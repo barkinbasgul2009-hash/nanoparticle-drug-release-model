@@ -221,9 +221,9 @@ Full transparency on verification status:
 | Test suite (`tests/`) | ✅ **Executed** | `Rscript tests/run_tests.R` — all pass |
 | Worked example (`examples/run_example.R`) | ✅ **Executed** | Runs; produces both figures and the model-fit ranking |
 | Jupyter notebook (`notebooks/`) | ✅ **Executed** | Every R code cell extracted and run end-to-end successfully |
-| Browser tool (`web/index.html`) | ✅ **Executed** | Loaded in a headless Chromium; both tabs render, no JS errors, penetration depth matches the R result |
-| Shiny app (`app/app.R`) | ⚠️ **Statically checked only** | Parses cleanly and its UI/server assemble under a stubbed `shiny`. It was **not** run live because installing `shiny` needs network access to CRAN, which was blocked in the build environment. Its model logic is the same tested `R/` core. |
-| GitHub Actions workflows | ⚠️ **Statically checked only** | Standard, validated YAML; they run on GitHub after merge, not in the build environment. |
+| Browser tool (`web/index.html`) | ✅ **Executed** | Loaded in a headless Chromium; all three tabs render, no JS errors, penetration depth matches the R result |
+| Shiny app (`app/app.R`) | ⚠ **Statically checked only** | Parses cleanly and its UI/server assemble under a stubbed `shiny`. It was **not** run live because installing `shiny` needs network access to CRAN, which was blocked in the build environment. Its model logic is the same tested `R/` core. |
+| GitHub Actions workflows | ⚠ **Statically checked only** | Standard, validated YAML; they run on GitHub after merge, not in the build environment. |
 
 ---
 

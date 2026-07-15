@@ -43,3 +43,14 @@ jobs:
       # enforcing R<->JS numerical equivalence. No npm dependencies required.
       - name: Run JavaScript model + R<->JS equivalence tests
         run: node tests/js/model.test.mjs
+
+  hidden-char-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Fails if prohibited hidden / bidirectional / zero-width characters are
+      # introduced into source, workflow, JSON, Markdown, or config files.
+      # Legitimate visible symbols (µ, ∂, π, →, emoji, dashes, ...) are allowed.
+      - name: Check for hidden / bidirectional Unicode characters
+        run: python3 tools/check_hidden_chars.py
