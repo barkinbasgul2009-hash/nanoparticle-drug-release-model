@@ -34,3 +34,17 @@ Each structure must declare state variables, geometry, ICs, BCs, parameters,
 units, identifiability, numerical method, and excluded processes before Stage-3
 implementation. See `recommended-model-equations.md` and
 `recommended-boundary-conditions.md`.
+
+---
+
+## Stage-2 CONTINUATION — spheroid carrier model (from dossier, Chen 2024)
+For intact-carrier penetration in a tumour spheroid, pure Fickian diffusion is
+**insufficient** (active/energy-dependent uptake observed). Candidate structure:
+  dC_np/dt = div(D_eff grad C_np) - k_u*C_np + k_r*C_cell
+  dC_cell/dt = k_u*C_np - k_r*C_cell - k_loss*C_cell
+where C_np = extracellular intact carrier, C_cell = cell-associated carrier, D_eff =
+effective (paracellular) diffusion, k_u uptake, k_r return, k_loss sequestration.
+This adds an intracellular state (M_cell) to the mass balance. Size-dependence cannot
+be inferred from reported peak positions alone — raw/digitized spatial profiles from
+the Chen primary (not opened) would be required. Kept SEPARATE from the skin submodel
+and the dextran vascular benchmark.

@@ -18,7 +18,7 @@
     },
     {
       "id": "solid_tumor_local",
-      "status": "BLOCKED (sources unavailable)",
+      "status": "RESEARCH_SUPPORTED (SEPARATE benchmarks; dossier-reported, UNVERIFIED)",
       "geometry": "1D radial",
       "process": "released-API interstitial diffusion + clearance",
       "populated": false,
@@ -27,7 +27,11 @@
         "dreher-2006",
         "spheroid-size-penetration-2024"
       ],
-      "note": "FALLBACK; best geometric fit but Dreher 2006 & Chen 2024 still missing -> cannot parameterize."
+      "note": "Two SEPARATE benchmarks per external dossier: (a) AuNP spheroid carrier penetration [Chen 2024]; (b) dextran vascular transport [Dreher 2006]. Values secondary/unverified (primaries not opened). NOT a drug-release profile; do NOT bridge the two systems.",
+      "sub_benchmarks": [
+        "chen-2024-spheroid (carrier, no API)",
+        "dreher-2006 (dextran, vascular)"
+      ]
     },
     {
       "id": "topical_skin",
@@ -68,7 +72,19 @@
       "populated": false,
       "pending_full_text": true,
       "note": "confounds local vs systemic; region-specific"
+    },
+    {
+      "id": "topical_skin_celastrol_nlc",
+      "status": "RESEARCH_SUPPORTED candidate (UNVERIFIED - primaries web-blocked)",
+      "geometry": "1D multilayer slab (new)",
+      "process": "NLC releasing celastrol -> multilayer skin diffusion",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "celastrol-tripterine-nlc-skin"
+      ],
+      "note": "Strongest EXACT NANOPARTICLE-skin candidate: has formulation+release+Franz permeation+in vivo (per search, unverified). Needs PDFs to verify/extract and to confirm independent validation."
     }
   ],
-  "stage2_continuation_note": "Grades revised after full-text upload. No profile is QUALIFIED. Skin sub-model is RESEARCH_SUPPORTED (small molecule); tumour blocked."
+  "stage2_continuation_note": "After external-dossier ingestion: tumour reclassified to two SEPARATE unverified benchmarks (not a drug profile). Verified skin submodel = niacinamide (small molecule, not NP). Strongest NP candidate = celastrol/tripterine NLC skin (unverified). No profile QUALIFIED."
 }

@@ -1,53 +1,56 @@
-# Stage-3 Recommendation (REVISED after full-text upload)
+# Stage-3 Recommendation (REVISED after external-dossier ingestion)
 
-## Scientific decision: OUTCOME B — partially sufficient (selection only)
-Full texts are now available for the **skin** methodology/parameter sources (Rothe
-2017, Iliopoulos 2020, OECD TG 428) and one **bladder** review (Sarfraz 2022). The
-**tumour** quantitative sources (Dreher 2006, Chen 2024) and **Potts & Guy 1992**
-remain **missing** (the "Potts & Guy" upload was the wrong paper — Karadzovska 2013).
+## Scientific decision: OUTCOME B — partially sufficient; complete NP profile = INSUFFICIENT_EVIDENCE
+Consistent with the external dossier and our own primary-source review. No profile is
+QUALIFIED. The evidence supports several **separate** submodels/benchmarks, not one
+continuous, externally-validated API–nanoparticle–route–tissue profile.
 
-The evidence — not the existing code — drives this revision. The only candidate with
-**verifiable, extracted transport parameters** is now the skin released-API
-diffusion sub-model; the previously-primary tumour candidate **cannot be
-parameterized** (its sources are unavailable). No candidate reaches **QUALIFIED**.
+## Verified vs candidate (do not conflate)
+- **Most VERIFIED submodel (opened primaries):** released **small-molecule** API
+  through human skin — niacinamide permeation/IVIVC (Iliopoulos 2020) + SC K/D
+  (Rothe 2017) + method (OECD TG 428). This is a **released-API skin submodel**, and
+  **niacinamide is NOT a nanoparticle**.
+- **Strongest EXACT NANOPARTICLE candidate (UNVERIFIED, web-blocked):**
+  **celastrol/tripterine-loaded NLC, topical skin** — appears to have formulation
+  characterization + controlled release + Franz permeation + in vivo PD (search-level
+  only; PDFs needed to verify/extract and to confirm independent validation).
 
-## Revised primary (for parameterizable work now)
-**Topical skin — released small-molecule API diffusing through a multilayer stratum
-corneum / viable epidermis / dermis slab; human (pig surrogate acceptable) skin;
-in vitro Franz-cell context (OECD TG 428); nanoparticle treated as a surface/
-follicular reservoir (carrier transport NOT modelled).**
+## Two SEPARATE tumour benchmarks (dossier-reported, UNVERIFIED; must NOT be bridged)
+- **Chen 2024** — intact AuNP (15/22/60 nm) penetration in MDA-MB-231 spheroids
+  (carrier only, no API/release). Indicates carrier transport needs an
+  **uptake–return intracellular state**, not pure Fickian diffusion.
+- **Dreher 2006** — dextran vascular permeability/penetration (model macromolecule,
+  IV, murine). Vascular-to-interstitium benchmark only.
+Values are secondary (from the external dossier); primaries were not opened here.
 
-- **Sourced parameters (small molecule):** SC partition K_SC/v and diffusion
-  D_SC/H²_SC (Rothe 2017, Table 2 — caffeine 2.68 / 0.21 h⁻¹; resorcinol 5.35 /
-  0.19 h⁻¹; 7-EC 39.5 / 0.030 h⁻¹, human, Protocol 1); split-thickness geometry
-  200–400 µm and 32±1 °C (OECD TG 428); IVIVC R²=0.98 and flux (Iliopoulos 2020,
-  niacinamide).
-- **Grade:** RESEARCH_SUPPORTED **for the released-API skin-diffusion sub-model
-  (small molecule)** — NOT a validated nanoparticle profile.
-- **Hard caveats:** every sourced value is for a **small-molecule API, not a
-  nanoparticle**; intact NPs are retained in SC/follicle; no dermal-clearance value
-  and no absolute D (cm²/s) without H_SC; requires new multilayer-slab geometry.
+## Recommended Stage-3 direction (only after approval + PDFs)
+1. **Implement the released-API multilayer human-skin transport engine** (SC / viable
+   epidermis / dermis; finite donor; Robin/flux coupling; optional binding & dermal
+   clearance), parameterized from the **verified** small-molecule values, clearly
+   labelled *"RESEARCH_SUPPORTED released-API skin submodel — NOT a nanoparticle
+   release model."*
+2. **Pursue the celastrol/tripterine NLC skin primaries** to upgrade this into a real
+   nanoparticle profile (needs the PDFs).
+3. **Keep Chen and Dreher as two separate, clearly-labelled benchmarks** (verify
+   against primaries before any quantitative use).
 
-## Fallback (blocked)
-**Solid tumour — local released-drug radial diffusion.** Best geometric fit to the
-current solver, but **cannot advance**: Dreher 2006 and Chen 2024 are still not
-available. Remains fallback pending those PDFs.
+## Release-to-tissue coupling & mass balance
+Robin/flux boundary (not `C0·f(t)`); for a spheroid carrier model add an intracellular
+`M_cell` uptake–return state (see `mass-balance-candidate-design.md`). Coupling per
+candidate in `release-to-tissue-coupling.md`.
 
-## What is required to reach a genuine nanoparticle profile
-A nanoparticle-formulation primary with BOTH in vitro release AND skin-penetration
-depth data (identified, not yet provided): tripterine NLC (PMC3392146), caffeic-acid
-lipid NP (PMC7826983), or caffeine lipid NP (Talanta 2015). Without one of these,
-the skin profile models released small-molecule diffusion only — it is not a
-nanoparticle product model.
+## Calibration / validation
+**No adequate independent external validation dataset exists for any candidate**
+(niacinamide: other vehicles in the same paper are not independent; Chen vs Dreher are
+incompatible systems). Maximum grade therefore **RESEARCH_SUPPORTED**, never QUALIFIED.
 
-## What Stage 3 MAY implement (after approval + the NP primary)
-A RESEARCH_SUPPORTED, clearly-labelled **educational** multilayer-skin released-API
-diffusion profile, parameterized from the sourced small-molecule values, with the
-nanoparticle as a surface reservoir and explicit uncertainty/extrapolation warnings.
+## Stage-3 entry conditions
+(1) user selects direction; (2) provide celastrol-NLC skin primaries (and/or Chen 2024,
+Dreher 2006, Potts & Guy 1992 PDFs) so parameters are extracted with provenance and
+independence checked; (3) confirm Outcome B and the "no complete NP profile" limit.
 
-## What Stage 3 MUST NOT claim
-QUALIFIED status; that it represents a specific nanoparticle product; carrier
-penetration; human clinical outcome; or validity beyond the small-molecule,
-in vitro, SC-diffusion evidence actually sourced.
-
-## Maximum defensible grade today: RESEARCH_SUPPORTED (skin sub-model). No QUALIFIED profile is possible without an NP-formulation primary + independent validation.
+## MUST NOT (Stage 3)
+Claim QUALIFIED/clinical/patient-specific; present the skin submodel as a nanoparticle
+model; bridge the three separate systems; use cumulative-release-fraction as surface
+concentration; infer free API from carrier-only data; generalize pig→human or
+spheroid→human tumour without qualification.

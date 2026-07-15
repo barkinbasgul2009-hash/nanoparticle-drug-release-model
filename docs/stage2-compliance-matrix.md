@@ -31,3 +31,24 @@ allows**. Two hard blockers remain, both requiring user-provided PDFs or network
 access: (1) tumour candidate sources (Dreher, Chen); (2) any nanoparticle-formulation
 primary with release + penetration. Until then, no QUALIFIED profile is possible and
 the skin sub-model is the maximum defensible (RESEARCH_SUPPORTED) selection.
+
+---
+
+## Stage-2 CONTINUATION 2 — external-dossier ingestion audit (update)
+| Requirement | Status | Evidence |
+|---|---|---|
+| Ingest + audit the 2 external artifacts | **DONE** | external-dossier-ingestion-audit.md; artifacts stored in docs/external/ |
+| Verify dossier claims vs primaries | **DONE** | Rothe/Iliopoulos/OECD/Sarfraz VERIFIED (opened); Chen/Dreher SECONDARY/UNVERIFIED (not opened) |
+| Reconcile + resolve contradictions | **DONE** | tumour reclassified to 2 separate benchmarks; niacinamide = verified non-NP submodel; celastrol NLC added as strongest NP candidate |
+| Continue research / citation network | **PARTIAL (web-blocked)** | search-log.md #8-9; celastrol NLC + Mitragotri 2011 identified, not opened |
+| Do NOT bridge incompatible systems | **ENFORCED** | skin / spheroid-carrier / dextran-vascular kept separate |
+| Keep provenance (measured vs secondary) | **DONE** | secondary_reported_values fields; "UNVERIFIED" flags |
+| Final decision A/B/C | **OUTCOME B** (complete NP profile = INSUFFICIENT_EVIDENCE) | stage3-recommendation.md |
+| User-held/not-ingested sources listed | **DONE** | critical-paywalled-sources.md (§30: no "01" file present) |
+| Update PR #3, do not merge | **DONE** | this branch/PR |
+
+**Honest overall:** Stage 2 is as complete as the available (opened) evidence allows.
+Open blockers requiring user-provided PDFs or network access: celastrol/tripterine NLC
+skin primaries (to build a real NP profile), Chen 2024 & Dreher 2006 primaries (to
+verify the benchmarks), Potts & Guy 1992 (coefficients). No QUALIFIED profile is
+possible until these are obtained and an independent validation set is confirmed.

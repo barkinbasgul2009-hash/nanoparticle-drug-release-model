@@ -38,3 +38,17 @@ Forward-citation searching (who later cited these) requires opening records and 
 **Saturation:** NOT reached for the NP-formulation facet — multiple candidate
 NP-skin primaries exist but are inaccessible. Saturation cannot be honestly
 declared while these remain unopened.
+
+---
+
+## Stage-2 CONTINUATION 2 (external-dossier ingestion + citation network)
+| # | Query (abridged) | Facet | Identified (not opened) |
+|---|---|---|---|
+| 8 | celastrol/tripterine NLC skin permeation + release + EE + validation | NP-skin chain | PMC3392146 (surface-charged tripterine NLC, Franz + in vivo PD); celastrol-indomethacin NLC (10.1080/21691401.2018.1503599); reviews PMC10904542, RSC 10.1039/D1BM00639H |
+| 9 | Mitragotri 2011 skin permeability models review | skin model structure | Mitragotri et al. 2011, Int J Pharm 418(1):115-129 (verified identity) |
+
+Backward citation (from external dossier reference list): Potts & Guy 1992 fuller
+citation; Mitragotri 2011. Forward citation still web-blocked.
+**Saturation:** still NOT reached for the NP-formulation facet — a genuinely stronger
+NP-skin candidate (celastrol/tripterine NLC) surfaced this iteration, which by the
+saturation rule means the facet is not saturated.

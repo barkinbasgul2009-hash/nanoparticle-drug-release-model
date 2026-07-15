@@ -2,14 +2,66 @@
   "$schema_version": "0.1.0",
   "description": "Mass-balance compartments (docs/mass-balance-candidate-design.md). Structure only.",
   "states": [
-    {"term":"M_carrier","meaning":"API in nanoparticle/depot","unit":"mass","necessary":true},
-    {"term":"M_donor_free","meaning":"free API in donor/interface","unit":"mass","necessary":true},
-    {"term":"M_interface","meaning":"API at boundary","unit":"mass","necessary":"if Robin BC"},
-    {"term":"M_tissue","meaning":"integral of C in tissue","unit":"mass","necessary":true},
-    {"term":"M_bound","meaning":"tissue-bound API","unit":"mass","necessary":"candidate-dependent"},
-    {"term":"M_cleared","meaning":"first-order clearance loss","unit":"mass","necessary":true},
-    {"term":"M_degraded","meaning":"chemical/enzymatic loss","unit":"mass","necessary":"candidate-dependent"},
-    {"term":"M_out","meaning":"outer-boundary flux loss","unit":"mass","necessary":true},
-    {"term":"M_residual","meaning":"numerical closure error","unit":"mass","necessary":true}
-  ]
+    {
+      "term": "M_carrier",
+      "meaning": "API in nanoparticle/depot",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_donor_free",
+      "meaning": "free API in donor/interface",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_interface",
+      "meaning": "API at boundary",
+      "unit": "mass",
+      "necessary": "if Robin BC"
+    },
+    {
+      "term": "M_tissue",
+      "meaning": "integral of C in tissue",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_bound",
+      "meaning": "tissue-bound API",
+      "unit": "mass",
+      "necessary": "candidate-dependent"
+    },
+    {
+      "term": "M_cleared",
+      "meaning": "first-order clearance loss",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_degraded",
+      "meaning": "chemical/enzymatic loss",
+      "unit": "mass",
+      "necessary": "candidate-dependent"
+    },
+    {
+      "term": "M_out",
+      "meaning": "outer-boundary flux loss",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_residual",
+      "meaning": "numerical closure error",
+      "unit": "mass",
+      "necessary": true
+    },
+    {
+      "term": "M_cell",
+      "meaning": "cell-associated / intracellular carrier or API (spheroid uptake-return)",
+      "unit": "mass",
+      "necessary": "tumour-spheroid carrier model only (Chen 2024): pure Fickian diffusion insufficient; needs uptake k_u / return k_r"
+    }
+  ],
+  "note": "Chen 2024 (dossier) indicates intact-carrier spheroid transport needs an uptake-return intracellular state (M_cell), not pure diffusion."
 }

@@ -34,3 +34,14 @@ carrier.** Therefore:
   encapsulated vs released fractions (identified: tripterine NLC etc., not provided).
 Per §22, small-molecule/tracer transport data must not be presented as a complete
 nanoparticle drug-release model.
+
+---
+
+## Stage-2 CONTINUATION 2 update
+The external dossier reinforces this: its supported skin submodel uses **niacinamide
+(free small molecule, no carrier)**, and Chen 2024 measures **intact carrier** (gold,
+no API/no release), while Dreher measures **dextran** (model macromolecule). None
+provides free-vs-encapsulated API kinetics for a therapeutic nanoparticle. The
+**celastrol/tripterine NLC** candidate is the first identified system that could
+provide encapsulated→released API behaviour for a nanoparticle, but its primaries are
+unopened (values unverified).

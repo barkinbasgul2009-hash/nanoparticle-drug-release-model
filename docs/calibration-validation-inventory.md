@@ -28,3 +28,17 @@ environment. Confirming independence and compatibility requires the PDFs in
   candidates remain **unavailable**.
 - **Explicit statement:** NO ADEQUATE INDEPENDENT EXTERNAL VALIDATION DATASET
   IDENTIFIED for any candidate. No QUALIFIED profile is possible at this time.
+
+---
+
+## Stage-2 CONTINUATION (external-dossier ingestion)
+The external dossier independently reaches the same conclusion: **no adequate
+independent external validation dataset** for any candidate.
+- Niacinamide skin: a second vehicle in the **same** Iliopoulos paper is NOT
+  independent; Rothe uses different permeants/endpoints → cannot serve as niacinamide
+  external validation.
+- Tumour: Chen 2024 (calibration candidate) and Dreher 2006 differ in carrier, route,
+  tissue model, and endpoint → not mutually compatible for calibration↔validation.
+- Celastrol/tripterine NLC skin: possibly the best route to a calibration+validation
+  pair, but primaries are unopened; independence unconfirmed.
+**Conclusion unchanged: no QUALIFIED profile possible.**

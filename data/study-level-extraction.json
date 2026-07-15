@@ -9,19 +9,81 @@
       "type": "in vitro / method (human & pig stratum corneum)",
       "api_class": "SMALL MOLECULE model chemicals (NOT nanoparticle)",
       "compounds": [
-        {"name": "caffeine", "MW": 194.2, "logP": -0.07, "source": "Table 1"},
-        {"name": "resorcinol", "MW": 110.1, "logP": 0.8, "source": "Table 1"},
-        {"name": "7-ethoxycoumarin", "MW": 190.2, "logP": 2.3, "source": "Table 1"}
+        {
+          "name": "caffeine",
+          "MW": 194.2,
+          "logP": -0.07,
+          "source": "Table 1"
+        },
+        {
+          "name": "resorcinol",
+          "MW": 110.1,
+          "logP": 0.8,
+          "source": "Table 1"
+        },
+        {
+          "name": "7-ethoxycoumarin",
+          "MW": 190.2,
+          "logP": 2.3,
+          "source": "Table 1"
+        }
       ],
       "extracted_values": {
         "note": "K_SC/v is dimensionless partition; D_SC/H2_SC has units h^-1 (lumped diffusion parameter). Mean (%CV). Human SC unless noted. Source: Table 2.",
-        "caffeine": {"K_SC_v": {"P1_human": 2.68, "P2A_human": 5.88, "P2B_human": 2.63, "P1_pig": 1.27}, "D_SC_H2_per_h": {"P1_human": 0.21, "P2B_human": 0.056, "P1_pig": 0.23}},
-        "resorcinol": {"K_SC_v": {"P1_human": 5.35, "P2A_human": 8.41, "P2B_human": 4.07, "P1_pig": 5.18}, "D_SC_H2_per_h": {"P1_human": 0.19, "P2B_human": 0.047, "P1_pig": 0.19}},
-        "7_ethoxycoumarin": {"K_SC_v": {"P1_human": 39.5, "P2A_human": 13.3, "P2B_human": 0.019, "P1_pig": 89.5}, "D_SC_H2_per_h": {"P1_human": 0.030, "P2B_human": 0.078, "P1_pig": 0.10}},
-        "D_SC_H2_ranges_per_h": {"caffeine": "0.06-0.23", "resorcinol": "0.05-0.19", "7_EC": "0.03-0.1", "source": "text line ~414"},
+        "caffeine": {
+          "K_SC_v": {
+            "P1_human": 2.68,
+            "P2A_human": 5.88,
+            "P2B_human": 2.63,
+            "P1_pig": 1.27
+          },
+          "D_SC_H2_per_h": {
+            "P1_human": 0.21,
+            "P2B_human": 0.056,
+            "P1_pig": 0.23
+          }
+        },
+        "resorcinol": {
+          "K_SC_v": {
+            "P1_human": 5.35,
+            "P2A_human": 8.41,
+            "P2B_human": 4.07,
+            "P1_pig": 5.18
+          },
+          "D_SC_H2_per_h": {
+            "P1_human": 0.19,
+            "P2B_human": 0.047,
+            "P1_pig": 0.19
+          }
+        },
+        "7_ethoxycoumarin": {
+          "K_SC_v": {
+            "P1_human": 39.5,
+            "P2A_human": 13.3,
+            "P2B_human": 0.019,
+            "P1_pig": 89.5
+          },
+          "D_SC_H2_per_h": {
+            "P1_human": 0.03,
+            "P2B_human": 0.078,
+            "P1_pig": 0.1
+          }
+        },
+        "D_SC_H2_ranges_per_h": {
+          "caffeine": "0.06-0.23",
+          "resorcinol": "0.05-0.19",
+          "7_EC": "0.03-0.1",
+          "source": "text line ~414"
+        },
         "kp_cm_per_h": "NOT TRANSCRIBED - pdftotext dropped negative exponent signs on the kp row; magnitude ~1e-4 cm/h; requires careful re-read"
       },
-      "provenance": {"tables": ["Table 1 physicochem", "Table 2 K & D/H2"], "status": "measured"},
+      "provenance": {
+        "tables": [
+          "Table 1 physicochem",
+          "Table 2 K & D/H2"
+        ],
+        "status": "measured"
+      },
       "applicability": "Parameterizes released small-molecule API diffusion/partition in stratum corneum. NOT a nanoparticle study. Pig ~ human for these compounds.",
       "pending_full_text": false
     },
@@ -32,14 +94,26 @@
       "type": "in vitro Franz cell + in vivo confocal Raman (human skin)",
       "api_class": "SMALL MOLECULE active: niacinamide (NIA) (NOT nanoparticle)",
       "extracted_values": {
-        "cumulative_permeation_24h_ug_cm2": {"PG_PGML_IPM_vehicles": ["100.3 +/- 10.8", "106.7 +/- 12.9"], "TC_vehicle": "1.3 +/- 2.3"},
-        "flux_ug_cm2_h": {"a_formulation": 96.1, "neat_PG": 0.2},
+        "cumulative_permeation_24h_ug_cm2": {
+          "PG_PGML_IPM_vehicles": [
+            "100.3 +/- 10.8",
+            "106.7 +/- 12.9"
+          ],
+          "TC_vehicle": "1.3 +/- 2.3"
+        },
+        "flux_ug_cm2_h": {
+          "a_formulation": 96.1,
+          "neat_PG": 0.2
+        },
         "IVIVC_R2": 0.98,
         "pearson_R2_cumulative_vs_SC": 0.94,
         "LOQ_ug_mL": 0.47,
         "linearity_r2": ">=0.99"
       },
-      "provenance": {"location": "Abstract + Results", "status": "measured"},
+      "provenance": {
+        "location": "Abstract + Results",
+        "status": "measured"
+      },
       "applicability": "Supports skin-permeation quantification and IVIVC method for released small-molecule API. NOT a nanoparticle study.",
       "pending_full_text": false
     },
@@ -56,7 +130,10 @@
         "mass_balance": "percentage recovery required; substance remaining in skin considered absorbed unless shown otherwise",
         "integrity_check": "required (e.g. electrical resistance / TEWL)"
       },
-      "provenance": {"location": "TG 428 method sections", "status": "guideline"},
+      "provenance": {
+        "location": "TG 428 method sections",
+        "status": "guideline"
+      },
       "applicability": "Standardized method for the skin candidate; defines acceptable geometry (split-thickness) and mass-balance requirements.",
       "pending_full_text": false
     },
@@ -70,7 +147,10 @@
         "mixture_factor_form": "log kp = c + m*MF + a*sum(alpha2) + b*sum(beta2) + s*pi2 + r*R2 + v*Vx",
         "cites_potts_guy_as": "first widely accepted QSAR (ref [171])"
       },
-      "provenance": {"location": "Model sections", "status": "model_form (supporting)"},
+      "provenance": {
+        "location": "Model sections",
+        "status": "model_form (supporting)"
+      },
       "applicability": "Supporting QSPR context only; does NOT contain Potts-Guy coefficients.",
       "pending_full_text": false
     },
@@ -83,12 +163,62 @@
         "qualitative_environment": "urothelium = innermost, main permeability barrier; GAG/mucin layer over umbrella cells (hydrophilic); three layers urothelium/detrusor/adventitia; urine pH, calcium, urea affect permeability",
         "quantitative_depth_concentration": null
       },
-      "provenance": {"location": "Sections 1-2 (qualitative)", "status": "review - trace to primaries"},
+      "provenance": {
+        "location": "Sections 1-2 (qualitative)",
+        "status": "review - trace to primaries"
+      },
       "applicability": "Bladder environment structure only; primary depth-concentration data must be traced and opened.",
       "pending_full_text": "primaries_pending"
     },
-    {"id": "dreher-2006", "identity": "Dreher MR et al. 2006, JNCI 98(5):335-344, PMID 16507830", "type": "in vivo rodent", "extracted_values": null, "pending_full_text": true, "note": "STILL MISSING (tumour candidate)"},
-    {"id": "chen-2024-spheroid", "identity": "Chen et al. 2024, Small, DOI 10.1002/smll.202304693", "type": "in vitro spheroid", "extracted_values": null, "pending_full_text": true, "note": "STILL MISSING (tumour candidate)"},
-    {"id": "potts-guy-1992", "identity": "Potts RO, Guy RH 1992, Predicting Skin Permeability, Pharm Res, PMID 1608900", "type": "model/correlation", "extracted_values": null, "pending_full_text": true, "note": "STILL MISSING (uploaded file was wrong paper)"}
+    {
+      "id": "dreher-2006",
+      "identity": "Dreher MR et al. 2006, JNCI 98(5):335-344, PMID 16507830",
+      "type": "in vivo rodent",
+      "extracted_values": {
+        "provenance": "EXTERNAL DOSSIER (secondary), primary NOT opened by us - UNVERIFIED",
+        "apparent_permeability_1e-7_cm_s": {
+          "3.3kDa": "154 [134-174]",
+          "10kDa": "32 [24-39]",
+          "40kDa": "9.5 [7.5-11.4]",
+          "70kDa": "9.8 [7.1-12.4]",
+          "2MDa": "1.7 [0.7-2.6]"
+        },
+        "penetration": ">35 um (3.3/10 kDa), ~5-15 um (40 kDa - 2 MDa)",
+        "system": "dextran, IV, murine FaDu window chamber"
+      },
+      "pending_full_text": "secondary_only",
+      "note": "Values from external dossier; carrier=dextran (not NP); NOT independently verified."
+    },
+    {
+      "id": "chen-2024-spheroid",
+      "identity": "Chen et al. 2024, Small, DOI 10.1002/smll.202304693",
+      "type": "in vitro spheroid",
+      "extracted_values": {
+        "provenance": "EXTERNAL DOSSIER (secondary), primary NOT opened by us - UNVERIFIED",
+        "system": "AuNP 15/22/60 nm, ~-35 mV, MDA-MB-231 spheroid, 1 ug/mL, 12 h",
+        "XFM_peak_ppm": {
+          "22nm": 924,
+          "60nm": 187
+        },
+        "peak_depth_um": {
+          "15nm": 21,
+          "22nm": 22,
+          "60nm": 15
+        },
+        "pathways": "15nm transcellular; 22nm mixed; 60nm energy-dependent transcellular",
+        "api": "none",
+        "release": "none"
+      },
+      "pending_full_text": "secondary_only",
+      "note": "Values from external dossier; carrier only (no API/release); NOT independently verified."
+    },
+    {
+      "id": "potts-guy-1992",
+      "identity": "Potts RO, Guy RH 1992, Predicting Skin Permeability, Pharm Res, PMID 1608900",
+      "type": "model/correlation",
+      "extracted_values": null,
+      "pending_full_text": true,
+      "note": "STILL MISSING (uploaded file was wrong paper)"
+    }
   ]
 }
