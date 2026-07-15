@@ -1,0 +1,22 @@
+{
+  "_comment": "Regression baseline capturing the CURRENT website behaviour at commit f7ca348, so any future change that alters the existing models fails loudly. Generated from R/*.R with the default-ish parameter set below; the JavaScript in web/index.html was verified numerically equivalent to these values (max|Δ| < 5e-11 for release, < 5e-5 abs for tissue). Do not edit by hand — regenerate with tests/regression/capture_baseline.R only when an intentional model change is being recorded.",
+  "commit": "f7ca348",
+  "parameters": {
+    "r": 0.1, "h": 0.02, "C0": 100, "K": 0.5, "Dr": 5e-4,
+    "kf": 0.15, "np": 0.43, "kz": 0.03, "kH": 0.25, "kp": 0.20,
+    "Dt": 50, "ro": 20, "ke": 0.1, "te": 48
+  },
+  "release_times": [0, 1, 6, 12, 24, 48],
+  "release": {
+    "higuchi":          [0, 0.25, 0.6123724356957945, 0.8660254037844386, 1, 1],
+    "first_order":      [0, 0.13929202357494218, 0.5934303402594008, 0.8347011117784134, 0.9726762775527075, 0.9992534141916234],
+    "zero_order":       [0, 0.03, 0.18, 0.36, 0.72, 1],
+    "korsmeyer_peppas": [0, 0.2, 0.43215051344526245, 0.5822076819732053, 0.7843697378634437, 1],
+    "fickian_sphere":   [0, 0.60693975667883193, 0.96852453511560066, 0.99837046884141822, 0.99999563208851339, 0.99999999996861688],
+    "membrane_shell":   [0, 0.37499999999999994, 1, 1, 1, 1]
+  },
+  "tissue_driver": "first_order",
+  "tissue_x": [0.1, 1, 2, 5, 10, 20],
+  "tissue_C_final": [99.925341419162322, 11.756231550860356, 5.3233077892320706, 1.6843353770649474, 0.53524250285060659, 0],
+  "tissue_tolerance_abs": 1e-6
+}

@@ -1,0 +1,22 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "SCHEMA ONLY. Every numerical parameter shown anywhere in the website must have a record here (no anonymous hard-coded biological constants). Currently EMPTY except for the illustrative generic-tissue defaults, which are explicitly marked non-literature-qualified. Biological/tissue parameters are added only after verification + approval.",
+  "parameter_field_definitions": {
+    "name": "", "value": "", "unit": "", "range": "", "uncertainty": "",
+    "api": "", "formulation": "", "tissue": "", "route": "", "species": "",
+    "experimental_context": "", "source_id": "", "doi_pmid": "",
+    "locator": "table/figure/page", "status": "measured|fitted|calculated|assumed",
+    "transformation": "", "date_accessed": "", "evidence_grade": "",
+    "applicability_notes": "", "exclusions": "", "version": ""
+  },
+  "parameters": [
+    {
+      "name": "generic_tissue_defaults",
+      "value": "see web/index.html sliders (Dt, ke, ro, etc.)",
+      "status": "assumed",
+      "evidence_grade": "ILLUSTRATIVE_ONLY",
+      "source_id": null,
+      "applicability_notes": "Order-of-magnitude teaching defaults for the generic soft-tissue illustrative model. NOT literature-qualified for any named tissue. Not used for any quantitative biological claim."
+    }
+  ]
+}

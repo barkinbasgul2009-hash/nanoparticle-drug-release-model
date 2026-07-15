@@ -26,11 +26,18 @@ Once it opens:
    with six standard models drawn together for the same design.
 3. **"Tissue penetration" tab** — see how far the drug spreads into tissue and
    read the **penetration depth** directly.
+4. **"Animated Tissue View" tab** — watch the drug spread outward over time as a
+   colour heatmap synced to the graphs. This view is a **generic soft-tissue,
+   ILLUSTRATIVE-ONLY** picture of the same calculation — it is not organ-specific
+   and not a clinical prediction.
 
 Everything updates instantly as you move the sliders. Nothing is uploaded, nothing
 is saved, and it works on a laptop or a phone. If you prefer, you can also open the
 file `web/index.html` from a download of this project by double-clicking it — no
 internet required.
+
+> **A note on the word "API":** in this project **API means *active pharmaceutical
+> ingredient*** (the drug), never a software interface.
 
 > The R code, Shiny app, and Jupyter notebook below are for developers who want to
 > extend the models or run them programmatically. Non-technical users can ignore
@@ -214,9 +221,9 @@ Full transparency on verification status:
 | Test suite (`tests/`) | ✅ **Executed** | `Rscript tests/run_tests.R` — all pass |
 | Worked example (`examples/run_example.R`) | ✅ **Executed** | Runs; produces both figures and the model-fit ranking |
 | Jupyter notebook (`notebooks/`) | ✅ **Executed** | Every R code cell extracted and run end-to-end successfully |
-| Browser tool (`web/index.html`) | ✅ **Executed** | Loaded in a headless Chromium; both tabs render, no JS errors, penetration depth matches the R result |
-| Shiny app (`app/app.R`) | ⚠️ **Statically checked only** | Parses cleanly and its UI/server assemble under a stubbed `shiny`. It was **not** run live because installing `shiny` needs network access to CRAN, which was blocked in the build environment. Its model logic is the same tested `R/` core. |
-| GitHub Actions workflows | ⚠️ **Statically checked only** | Standard, validated YAML; they run on GitHub after merge, not in the build environment. |
+| Browser tool (`web/index.html`) | ✅ **Executed** | Loaded in a headless Chromium; all three tabs render, no JS errors, penetration depth matches the R result |
+| Shiny app (`app/app.R`) | ⚠ **Statically checked only** | Parses cleanly and its UI/server assemble under a stubbed `shiny`. It was **not** run live because installing `shiny` needs network access to CRAN, which was blocked in the build environment. Its model logic is the same tested `R/` core. |
+| GitHub Actions workflows | ⚠ **Statically checked only** | Standard, validated YAML; they run on GitHub after merge, not in the build environment. |
 
 ---
 
