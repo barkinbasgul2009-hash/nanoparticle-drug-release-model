@@ -1,0 +1,28 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "SCHEMA ONLY. This file defines the shape of a tissue/route profile for the future Animated Tissue View. It contains NO populated profiles: every numeric parameter must come from a verified entry in data/source-registry.json and pass the Phase-3 eligibility gate before it may appear here. Populating profiles is gated on user approval (Phase 17). An empty 'profiles' array is intentional and correct at this stage.",
+  "eligibility_status_enum": {
+    "QUALIFIED": "Validated or independently testable model + suitable quantitative data. May produce quantitative predictions.",
+    "RESEARCH_SUPPORTED": "Multiple credible studies, meaningful uncertainty / limited validation. May produce quantitative predictions only with explicit uncertainty and justification.",
+    "ILLUSTRATIVE_ONLY": "Insufficient evidence for quantitative prediction. Shown as schematic only, never as a prediction.",
+    "EXCLUDED": "Evidence missing/incompatible/unsuitable. Not implemented; selector entry disabled with explanation."
+  },
+  "profile_field_definitions": {
+    "id": "stable key",
+    "display_name": "human-readable tissue/organ name",
+    "route": "administration route this profile is valid for (must match an entry in routes)",
+    "eligibility_status": "one of eligibility_status_enum",
+    "process_represented": "which of the 9 processes in docs/model-scope.md this profile models (must be a subset the current solver actually computes)",
+    "geometry": "spatial idealisation (e.g. 1D slab, 1D spherical) — must match a solver the code implements",
+    "parameters": "object mapping parameter name -> { value|range, unit, source_id, status (measured|fitted|assumed), species, confidence, uncertainty }",
+    "applicable_controls": "which existing UI controls are scientifically meaningful for this profile",
+    "inapplicable_controls": "existing controls that must be shown as disabled/not-used for this profile",
+    "extrapolation_domain": "supported parameter ranges; values outside trigger an extrapolation warning",
+    "evidence_grade": "summary grade shown in UI (mirrors eligibility_status)",
+    "source_ids": "list of source-registry ids backing this profile",
+    "limitations_note": "short UI-facing limitations statement",
+    "assumptions": "list of explicit modelling assumptions"
+  },
+  "routes": [],
+  "profiles": []
+}

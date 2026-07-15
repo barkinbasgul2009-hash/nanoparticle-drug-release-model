@@ -22,5 +22,8 @@ jobs:
       - name: Run test suite
         run: Rscript tests/run_tests.R
 
+      - name: Run regression baseline (preserves existing behaviour)
+        run: Rscript tests/regression/baseline_test.R
+
       - name: Run worked example
         run: Rscript examples/run_example.R
