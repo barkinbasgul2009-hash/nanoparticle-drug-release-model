@@ -16,18 +16,30 @@ Two tabs, both preserved:
 Developers can also use the R core, the Shiny app (`app/app.R`), and the Jupyter
 notebook — see the README.
 
-## Animated Tissue View (planned — not yet available)
+## Animated Tissue View (available — generic soft tissue, ILLUSTRATIVE ONLY)
 
-An additional **Animated Tissue View** tab is planned. It will add, *alongside*
-the existing tabs:
-- an evidence-qualified tissue selector and administration-route selector,
-- a time-animated heatmap of the solver's concentration field `C(x,t)`,
-- synchronized quantitative graphs and a penetration-depth marker,
-- an **Evidence, Assumptions & Limitations** panel and Simple/Scientific view
-  modes.
+A third tab, **Animated Tissue View**, is now available *alongside* the two
+existing tabs (which are unchanged). It provides:
+- a time-animated radial heatmap of the solver's concentration field `C(x,t)`,
+  coloured directly from the computed values (no invented motion);
+- play / pause / reset, a time scrubber, and a speed control;
+- a synchronized concentration-vs-depth graph with a penetration-depth marker
+  and an adjustable depth probe;
+- readouts for simulation time, penetration depth, maximum concentration, probe
+  concentration, and a tissue-drug-mass diagnostic;
+- an **Evidence, Assumptions & Limitations** panel.
 
-It is intentionally **not implemented yet**: it is gated on the scientific
-evidence audit and architecture review (see `docs/evidence-matrix.md`,
-`docs/model-scope.md`, `docs/architecture.md`). No tissue-specific predictive
-values exist until sources are verified and approved. Nothing about the current
-tool changes in the meantime.
+It is deliberately restricted to a **generic soft tissue** and marked
+**ILLUSTRATIVE_ONLY**: it visualizes the same physics as the Tissue Penetration
+tab and makes **no organ-specific or clinical claim**. The heatmap uses a
+perceptual √ colour scale for visibility; the quantitative graph is linear.
+
+Reduced-motion users: the animation never auto-plays; the scrubber gives the
+identical results as a static, step-through view.
+
+### Named-tissue profiles (skin, gut, tumour) — not yet available
+Evidence-qualified tissue and administration-route selectors are **not** enabled
+yet. They are gated on the scientific evidence review and approval
+(`docs/search-protocol.md`, `docs/evidence-matrix.md`, `docs/model-scope.md`).
+No tissue-specific predictive values exist until sources are verified and
+approved.

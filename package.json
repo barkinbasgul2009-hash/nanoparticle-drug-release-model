@@ -1,0 +1,11 @@
+{
+  "name": "nanoparticle-drug-release-model",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JavaScript-side tests for the nanoparticle drug-release simulator (the browser tool). The scientific model core lives inline in web/index.html; these tests load it directly and check it against the R-derived golden reference.",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/js/model.test.mjs"
+  },
+  "license": "SEE README"
+}

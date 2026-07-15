@@ -20,8 +20,8 @@ golden <- list(
   first_order      = c(0, 0.13929202357494218, 0.5934303402594008, 0.8347011117784134, 0.9726762775527075, 0.9992534141916234),
   zero_order       = c(0, 0.03, 0.18, 0.36, 0.72, 1),
   korsmeyer_peppas = c(0, 0.2, 0.43215051344526245, 0.5822076819732053, 0.7843697378634437, 1),
-  fickian_sphere   = c(0, 0.6069397566788321, 0.9685245351156007, 0.9983704688414182, 0.9999956320885134, 1),
-  membrane_shell   = c(0, 0.375, 1, 1, 1, 1)
+  fickian_sphere   = c(0, 0.60693975667883193, 0.96852453511560066, 0.99837046884141822, 0.99999563208851339, 0.99999999996861688),
+  membrane_shell   = c(0, 0.37499999999999994, 1, 1, 1, 1)
 )
 p <- list(r = 0.1, h = 0.02, C0 = 100, K = 0.5, Dr = 5e-4,
           kf = 0.15, np = 0.43, kz = 0.03, kH = 0.25, kp = 0.20,
@@ -55,8 +55,9 @@ sol  <- solve_tissue_diffusion(D = p$Dt, r_inner = p$r, r_outer = p$ro, t_end = 
 xs    <- c(0.1, 1, 2, 5, 10, 20)
 Cend  <- sol$C[nrow(sol$C), ]
 Cfin  <- sapply(xs, function(xq) Cend[which.min(abs(sol$x - xq))])
-golden_tissue <- c(99.92534141916234, 11.756, 5.32331, 1.68434, 0.535243, 0)
-chk(max(abs(Cfin - golden_tissue)) < 0.05,
+golden_tissue <- c(99.925341419162322, 11.756231550860356, 5.3233077892320706,
+                   1.6843353770649474, 0.53524250285060659, 0)
+chk(max(abs(Cfin - golden_tissue)) < 1e-6,
     sprintf("tissue profile drifted from baseline (max|Δ|=%.3e)", max(abs(Cfin - golden_tissue))))
 
 # Structural invariants that must always hold for the EXISTING model.

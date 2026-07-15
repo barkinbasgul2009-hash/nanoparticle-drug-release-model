@@ -16,8 +16,21 @@ Two parallel implementations of the same model core, plus interfaces:
 | JS model core | inline `<script>` in `web/index.html` | Browser reimplementation of the same equations |
 | R interface | `app/app.R` (Shiny), `notebooks/…ipynb`, `examples/run_example.R` | Developer/interactive use |
 | Web interface | `web/index.html` | Public GitHub-Pages tool (primary) |
-| Tests | `tests/testthat/test_models.R`, `tests/regression/` | Verification + regression baseline |
-| CI/CD | `.github/workflows/tests.yml`, `pages.yml` | Test on push; deploy `web/` to Pages |
+| Tests | `tests/testthat/test_models.R`, `tests/regression/`, `tests/js/` | R core + regression baseline + genuine JS/R↔JS tests |
+| CI/CD | `.github/workflows/tests.yml` (R job + Node job), `pages.yml` | Test on push; deploy `web/` to Pages |
+
+### Extension added this phase (additive, existing tabs preserved)
+- **Animated Tissue View** tab in `web/index.html`: a radial heatmap coloured
+  directly from the solver's `C(x,t)`, synchronized graph, animation controls,
+  penetration marker, depth probe, tissue-mass diagnostic, and an
+  ILLUSTRATIVE_ONLY evidence panel. `solveTissue` gained a backward-compatible
+  optional `nFrames` (adds animation frames + a tissue-mass integral); all
+  existing outputs (`snaps`, `snapTimes`, `Cfinal`) are byte-for-byte unchanged.
+- **Genuine JavaScript + R↔JS CI test** (`tests/js/model.test.mjs`,
+  `extract-model.mjs`): loads the actual model core from `web/index.html` and
+  checks it against the R-derived golden reference (`tests/regression/`), so
+  drift fails CI. R↔JS agreement is exact (release ≈1e-16, tissue 0 at full
+  precision).
 
 ### Data flow (both implementations)
 ```
