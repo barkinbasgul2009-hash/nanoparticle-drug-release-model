@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Generated example figures (produced by examples/run_example.R)
+examples/*.png
