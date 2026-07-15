@@ -19,7 +19,8 @@ it meets that bar.
 | Item | Status | Evidence |
 | --- | --- | --- |
 | Release models compute intended formulae | **code-verified** | 31 assertions in `tests/testthat/test_models.R` (bounds, analytic values, monotonicity, parameter recovery) |
-| R ↔ JS numerical equivalence | **numerically-verified** | Cross-check this session: release `max|Δ|<5×10⁻¹¹`; tissue `max|Δ|<5×10⁻⁵` abs |
+| R ↔ JS numerical equivalence | **numerically-verified (CI-enforced)** | `tests/js/model.test.mjs` loads the actual core from `web/index.html` and checks it against the R-derived golden reference every CI run; at full precision release `max|Δ|≈1×10⁻¹⁶`, tissue `max|Δ|=0` |
+| Animated Tissue View (generic) | **code-verified, ILLUSTRATIVE_ONLY** | Visualizes the same `C(x,t)`; browser-tested (all tabs, playback, no errors, subpath-safe); not a biological prediction |
 | Explicit tissue solver stability | **numerically-verified (partial)** | Stability-limited `Δt`; test asserts finiteness/decay. Convergence not yet tested. |
 | Regression baseline | **code-verified** | `tests/regression/baseline_test.R` (11 checks) locks current outputs |
 | Tissue parameter values | **illustrative only** | Defaults are order-of-magnitude, not literature-qualified |

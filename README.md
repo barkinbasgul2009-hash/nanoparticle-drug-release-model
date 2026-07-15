@@ -26,11 +26,18 @@ Once it opens:
    with six standard models drawn together for the same design.
 3. **"Tissue penetration" tab** — see how far the drug spreads into tissue and
    read the **penetration depth** directly.
+4. **"Animated Tissue View" tab** — watch the drug spread outward over time as a
+   colour heatmap synced to the graphs. This view is a **generic soft-tissue,
+   ILLUSTRATIVE-ONLY** picture of the same calculation — it is not organ-specific
+   and not a clinical prediction.
 
 Everything updates instantly as you move the sliders. Nothing is uploaded, nothing
 is saved, and it works on a laptop or a phone. If you prefer, you can also open the
 file `web/index.html` from a download of this project by double-clicking it — no
 internet required.
+
+> **A note on the word "API":** in this project **API means *active pharmaceutical
+> ingredient*** (the drug), never a software interface.
 
 > The R code, Shiny app, and Jupyter notebook below are for developers who want to
 > extend the models or run them programmatically. Non-technical users can ignore

@@ -1,0 +1,14 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "SCHEMA ONLY. Administration-route definitions. No route is enabled for quantitative prediction yet. A route becomes available only when a route+tissue+API+formulation profile passes the eligibility gate (docs/model-scope.md, Section 18 of the task).",
+  "route_field_definitions": {
+    "id": "stable key",
+    "display_name": "human-readable route",
+    "exposure_type": "e.g. luminal, topical-surface, systemic-vascular, local-injection",
+    "compatible_tissues": "tissue ids this route can be paired with",
+    "incompatible_with": "explicitly disallowed tissue/route conflations",
+    "source_ids": "supporting source-registry ids",
+    "status": "DISABLED until a qualified profile exists"
+  },
+  "routes": []
+}

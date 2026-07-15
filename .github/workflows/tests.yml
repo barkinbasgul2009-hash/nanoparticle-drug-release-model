@@ -27,3 +27,19 @@ jobs:
 
       - name: Run worked example
         run: Rscript examples/run_example.R
+
+  js-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Loads the actual model core from web/index.html and checks it against the
+      # R-derived golden reference (tests/regression/baseline_release.json),
+      # enforcing R<->JS numerical equivalence. No npm dependencies required.
+      - name: Run JavaScript model + R<->JS equivalence tests
+        run: node tests/js/model.test.mjs

@@ -1,0 +1,25 @@
+{
+  "$schema_version": "0.1.0",
+  "terminology_note": "'api' = ACTIVE PHARMACEUTICAL INGREDIENT.",
+  "description": "SCHEMA ONLY. Exact nanoparticle-formulation definitions (the minimum modeling unit couples api + carrier + composition + dosage form + route + tissue + species + dose + conditions + endpoint). No formulation is populated with transport parameters. Populating requires verified sources + approval.",
+  "formulation_field_definitions": {
+    "id": "stable key",
+    "api_id": "reference to data/api-candidates.json",
+    "product_name": "exact product/formulation name",
+    "carrier_material": "material/chemistry",
+    "core_structure": "",
+    "shell_structure": "",
+    "particle_diameter": "{value|range, unit, source_id}",
+    "size_distribution_pdi": "{value, source_id}",
+    "zeta_potential": "{value, unit, source_id}",
+    "surface_coating": "",
+    "targeting_ligand": "",
+    "api_loading": "{value, unit, source_id}",
+    "encapsulation_efficiency": "{value, unit, source_id}",
+    "free_api_fraction": "{value, source_id}",
+    "release_data_ref": "validation-datasets id",
+    "source_ids": [],
+    "status": "SCHEMA_ONLY"
+  },
+  "formulations": []
+}

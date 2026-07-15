@@ -45,6 +45,30 @@
   .stat{display:inline-block;background:var(--panel);border:1px solid var(--line);
         border-radius:8px;padding:10px 14px;margin-top:10px}
   .stat b{color:var(--accent);font-size:18px}
+  /* --- Animated Tissue View --- */
+  .evbanner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;
+            color:var(--muted);background:var(--panel);border:1px solid var(--line);
+            border-left:4px solid #e8a33d;border-radius:8px;padding:10px 14px;margin-bottom:14px}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:20px;
+         color:#3a2a06;background:#f0c05a;white-space:nowrap}
+  .animwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+  @media(max-width:820px){.animwrap{grid-template-columns:1fr}}
+  .controls-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .controls-row button{padding:6px 12px;background:var(--accent);color:#fff;border:none;
+                       border-radius:6px;cursor:pointer;font-size:13px}
+  .controls-row button.secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .controls-row input[type=range]{flex:1;min-width:90px}
+  .statgrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;font-size:13px}
+  .statgrid .row{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;
+                 display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted)}
+  .statgrid .row b{color:var(--accent);font-variant-numeric:tabular-nums}
+  details.evidence{margin-top:16px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+  details.evidence summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--ink)}
+  details.evidence .body{padding:0 16px 14px;color:var(--muted);font-size:13px;max-width:820px}
+  details.evidence .body li{margin:4px 0}
+  .heatlegend{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--muted)}
+  .heatbar{height:12px;width:160px;border-radius:3px;
+           background:linear-gradient(90deg,#0b1836,#1a4a8f,#2f9e8f,#f0c05a,#d7402a)}
 </style>
 </head>
 <body>
@@ -99,6 +123,7 @@
     <div class="tabs">
       <div class="tab active" data-tab="rel">Release comparison</div>
       <div class="tab" data-tab="tis">Tissue penetration</div>
+      <div class="tab" data-tab="anim">Animated Tissue View</div>
     </div>
 
     <section class="panel active" id="panel-rel">
@@ -118,6 +143,77 @@
         symmetry, driven by the chosen release curve. Concentration decays with
         distance; clearance and a finite tissue radius limit how far the drug
         reaches.</p>
+    </section>
+
+    <section class="panel" id="panel-anim">
+      <div class="evbanner">
+        <span class="badge illus">ILLUSTRATIVE ONLY</span>
+        <span><b>Generic soft tissue.</b> Not organ-specific, not a clinical
+        prediction. This animation is a direct colour-map of the same
+        <i>C(x,&nbsp;t)</i> field computed on the Tissue Penetration tab — it invents
+        no movement. Named-tissue profiles (skin, gut, tumour) are not yet
+        available (pending evidence review).</span>
+      </div>
+      <div class="animwrap">
+        <div class="animleft">
+          <canvas id="animHeat" width="820" height="340"></canvas>
+          <div class="heatlegend">low
+            <span class="heatbar"></span> high &nbsp;·&nbsp; relative concentration
+            (perceptual √ colour scale; the graph at right is linear)</div>
+          <div class="controls-row">
+            <button id="playBtn">▶ Play</button>
+            <button id="resetBtn" class="secondary">⟲ Reset</button>
+            <label style="font-size:13px;color:var(--muted)">t</label>
+            <input id="scrub" type="range" min="0" max="59" value="0" step="1"
+                   aria-label="Simulation time scrubber">
+            <label style="font-size:13px;color:var(--muted)">speed
+              <input id="animspeed" type="range" min="0.25" max="4" step="0.25" value="1"
+                     aria-label="Animation speed" style="width:80px"></label>
+          </div>
+        </div>
+        <div class="animright">
+          <canvas id="animProfile" width="400" height="300"></canvas>
+          <div class="statgrid">
+            <div class="row">Simulation time <b id="a_time">–</b></div>
+            <div class="row">Penetration depth (<span id="a_thr">10</span>% of surface)
+              <b id="a_pen">–</b></div>
+            <div class="row">Max tissue concentration <b id="a_max">–</b></div>
+            <div class="row">
+              <label for="probe">Probe depth
+                <input id="probe" type="range" min="0" max="100" value="20" step="1"
+                       aria-label="Probe depth" style="width:90px"></label>
+              <b id="a_probe">–</b>
+            </div>
+            <div class="row">Tissue drug mass (rel.) <b id="a_mass">–</b></div>
+          </div>
+        </div>
+      </div>
+      <details class="evidence">
+        <summary>Evidence, Assumptions &amp; Limitations</summary>
+        <div class="body">
+          <p><b>What this shows:</b> diffusion of <i>released free drug</i> outward
+          from the nanoparticle through a homogeneous generic soft-tissue medium,
+          coloured directly from the finite-difference solution of
+          <i>∂C/∂t = D∇²C − kₑC</i> (spherical symmetry). The play head, heatmap
+          and depth graph all read the same solver snapshots.</p>
+          <p><b>What this does NOT show:</b> nanoparticle carriers moving through
+          tissue, crossing membranes, entering cells, or accumulating in a named
+          organ; whole-body biodistribution; barrier/partition effects.</p>
+          <ul>
+            <li><b>Evidence grade:</b> ILLUSTRATIVE_ONLY — teaching/qualitative use.</li>
+            <li><b>Model status:</b> code-verified &amp; numerically-verified;
+              <b>not</b> calibrated or externally validated.</li>
+            <li><b>Parameters:</b> the tissue diffusivity, clearance and geometry
+              are the on-screen slider values — order-of-magnitude illustrative,
+              <b>not</b> literature-qualified for any specific tissue.</li>
+            <li><b>Penetration depth</b> = deepest point where <i>C</i> exceeds
+              10% of the surface concentration (threshold shown; the definition is
+              fixed here and will be user-adjustable in named-tissue profiles).</li>
+            <li>Not a clinical decision tool; does not predict any individual’s
+              response.</li>
+          </ul>
+        </div>
+      </details>
     </section>
   </main>
 </div>
@@ -176,6 +272,15 @@ function solveTissue(p, surfArr, tArr){
   const snapTimes=[], snaps=[];
   const wantSnaps=[0.1,0.3,0.6,1.0].map(f=>f*p.te);
   let sIdx=0;
+  // Optional evenly spaced frames for the Animated Tissue View. Requested via
+  // p.nFrames; when absent, behaviour and all returned fields below are
+  // identical to before (existing Tissue Penetration tab + tests unaffected).
+  const nFrames = (p.nFrames|0);
+  const frames=[], frameTimes=[], frameMass=[];
+  const shellVol = i => 4*Math.PI*x[i]*x[i]*dx;           // spherical shell volume
+  const tissueMass = arr => { let m=0; for(let i=0;i<nx;i++) m+=arr[i]*shellVol(i); return m; };
+  let fIdx=0;
+  const wantFrames = nFrames>0 ? Array.from({length:nFrames},(_,k)=>(k+1)*p.te/nFrames) : [];
   for(let step=1;step<=nt;step++){
     const tt=step*dt, Cn=C.slice();
     for(let i=1;i<nx-1;i++){
@@ -189,8 +294,11 @@ function solveTissue(p, surfArr, tArr){
     while(sIdx<wantSnaps.length && tt>=wantSnaps[sIdx]){
       snapTimes.push(wantSnaps[sIdx]); snaps.push(C.slice()); sIdx++;
     }
+    while(fIdx<wantFrames.length && tt>=wantFrames[fIdx]){
+      frameTimes.push(wantFrames[fIdx]); frames.push(C.slice()); frameMass.push(tissueMass(C)); fIdx++;
+    }
   }
-  return {x, snapTimes, snaps, Cfinal:C};
+  return {x, snapTimes, snaps, Cfinal:C, frames, frameTimes, frameMass};
 }
 
 // ===========================================================================
@@ -263,24 +371,125 @@ function drawTissue(p){
 }
 
 // ===========================================================================
+// Animated Tissue View  (visualises the SAME C(x,t) the tissue solver computes)
+// ===========================================================================
+const ANIM={frames:[],times:[],mass:[],x:[],r:0,ro:0,cmax:1,massmax:1,
+            idx:0,playing:false,raf:0,last:0,speed:1,nF:60,thr:0.1};
+function heatColor(v){
+  const stops=[[11,24,54],[26,74,143],[47,158,143],[240,192,90],[215,64,42]];
+  v=Math.max(0,Math.min(1,v));
+  const s=v*(stops.length-1), i=Math.min(stops.length-2,Math.floor(s)), f=s-i;
+  const a=stops[i], b=stops[i+1];
+  return `rgb(${Math.round(a[0]+f*(b[0]-a[0]))},${Math.round(a[1]+f*(b[1]-a[1]))},${Math.round(a[2]+f*(b[2]-a[2]))})`;
+}
+function penDepthOf(C){const cut=ANIM.thr*C[0];
+  for(let i=0;i<C.length;i++) if(C[i]<cut) return ANIM.x[i]-ANIM.r;
+  return ANIM.ro-ANIM.r;}
+function computeAnim(p){
+  const N=200,tArr=[],surfArr=[];
+  for(let i=0;i<=N;i++){const t=p.te*i/N;tArr.push(t);surfArr.push(p.C0*release(p.drive,t,p));}
+  const sol=solveTissue({...p,nFrames:ANIM.nF},surfArr,tArr);
+  ANIM.frames=sol.frames; ANIM.times=sol.frameTimes; ANIM.mass=sol.frameMass; ANIM.x=sol.x;
+  ANIM.r=p.r; ANIM.ro=p.ro;
+  ANIM.cmax=Math.max(1e-9,...sol.frames.map(fr=>Math.max(...fr)));
+  ANIM.massmax=Math.max(1e-9,...sol.frameMass);
+  const scrub=document.getElementById("scrub"); scrub.max=ANIM.frames.length-1;
+  if(ANIM.idx>=ANIM.frames.length) ANIM.idx=ANIM.frames.length-1;
+  renderAnimFrame();
+}
+function renderAnimFrame(){
+  if(!ANIM.frames.length) return;
+  const C=ANIM.frames[ANIM.idx], span=ANIM.ro-ANIM.r, inner=0.06, nx=ANIM.x.length;
+  // --- radial tissue cross-section heatmap (spherical symmetry) ---
+  const cv=document.getElementById("animHeat"),ctx=cv.getContext("2d");
+  const W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+  const cx=W/2,cy=H/2,maxR=Math.min(W,H)/2-12;
+  for(let i=nx-1;i>=0;i--){
+    const frac=(ANIM.x[i]-ANIM.r)/span, R=maxR*(inner+(1-inner)*frac);
+    // Perceptual sqrt colour scale (display only) so the steep near-surface
+    // gradient is visible; the quantitative graph on the right stays linear.
+    const shade=Math.sqrt(Math.max(0,C[i])/ANIM.cmax);
+    ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.fillStyle=heatColor(shade);ctx.fill();
+  }
+  ctx.beginPath();ctx.arc(cx,cy,maxR*inner,0,2*Math.PI);ctx.fillStyle="#f2f4f8";ctx.fill();
+  ctx.lineWidth=1;ctx.strokeStyle="#7a8698";ctx.stroke();
+  const pd=penDepthOf(C), pdR=maxR*(inner+(1-inner)*(pd/span));
+  ctx.setLineDash([6,4]);ctx.lineWidth=1.5;ctx.strokeStyle="#ffffff";
+  ctx.beginPath();ctx.arc(cx,cy,pdR,0,2*Math.PI);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle="#cbd5e6";ctx.font="12px system-ui";
+  ctx.fillText("nanoparticle",cx-30,cy+4);
+  ctx.fillText("penetration front (10%)",cx+pdR*0.35,cy-pdR-4);
+  // --- synced concentration-vs-depth profile ---
+  const pc=document.getElementById("animProfile"),px=pc.getContext("2d");
+  const A=axes(px,pc.width,pc.height,44,ANIM.r,ANIM.ro,0,ANIM.cmax,"Distance (µm)","Conc.");
+  px.strokeStyle="#d7402a";px.lineWidth=2.5;px.beginPath();
+  for(let i=0;i<nx;i++){const X=A.px(ANIM.x[i]),Y=A.py(C[i]); i===0?px.moveTo(X,Y):px.lineTo(X,Y);}
+  px.stroke();
+  px.setLineDash([5,4]);px.strokeStyle="#888";px.lineWidth=1;
+  px.beginPath();px.moveTo(A.px(ANIM.r+pd),A.py(0));px.lineTo(A.px(ANIM.r+pd),A.py(ANIM.cmax));px.stroke();
+  // probe marker
+  const probeFrac=parseFloat(document.getElementById("probe").value)/100;
+  const xProbe=ANIM.r+probeFrac*span, pi=Math.max(0,Math.min(nx-1,Math.round(probeFrac*(nx-1))));
+  px.strokeStyle="#4da3ff";px.beginPath();px.moveTo(A.px(xProbe),A.py(0));px.lineTo(A.px(xProbe),A.py(ANIM.cmax));px.stroke();
+  px.setLineDash([]);
+  // --- stats ---
+  const S=(id,v)=>document.getElementById(id).textContent=v;
+  S("a_time",ANIM.times[ANIM.idx].toFixed(1)+" h");
+  S("a_pen",pd.toFixed(2)+" µm");
+  S("a_max",(Math.max(...C)).toFixed(2));
+  S("a_probe",C[pi].toFixed(2)+"  @ "+(xProbe-ANIM.r).toFixed(1)+" µm");
+  S("a_mass",(ANIM.mass[ANIM.idx]/ANIM.massmax).toFixed(2)+"× peak");
+  document.getElementById("scrub").value=ANIM.idx;
+}
+function animLoop(ts){
+  if(!ANIM.playing) return;
+  if(!ANIM.last) ANIM.last=ts;
+  if(ts-ANIM.last > 90/ANIM.speed){
+    ANIM.idx=(ANIM.idx+1)%ANIM.frames.length; ANIM.last=ts; renderAnimFrame();
+  }
+  ANIM.raf=requestAnimationFrame(animLoop);
+}
+function playPause(force){
+  ANIM.playing = (force!==undefined)?force:!ANIM.playing;
+  document.getElementById("playBtn").textContent=ANIM.playing?"⏸ Pause":"▶ Play";
+  if(ANIM.playing){ANIM.last=0;ANIM.raf=requestAnimationFrame(animLoop);}
+  else cancelAnimationFrame(ANIM.raf);
+}
+
+// ===========================================================================
 // Wiring
 // ===========================================================================
 const VAL={r:"v_r",h:"v_h",C0:"v_C0",K:"v_K",Dr:"v_Dr",kf:"v_kf",np:"v_np",
            Dt:"v_Dt",ro:"v_ro",ke:"v_ke",te:"v_te"};
+const ANIM_CTRLS=["scrub","animspeed","probe"];
+function animActive(){return document.getElementById("panel-anim").classList.contains("active");}
 function refresh(){
   const p=readParams();
   for(const id in VAL){document.getElementById(VAL[id]).textContent=
     document.getElementById(id).value;}
   drawRelease(p); drawTissue(p);
+  if(animActive()) computeAnim(p);
 }
-document.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",refresh));
+document.querySelectorAll("input,select").forEach(el=>{
+  if(ANIM_CTRLS.includes(el.id)) return;      // animation controls handled separately
+  el.addEventListener("input",refresh);
+});
+// Animation-only controls (do not trigger a full recompute)
+document.getElementById("scrub").addEventListener("input",e=>{
+  playPause(false); ANIM.idx=parseInt(e.target.value,10)||0; renderAnimFrame();});
+document.getElementById("animspeed").addEventListener("input",e=>{ANIM.speed=parseFloat(e.target.value);});
+document.getElementById("probe").addEventListener("input",renderAnimFrame);
+document.getElementById("playBtn").addEventListener("click",()=>playPause());
+document.getElementById("resetBtn").addEventListener("click",()=>{playPause(false);ANIM.idx=0;renderAnimFrame();});
 document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+  playPause(false);
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
   document.querySelectorAll(".panel").forEach(pn=>pn.classList.remove("active"));
   tab.classList.add("active");
   document.getElementById("panel-"+tab.dataset.tab).classList.add("active");
   refresh();
 }));
+// Respect reduced-motion: never auto-play (default is already paused).
 refresh();
 </script>
 </body>

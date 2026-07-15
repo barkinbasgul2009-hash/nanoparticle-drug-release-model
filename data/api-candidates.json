@@ -1,0 +1,57 @@
+{
+  "$schema_version": "0.1.0",
+  "terminology_note": "Here 'api' means ACTIVE PHARMACEUTICAL INGREDIENT, never a software interface.",
+  "description": "Candidate-identification list for the evidence review. These entries record only high-level identity/approval facts to SCREEN candidates. They are NOT qualified profiles and contain NO tissue-penetration, diffusion, clearance, or release parameters. Every field marked verified:false must be confirmed against a primary source (Drugs@FDA label, EMA EPAR, or peer-reviewed characterization) before use. Selecting a candidate for implementation requires user approval (stop gate).",
+  "status_legend": "candidate_screening only; none is SELECTED or QUALIFIED",
+  "candidates": [
+    {
+      "id": "pld-doxil",
+      "api": "doxorubicin",
+      "product_name": "Doxil / Caelyx",
+      "carrier": "PEGylated liposome",
+      "carrier_class": "liposomal (stealth)",
+      "typical_routes": ["intravenous"],
+      "primary_indication_context": "ovarian cancer, Kaposi sarcoma, multiple myeloma (context only)",
+      "approval_note": "First FDA-approved cancer nanomedicine; approval commonly cited as 1995.",
+      "approval_verified": false,
+      "verification_todo": "Confirm approval date/indications from Drugs@FDA label; distinguish free vs liposome-encapsulated doxorubicin PK.",
+      "why_candidate": "Well-characterized; free vs encapsulated distinction is scientifically important and documented in the literature.",
+      "tissue_penetration_data_status": "NOT_ASSESSED",
+      "parameters": {}
+    },
+    {
+      "id": "nab-paclitaxel-abraxane",
+      "api": "paclitaxel",
+      "product_name": "Abraxane",
+      "carrier": "albumin-bound (nab) nanoparticle",
+      "carrier_class": "protein nanoparticle",
+      "typical_routes": ["intravenous"],
+      "primary_indication_context": "breast, NSCLC, pancreatic cancer (context only)",
+      "approval_note": "FDA approval commonly cited as January 2005 (metastatic breast cancer).",
+      "approval_verified": false,
+      "verification_todo": "Confirm from Drugs@FDA; note nab-paclitaxel dissociates rapidly in plasma (free vs bound distinction).",
+      "why_candidate": "Distinct carrier chemistry vs liposomes; illustrates carrier-class differences.",
+      "tissue_penetration_data_status": "NOT_ASSESSED",
+      "parameters": {}
+    },
+    {
+      "id": "liposomal-irinotecan-onivyde",
+      "api": "irinotecan",
+      "product_name": "Onivyde",
+      "carrier": "liposome",
+      "carrier_class": "liposomal",
+      "typical_routes": ["intravenous"],
+      "primary_indication_context": "metastatic pancreatic adenocarcinoma (context only)",
+      "approval_note": "Approved for metastatic pancreatic adenocarcinoma; approval year to be verified (do not assert without primary source).",
+      "approval_verified": false,
+      "verification_todo": "Confirm approval year/indication from Drugs@FDA; irinotecan->SN-38 active metabolite complicates the API definition.",
+      "why_candidate": "Prodrug/active-metabolite complexity is a useful test of the 'free vs encapsulated + active metabolite' modeling requirement.",
+      "tissue_penetration_data_status": "NOT_ASSESSED",
+      "parameters": {}
+    }
+  ],
+  "note_on_skin_and_gut": "No topical-skin or oral/intestinal nanoparticle candidates have been identified yet. Section-8 requires separate, data-rich candidates for those routes; this needs a dedicated verified search (gated).",
+  "pending": {
+    "note": "This list is for screening only. It is NOT evidence that adequate tissue-penetration data exist for any product. Advancing any candidate to a quantitative profile requires the full evidence review (docs/search-protocol.md) and approval."
+  }
+}
