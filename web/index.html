@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nanoparticle Drug-Release Simulator</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#171e2e; --ink:#e8ecf4; --muted:#9aa7bd;
+    --line:#2a3550; --accent:#4da3ff; --grid:#223052;
+  }
+  @media (prefers-color-scheme: light){
+    :root{--bg:#f5f7fb;--panel:#ffffff;--ink:#1a2233;--muted:#5b6675;
+          --line:#dbe2ee;--accent:#1f6feb;--grid:#e6ecf5;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+       background:var(--bg);color:var(--ink)}
+  header{padding:18px 22px;border-bottom:1px solid var(--line)}
+  h1{font-size:20px;margin:0 0 4px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  .wrap{display:grid;grid-template-columns:300px 1fr;gap:0;min-height:calc(100vh - 66px)}
+  @media(max-width:820px){.wrap{grid-template-columns:1fr}}
+  .controls{padding:16px 20px;border-right:1px solid var(--line);overflow-y:auto}
+  .controls h3{font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+               color:var(--muted);margin:18px 0 8px}
+  .ctl{margin-bottom:12px}
+  .ctl label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}
+  .ctl label b{color:var(--accent);font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  select{width:100%;padding:5px;background:var(--panel);color:var(--ink);
+         border:1px solid var(--line);border-radius:6px}
+  main{padding:16px 22px}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .tab{padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)}
+  .tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .panel{display:none}
+  .panel.active{display:block}
+  canvas{width:100%;max-width:820px;height:auto;background:var(--panel);
+         border:1px solid var(--line);border-radius:8px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+  .sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+  .note{color:var(--muted);font-size:13px;max-width:820px;margin-top:12px}
+  .stat{display:inline-block;background:var(--panel);border:1px solid var(--line);
+        border-radius:8px;padding:10px 14px;margin-top:10px}
+  .stat b{color:var(--accent);font-size:18px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Nanoparticle Drug-Release &amp; Tissue-Penetration Simulator</h1>
+  <p>Compare release models and simulate diffusion into tissue — entirely in your browser, no install required.</p>
+</header>
+
+<div class="wrap">
+  <aside class="controls">
+    <h3>Nanoparticle design</h3>
+    <div class="ctl"><label>Core radius (µm)<b id="v_r"></b></label>
+      <input id="r" type="range" min="0.02" max="1" step="0.01" value="0.1"></div>
+    <div class="ctl"><label>Shell thickness (µm)<b id="v_h"></b></label>
+      <input id="h" type="range" min="0.005" max="0.5" step="0.005" value="0.02"></div>
+    <div class="ctl"><label>Drug loading<b id="v_C0"></b></label>
+      <input id="C0" type="range" min="10" max="500" step="10" value="100"></div>
+    <div class="ctl"><label>Shell/core partition K<b id="v_K"></b></label>
+      <input id="K" type="range" min="0.05" max="2" step="0.05" value="0.5"></div>
+
+    <h3>Release kinetics (Module 1)</h3>
+    <div class="ctl"><label>Drug diffusivity D (µm²/h)<b id="v_Dr"></b></label>
+      <input id="Dr" type="range" min="0.0001" max="0.005" step="0.0001" value="0.0005"></div>
+    <div class="ctl"><label>First-order rate k (1/h)<b id="v_kf"></b></label>
+      <input id="kf" type="range" min="0.01" max="1" step="0.01" value="0.15"></div>
+    <div class="ctl"><label>Peppas exponent n<b id="v_np"></b></label>
+      <input id="np" type="range" min="0.2" max="1" step="0.01" value="0.43"></div>
+
+    <h3>Tissue diffusion (Module 2)</h3>
+    <div class="ctl"><label>Tissue diffusivity (µm²/h)<b id="v_Dt"></b></label>
+      <input id="Dt" type="range" min="5" max="200" step="5" value="50"></div>
+    <div class="ctl"><label>Tissue radius (µm)<b id="v_ro"></b></label>
+      <input id="ro" type="range" min="5" max="50" step="1" value="20"></div>
+    <div class="ctl"><label>Clearance k_e (1/h)<b id="v_ke"></b></label>
+      <input id="ke" type="range" min="0" max="1" step="0.05" value="0.1"></div>
+    <div class="ctl"><label>Source (drives Module 2)</label>
+      <select id="drive">
+        <option value="first_order" selected>First-order release</option>
+        <option value="higuchi">Higuchi</option>
+        <option value="fickian_sphere">Fickian sphere</option>
+        <option value="membrane_shell">Membrane core-shell</option>
+        <option value="korsmeyer_peppas">Korsmeyer-Peppas</option>
+        <option value="zero_order">Zero-order</option>
+      </select></div>
+
+    <h3>Simulation</h3>
+    <div class="ctl"><label>Total time (h)<b id="v_te"></b></label>
+      <input id="te" type="range" min="6" max="120" step="6" value="48"></div>
+  </aside>
+
+  <main>
+    <div class="tabs">
+      <div class="tab active" data-tab="rel">Release comparison</div>
+      <div class="tab" data-tab="tis">Tissue penetration</div>
+    </div>
+
+    <section class="panel active" id="panel-rel">
+      <canvas id="relCanvas" width="820" height="480"></canvas>
+      <div class="legend" id="relLegend"></div>
+      <p class="note">Six release models on the same design. Only the
+        membrane-controlled model responds to shell thickness — the primary
+        formulation knob a designer tunes.</p>
+    </section>
+
+    <section class="panel" id="panel-tis">
+      <canvas id="tisCanvas" width="820" height="480"></canvas>
+      <div class="legend" id="tisLegend"></div>
+      <div class="stat">Penetration depth (10% of surface):
+        <b id="penDepth">–</b></div>
+      <p class="note">Fick's second law with first-order clearance, spherical
+        symmetry, driven by the chosen release curve. Concentration decays with
+        distance; clearance and a finite tissue radius limit how far the drug
+        reaches.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+// ===========================================================================
+// Model core (mirrors the R implementation in /R). Units: µm, hours.
+// ===========================================================================
+const MODELS = ["higuchi","first_order","zero_order","korsmeyer_peppas",
+                "fickian_sphere","membrane_shell"];
+const LABELS = {
+  higuchi:"Higuchi (√t)", first_order:"First-order", zero_order:"Zero-order",
+  korsmeyer_peppas:"Korsmeyer-Peppas", fickian_sphere:"Fickian sphere (Crank)",
+  membrane_shell:"Membrane core-shell"
+};
+const COLORS = {
+  higuchi:"#4da3ff", first_order:"#ff6b6b", zero_order:"#51cf66",
+  korsmeyer_peppas:"#b088ff", fickian_sphere:"#ffa94d", membrane_shell:"#22c5d8"
+};
+const clamp01 = x => Math.max(0, Math.min(1, x));
+
+function release(model, t, p){
+  switch(model){
+    case "higuchi":     return clamp01(p.kH*Math.sqrt(t));
+    case "first_order": return clamp01(1-Math.exp(-p.kf*t));
+    case "zero_order":  return clamp01(p.kz*t);
+    case "korsmeyer_peppas": return clamp01(p.kp*Math.pow(t,p.np));
+    case "fickian_sphere":{
+      if(t<=0) return 0;
+      let s=0; for(let n=1;n<=50;n++) s+=(1/(n*n))*Math.exp(-p.Dr*n*n*Math.PI*Math.PI*t/(p.r*p.r));
+      return clamp01(1-(6/(Math.PI*Math.PI))*s);
+    }
+    case "membrane_shell":{
+      const A=4*Math.PI*p.r*p.r, Mtot=(4/3)*Math.PI*p.r*p.r*p.r*p.C0;
+      const flux=A*p.Dr*p.K*p.C0/p.h;      // Cs = C0
+      return clamp01(flux*t/Mtot);
+    }
+  }
+}
+
+// Explicit finite-difference spherical reaction-diffusion (mirrors R solver).
+function solveTissue(p, surfArr, tArr){
+  const nx=120, x=[], dx=(p.ro-p.r)/(nx-1);
+  for(let i=0;i<nx;i++) x.push(p.r+i*dx);
+  const dtStable=0.4*dx*dx/p.Dt;
+  const nt=Math.max(2,Math.ceil(p.te/dtStable));
+  const dt=p.te/nt;
+  const surf = tt => { // interpolate surface conc(t)
+    if(tt<=tArr[0]) return surfArr[0];
+    if(tt>=tArr[tArr.length-1]) return surfArr[surfArr.length-1];
+    let i=1; while(tArr[i]<tt) i++;
+    const w=(tt-tArr[i-1])/(tArr[i]-tArr[i-1]);
+    return surfArr[i-1]+w*(surfArr[i]-surfArr[i-1]);
+  };
+  let C=new Array(nx).fill(0); C[0]=surf(0);
+  const snapTimes=[], snaps=[];
+  const wantSnaps=[0.1,0.3,0.6,1.0].map(f=>f*p.te);
+  let sIdx=0;
+  for(let step=1;step<=nt;step++){
+    const tt=step*dt, Cn=C.slice();
+    for(let i=1;i<nx-1;i++){
+      const xp=(x[i]+x[i+1])/2, xm=(x[i]+x[i-1])/2;
+      const lap=(xp*xp*(C[i+1]-C[i])-xm*xm*(C[i]-C[i-1]))/(x[i]*x[i]*dx*dx);
+      Cn[i]=C[i]+dt*(p.Dt*lap-p.ke*C[i]);
+    }
+    Cn[0]=surf(tt);
+    Cn[nx-1]= p.bc==="reflect" ? Cn[nx-2] : 0;
+    C=Cn;
+    while(sIdx<wantSnaps.length && tt>=wantSnaps[sIdx]){
+      snapTimes.push(wantSnaps[sIdx]); snaps.push(C.slice()); sIdx++;
+    }
+  }
+  return {x, snapTimes, snaps, Cfinal:C};
+}
+
+// ===========================================================================
+// Plotting (canvas, no libraries)
+// ===========================================================================
+function readParams(){
+  const g=id=>parseFloat(document.getElementById(id).value);
+  return {r:g("r"),h:g("h"),C0:g("C0"),K:g("K"),Dr:g("Dr"),kf:g("kf"),
+          np:g("np"),Dt:g("Dt"),ro:g("ro"),ke:g("ke"),te:g("te"),
+          kz:0.03,kH:0.25,kp:0.20,bc:"sink",drive:document.getElementById("drive").value};
+}
+
+function axes(ctx,W,H,pad,xmin,xmax,ymin,ymax,xlab,ylab){
+  const css=getComputedStyle(document.documentElement);
+  const grid=css.getPropertyValue('--grid'), ink=css.getPropertyValue('--muted');
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle=grid; ctx.fillStyle=ink; ctx.lineWidth=1;
+  ctx.font="12px system-ui";
+  for(let i=0;i<=5;i++){
+    const gx=pad+(W-2*pad)*i/5, gy=H-pad-(H-2*pad)*i/5;
+    ctx.beginPath();ctx.moveTo(pad,gy);ctx.lineTo(W-pad,gy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(gx,pad);ctx.lineTo(gx,H-pad);ctx.stroke();
+    ctx.fillText((xmin+(xmax-xmin)*i/5).toFixed( (xmax-xmin)<5?2:0 ),gx-8,H-pad+16);
+    ctx.fillText((ymin+(ymax-ymin)*i/5).toFixed(ymax<=1?1:0),4,gy+4);
+  }
+  ctx.fillText(xlab,W/2-30,H-6);
+  ctx.save();ctx.translate(14,H/2+30);ctx.rotate(-Math.PI/2);ctx.fillText(ylab,0,0);ctx.restore();
+  return {px:v=>pad+(W-2*pad)*(v-xmin)/(xmax-xmin),
+          py:v=>H-pad-(H-2*pad)*(v-ymin)/(ymax-ymin)};
+}
+
+function drawRelease(p){
+  const cv=document.getElementById("relCanvas"),ctx=cv.getContext("2d");
+  const W=cv.width,H=cv.height,pad=48;
+  const A=axes(ctx,W,H,pad,0,p.te,0,1,"Time (h)","Fraction released");
+  const N=200;
+  MODELS.forEach(m=>{
+    ctx.strokeStyle=COLORS[m];ctx.lineWidth=2.5;ctx.beginPath();
+    for(let i=0;i<=N;i++){const t=p.te*i/N,f=release(m,t,p);
+      const X=A.px(t),Y=A.py(f); i===0?ctx.moveTo(X,Y):ctx.lineTo(X,Y);}
+    ctx.stroke();
+  });
+  document.getElementById("relLegend").innerHTML=MODELS.map(m=>
+    `<span><i class="sw" style="background:${COLORS[m]}"></i>${LABELS[m]}</span>`).join("");
+}
+
+function drawTissue(p){
+  const N=200,tArr=[],surfArr=[];
+  for(let i=0;i<=N;i++){const t=p.te*i/N;tArr.push(t);
+    surfArr.push(p.C0*release(p.drive,t,p));}
+  const sol=solveTissue(p,surfArr,tArr);
+  const cv=document.getElementById("tisCanvas"),ctx=cv.getContext("2d");
+  const W=cv.width,H=cv.height,pad=48;
+  let ymax=0; sol.snaps.forEach(s=>s.forEach(v=>{if(v>ymax)ymax=v;}));
+  ymax=Math.max(ymax,1e-6);
+  const A=axes(ctx,W,H,pad,p.r,p.ro,0,ymax,"Distance from centre (µm)","Concentration");
+  const cols=["#ffd08a","#ffa94d","#ff6b6b","#c92a2a"];
+  sol.snaps.forEach((s,k)=>{
+    ctx.strokeStyle=cols[k%cols.length];ctx.lineWidth=2.5;ctx.beginPath();
+    for(let i=0;i<sol.x.length;i++){const X=A.px(sol.x[i]),Y=A.py(s[i]);
+      i===0?ctx.moveTo(X,Y):ctx.lineTo(X,Y);}
+    ctx.stroke();
+  });
+  document.getElementById("tisLegend").innerHTML=sol.snapTimes.map((t,k)=>
+    `<span><i class="sw" style="background:${cols[k%cols.length]}"></i>t = ${t.toFixed(0)} h</span>`).join("");
+  // penetration depth at final time
+  const Cf=sol.Cfinal, cutoff=0.1*Cf[0]; let depth=p.ro-p.r;
+  for(let i=0;i<Cf.length;i++){if(Cf[i]<cutoff){depth=sol.x[i]-p.r;break;}}
+  document.getElementById("penDepth").textContent=depth.toFixed(2)+" µm";
+}
+
+// ===========================================================================
+// Wiring
+// ===========================================================================
+const VAL={r:"v_r",h:"v_h",C0:"v_C0",K:"v_K",Dr:"v_Dr",kf:"v_kf",np:"v_np",
+           Dt:"v_Dt",ro:"v_ro",ke:"v_ke",te:"v_te"};
+function refresh(){
+  const p=readParams();
+  for(const id in VAL){document.getElementById(VAL[id]).textContent=
+    document.getElementById(id).value;}
+  drawRelease(p); drawTissue(p);
+}
+document.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",refresh));
+document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(pn=>pn.classList.remove("active"));
+  tab.classList.add("active");
+  document.getElementById("panel-"+tab.dataset.tab).classList.add("active");
+  refresh();
+}));
+refresh();
+</script>
+</body>
+</html>
