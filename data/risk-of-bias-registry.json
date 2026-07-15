@@ -1,0 +1,6 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Risk-of-bias records. NONE applied yet: full texts could not be opened (docs/risk-of-bias.md). Applying RoB frameworks to abstracts would be invalid.",
+  "frameworks": {"RCT":"RoB 2","nonrandomized_human":"ROBINS-I","animal":"SYRCLE + ARRIVE","skin_in_vitro":"OECD TG 428 compliance","systematic_review":"AMSTAR 2"},
+  "assessments": []
+}

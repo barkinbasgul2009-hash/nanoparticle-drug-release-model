@@ -1,102 +1,101 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "Version-controlled evidence registry for the nanoparticle simulator. Every scientific value used anywhere in the tool must be traceable to an entry here. This file currently contains ONLY verified methodology/regulatory anchors. NO tissue-specific numeric parameters have been added: those require the Phase-2 evidence audit and explicit user approval (Phase 17 stop gate). Do not add a source unless its identifier (DOI/PMID/official document ID) has been checked against the actual source.",
-  "field_definitions": {
-    "id": "stable local key referenced by parameters and tissue profiles",
-    "type": "one of: regulatory_guidance | modeling_platform | scientific_library | peer_reviewed_study | review_or_meta_analysis | mechanistic_model | parameter_database",
-    "title": "exact title of the source",
-    "authors_or_issuer": "authors, or issuing institution for guidance/software",
-    "year": "publication or release year",
-    "identifier": "DOI, PMID, or official document identifier",
-    "url": "canonical URL",
-    "verified": "true only if the identifier/URL was checked against the real source in this session",
-    "verification_note": "how it was verified",
-    "species": "species the data pertains to, or N/A for methodology sources",
-    "tissue": "tissue/organ, or N/A",
-    "route": "administration route, or N/A",
-    "nanoparticle_material": "material/formulation, or N/A",
-    "particle_size": "size / distribution, or N/A",
-    "endpoint": "measured endpoint, or N/A",
-    "model_type": "model class, or N/A",
-    "provides_parameters": "list of parameter names this source supports (empty until audited)",
-    "confidence": "high | medium | low",
-    "applicability_constraints": "when these values may/may not be transferred",
-    "limitations": "stated limitations",
-    "usage": "how this source is used in the project"
+  "$schema_version": "0.2.0",
+  "terminology_note": "'API' = ACTIVE PHARMACEUTICAL INGREDIENT throughout.",
+  "description": "Version-controlled evidence registry. Sources are recorded with the strongest identifier obtained. IMPORTANT ACCESS CONSTRAINT (Stage 2): this build environment's network proxy blocks all direct HTTPS fetches (WebFetch and curl both return 403 CONNECT-tunnel-failed) to publishers, PMC, arXiv, and even NCBI E-utilities. Only server-side WebSearch is available, which returns AI summaries. Per the Stage-2 no-fabrication policy, AI summaries are used ONLY to IDENTIFY sources, never as verified quantitative evidence. Therefore every source below is marked full_text_opened=false and any numbers seen in search summaries are NOT recorded here as data. See docs/full-text-access-log.md and docs/critical-paywalled-sources.md.",
+  "field_notes": {
+    "identity_verified": "true if title/authors/journal/year/identifier were returned by a search listing (bibliographic identity), NOT that the full text was read",
+    "full_text_opened": "true only if the original full text was actually opened and inspected in this session (always false in Stage 2 due to the access block)",
+    "quantitative_data_extracted": "true only if specific values were read from the source with an exact locator (none in Stage 2)"
   },
   "sources": [
     {
-      "id": "osp-suite",
-      "type": "modeling_platform",
-      "title": "Open Systems Pharmacology Suite (PK-Sim and MoBi)",
-      "authors_or_issuer": "Open Systems Pharmacology Community",
-      "year": 2017,
-      "identifier": "github.com/Open-Systems-Pharmacology/Suite",
-      "url": "https://www.open-systems-pharmacology.org/",
-      "verified": true,
-      "verification_note": "Confirmed via web search 2026-07: open-source (GPLv2) whole-body PBPK platform; overview paper PMC6930856 (CPT Pharmacometrics Syst Pharmacol). Search results indicate NO documented dedicated nanoparticle-PBPK module.",
-      "species": "human + common lab animals (mouse, rat, dog, monkey, minipig, rabbit)",
-      "tissue": "whole-body organs",
-      "route": "multiple",
-      "nanoparticle_material": "N/A (small-molecule and biologics focus; nanoparticle support not documented)",
-      "particle_size": "N/A",
-      "endpoint": "N/A",
-      "model_type": "PBPK (whole-body biodistribution)",
-      "provides_parameters": [],
-      "confidence": "high",
-      "applicability_constraints": "Represents whole-body biodistribution, NOT the local intra-tissue diffusion the current simulator models. Candidate for a future backend only if nanoparticle support is added or custom-built.",
-      "limitations": "No documented nanoparticle class support; whole-body scope differs from this tool's local-diffusion scope.",
-      "usage": "Reference platform for the biodistribution scope discussion in docs/model-scope.md. Not currently a dependency."
-    },
-    {
-      "id": "fda-pbpk-2018",
-      "type": "regulatory_guidance",
+      "id": "fda-pbpk-2018", "type": "regulatory_guidance",
       "title": "Physiologically Based Pharmacokinetic Analyses — Format and Content, Guidance for Industry",
-      "authors_or_issuer": "U.S. Food and Drug Administration (CDER)",
-      "year": 2018,
-      "identifier": "FDA-2016-D-3969 (final guidance, Aug 2018)",
-      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/physiologically-based-pharmacokinetic-analyses-format-and-content-guidance-industry",
-      "verified": true,
-      "verification_note": "Confirmed via web search 2026-07: final guidance issued Aug 31 2018; Federal Register 2018-19065; recommends six-section PBPK report structure.",
-      "species": "N/A",
-      "tissue": "N/A",
-      "route": "N/A",
-      "nanoparticle_material": "N/A",
-      "particle_size": "N/A",
-      "endpoint": "N/A",
-      "model_type": "regulatory reporting standard",
-      "provides_parameters": [],
-      "confidence": "high",
-      "applicability_constraints": "Reporting/qualification framework, not parameter data. Informs how we label model status and report assumptions.",
-      "limitations": "Does not itself supply tissue parameters.",
-      "usage": "Basis for the model-status vocabulary (code-verified vs calibrated vs validated) and the assumptions/limitations reporting in docs/validation-report.md."
+      "issuer": "U.S. FDA (CDER)", "year": 2018, "identifier": "FDA-2016-D-3969",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "reporting/qualification framework; model-status vocabulary"
     },
     {
-      "id": "wilhelm-2016",
-      "type": "review_or_meta_analysis",
+      "id": "osp-suite", "type": "modeling_platform",
+      "title": "Open Systems Pharmacology Suite (PK-Sim, MoBi)",
+      "issuer": "Open Systems Pharmacology Community", "year": 2017,
+      "identifier": "github.com/Open-Systems-Pharmacology/Suite; overview PMC6930856",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "whole-body PBPK platform (different scope than local diffusion); no documented nanoparticle module"
+    },
+    {
+      "id": "wilhelm-2016", "type": "review_or_meta_analysis",
       "title": "Analysis of nanoparticle delivery to tumours",
-      "authors_or_issuer": "Wilhelm S, Tavares AJ, Dai Q, Ohta S, Audet J, Dvorak HF, Chan WCW",
-      "year": 2016,
-      "identifier": "10.1038/natrevmats.2016.14",
-      "url": "https://www.nature.com/articles/natrevmats201614",
-      "verified": true,
-      "verification_note": "Confirmed via web search 2026-07: Nature Reviews Materials 1:16014 (2016); DOI 10.1038/natrevmats.2016.14; landmark finding of ~0.7% median administered-dose delivery to solid tumours.",
-      "species": "meta-analysis (predominantly rodent studies)",
-      "tissue": "solid tumour",
-      "route": "predominantly intravenous",
-      "nanoparticle_material": "mixed (survey across materials)",
-      "particle_size": "mixed",
-      "endpoint": "% injected dose delivered to tumour (median 0.7%)",
-      "model_type": "literature meta-analysis (not a mechanistic model)",
-      "provides_parameters": [],
-      "confidence": "high",
-      "applicability_constraints": "Aggregate delivery efficiency across heterogeneous studies; NOT a source of intra-tissue diffusion coefficients. Values must not be transferred across incompatible materials/species/routes.",
-      "limitations": "Reports delivered-dose fraction, not spatial diffusion parameters; heterogeneous underlying data.",
-      "usage": "Honest-framing anchor for the Evidence, Assumptions & Limitations panel (why tumour delivery is highly uncertain)."
+      "authors": "Wilhelm S, Tavares AJ, Dai Q, Ohta S, Audet J, Dvorak HF, Chan WCW",
+      "journal": "Nature Reviews Materials", "year": 2016, "identifier": "DOI 10.1038/natrevmats.2016.14",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "context/limitations anchor (median ~0.7% ID tumour delivery); NOT a diffusion parameter"
+    },
+    {
+      "id": "dreher-2006", "type": "peer_reviewed_study",
+      "title": "Tumor Vascular Permeability, Accumulation, and Penetration of Macromolecular Drug Carriers",
+      "authors": "Dreher MR, Liu W, Michelich CR, Dewhirst MW, Yuan F, Chilkoti A",
+      "journal": "J Natl Cancer Inst", "year": 2006, "volume": "98(5)", "pages": "335-344",
+      "identifier": "PMID 16507830 (DOI 10.1093/jnci/djj070 reported, not opened)",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "candidate quantitative source for tumour vascular permeability vs MW and interstitial penetration depth; rodent window-chamber, dextran carriers (not released API). Values require full-text verification."
+    },
+    {
+      "id": "potts-guy-1992", "type": "peer_reviewed_study",
+      "title": "Predicting Skin Permeability",
+      "authors": "Potts RO, Guy RH", "journal": "Pharm Res", "year": 1992,
+      "identifier": "PMID 1608900",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "model form for skin permeability coefficient from logKow and MW (a correlation, applies to API not intact nanoparticle). Coefficients require full-text verification."
+    },
+    {
+      "id": "oecd-tg428-2004", "type": "regulatory_guidance",
+      "title": "Test No. 428: Skin Absorption: In Vitro Method",
+      "issuer": "OECD", "year": 2004, "identifier": "OECD TG 428 (adopted 13 Apr 2004)",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "standardized in vitro (Franz cell) skin-absorption methodology anchor for a skin candidate"
+    },
+    {
+      "id": "rothe-2017", "type": "peer_reviewed_study",
+      "title": "Comparison of protocols measuring diffusion and partition coefficients in the stratum corneum",
+      "authors": "Rothe H, et al.", "journal": "J Appl Toxicol", "year": 2017,
+      "identifier": "PMC5484360 (DOI 10.1002/jat.3427 reported, not opened)",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "candidate source for stratum-corneum D and K values (API). Values require full-text verification."
+    },
+    {
+      "id": "pharmaceutics-2020-franz-raman", "type": "peer_reviewed_study",
+      "title": "Franz Cell Diffusion Testing and Quantitative Confocal Raman Spectroscopy: In Vitro-In Vivo Correlation",
+      "journal": "Pharmaceutics", "year": 2020, "volume": "12(9)", "pages": "887",
+      "identifier": "DOI 10.3390/pharmaceutics12090887; PMC7558152",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "candidate IVIVC evidence for skin permeation (reported strong correlation); values require full-text verification"
+    },
+    {
+      "id": "intravesical-review-2022", "type": "review_or_meta_analysis",
+      "title": "Nano-Formulation Based Intravesical Drug Delivery Systems (review)",
+      "journal": "Pharmaceutics", "year": 2022, "identifier": "DOI 10.3390/pharmaceutics14091909; PMC9501312",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "entry point to intravesical bladder-wall penetration literature; primary quantitative sources must be traced and opened"
+    },
+    {
+      "id": "nanodoce-nct03636256", "type": "trial_record",
+      "title": "Evaluation of NanoDoce (docetaxel nanoparticle) in Participants With Urothelial Carcinoma",
+      "issuer": "ClinicalTrials.gov", "identifier": "NCT03636256",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "clinical-stage nanoparticle for a local (intravesical) route; formulation/PK details require source access"
+    },
+    {
+      "id": "spheroid-size-penetration-2024", "type": "peer_reviewed_study",
+      "title": "Size-Dependent Penetration of Nanoparticles in Tumor Spheroids (transcellular/paracellular)",
+      "authors": "Chen et al.", "journal": "Small", "year": 2024,
+      "identifier": "DOI 10.1002/smll.202304693",
+      "identity_verified": true, "full_text_opened": false, "quantitative_data_extracted": false,
+      "role": "candidate in vitro quantitative NP penetration-depth data in spherical geometry (matches solver); measures carrier, not released API"
     }
   ],
   "pending": {
-    "note": "Tissue-specific diffusion/permeability/clearance parameters are intentionally ABSENT. Populating them is Phase-2 work, gated on user approval. Each future entry must pass the verification checklist in docs/evidence-matrix.md before use.",
-    "candidate_tissues_awaiting_audit": ["generic_soft_tissue", "skin", "intestinal_mucosa", "colon", "gastric_mucosa", "solid_tumor"]
+    "note": "No tissue-specific numeric parameters have been added to any profile. Quantitative extraction is blocked by the environment's network policy. To advance any candidate to parameterization, the full texts in docs/critical-paywalled-sources.md must be provided (PDF upload) or a networked environment enabled.",
+    "candidate_systems_identified": ["solid_tumor_local_diffusion", "topical_skin_multilayer", "intravesical_bladder_wall", "tumor_spheroid_in_vitro", "ocular_cornea", "gastrointestinal_regional"]
   }
 }

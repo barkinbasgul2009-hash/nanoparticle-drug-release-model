@@ -1,0 +1,8 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Skeleton content for the organ/environment overview panel (docs/organ-environment-panel-spec.md). Text is qualitative/safe; numeric ranges pending sources.",
+  "organs": [
+    {"id":"solid_tumor_local","name":"Solid tumour (local depot)","route":"intratumoral/local","layers":["vasculature","interstitium/ECM","tumour cells"],"barriers":["interstitial matrix","interstitial fluid pressure"],"clearance":["perfusion","lymphatic"],"model_includes":["released-API interstitial diffusion","first-order clearance"],"model_excludes":["carrier transport","cellular uptake","vascular source geometry"],"quantitative":null,"pending_full_text":true},
+    {"id":"topical_skin","name":"Skin (topical)","route":"topical","layers":["stratum corneum","viable epidermis","dermis"],"barriers":["stratum corneum"],"clearance":["dermal blood flow"],"model_includes":["released-API multilayer diffusion (planned)"],"model_excludes":["intact-nanoparticle transport (NP retained in SC/follicle)"],"quantitative":null,"pending_full_text":true}
+  ]
+}

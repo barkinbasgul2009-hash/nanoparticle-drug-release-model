@@ -1,28 +1,13 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "SCHEMA ONLY. This file defines the shape of a tissue/route profile for the future Animated Tissue View. It contains NO populated profiles: every numeric parameter must come from a verified entry in data/source-registry.json and pass the Phase-3 eligibility gate before it may appear here. Populating profiles is gated on user approval (Phase 17). An empty 'profiles' array is intentional and correct at this stage.",
-  "eligibility_status_enum": {
-    "QUALIFIED": "Validated or independently testable model + suitable quantitative data. May produce quantitative predictions.",
-    "RESEARCH_SUPPORTED": "Multiple credible studies, meaningful uncertainty / limited validation. May produce quantitative predictions only with explicit uncertainty and justification.",
-    "ILLUSTRATIVE_ONLY": "Insufficient evidence for quantitative prediction. Shown as schematic only, never as a prediction.",
-    "EXCLUDED": "Evidence missing/incompatible/unsuitable. Not implemented; selector entry disabled with explanation."
-  },
-  "profile_field_definitions": {
-    "id": "stable key",
-    "display_name": "human-readable tissue/organ name",
-    "route": "administration route this profile is valid for (must match an entry in routes)",
-    "eligibility_status": "one of eligibility_status_enum",
-    "process_represented": "which of the 9 processes in docs/model-scope.md this profile models (must be a subset the current solver actually computes)",
-    "geometry": "spatial idealisation (e.g. 1D slab, 1D spherical) — must match a solver the code implements",
-    "parameters": "object mapping parameter name -> { value|range, unit, source_id, status (measured|fitted|assumed), species, confidence, uncertainty }",
-    "applicable_controls": "which existing UI controls are scientifically meaningful for this profile",
-    "inapplicable_controls": "existing controls that must be shown as disabled/not-used for this profile",
-    "extrapolation_domain": "supported parameter ranges; values outside trigger an extrapolation warning",
-    "evidence_grade": "summary grade shown in UI (mirrors eligibility_status)",
-    "source_ids": "list of source-registry ids backing this profile",
-    "limitations_note": "short UI-facing limitations statement",
-    "assumptions": "list of explicit modelling assumptions"
-  },
-  "routes": [],
-  "profiles": []
+  "$schema_version": "0.2.0",
+  "description": "Named-tissue profiles. Stage 2 identifies candidate structures only. Every profile is eligibility-graded and carries NO verified numeric parameters (access block). populated=false everywhere.",
+  "eligibility_status_enum": {"QUALIFIED":"validated+calibrated+externally validated","RESEARCH_SUPPORTED":"credible studies, uncertainty remains","ILLUSTRATIVE_ONLY":"visual/teaching only","INSUFFICIENT_EVIDENCE":"critical data missing","EXCLUDED":"inappropriate/misleading"},
+  "profiles": [
+    {"id":"generic_soft_tissue","status":"ILLUSTRATIVE_ONLY","geometry":"1D spherical","populated":true,"note":"the existing live generic animation; not organ-specific"},
+    {"id":"solid_tumor_local","status":"RESEARCH_SUPPORTED_provisional","geometry":"1D radial","process":"released-API interstitial diffusion + clearance","populated":false,"pending_full_text":true,"sources_to_open":["dreher-2006","spheroid-size-penetration-2024"],"note":"PRIMARY Stage-3 candidate; grade provisional on sourced parameters + independent validation"},
+    {"id":"topical_skin","status":"RESEARCH_SUPPORTED_provisional","geometry":"1D multilayer slab (new)","process":"released-API diffusion through SC/epidermis/dermis","populated":false,"pending_full_text":true,"sources_to_open":["rothe-2017","potts-guy-1992","pharmaceutics-2020-franz-raman","oecd-tg428-2004"],"note":"FALLBACK; NP retained in SC/follicle"},
+    {"id":"intravesical_bladder","status":"INSUFFICIENT_EVIDENCE_pending","geometry":"1D slab (new)","populated":false,"pending_full_text":true,"sources_to_open":["intravesical-review-2022"],"note":"promising; needs primary depth-concentration sources"},
+    {"id":"ocular_cornea","status":"INSUFFICIENT_EVIDENCE_pending","populated":false,"pending_full_text":true},
+    {"id":"gastrointestinal_regional","status":"INSUFFICIENT_EVIDENCE_pending","populated":false,"pending_full_text":true,"note":"confounds local vs systemic; region-specific"}
+  ]
 }

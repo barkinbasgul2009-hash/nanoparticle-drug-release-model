@@ -1,11 +1,11 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "SCHEMA ONLY. Inventory of experimental datasets reserved for calibration vs external validation. EMPTY until verified datasets are located. A profile may not be graded QUALIFIED without at least one calibration dataset and one independent validation dataset (task Section 16/22).",
-  "dataset_field_definitions": {
-    "id": "", "source_id": "", "doi_pmid": "", "purpose": "calibration|validation",
-    "api": "", "formulation": "", "tissue": "", "route": "", "species": "",
-    "endpoint": "", "units": "", "data_availability": "raw|digitized|none",
-    "n_replicates": "", "notes": ""
-  },
-  "datasets": []
+  "$schema_version": "0.2.0",
+  "description": "Calibration/validation dataset inventory (docs/calibration-validation-inventory.md). Candidates IDENTIFIED but not opened; independence NOT confirmed (access block). A profile cannot be QUALIFIED without a confirmed independent validation set.",
+  "datasets": [
+    {"id":"dreher-2006","system":"solid_tumor_local","possible_role":"calibration","independence_confirmed":false,"opened":false,"pending_full_text":true},
+    {"id":"spheroid-2024","system":"solid_tumor_local","possible_role":"validation(in vitro)","independence_confirmed":false,"opened":false,"pending_full_text":true},
+    {"id":"franz-raman-2020","system":"topical_skin","possible_role":"calibration/IVIVC","independence_confirmed":false,"opened":false,"pending_full_text":true},
+    {"id":"rothe-2017","system":"topical_skin","possible_role":"parameter source (D,K)","independence_confirmed":false,"opened":false,"pending_full_text":true}
+  ],
+  "conclusion": "No calibration/validation pairing can be finalized in this environment; requires full-text access."
 }

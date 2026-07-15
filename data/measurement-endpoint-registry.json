@@ -1,0 +1,10 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Typing of what each candidate measurement represents (docs/free-vs-encapsulated-api.md).",
+  "endpoint_types": ["total_API","free_API","encapsulated_API","carrier_label","tissue_bound","metabolite","intact_carrier"],
+  "candidate_notes": [
+    {"system":"solid_tumor_local","typical_measurement":"carrier_label or total_API","usable_as_free_API_input":false,"note":"most quantitative tumour/spheroid data are carrier penetration; released-API deconvolution needed"},
+    {"system":"topical_skin","typical_measurement":"free_API (released)","usable_as_free_API_input":true,"note":"intact NP retained in SC/follicle; skin data read as released-API diffusion"},
+    {"system":"intravesical_bladder","typical_measurement":"total_API in wall","usable_as_free_API_input":false,"note":"depth-concentration typically total drug; check free vs total"}
+  ]
+}

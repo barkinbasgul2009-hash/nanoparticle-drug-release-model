@@ -1,0 +1,9 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Information-card store (docs/interactive-knowledge-layer-spec.md). Quantitative fields pending sources; qualitative explanations are physics-based and safe to state.",
+  "cards": [
+    {"id":"tissue_diffusivity_D","display_name":"Tissue diffusivity","plain":"How quickly released drug spreads through the tissue.","why":"Sets how deep and how fast the concentration front moves.","effect_increase":"deeper, faster spread","effect_decrease":"shallower, slower spread","adjustable":true,"value":null,"range":null,"evidence_grade":"pending","pending_full_text":true},
+    {"id":"local_clearance_ke","display_name":"Local clearance","plain":"How fast the tissue removes the drug (e.g. by blood flow).","why":"Higher clearance limits how far the drug reaches.","effect_increase":"shallower penetration, lower concentration","effect_decrease":"deeper penetration","adjustable":true,"value":null,"range":null,"evidence_grade":"pending","pending_full_text":true},
+    {"id":"release_rate","display_name":"Release rate","plain":"How fast drug leaves the nanoparticle.","why":"Drives the amount available at the tissue boundary.","effect_increase":"higher boundary concentration","effect_decrease":"lower boundary concentration","adjustable":true,"value":null,"range":null,"evidence_grade":"pending","pending_full_text":true}
+  ]
+}

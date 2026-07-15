@@ -1,0 +1,10 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Study-level extraction (Stage-2 §29). All quantitative fields pending_full_text=true because full texts could not be opened (docs/full-text-access-log.md). Identity only.",
+  "studies": [
+    {"id":"dreher-2006","identity":"Dreher MR et al. 2006, J Natl Cancer Inst 98(5):335-344, PMID 16507830","type":"in vivo rodent","system":"tumour transport","quantitative":null,"risk_of_bias":null,"pending_full_text":true},
+    {"id":"spheroid-2024","identity":"Chen et al. 2024, Small, DOI 10.1002/smll.202304693","type":"in vitro spheroid","system":"NP penetration vs size","quantitative":null,"risk_of_bias":null,"pending_full_text":true},
+    {"id":"rothe-2017","identity":"Rothe H et al. 2017, J Appl Toxicol, PMC5484360","type":"in vitro/method","system":"SC D & K","quantitative":null,"risk_of_bias":null,"pending_full_text":true},
+    {"id":"potts-guy-1992","identity":"Potts RO, Guy RH 1992, Pharm Res, PMID 1608900","type":"model/correlation","system":"skin permeability","quantitative":null,"risk_of_bias":null,"pending_full_text":true}
+  ]
+}

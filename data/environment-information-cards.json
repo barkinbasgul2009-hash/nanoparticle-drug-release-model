@@ -1,0 +1,9 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Environment-variable info cards per tissue. Quantitative ranges pending sourced values (no guesses).",
+  "cards": [
+    {"id":"tumor_ecm","tissue":"solid_tumor_local","display_name":"Extracellular matrix density","plain":"Dense matrix slows diffusion.","model_role":"affects effective D","value":null,"range":null,"pending_full_text":true},
+    {"id":"skin_sc_thickness","tissue":"topical_skin","display_name":"Stratum corneum thickness","plain":"The main barrier layer; thicker = longer path.","model_role":"layer length in slab model","value":null,"range":null,"pending_full_text":true},
+    {"id":"bladder_urothelium","tissue":"intravesical_bladder","display_name":"Urothelium permeability","plain":"Tight barrier limiting entry into the wall.","model_role":"boundary permeability","value":null,"range":null,"pending_full_text":true}
+  ]
+}

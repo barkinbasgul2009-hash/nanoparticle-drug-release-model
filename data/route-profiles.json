@@ -1,14 +1,10 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "SCHEMA ONLY. Administration-route definitions. No route is enabled for quantitative prediction yet. A route becomes available only when a route+tissue+API+formulation profile passes the eligibility gate (docs/model-scope.md, Section 18 of the task).",
-  "route_field_definitions": {
-    "id": "stable key",
-    "display_name": "human-readable route",
-    "exposure_type": "e.g. luminal, topical-surface, systemic-vascular, local-injection",
-    "compatible_tissues": "tissue ids this route can be paired with",
-    "incompatible_with": "explicitly disallowed tissue/route conflations",
-    "source_ids": "supporting source-registry ids",
-    "status": "DISABLED until a qualified profile exists"
-  },
-  "routes": []
+  "$schema_version": "0.2.0",
+  "description": "Administration routes with Stage-2 candidate tissue pairings. No route is ENABLED for quantitative prediction; each stays disabled until a route+tissue profile passes the eligibility gate with sourced parameters.",
+  "routes": [
+    {"id":"intratumoral_local","display_name":"Intratumoral / local injection","exposure_type":"local-injection","compatible_tissues":["solid_tumor_local"],"incompatible_with":["IV whole-body biodistribution"],"status":"DISABLED_pending_sources"},
+    {"id":"topical","display_name":"Topical","exposure_type":"topical-surface","compatible_tissues":["topical_skin","ocular_cornea"],"incompatible_with":["IV delivery"],"status":"DISABLED_pending_sources"},
+    {"id":"intravesical","display_name":"Intravesical","exposure_type":"luminal-local","compatible_tissues":["intravesical_bladder"],"incompatible_with":["systemic biodistribution"],"status":"DISABLED_pending_sources"},
+    {"id":"intravenous","display_name":"Intravenous","exposure_type":"systemic-vascular","compatible_tissues":[],"incompatible_with":["local penetration endpoints without extravasation model"],"status":"DISABLED_out_of_scope_for_local_model"}
+  ]
 }

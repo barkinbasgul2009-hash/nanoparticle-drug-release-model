@@ -1,0 +1,10 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Qualitative, physics-based effect statements for the dynamic-explanation engine (docs/dynamic-explanation-engine-spec.md). Directions are safe/general; magnitudes come from the solver at runtime. Context-dependent cases flagged.",
+  "statements": [
+    {"parameter":"shell_thickness","direction":"increase","effect":"slows release, lowering the boundary source, so tissue concentration and penetration decrease","context_dependent":false},
+    {"parameter":"tissue_diffusivity_D","direction":"increase","effect":"drug spreads faster and deeper; peak near the source drops","context_dependent":false},
+    {"parameter":"local_clearance_ke","direction":"increase","effect":"more drug is removed per unit time, so the penetration front is shallower","context_dependent":false},
+    {"parameter":"particle_size","direction":"increase","effect":"often slows release and, for carriers, reduces penetration; system-dependent","context_dependent":true}
+  ]
+}

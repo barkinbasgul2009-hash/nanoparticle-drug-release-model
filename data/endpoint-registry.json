@@ -1,0 +1,12 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Penetration endpoint definitions (docs/penetration-endpoint-definitions.md).",
+  "endpoints": [
+    {"id":"depth_above_threshold","definition":"deepest x with C >= threshold*C_ref","measures":"API or carrier","matches_current_tool":true,"threshold_default":0.1,"threshold_user_visible":true},
+    {"id":"concentration_profile","definition":"C(x) at time t","measures":"API or carrier","matches_current_tool":true},
+    {"id":"permeability_coefficient","definition":"steady-state flux / donor conc","measures":"API","matches_current_tool":false},
+    {"id":"cumulative_permeated","definition":"mass through membrane over time","measures":"API","matches_current_tool":"indirect"},
+    {"id":"tissue_AUC","definition":"integral of C over tissue/time","measures":"API or carrier","matches_current_tool":"derivable"},
+    {"id":"whole_organ_accumulation","definition":"fraction of dose in organ (%ID or %ID/g)","measures":"often carrier","matches_current_tool":false}
+  ]
+}
