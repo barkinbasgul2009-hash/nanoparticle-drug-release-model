@@ -1,24 +1,39 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "Biological environment profiles per route/tissue. Quantitative fields are null with pending_full_text=true because the Stage-2 access block prevented sourced extraction (see docs/full-text-access-log.md). NO guessed values. Qualitative structure only.",
+  "$schema_version": "0.3.0",
+  "description": "Biological environment profiles. Skin now has SOURCED small-molecule SC transport parameters (Rothe 2017) and method geometry (OECD TG 428). Tumour/bladder quantitative fields remain pending (sources missing/review-only). CRITICAL: sourced skin values are for small-molecule APIs, not nanoparticles.",
   "profiles": [
     {
-      "id": "solid_tumor_local", "route": "intratumoral/local", "dominant_barrier": "interstitial ECM + interstitial fluid pressure",
-      "clearance_mechanism": "perfusion/lymphatic (lumped k_e)", "key_structures": ["collagen","hyaluronan","tumour cells"],
-      "model_critical_params": ["D_interstitium","k_e","release_rate"],
-      "quantitative": null, "pending_full_text": true, "sources_to_open": ["dreher-2006","spheroid-size-penetration-2024"]
+      "id": "topical_skin", "route": "topical",
+      "dominant_barrier": "stratum corneum (lipid lamellae + corneocytes)",
+      "clearance_mechanism": "dermal blood flow (not measured in the provided in vitro sources)",
+      "key_structures": ["stratum corneum", "viable epidermis", "dermis", "hair follicles"],
+      "sourced_parameters": {
+        "SC_partition_K_SC_v_dimensionless": {"caffeine": 2.68, "resorcinol": 5.35, "7_EC": 39.5, "source": "rothe-2017 Table 2 (human, Protocol 1)", "status": "measured", "api_class": "small molecule"},
+        "SC_diffusion_D_SC_over_H2_per_h": {"caffeine": 0.21, "resorcinol": 0.19, "7_EC": 0.030, "range_all": "0.03-0.23", "source": "rothe-2017 Table 2 (human, Protocol 1)", "status": "measured"},
+        "split_thickness_um": {"value": "200-400", "source": "oecd-tg428-2004", "status": "guideline"},
+        "experiment_temperature_C": {"value": "32 +/- 1", "source": "oecd-tg428-2004"},
+        "cumulative_permeation_niacinamide_ug_cm2_24h": {"value": "100-107 (favourable vehicles)", "source": "iliopoulos-2020"}
+      },
+      "still_missing": ["nanoparticle formulation + its release", "NP-specific skin penetration depth", "dermal clearance value", "absolute D in cm2/s (needs H_SC)"],
+      "pending_full_text": false
     },
     {
-      "id": "topical_skin", "route": "topical", "dominant_barrier": "stratum corneum (lipid lamellae + corneocytes)",
-      "clearance_mechanism": "dermal blood flow", "key_structures": ["stratum corneum","viable epidermis","dermis","hair follicles"],
-      "model_critical_params": ["D_SC","K_partition","layer_thickness","dermal_clearance"],
-      "quantitative": null, "pending_full_text": true, "sources_to_open": ["rothe-2017","potts-guy-1992","pharmaceutics-2020-franz-raman","oecd-tg428-2004"]
+      "id": "solid_tumor_local", "route": "intratumoral/local",
+      "dominant_barrier": "interstitial ECM + interstitial fluid pressure",
+      "clearance_mechanism": "perfusion/lymphatic (lumped k_e)",
+      "key_structures": ["collagen", "hyaluronan", "tumour cells"],
+      "sourced_parameters": null,
+      "still_missing": ["Dreher 2006 and Chen 2024 full texts (blocked/not provided)"],
+      "pending_full_text": true
     },
     {
-      "id": "intravesical_bladder", "route": "intravesical", "dominant_barrier": "urothelium + GAG layer",
-      "clearance_mechanism": "urine turnover/washout", "key_structures": ["GAG layer","urothelium","lamina propria","detrusor"],
-      "model_critical_params": ["urothelium_permeability","wall_D"],
-      "quantitative": null, "pending_full_text": true, "sources_to_open": ["intravesical-review-2022"]
+      "id": "intravesical_bladder", "route": "intravesical",
+      "dominant_barrier": "urothelium + GAG/mucin layer",
+      "clearance_mechanism": "urine turnover/washout",
+      "key_structures": ["GAG/mucin layer", "urothelium (umbrella cells)", "detrusor muscle", "adventitia"],
+      "sourced_parameters": {"qualitative": "urothelium = main permeability barrier; GAG layer hydrophilic; urine pH/calcium/urea modulate permeability", "source": "sarfraz-2022 (review, qualitative)"},
+      "still_missing": ["primary depth-concentration profiles (review does not report clean primaries)"],
+      "pending_full_text": "primaries_pending"
     }
   ]
 }

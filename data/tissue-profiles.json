@@ -1,13 +1,74 @@
 {
   "$schema_version": "0.2.0",
   "description": "Named-tissue profiles. Stage 2 identifies candidate structures only. Every profile is eligibility-graded and carries NO verified numeric parameters (access block). populated=false everywhere.",
-  "eligibility_status_enum": {"QUALIFIED":"validated+calibrated+externally validated","RESEARCH_SUPPORTED":"credible studies, uncertainty remains","ILLUSTRATIVE_ONLY":"visual/teaching only","INSUFFICIENT_EVIDENCE":"critical data missing","EXCLUDED":"inappropriate/misleading"},
+  "eligibility_status_enum": {
+    "QUALIFIED": "validated+calibrated+externally validated",
+    "RESEARCH_SUPPORTED": "credible studies, uncertainty remains",
+    "ILLUSTRATIVE_ONLY": "visual/teaching only",
+    "INSUFFICIENT_EVIDENCE": "critical data missing",
+    "EXCLUDED": "inappropriate/misleading"
+  },
   "profiles": [
-    {"id":"generic_soft_tissue","status":"ILLUSTRATIVE_ONLY","geometry":"1D spherical","populated":true,"note":"the existing live generic animation; not organ-specific"},
-    {"id":"solid_tumor_local","status":"RESEARCH_SUPPORTED_provisional","geometry":"1D radial","process":"released-API interstitial diffusion + clearance","populated":false,"pending_full_text":true,"sources_to_open":["dreher-2006","spheroid-size-penetration-2024"],"note":"PRIMARY Stage-3 candidate; grade provisional on sourced parameters + independent validation"},
-    {"id":"topical_skin","status":"RESEARCH_SUPPORTED_provisional","geometry":"1D multilayer slab (new)","process":"released-API diffusion through SC/epidermis/dermis","populated":false,"pending_full_text":true,"sources_to_open":["rothe-2017","potts-guy-1992","pharmaceutics-2020-franz-raman","oecd-tg428-2004"],"note":"FALLBACK; NP retained in SC/follicle"},
-    {"id":"intravesical_bladder","status":"INSUFFICIENT_EVIDENCE_pending","geometry":"1D slab (new)","populated":false,"pending_full_text":true,"sources_to_open":["intravesical-review-2022"],"note":"promising; needs primary depth-concentration sources"},
-    {"id":"ocular_cornea","status":"INSUFFICIENT_EVIDENCE_pending","populated":false,"pending_full_text":true},
-    {"id":"gastrointestinal_regional","status":"INSUFFICIENT_EVIDENCE_pending","populated":false,"pending_full_text":true,"note":"confounds local vs systemic; region-specific"}
-  ]
+    {
+      "id": "generic_soft_tissue",
+      "status": "ILLUSTRATIVE_ONLY",
+      "geometry": "1D spherical",
+      "populated": true,
+      "note": "the existing live generic animation; not organ-specific"
+    },
+    {
+      "id": "solid_tumor_local",
+      "status": "BLOCKED (sources unavailable)",
+      "geometry": "1D radial",
+      "process": "released-API interstitial diffusion + clearance",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "dreher-2006",
+        "spheroid-size-penetration-2024"
+      ],
+      "note": "FALLBACK; best geometric fit but Dreher 2006 & Chen 2024 still missing -> cannot parameterize."
+    },
+    {
+      "id": "topical_skin",
+      "status": "RESEARCH_SUPPORTED (released small-molecule SC diffusion sub-model)",
+      "geometry": "1D multilayer slab (new)",
+      "process": "released-API diffusion through SC/epidermis/dermis",
+      "populated": "partial (small-molecule sub-model)",
+      "pending_full_text": true,
+      "sources_to_open": [
+        "rothe-2017",
+        "potts-guy-1992",
+        "pharmaceutics-2020-franz-raman",
+        "oecd-tg428-2004"
+      ],
+      "note": "REVISED PRIMARY: only candidate with extracted transport parameters. Small-molecule, not nanoparticle; needs NP-formulation primary + validation to become a real NP profile.",
+      "sourced_parameters": "K_SC/v & D_SC/H2 (Rothe 2017, small molecule); geometry (OECD TG428); IVIVC (Iliopoulos 2020)"
+    },
+    {
+      "id": "intravesical_bladder",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "geometry": "1D slab (new)",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "intravesical-review-2022"
+      ],
+      "note": "promising; needs primary depth-concentration sources"
+    },
+    {
+      "id": "ocular_cornea",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "populated": false,
+      "pending_full_text": true
+    },
+    {
+      "id": "gastrointestinal_regional",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "populated": false,
+      "pending_full_text": true,
+      "note": "confounds local vs systemic; region-specific"
+    }
+  ],
+  "stage2_continuation_note": "Grades revised after full-text upload. No profile is QUALIFIED. Skin sub-model is RESEARCH_SUPPORTED (small molecule); tumour blocked."
 }

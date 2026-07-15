@@ -64,3 +64,29 @@ recorded as data.**
 | skin method | `oecd-tg428-2004` | OECD TG 428 | standardized method | identified, not opened |
 
 Tissue-parameter rows remain intentionally empty (no verified numeric values).
+
+---
+
+## Stage-2 CONTINUATION — EXTRACTED values (from opened full-text PDFs, with provenance)
+All values below were read from the uploaded full texts. Class flagged: all are
+**small-molecule** skin studies (no nanoparticle).
+
+| Parameter | Value (mean, %CV) | Unit | Compound | Source (locator) | Status |
+|---|---|---|---|---|---|
+| SC partition K_SC/v | 2.68 (20%) | – | caffeine (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| SC diffusion D_SC/H²_SC | 0.21 (26%) | h⁻¹ | caffeine (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| SC partition K_SC/v | 5.35 (28%) | – | resorcinol (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| SC diffusion D_SC/H²_SC | 0.19 (37%) | h⁻¹ | resorcinol (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| SC partition K_SC/v | 39.5 (19%) | – | 7-ethoxycoumarin (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| SC diffusion D_SC/H²_SC | 0.030 (55%) | h⁻¹ | 7-EC (human) | Rothe 2017, Table 2, Protocol 1 | measured |
+| D_SC/H²_SC range (all protocols) | 0.03–0.23 | h⁻¹ | 3 compounds | Rothe 2017, text | measured |
+| Cumulative permeation, 24 h | 100.3±10.8 / 106.7±12.9 | µg/cm² | niacinamide (human) | Iliopoulos 2020, Results | measured |
+| Steady-state flux | 96.1 (vs 0.2 neat PG) | µg/cm²/h | niacinamide | Iliopoulos 2020 | measured |
+| IVIVC (in vitro vs in vivo SC) | R²=0.98 (Pearson R²=0.94) | – | niacinamide | Iliopoulos 2020 | measured |
+| Skin temperature | 32 ± 1 | °C | method | OECD TG 428 | guideline |
+| Split-thickness skin | 200–400 | µm | method | OECD TG 428 | guideline |
+| Finite dose (solid) | 1–5 | mg/cm² | method | OECD TG 428 | guideline |
+
+**Not transcribed:** Rothe k_p (cm/h) values — pdftotext corrupted the negative
+exponents; require careful re-read. **Absolute D (cm²/s)** cannot be computed
+without an SC thickness H_SC value from a matched source.

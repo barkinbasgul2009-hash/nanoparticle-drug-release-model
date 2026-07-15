@@ -19,3 +19,18 @@ Key honesty points:
   released-API tool must not adopt carrier depths as API depths without justification.
 
 Machine-readable endpoint typing: `data/measurement-endpoint-registry.json`.
+
+---
+
+## Stage-2 CONTINUATION finding (critical)
+Every opened quantitative source measures **free small-molecule API** permeation/
+partition in skin (caffeine, resorcinol, 7-ethoxycoumarin, niacinamide) — i.e.
+exactly the "released free API" the tool diffuses. **None involves a nanoparticle
+carrier.** Therefore:
+- These sources parameterize the **released-API skin-diffusion layer** validly.
+- They do **not** provide free-vs-encapsulated partitioning for any nanoparticle,
+  nor carrier penetration.
+- A genuine nanoparticle profile still needs an NP-formulation primary reporting
+  encapsulated vs released fractions (identified: tripterine NLC etc., not provided).
+Per §22, small-molecule/tracer transport data must not be presented as a complete
+nanoparticle drug-release model.

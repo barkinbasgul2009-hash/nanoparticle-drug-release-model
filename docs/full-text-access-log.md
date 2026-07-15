@@ -36,3 +36,21 @@ exact table/figure/page locator. Because full texts cannot be opened here:
 This is reported honestly rather than filled with plausible-looking numbers
 (Stage-2 §5, §43 Outcome C). The specific full texts required to proceed are listed
 in `critical-paywalled-sources.md`.
+
+---
+
+## Stage-2 CONTINUATION update (user-provided PDFs)
+Five PDFs were uploaded and **successfully opened** locally (poppler `pdftotext`);
+the web-fetch block is unchanged (still cannot reach publishers/PMC). Quantitative
+extraction was therefore performed on the uploaded full texts:
+
+- **Extracted with provenance:** Rothe 2017 (SC K & D/H², Tables 1–2), Iliopoulos
+  2020 (IVIVC R², flux, cumulative permeation), OECD TG 428 (method parameters),
+  Karadzovska 2013 (QSPR/LFER model forms — supporting).
+- **Qualitative only:** Sarfraz 2022 (review; bladder environment structure).
+- **One extraction caveat:** Rothe Table (k_p row) lost negative exponent signs in
+  `pdftotext`; k_p numeric values were **not** transcribed (only the clean K and
+  D/H² values were). 
+- **Still unreadable (web-blocked, not uploaded):** Dreher 2006, Chen 2024
+  spheroid, Potts & Guy 1992, and newly-identified NP-skin primaries (tripterine
+  NLC PMC3392146; caffeic-acid lipid NP PMC7826983; caffeine lipid NP Talanta 2015).

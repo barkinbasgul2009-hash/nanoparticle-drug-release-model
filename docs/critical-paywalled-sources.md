@@ -1,19 +1,22 @@
-# Critical Sources Required (full text needed to proceed)
+# Critical Sources — Reconciliation (after user upload)
 
-These sources were **identified** but could **not be opened** in this environment
-(see `full-text-access-log.md`). To parameterize any Stage-3 candidate, the user
-should provide the PDF (upload) or enable a networked environment. For each: why it
-is needed and which data are required.
+| # | Source | Identifier | Previous status | Now | Data extracted? | Still required? |
+|---|---|---|---|---|---|---|
+| 1 | Rothe 2017, SC diffusion/partition, J Appl Toxicol | DOI 10.1002/jat.3427 | inaccessible | **PROVIDED & VERIFIED** | Yes (K_SC/v, D_SC/H²_SC) | No |
+| 2 | Iliopoulos 2020, Franz+Raman IVIVC, Pharmaceutics 12(9):887 | DOI 10.3390/pharmaceutics12090887 | inaccessible | **PROVIDED & VERIFIED** | Yes (IVIVC, flux) | No |
+| 3 | Sarfraz 2022, intravesical review, Pharmaceutics 14:1909 | DOI 10.3390/pharmaceutics14091909 | inaccessible | **PROVIDED & VERIFIED (review)** | Qualitative only | Primaries still needed |
+| 4 | OECD TG 428 (2004) | OECD TG 428 | inaccessible | **PROVIDED & VERIFIED** | Yes (method) | No |
+| 5 | **Potts & Guy 1992**, Predicting Skin Permeability, Pharm Res | PMID 1608900 | inaccessible | **STILL MISSING** (uploaded file was the wrong paper — Karadzovska 2013) | No | **YES** — for exact regression coefficients |
+| 6 | **Dreher 2006**, tumour transport, JNCI 98(5):335–344 | PMID 16507830 | inaccessible | **STILL MISSING** | No | **YES** (tumour candidate) |
+| 7 | **Chen 2024**, spheroid NP penetration, Small | DOI 10.1002/smll.202304693 | inaccessible | **STILL MISSING** | No | **YES** (tumour candidate) |
 
-| # | Source (identity from search) | Identifier | Why essential | Data needed |
-|---|---|---|---|---|
-| 1 | Dreher et al. 2006, *Tumor Vascular Permeability, Accumulation, and Penetration of Macromolecular Drug Carriers*, JNCI 98(5):335–344 | PMID 16507830 | Primary quantitative tumour transport/penetration data | Vascular permeability vs MW (values + units, Table/Fig); penetration depth vs MW from vessel wall (µm); tumour model/species |
-| 2 | Rothe et al. 2017, *Comparison of protocols measuring diffusion and partition coefficients in the stratum corneum*, J Appl Toxicol | PMC5484360 / DOI 10.1002/jat.3427 | Stratum-corneum D and K reference values | D (cm²/s), K (–), test compounds, method, uncertainty (exact tables) |
-| 3 | Potts & Guy 1992, *Predicting Skin Permeability*, Pharm Res | PMID 1608900 | Skin permeability model form + regression coefficients | Regression coefficients, dataset, applicability domain |
-| 4 | Pharmaceutics 2020, 12(9):887 (Franz + confocal Raman IVIVC) | DOI 10.3390/pharmaceutics12090887 / PMC7558152 | IVIVC evidence for skin permeation | Correlation coefficients, flux/permeability values, drug identity |
-| 5 | Intravesical nano-DDS review 2022, Pharmaceutics | DOI 10.3390/pharmaceutics14091909 / PMC9501312 | Entry point to bladder-wall penetration primary data | Trace to primary depth–concentration profiles (µg/g vs µm), species, formulation |
-| 6 | Chen et al. 2024, *Size-Dependent Penetration of Nanoparticles in Tumor Spheroids*, Small | DOI 10.1002/smll.202304693 | In vitro spherical-geometry NP penetration | Penetration depth vs particle size (µm), spheroid dimensions, method |
-| 7 | OECD Test Guideline 428 (2004), *Skin Absorption: In Vitro Method* | OECD TG 428 | Standardized skin method + acceptance criteria | Method parameters, mass-balance/recovery criteria |
+## Newly identified, still-needed (NP-skin primaries; web-blocked)
+- Tripterine-loaded NLC, in vitro release + Franz-cell skin depth (PMC3392146)
+- Caffeic-acid lipid nanoparticles, skin delivery (PMC7826983)
+- Caffeine lipid nanoparticles, on-line Franz permeation (Talanta 2015)
+These provide the **missing nanoparticle formulation + release + skin-penetration
+link**; please provide PDFs to parameterize a true nanoparticle-skin profile.
 
-**Priority for Stage 3:** items 1 & 6 (tumour/spheroid, best geometric fit to the
-current spherical solver) and items 2–4 & 7 (skin, best-standardized methodology).
+## Substitution note
+Karadzovska 2013 (QSPR review) cannot substitute for Potts & Guy 1992; it does not
+report the Potts–Guy coefficients. It is retained only as supporting QSPR context.

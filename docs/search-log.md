@@ -17,3 +17,24 @@ identified sources, not verified extractions.
 source-enabled follow-up): release-assay methodology detail; free-vs-encapsulated
 per product; GI regional environment primary data; calibration/validation dataset
 independence; assay-interference primary studies.
+
+---
+
+## Stage-2 CONTINUATION — deeper search + backward citation (from uploaded full texts)
+Backward-citation identification (read from the uploaded PDFs' own text):
+- Rothe 2017 references: Herkenne et al. 2006 (K_SC/v, D_SC methodology), Nitsche
+  (hydration correction), Hansen et al. 2008 (literature K), Davies et al. 2004
+  (skin integrity), Russell et al. 2008 (SC density).
+- Karadzovska 2013 references: Potts & Guy [171] (first QSAR), Abraham LFER [172],
+  Geinoz et al. [175] (16 LFER equations reviewed).
+
+Forward-citation searching (who later cited these) requires opening records and is
+**blocked** by the web-fetch policy — deferred to a source-enabled pass.
+
+| # | Query (abridged) | Facet | Identified (not opened) |
+|---|---|---|---|
+| 7 | nanoparticle topical release + Franz permeation depth primary | NP-skin gap | tripterine NLC (PMC3392146); caffeic-acid lipid NP (PMC7826983); caffeine lipid NP (Talanta 2015) |
+
+**Saturation:** NOT reached for the NP-formulation facet — multiple candidate
+NP-skin primaries exist but are inaccessible. Saturation cannot be honestly
+declared while these remain unopened.
