@@ -52,3 +52,27 @@ Open blockers requiring user-provided PDFs or network access: celastrol/tripteri
 skin primaries (to build a real NP profile), Chen 2024 & Dreher 2006 primaries (to
 verify the benchmarks), Potts & Guy 1992 (coefficients). No QUALIFIED profile is
 possible until these are obtained and an independent validation set is confirmed.
+
+---
+
+## Stage-2 CONTINUATION 3 — modular restructuring (this iteration)
+| Requirement | Status | Evidence |
+|---|---|---|
+| Inspect/verify uploaded images (not filenames) | **DONE** | 5 images = Dreher 2006 pp.335-339; read directly |
+| Replace binary evidence logic with modular architecture | **DONE** | data/evidence-labels.json; docs/evidence-architecture.md |
+| Build 5-6 profile portfolio with per-module grades | **DONE** | data/profile-portfolio.json; docs/profile-portfolio.md (Profiles A-F) |
+| Evidence bridge tables | **DONE** | docs/evidence-bridge-tables.md |
+| Parameter-level provenance | **DONE** | data/parameter-provenance.json (verified vs secondary vs assumed) |
+| Profile-level LEVEL grading (0-6) | **DONE** | evidence-labels.json + portfolio |
+| Continue research (E/F, citation network) | **PARTIAL (web-blocked)** | search-log #10-11; Doxil/Abraxane/Onivyde identified, not opened |
+| Endpoint-specific validation | **DONE** | stage3-recommendation.md; no external validation for any |
+| Stage-3 readiness (block claim not profile) | **DONE** | A & D ready (labelled); C illustrative; B/E/F blocked |
+| Do NOT fabricate / bridge silently | **ENFORCED** | UNVERIFIED_SECONDARY flags; prohibited-bridges list |
+| §20 user-held files | **DONE** | no "01" file present; listed as user-held |
+| Update PR #3, do not merge | **DONE** | this branch/PR |
+
+**Honest overall:** Stage 2 now delivers a modular, Stage-3-actionable portfolio.
+Profiles A (skin released-API) and D (vascular benchmark, primary-verified) are ready
+with explicit labels; B/E/F need primary PDFs/labels; C is illustrative until the Chen
+primary is opened. No externally-validated or clinically-qualified profile exists, and
+none is claimed.

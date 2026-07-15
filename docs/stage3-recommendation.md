@@ -1,56 +1,49 @@
-# Stage-3 Recommendation (REVISED after external-dossier ingestion)
+# Stage-3 Recommendation (modular portfolio; after Dreher primary verified)
 
-## Scientific decision: OUTCOME B — partially sufficient; complete NP profile = INSUFFICIENT_EVIDENCE
-Consistent with the external dossier and our own primary-source review. No profile is
-QUALIFIED. The evidence supports several **separate** submodels/benchmarks, not one
-continuous, externally-validated API–nanoparticle–route–tissue profile.
+## Decision: OUTCOME B — a portfolio of research-supported submodels/benchmarks
+Under the modular evidence architecture (`evidence-architecture.md`), Stage 2 delivers
+a 6-profile portfolio (`profile-portfolio.md`, `data/profile-portfolio.json`). No
+single profile is externally validated (L5) or clinically qualified (L6), but several
+are Stage-3-actionable at LEVEL 1–2 with explicit labels. **Block unsupported outputs,
+not whole profiles.**
 
-## Verified vs candidate (do not conflate)
-- **Most VERIFIED submodel (opened primaries):** released **small-molecule** API
-  through human skin — niacinamide permeation/IVIVC (Iliopoulos 2020) + SC K/D
-  (Rothe 2017) + method (OECD TG 428). This is a **released-API skin submodel**, and
-  **niacinamide is NOT a nanoparticle**.
-- **Strongest EXACT NANOPARTICLE candidate (UNVERIFIED, web-blocked):**
-  **celastrol/tripterine-loaded NLC, topical skin** — appears to have formulation
-  characterization + controlled release + Franz permeation + in vivo PD (search-level
-  only; PDFs needed to verify/extract and to confirm independent validation).
+## Stage-3-ready now
+- **Profile A — niacinamide human-skin released-API transport (LEVEL 2).** All modules
+  primary-verified here (Iliopoulos 2020, Rothe 2017, OECD TG 428). Implement as a
+  multilayer released-API skin engine, labelled *"RESEARCH_SUPPORTED released-API skin
+  submodel — NOT a nanoparticle release model."*
+- **Profile D — tumour vascular transport benchmark (LEVEL 2).** **Primary now
+  verified from user-provided Dreher 2006 page images** (Kedem–Katchalsky; P_app
+  3.3 kDa=154 / 40 kDa=9.5 / 2 MDa=1.7 ×10⁻⁷ cm/s; albumin 4.9×10⁻⁷; t½ 3.8/19.6 min;
+  penetration >35/15/5 µm). Implement as a mechanistic benchmark, labelled *"dextran,
+  murine — NOT a nanoparticle drug."*
 
-## Two SEPARATE tumour benchmarks (dossier-reported, UNVERIFIED; must NOT be bridged)
-- **Chen 2024** — intact AuNP (15/22/60 nm) penetration in MDA-MB-231 spheroids
-  (carrier only, no API/release). Indicates carrier transport needs an
-  **uptake–return intracellular state**, not pure Fickian diffusion.
-- **Dreher 2006** — dextran vascular permeability/penetration (model macromolecule,
-  IV, murine). Vascular-to-interstitium benchmark only.
-Values are secondary (from the external dossier); primaries were not opened here.
+## Ready as illustrative mechanism only
+- **Profile C — AuNP spheroid carrier penetration.** Use the size-dependent
+  penetration + **uptake–return (M_cell)** concept as an illustrative mechanism; do
+  NOT use Chen quantitative values until the primary is opened (currently
+  UNVERIFIED_SECONDARY from the external dossier).
 
-## Recommended Stage-3 direction (only after approval + PDFs)
-1. **Implement the released-API multilayer human-skin transport engine** (SC / viable
-   epidermis / dermis; finite donor; Robin/flux coupling; optional binding & dermal
-   clearance), parameterized from the **verified** small-molecule values, clearly
-   labelled *"RESEARCH_SUPPORTED released-API skin submodel — NOT a nanoparticle
-   release model."*
-2. **Pursue the celastrol/tripterine NLC skin primaries** to upgrade this into a real
-   nanoparticle profile (needs the PDFs).
-3. **Keep Chen and Dreher as two separate, clearly-labelled benchmarks** (verify
-   against primaries before any quantitative use).
+## Blocked pending sources (identified, not opened)
+- **Profile B — celastrol/tripterine NLC skin** (strongest genuine NP-skin chain):
+  need PMC3392146 / 10.1080/21691401.2018.1503599.
+- **Profile E — Doxil**: need FDA label + Gabizon 2003 (PMID 12739982).
+- **Profile F — nab-paclitaxel (Abraxane)** (or Onivyde alt): need SmPC/label + PK primary.
 
-## Release-to-tissue coupling & mass balance
-Robin/flux boundary (not `C0·f(t)`); for a spheroid carrier model add an intracellular
-`M_cell` uptake–return state (see `mass-balance-candidate-design.md`). Coupling per
-candidate in `release-to-tissue-coupling.md`.
-
-## Calibration / validation
-**No adequate independent external validation dataset exists for any candidate**
-(niacinamide: other vehicles in the same paper are not independent; Chen vs Dreher are
-incompatible systems). Maximum grade therefore **RESEARCH_SUPPORTED**, never QUALIFIED.
+## Calibration / validation (endpoint-specific)
+No profile has an independent external validation set. Endpoint status:
+- A: permeation/IVIVC = calibrated-quality (Iliopoulos), external validation = none.
+- D: permeability/PK/penetration = directly measured (single primary); external
+  validation = none (benchmark).
+- B/C/E/F: unverified pending primaries.
 
 ## Stage-3 entry conditions
-(1) user selects direction; (2) provide celastrol-NLC skin primaries (and/or Chen 2024,
-Dreher 2006, Potts & Guy 1992 PDFs) so parameters are extracted with provenance and
-independence checked; (3) confirm Outcome B and the "no complete NP profile" limit.
+Stage 3 may start on **A and D** now (with the mandatory labels above) and add C as an
+illustrative mechanism; B/E/F require the listed PDFs/labels. Any composite (e.g. E)
+must use the explicit bridges in `evidence-bridge-tables.md` and disable unsupported
+outputs.
 
-## MUST NOT (Stage 3)
-Claim QUALIFIED/clinical/patient-specific; present the skin submodel as a nanoparticle
-model; bridge the three separate systems; use cumulative-release-fraction as surface
-concentration; infer free API from carrier-only data; generalize pig→human or
-spheroid→human tumour without qualification.
+## MUST NOT
+Claim L5/L6/clinical/patient-specific; present A as a nanoparticle model or D as a
+drug; use Chen/Doxil/Abraxane search values as production data; bridge distinct systems
+without an explicit labelled ILLUSTRATIVE_COUPLING.

@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "description": "Parameter-level provenance (§14). Every value carries source, locator, evidence label, and verified_here flag. No naked numbers. 'verified_here' = read from an opened primary/PDF/user-image in this project.",
+  "parameters": [
+    {"name":"P_app_dextran_3.3kDa","value":"154 [134-174]","unit":"1e-7 cm/s","source":"dreher-2006","locator":"p.338 text + Fig3","label":"DIRECT_EXACT","verified_here":true,"system":"murine FaDu tumour vasculature"},
+    {"name":"P_app_dextran_40kDa","value":"9.5 [7.5-11.4]","unit":"1e-7 cm/s","source":"dreher-2006","locator":"p.338 text","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"P_app_dextran_2MDa","value":"1.7 [0.7-2.6]","unit":"1e-7 cm/s","source":"dreher-2006","locator":"p.335 abstract + p.338","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"P_app_serum_albumin","value":"4.9 [3.8-5.9]","unit":"1e-7 cm/s","source":"dreher-2006","locator":"p.339","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"P_app_dextran_10kDa","value":"32 [24-39]","unit":"1e-7 cm/s","source":"dreher-2006 (dossier/Fig3)","locator":"Fig3 / external dossier","label":"DIRECT_PARTIAL","verified_here":"figure-consistent (not in provided text pages)"},
+    {"name":"P_app_dextran_70kDa","value":"9.8 [7.1-12.4]","unit":"1e-7 cm/s","source":"dreher-2006 (dossier/Fig3)","locator":"Fig3 / external dossier","label":"DIRECT_PARTIAL","verified_here":"figure-consistent"},
+    {"name":"plasma_half_life_3.3kDa","value":"3.8 [2.5-4.2]","unit":"min","source":"dreher-2006","locator":"Fig4 caption p.339","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"plasma_half_life_70kDa","value":"19.6 [18.3-21.0]","unit":"min","source":"dreher-2006","locator":"Fig4 caption p.339","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"extravascular_AUC_40kDa","value":"2398","unit":"%Vmax*min","source":"dreher-2006","locator":"p.339","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"penetration_depth_small_dextran","value":">35","unit":"um","source":"dreher-2006","locator":"abstract/p.335","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"SC_partition_K_caffeine_human","value":"2.68 (20%CV)","unit":"dimensionless","source":"rothe-2017","locator":"Table 2, Protocol 1","label":"TISSUE_SPECIFIC","verified_here":true,"note":"caffeine, not niacinamide"},
+    {"name":"SC_diffusion_DH2_caffeine_human","value":"0.21 (26%CV)","unit":"h^-1","source":"rothe-2017","locator":"Table 2","label":"TISSUE_SPECIFIC","verified_here":true},
+    {"name":"niacinamide_cumulative_permeation_24h","value":"100.3-106.7","unit":"ug/cm2","source":"iliopoulos-2020","locator":"Results","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"niacinamide_IVIVC_R2","value":"0.98","unit":"dimensionless","source":"iliopoulos-2020","locator":"Abstract/Results","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"skin_split_thickness","value":"200-400","unit":"um","source":"oecd-tg428-2004","locator":"method","label":"DIRECT_PARTIAL","verified_here":true},
+    {"name":"doxil_composition","value":"HSPC 9.58 / chol 3.19 / DSPE-PEG2000 3.19; doxorubicin 2 mg/mL","unit":"mg/mL","source":"doxil-fda-label (search summary)","locator":"pending FDA label","label":"UNVERIFIED_SECONDARY","verified_here":false},
+    {"name":"doxil_elimination_half_life","value":"~20-30","unit":"h","source":"gabizon-2003-pld-pk (search)","locator":"pending primary","label":"UNVERIFIED_SECONDARY","verified_here":false},
+    {"name":"abraxane_particle_size","value":"~130 (dissociates to ~10)","unit":"nm","source":"abraxane-smpc (search)","locator":"pending label","label":"UNVERIFIED_SECONDARY","verified_here":false},
+    {"name":"chen_aunp_peak_depth","value":"15nm:21, 22nm:22, 60nm:15","unit":"um","source":"chen-2024 (dossier)","locator":"pending primary","label":"UNVERIFIED_SECONDARY","verified_here":false},
+    {"name":"celastrol_nlc_EE","value":"~96.56 (celastrol-indomethacin NLC)","unit":"%","source":"celastrol-tripterine-nlc-skin (search)","locator":"pending primary","label":"UNVERIFIED_SECONDARY","verified_here":false},
+    {"name":"dermal_clearance_k","value":null,"unit":"1/h","source":null,"label":"ASSUMED","verified_here":false,"note":"required for skin dermis sink; no sourced value; sensitivity analysis planned"}
+  ],
+  "rule": "ASSUMED/UNVERIFIED_SECONDARY parameters must not drive production predictions; they get ranges + sensitivity analysis, or block only the specific output."
+}

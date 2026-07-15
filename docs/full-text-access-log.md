@@ -54,3 +54,15 @@ extraction was therefore performed on the uploaded full texts:
 - **Still unreadable (web-blocked, not uploaded):** Dreher 2006, Chen 2024
   spheroid, Potts & Guy 1992, and newly-identified NP-skin primaries (tripterine
   NLC PMC3392146; caffeic-acid lipid NP PMC7826983; caffeine lipid NP Talanta 2015).
+
+---
+
+## Stage-2 CONTINUATION 3 (user-provided primary IMAGES)
+The user provided 5 photographs (IMG_8078–8082) = **Dreher et al. 2006 primary pages
+335–339** (JNCI 98(5)). Opened and read directly. This **upgrades Dreher from
+UNVERIFIED_SECONDARY to PRIMARY-VERIFIED**: P_app (154/9.5/1.7 ×10⁻⁷ cm/s; albumin
+4.9×10⁻⁷), plasma t½ (3.8/19.6 min), extravascular AUC (887/846/2398 %Vmax·min),
+penetration (>35/15/5 µm), Kedem–Katchalsky model — all read from the images. (10 kDa
+and 70 kDa P_app appear in Fig 3 / dossier but not in the provided text pages →
+DIRECT_PARTIAL.) Web-fetch remains blocked; Chen 2024, Potts & Guy 1992, celastrol NLC,
+Doxil/Abraxane labels are still not opened.

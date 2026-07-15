@@ -1,0 +1,118 @@
+{
+  "$schema_version": "1.0",
+  "description": "Stage-2 portfolio of 5-6 research-supported simulation profiles under the modular evidence architecture. Module labels use data/evidence-labels.json. 'verified_here' = opened primary in THIS project; secondary/search values are flagged. No production model is activated (Stage 3 not started).",
+  "generic_live_animation": {"id":"generic_soft_tissue","level":"LEVEL_0_ILLUSTRATIVE_ONLY","status":"live on site (unchanged)","note":"not organ-specific"},
+  "profiles": [
+    {
+      "id": "A_niacinamide_human_skin",
+      "name": "Released small-molecule (niacinamide) transport through human skin",
+      "api": "niacinamide", "carrier": "none (vehicle only)", "route": "topical", "tissue": "human skin (SC/epidermis/dermis)",
+      "purpose": "post-release tissue-transport submodel (multilayer skin diffusion)",
+      "profile_level": "LEVEL_2_RESEARCH_SUPPORTED_SUBMODEL",
+      "modules": {
+        "API_physchem": {"label":"DIRECT_EXACT","source":"iliopoulos-2020","verified_here":true},
+        "SC_partition_K": {"label":"TISSUE_SPECIFIC","source":"rothe-2017 (caffeine/resorcinol/7-EC, not niacinamide)","verified_here":true,"note":"transfer to niacinamide is MECHANISTIC_TRANSFER"},
+        "SC_diffusion_DH2": {"label":"TISSUE_SPECIFIC","source":"rothe-2017","verified_here":true},
+        "skin_geometry": {"label":"DIRECT_PARTIAL","source":"oecd-tg428-2004 (200-400 um split-thickness)","verified_here":true},
+        "permeation_flux_IVIVC": {"label":"DIRECT_EXACT","source":"iliopoulos-2020 (R2=0.98)","verified_here":true},
+        "dermal_clearance": {"label":"ASSUMED","source":null},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE","note":"same-paper vehicles not independent"}
+      },
+      "is_nanoparticle": false,
+      "stage3_ready": true,
+      "stage3_label": "RESEARCH_SUPPORTED released-API skin submodel - NOT a nanoparticle release model"
+    },
+    {
+      "id": "B_celastrol_nlc_skin",
+      "name": "Topical NLC (celastrol/tripterine) release + skin permeation",
+      "api": "celastrol (tripterine)", "carrier": "nanostructured lipid carrier (NLC)", "route": "topical", "tissue": "skin",
+      "purpose": "genuine nanoparticle release -> skin transport (target profile)",
+      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (candidate; currently UNVERIFIED)",
+      "modules": {
+        "formulation_size_EE": {"label":"UNVERIFIED_SECONDARY","source":"celastrol-tripterine-nlc-skin (search)","verified_here":false,"note":"e.g. celastrol-indomethacin NLC 26.92 nm, EE 96.56% - search summary only"},
+        "release_kinetics": {"label":"UNVERIFIED_SECONDARY","verified_here":false},
+        "skin_permeation": {"label":"UNVERIFIED_SECONDARY","verified_here":false,"note":"cationic NLC 1.35x/1.95x vs neutral/anionic - search summary"},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE"}
+      },
+      "is_nanoparticle": true,
+      "stage3_ready": false,
+      "blocker": "primaries web-blocked/not uploaded (PMC3392146; 10.1080/21691401.2018.1503599) - need PDFs to verify/extract"
+    },
+    {
+      "id": "C_aunp_tumor_spheroid",
+      "name": "Intact nanoparticle penetration in a tumour spheroid (carrier transport)",
+      "api": "none (gold nanoparticle carrier)", "carrier": "gold nanoparticle (15/22/60 nm)", "route": "in vitro incubation", "tissue": "MDA-MB-231 spheroid",
+      "purpose": "size-dependent intact-carrier penetration benchmark (uptake-return, not pure Fickian)",
+      "profile_level": "LEVEL_1_MECHANISTIC_BENCHMARK (UNVERIFIED)",
+      "modules": {
+        "carrier_size": {"label":"UNVERIFIED_SECONDARY","source":"chen-2024 (dossier)","verified_here":false},
+        "penetration_depth": {"label":"UNVERIFIED_SECONDARY","note":"peaks 924/187 ppm; depths 21/22/15 um - dossier only","verified_here":false},
+        "transport_mechanism": {"label":"MECHANISTIC_TRANSFER","note":"needs extracellular<->cell uptake-return state (M_cell)"},
+        "api_release": {"label":"INSUFFICIENT_EVIDENCE","note":"no API present"}
+      },
+      "is_nanoparticle": true,
+      "stage3_ready": false,
+      "blocker": "Chen 2024 primary not opened (dossier-secondary only). Ready as illustrative mechanism; NOT for quantitative use until primary + SI verified."
+    },
+    {
+      "id": "D_dreher_tumor_vascular",
+      "name": "Tumour vascular-to-interstitial transport benchmark",
+      "api": "none (dextran model macromolecule)", "carrier": "fluorescent dextran / albumin", "route": "intravenous", "tissue": "murine FaDu window-chamber tumour",
+      "purpose": "vascular permeability + interstitial penetration benchmark (Kedem-Katchalsky)",
+      "profile_level": "LEVEL_2_RESEARCH_SUPPORTED_SUBMODEL (mechanistic benchmark; PRIMARY VERIFIED)",
+      "modules": {
+        "governing_equation": {"label":"DIRECT_EXACT","source":"dreher-2006 (Kedem-Katchalsky, Eq 1-3)","verified_here":true,"note":"verified from user-provided primary images pp.335-339"},
+        "apparent_permeability": {"label":"DIRECT_EXACT","source":"dreher-2006 Fig3/text","verified_here":true,"values":"3.3kDa=154, 40kDa=9.5, 2MDa=1.7 (x1e-7 cm/s); albumin=4.9e-7"},
+        "permeability_intermediate": {"label":"DIRECT_PARTIAL","note":"10kDa=32, 70kDa=9.8 (x1e-7) from dossier/Fig3, not in the text pages provided","verified_here":"figure-consistent"},
+        "plasma_half_life": {"label":"DIRECT_EXACT","values":"3.3kDa=3.8min, 70kDa=19.6min","verified_here":true},
+        "extravascular_AUC": {"label":"DIRECT_EXACT","values":"3.3kDa=887, 10kDa=846, 40kDa=2398 %Vmax.min","verified_here":true},
+        "penetration_depth": {"label":"DIRECT_EXACT","values":">35um (3.3/10kDa); ~15um (40-70kDa); ~5um (2MDa) at 30min","verified_here":true},
+        "species_relevance": {"label":"BENCHMARK","note":"murine; dextran not a drug - benchmark only"}
+      },
+      "is_nanoparticle": false,
+      "stage3_ready": true,
+      "stage3_label": "MECHANISTIC_BENCHMARK (dextran, murine) - NOT a nanoparticle drug; primary-verified"
+    },
+    {
+      "id": "E_doxil_liposomal_doxorubicin",
+      "name": "PEGylated liposomal doxorubicin (Doxil) systemic PK + tumour delivery",
+      "api": "doxorubicin", "carrier": "PEGylated liposome (HSPC/chol/DSPE-PEG2000)", "route": "intravenous", "tissue": "systemic + solid tumour",
+      "purpose": "clinically established nanoformulation; modular composite (formulation+PK verified-elsewhere; local transport transferred/benchmarked)",
+      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (candidate; modules UNVERIFIED here)",
+      "modules": {
+        "formulation": {"label":"UNVERIFIED_SECONDARY","note":"HSPC/chol/DSPE-PEG2000; ammonium-sulfate loading (search) - needs FDA label","verified_here":false},
+        "systemic_PK": {"label":"UNVERIFIED_SECONDARY","note":"elimination t1/2 ~20-30 h; ~90-95% encapsulated in plasma (search) - needs FDA label / Gabizon 2003 PMID 12739982","verified_here":false},
+        "tumour_accumulation": {"label":"INSUFFICIENT_EVIDENCE","note":"needs primary"},
+        "local_release": {"label":"ASSUMED"},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE"}
+      },
+      "is_nanoparticle": true,
+      "stage3_ready": false,
+      "blocker": "no opened primary/label; composition & PK are search-summary (UNVERIFIED_SECONDARY). Need Doxil FDA label + Gabizon 2003."
+    },
+    {
+      "id": "F_nab_paclitaxel_abraxane",
+      "name": "nab-Paclitaxel (Abraxane) systemic PK + carrier dissociation",
+      "api": "paclitaxel", "carrier": "albumin-bound nanoparticle (~130 nm)", "route": "intravenous", "tissue": "systemic + tumour",
+      "purpose": "distinct carrier class (protein NP); teaches carrier dissociation & free-vs-bound API",
+      "profile_level": "LEVEL_2_RESEARCH_SUPPORTED_SUBMODEL (candidate; UNVERIFIED here)",
+      "modules": {
+        "formulation": {"label":"UNVERIFIED_SECONDARY","note":"130 nm albumin-bound, no excipients; dissociates to ~10 nm complexes on IV (search) - needs SmPC/label","verified_here":false},
+        "systemic_PK": {"label":"UNVERIFIED_SECONDARY","note":"linear PK (search) - needs label / PMC2661025","verified_here":false},
+        "free_vs_bound": {"label":"MECHANISTIC_TRANSFER","note":"rapid dissociation = key free-vs-encapsulated teaching point"},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE"}
+      },
+      "is_nanoparticle": true,
+      "stage3_ready": false,
+      "alternative": "Onivyde (liposomal irinotecan) - reverse-engineering PMC11791869; free/total SN-38 methodology",
+      "blocker": "no opened primary/label; all values search-summary (UNVERIFIED_SECONDARY)."
+    }
+  ],
+  "portfolio_summary": {
+    "stage3_ready_now": ["A_niacinamide_human_skin (released-API skin submodel, labelled non-NP)", "D_dreher_tumor_vascular (vascular benchmark, primary-verified)"],
+    "ready_as_illustrative_mechanism_only": ["C_aunp_tumor_spheroid (until Chen primary verified)"],
+    "blocked_pending_sources": ["B_celastrol_nlc_skin","E_doxil_liposomal_doxorubicin","F_nab_paclitaxel_abraxane"],
+    "no_profile_externally_validated": true,
+    "outcome": "OUTCOME B - portfolio of research-supported submodels/benchmarks; no complete externally-validated NP drug profile"
+  }
+}

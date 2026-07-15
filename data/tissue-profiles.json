@@ -18,7 +18,7 @@
     },
     {
       "id": "solid_tumor_local",
-      "status": "RESEARCH_SUPPORTED (SEPARATE benchmarks; dossier-reported, UNVERIFIED)",
+      "status": "Profile D (Dreher vascular) PRIMARY-VERIFIED via user images = LEVEL_2 benchmark; Profile C (Chen spheroid) UNVERIFIED_SECONDARY = LEVEL_1",
       "geometry": "1D radial",
       "process": "released-API interstitial diffusion + clearance",
       "populated": false,
@@ -27,7 +27,7 @@
         "dreher-2006",
         "spheroid-size-penetration-2024"
       ],
-      "note": "Two SEPARATE benchmarks per external dossier: (a) AuNP spheroid carrier penetration [Chen 2024]; (b) dextran vascular transport [Dreher 2006]. Values secondary/unverified (primaries not opened). NOT a drug-release profile; do NOT bridge the two systems.",
+      "note": "Two SEPARATE benchmarks (not a drug profile). Dreher now primary-verified; Chen still dossier-only. See profile-portfolio.json.",
       "sub_benchmarks": [
         "chen-2024-spheroid (carrier, no API)",
         "dreher-2006 (dextran, vascular)"
@@ -86,5 +86,6 @@
       "note": "Strongest EXACT NANOPARTICLE-skin candidate: has formulation+release+Franz permeation+in vivo (per search, unverified). Needs PDFs to verify/extract and to confirm independent validation."
     }
   ],
-  "stage2_continuation_note": "After external-dossier ingestion: tumour reclassified to two SEPARATE unverified benchmarks (not a drug profile). Verified skin submodel = niacinamide (small molecule, not NP). Strongest NP candidate = celastrol/tripterine NLC skin (unverified). No profile QUALIFIED."
+  "stage2_continuation_note": "After external-dossier ingestion: tumour reclassified to two SEPARATE unverified benchmarks (not a drug profile). Verified skin submodel = niacinamide (small molecule, not NP). Strongest NP candidate = celastrol/tripterine NLC skin (unverified). No profile QUALIFIED.",
+  "portfolio_reference": "See data/profile-portfolio.json for the modular 6-profile portfolio with per-module evidence labels and profile LEVELs. This file retains the earlier tissue-candidate view."
 }

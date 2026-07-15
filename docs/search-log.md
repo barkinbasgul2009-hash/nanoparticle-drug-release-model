@@ -52,3 +52,12 @@ citation; Mitragotri 2011. Forward citation still web-blocked.
 **Saturation:** still NOT reached for the NP-formulation facet — a genuinely stronger
 NP-skin candidate (celastrol/tripterine NLC) surfaced this iteration, which by the
 saturation rule means the facet is not saturated.
+
+---
+
+## Stage-2 CONTINUATION 3 (portfolio E/F identification)
+| # | Query (abridged) | Facet | Identified (not opened) |
+|---|---|---|---|
+| 10 | Doxil PLD size/lipid/PK/encapsulation | Profile E | Doxil FDA label; Gabizon 2003 (PMID 12739982); composition/PK = search-summary only |
+| 11 | Abraxane vs Onivyde formulation/PK | Profile F | Abraxane SmPC (emc/6438); PMC2661025 PK; Onivyde reverse-eng PMC11791869 |
+All Profile E/F values are UNVERIFIED_SECONDARY (labels/primaries not opened).

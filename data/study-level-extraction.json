@@ -175,19 +175,37 @@
       "identity": "Dreher MR et al. 2006, JNCI 98(5):335-344, PMID 16507830",
       "type": "in vivo rodent",
       "extracted_values": {
-        "provenance": "EXTERNAL DOSSIER (secondary), primary NOT opened by us - UNVERIFIED",
-        "apparent_permeability_1e-7_cm_s": {
+        "provenance": "PRIMARY VERIFIED via user-provided page images (JNCI 2006;98:335-339)",
+        "apparent_permeability_1e-7_cm_s_TEXT_VERIFIED": {
           "3.3kDa": "154 [134-174]",
-          "10kDa": "32 [24-39]",
           "40kDa": "9.5 [7.5-11.4]",
-          "70kDa": "9.8 [7.1-12.4]",
-          "2MDa": "1.7 [0.7-2.6]"
+          "2MDa": "1.7 [0.7-2.6]",
+          "serum_albumin": "4.9 [3.8-5.9]"
         },
-        "penetration": ">35 um (3.3/10 kDa), ~5-15 um (40 kDa - 2 MDa)",
-        "system": "dextran, IV, murine FaDu window chamber"
+        "apparent_permeability_figure_or_dossier_only": {
+          "10kDa": "32 [24-39]",
+          "70kDa": "9.8 [7.1-12.4]"
+        },
+        "plasma_half_life_min": {
+          "3.3kDa": "3.8 [2.5-4.2]",
+          "70kDa": "19.6 [18.3-21.0]"
+        },
+        "extravascular_AUC_pctVmax_min": {
+          "3.3kDa": 887,
+          "10kDa": 846,
+          "40kDa": 2398
+        },
+        "penetration_um_at_30min": {
+          "3.3_10kDa": ">35",
+          "40_70kDa": "~15",
+          "2MDa": "~5"
+        },
+        "spearman_r": -0.8,
+        "model": "Kedem-Katchalsky (Eq1); P_app Eq2-3; HCT~20%; Stokes-Einstein radius",
+        "system": "dextran/albumin, IV, nude BALB/c mouse, FaDu dorsal window chamber, LSM510 confocal (460x460um, 7.1um slice)"
       },
-      "pending_full_text": "secondary_only",
-      "note": "Values from external dossier; carrier=dextran (not NP); NOT independently verified."
+      "pending_full_text": false,
+      "note": "PRIMARY VERIFIED from user images pp.335-339. Dextran = model macromolecule (benchmark, not a drug). 10/70 kDa values figure/dossier-consistent, not in provided text pages."
     },
     {
       "id": "chen-2024-spheroid",

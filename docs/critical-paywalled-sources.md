@@ -27,3 +27,14 @@ OECD TG 428; Sarfraz 2022 review (10.3390/pharmaceutics14091909).
   dossier's §2.7 "additional skin-modeling review"; **not present**.
 - A previously identified paywalled article — **not present**.
 These are listed as user-held, not fabricated. Please upload if available.
+
+---
+
+## Stage-2 CONTINUATION 3 update
+- **Dreher 2006 — NOW PROVIDED & VERIFIED** (user photos pp.335–339). Removed from the
+  missing list. (10/70 kDa exact P_app values would still benefit from the full Table 1.)
+- **Still needed:** Chen 2024 primary + SI; Potts & Guy 1992; celastrol/tripterine NLC
+  skin primaries; **Doxil FDA label + Gabizon 2003**; **Abraxane SmPC/label** (or
+  Onivyde monograph). These block Profiles B, C, E, F from primary verification.
+- **User-held / not present** (§20): the "01"-prefixed PDF, an extra supporting source,
+  and any earlier paywalled article are still NOT in the upload folder.

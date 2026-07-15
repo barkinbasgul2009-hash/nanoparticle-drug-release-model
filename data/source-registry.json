@@ -54,13 +54,14 @@
       "year": 2006,
       "volume": "98(5)",
       "pages": "335-344",
-      "identifier": "PMID 16507830 (DOI 10.1093/jnci/djj070 reported, not opened)",
+      "identifier": "PMID 16507830; DOI 10.1093/jnci/djj070 (VERIFIED from primary images)",
       "identity_verified": true,
-      "full_text_opened": false,
-      "quantitative_data_extracted": false,
+      "full_text_opened": "partial (primary pages 335-339 provided as images by user; verified)",
+      "quantitative_data_extracted": true,
       "role": "candidate quantitative source for tumour vascular permeability vs MW and interstitial penetration depth; rodent window-chamber, dextran carriers (not released API). Values require full-text verification.",
       "stage2_continuation": "Values are dossier-reported SECONDARY/UNVERIFIED; primary still not opened.",
-      "secondary_reported_values": "From external dossier (UNVERIFIED by us): apparent permeability (x1e-7 cm/s) 3.3kDa=154 [134-174], 10kDa=32 [24-39], 40kDa=9.5 [7.5-11.4], 70kDa=9.8 [7.1-12.4], 2MDa=1.7 [0.7-2.6]; depth >35 um (small) vs ~5-15 um (large). Dextran (model macromolecule), IV, murine FaDu window chamber."
+      "secondary_reported_values": "From external dossier (UNVERIFIED by us): apparent permeability (x1e-7 cm/s) 3.3kDa=154 [134-174], 10kDa=32 [24-39], 40kDa=9.5 [7.5-11.4], 70kDa=9.8 [7.1-12.4], 2MDa=1.7 [0.7-2.6]; depth >35 um (small) vs ~5-15 um (large). Dextran (model macromolecule), IV, murine FaDu window chamber.",
+      "stage2_continuation2": "PRIMARY VERIFIED via user photos pp.335-339. Text-verified P_app: 3.3kDa=154 [134-174], 40kDa=9.5 [7.5-11.4], 2MDa=1.7 [0.7-2.6] x1e-7 cm/s; albumin=4.9e-7 [3.8-5.9]. Plasma t1/2 3.3kDa=3.8min, 70kDa=19.6min. Extravasc AUC 887/846/2398 %Vmax.min (3.3/10/40kDa). Penetration >35um(small)/~15um(40-70)/~5um(2MDa) at 30min. Model: Kedem-Katchalsky. 10kDa=32 & 70kDa=9.8 from Fig3/dossier (figure-consistent, not in provided text pages)."
     },
     {
       "id": "potts-guy-1992",
@@ -222,6 +223,50 @@
       "full_text_opened": false,
       "quantitative_data_extracted": false,
       "role": "skin-model-structure support (dossier ref 8 / 'additional review'); identified, not opened"
+    },
+    {
+      "id": "doxil-fda-label",
+      "type": "regulatory_label",
+      "title": "DOXIL (doxorubicin HCl liposome injection) - FDA label (authoritative source, NOT opened)",
+      "identity_verified": true,
+      "full_text_opened": false,
+      "quantitative_data_extracted": false,
+      "role": "authoritative Doxil composition/PK; needed to verify Profile E",
+      "secondary_reported_values": "Search summary (UNVERIFIED): doxorubicin 2 mg/mL; HSPC 9.58, chol 3.19, DSPE-PEG2000 3.19 mg/mL; ammonium-sulfate loading; elim t1/2 ~20-30 h; ~90-95% encapsulated in plasma."
+    },
+    {
+      "id": "gabizon-2003-pld-pk",
+      "type": "review_or_meta_analysis",
+      "title": "Pharmacokinetics of Pegylated Liposomal Doxorubicin: review of animal and human studies",
+      "authors": "Gabizon A, et al.",
+      "journal": "Clin Pharmacokinet",
+      "year": 2003,
+      "identifier": "PMID 12739982",
+      "identity_verified": true,
+      "full_text_opened": false,
+      "quantitative_data_extracted": false,
+      "role": "PLD PK review (secondary); trace to primaries for Profile E"
+    },
+    {
+      "id": "abraxane-smpc",
+      "type": "regulatory_label",
+      "title": "Abraxane (nab-paclitaxel) SmPC / FDA label (NOT opened)",
+      "identity_verified": true,
+      "full_text_opened": false,
+      "quantitative_data_extracted": false,
+      "role": "authoritative nab-paclitaxel formulation/PK; needed for Profile F",
+      "secondary_reported_values": "Search summary (UNVERIFIED): 130 nm albumin-bound paclitaxel, no excipients; dissociates to ~10 nm albumin-paclitaxel complexes on IV; linear PK."
+    },
+    {
+      "id": "onivyde-reverse-eng-2025",
+      "type": "peer_reviewed_study",
+      "title": "Reverse engineering of Onivyde - irinotecan liposome injection",
+      "journal": "(PMC11791869)",
+      "identifier": "PMC11791869",
+      "identity_verified": true,
+      "full_text_opened": false,
+      "quantitative_data_extracted": false,
+      "role": "alternative Profile F (liposomal irinotecan); free/total SN-38 methodology; not opened"
     }
   ],
   "pending": {
