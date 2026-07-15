@@ -5,6 +5,39 @@ two physics modules so that different nanoparticle designs can be compared *in
 silico* — before going to the bench — and packages the result as an interactive,
 browser-based tool the community can use directly.
 
+---
+
+## 🚀 For non-technical users — start here
+
+**You do not need to install anything.** The simulator runs entirely in your web
+browser.
+
+👉 **Open the live tool:
+[https://barkinbasgul2009-hash.github.io/nanoparticle-drug-release-model/](https://barkinbasgul2009-hash.github.io/nanoparticle-drug-release-model/)**
+
+*(The link goes live after this project is merged and GitHub Pages finishes its
+first deployment — see [Publishing the website](#publishing-the-website-github-pages).)*
+
+Once it opens:
+
+1. **Move the sliders** on the left to describe your nanoparticle (size, coating
+   thickness, drug loading) and the tissue around it.
+2. **"Release comparison" tab** — see how fast the drug leaves the particle,
+   with six standard models drawn together for the same design.
+3. **"Tissue penetration" tab** — see how far the drug spreads into tissue and
+   read the **penetration depth** directly.
+
+Everything updates instantly as you move the sliders. Nothing is uploaded, nothing
+is saved, and it works on a laptop or a phone. If you prefer, you can also open the
+file `web/index.html` from a download of this project by double-clicking it — no
+internet required.
+
+> The R code, Shiny app, and Jupyter notebook below are for developers who want to
+> extend the models or run them programmatically. Non-technical users can ignore
+> them entirely.
+
+---
+
 | Module | Question it answers | Physics |
 | --- | --- | --- |
 | **1 — Release** | How fast does drug leave the particle? | Higuchi, first-order, zero-order, Korsmeyer–Peppas, exact Fickian sphere (Crank), membrane-controlled core–shell |
@@ -98,27 +131,37 @@ notebooks/
 examples/
   run_example.R         worked example; writes comparison + tissue-profile PNGs
 tests/
-  run_tests.R           test entry point (62 assertions, no dependencies)
+  run_tests.R           test entry point (31 assertions, no dependencies)
 ```
 
 ---
 
 ## Getting started
 
-### 1. Run the core models (R, no packages needed)
+### ⭐ Recommended: the browser tool (no installation)
+
+This is the primary, recommended way to use the simulator — for everyone, technical
+or not.
+
+- **Online:** open
+  [the live website](https://barkinbasgul2009-hash.github.io/nanoparticle-drug-release-model/).
+- **Offline:** download this project and double-click `web/index.html`.
+
+No R, no server, no dependencies — the models run client-side in JavaScript. It is
+fully self-contained (all styles and code are inline in the one HTML file), so it
+also works correctly when served from a subdirectory such as a GitHub Pages
+project site.
+
+The sections below are **for developers only.**
+
+### For developers — run the core models (R, no packages needed)
 
 ```bash
-Rscript tests/run_tests.R          # 62 assertions, all base R
+Rscript tests/run_tests.R          # 31 assertions, all base R
 Rscript examples/run_example.R     # writes examples/*.png and a fit demo
 ```
 
-### 2. Zero-install browser tool
-
-Open `web/index.html` in any browser, or publish the `web/` folder to GitHub Pages.
-No R, no server, no dependencies — the models run client-side in JavaScript. This is
-the fastest path for the wider community.
-
-### 3. Full Shiny app (R-native, interactive)
+### For developers — full Shiny app (R-native, interactive)
 
 ```r
 install.packages("shiny")                      # one-time
@@ -130,7 +173,7 @@ readout), and **Fit your data** (CSV upload → AICc model ranking). Deploy publ
 via [shinyapps.io](https://www.shinyapps.io/) or Posit Connect. The app depends only
 on `shiny`; all plotting uses base graphics.
 
-### 4. Develop / document in Jupyter
+### For developers — develop / document in Jupyter
 
 The R models run in a Jupyter notebook via the **IRkernel**:
 
@@ -139,6 +182,41 @@ install.packages("IRkernel"); IRkernel::installspec()
 ```
 
 Then open `notebooks/nanoparticle_simulator.ipynb`.
+
+---
+
+## Publishing the website (GitHub Pages)
+
+The website is deployed automatically by the workflow
+`.github/workflows/pages.yml`, which uploads the `web/` folder as the site root.
+
+**One-time setup (repository owner):** in the repository, go to
+**Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+After that, every push to `main` (including merging this pull request) rebuilds and
+publishes the site to:
+
+```
+https://barkinbasgul2009-hash.github.io/nanoparticle-drug-release-model/
+```
+
+You can also trigger a deployment manually from the **Actions** tab
+("Deploy web tool to GitHub Pages" → **Run workflow**).
+
+---
+
+## What was executed and tested vs. only statically checked
+
+Full transparency on verification status:
+
+| Component | Status | How it was verified |
+| --- | --- | --- |
+| R model core (`R/*.R`) | ✅ **Executed & tested** | 31 assertions pass under R 4.3.3 (bounds, analytic values, solver stability, parameter recovery) |
+| Test suite (`tests/`) | ✅ **Executed** | `Rscript tests/run_tests.R` — all pass |
+| Worked example (`examples/run_example.R`) | ✅ **Executed** | Runs; produces both figures and the model-fit ranking |
+| Jupyter notebook (`notebooks/`) | ✅ **Executed** | Every R code cell extracted and run end-to-end successfully |
+| Browser tool (`web/index.html`) | ✅ **Executed** | Loaded in a headless Chromium; both tabs render, no JS errors, penetration depth matches the R result |
+| Shiny app (`app/app.R`) | ⚠️ **Statically checked only** | Parses cleanly and its UI/server assemble under a stubbed `shiny`. It was **not** run live because installing `shiny` needs network access to CRAN, which was blocked in the build environment. Its model logic is the same tested `R/` core. |
+| GitHub Actions workflows | ⚠️ **Statically checked only** | Standard, validated YAML; they run on GitHub after merge, not in the build environment. |
 
 ---
 
