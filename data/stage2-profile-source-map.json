@@ -2,13 +2,96 @@
   "$schema_version": "1.0",
   "description": "Maps each portfolio profile to its acquisition items (data/stage2-source-acquisition-registry.json 'aid'). Some items serve multiple profiles; counted once in the unique total (35).",
   "profiles": {
-    "A_niacinamide_skin": {"items": ["A1","A2","A3","A4","A5","A6","A7"], "verified_in_repo": ["A1","A2","A3"], "target_range": "6-10"},
-    "B_celastrol_nlc_skin": {"items": ["B1","B2","B3","B4","B5","B6"], "verified_in_repo": [], "target_range": "8-12"},
-    "C_aunp_spheroid": {"items": ["C1","C2","C3"], "verified_in_repo": [], "target_range": "6-10"},
-    "D_dreher_vascular": {"items": ["D1","D2","D3","D4","D5","D6","D7"], "verified_in_repo": ["D1"], "target_range": "4-7"},
-    "E_doxil": {"items": ["E1","E2","E3","E4","E5","E6"], "verified_in_repo": [], "target_range": "8-12"},
-    "F_abraxane_onivyde": {"items": ["F1","F2","F3","F4","F5","F6"], "verified_in_repo": [], "target_range": "7-10"}
+    "A_niacinamide_skin": {
+      "items": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8"
+      ],
+      "verified_in_repo": [
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "target_range": "6-10"
+    },
+    "B_celastrol_nlc_skin": {
+      "items": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "B7",
+        "B8"
+      ],
+      "verified_in_repo": [],
+      "target_range": "8-12"
+    },
+    "C_aunp_spheroid": {
+      "items": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5"
+      ],
+      "verified_in_repo": [],
+      "target_range": "6-10"
+    },
+    "D_dreher_vascular": {
+      "items": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9"
+      ],
+      "verified_in_repo": [
+        "D1"
+      ],
+      "target_range": "4-7"
+    },
+    "E_doxil": {
+      "items": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E7",
+        "E8"
+      ],
+      "verified_in_repo": [],
+      "target_range": "8-12"
+    },
+    "F_abraxane_onivyde": {
+      "items": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6"
+      ],
+      "verified_in_repo": [],
+      "target_range": "7-10"
+    }
   },
-  "shared_or_cross_profile": ["A5 Mitragotri (also model structure for any skin profile)", "D6 Matsumura&Maeda EPR (context for E/F too)"],
-  "note": "Profile targets are guidance, not quotas. Total unique items = 35."
+  "shared_or_cross_profile": [
+    "A5 Mitragotri (also model structure for any skin profile)",
+    "D6 Matsumura&Maeda EPR (context for E/F too)"
+  ],
+  "note": "Profile targets are guidance, not quotas. Total unique items = 44 (expanded toward preferred 40-60)."
 }

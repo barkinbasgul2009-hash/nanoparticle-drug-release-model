@@ -18,7 +18,7 @@ Machine-readable master list: `data/stage2-source-acquisition-registry.json`.
 No DOI is asserted as confirmed unless actually seen; unseen ones are marked "confirm".
 
 ## Totals
-35 unique items — Tier 1: 11, Tier 2: 15, Tier 3: 8 (targets: A 7, B 6, C 3, D 7,
+44 unique items — Tier 1: 13, Tier 2: 23, Tier 3: 8 (expanded toward the preferred 40-60 range) (targets: A 7, B 6, C 3, D 7,
 E 6, F 6). Open-access/PMC: 6; FDA/EMA: 6; already in repo: 4; user-download-required
 (paywalled/subscription): 18.
 

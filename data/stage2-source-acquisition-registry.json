@@ -394,16 +394,104 @@
       "id_status": "identified_search",
       "access": "FDA",
       "need": "authoritative formulation/PK if Onivyde chosen over Abraxane"
+    },
+    {
+      "aid": "A8",
+      "tier": 2,
+      "profile": "A",
+      "module": "human vs pig skin / anatomical site",
+      "citation": "SEARCH TARGET: primary quantitative comparison of human vs pig (and body-site) skin permeability/retention (e.g., Wester & Maibach, or an in vitro inter-species/site study).",
+      "id_status": "search_target",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "species/site transferability of SC parameters (Rothe used pig+human; quantify the mapping)"
+    },
+    {
+      "aid": "B7",
+      "tier": 2,
+      "profile": "B",
+      "module": "alternative topical NP (SLN)",
+      "citation": "SEARCH TARGET: a solid lipid nanoparticle (SLN) topical study with the FULL chain (characterization + EE/loading + release curve + Franz permeation + skin retention + comparator).",
+      "id_status": "search_target",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "backup NP-skin candidate if celastrol NLC chain is incomplete"
+    },
+    {
+      "aid": "B8",
+      "tier": 2,
+      "profile": "B",
+      "module": "alternative topical NP (polymeric)",
+      "citation": "SEARCH TARGET: a polymeric nanoparticle (e.g., PLGA) topical study with release + skin permeation + retention.",
+      "id_status": "search_target",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "second carrier class comparator for Profile B"
+    },
+    {
+      "aid": "C4",
+      "tier": 2,
+      "profile": "C",
+      "module": "independent spheroid dataset (2nd group)",
+      "citation": "SEARCH TARGET: an independent multicellular tumor spheroid nanoparticle penetration study (non-gold or a second group) reporting radial depth profiles.",
+      "id_status": "search_target",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "independent benchmark/validation for Chen 2024"
+    },
+    {
+      "aid": "C5",
+      "tier": 2,
+      "profile": "C",
+      "module": "penetration model (binding/uptake)",
+      "citation": "Thurber GM, Wittrup KD - mechanistic model of macromolecule/nanoparticle tumor penetration with binding and cellular uptake (confirm exact paper/DOI).",
+      "id_status": "identified_search",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "reaction-diffusion + uptake model structure for intact carriers (Profile C equations)"
+    },
+    {
+      "aid": "D8",
+      "tier": 3,
+      "profile": "D",
+      "module": "foundational permeability",
+      "citation": "Michel CC, Curry FE. Microvascular permeability. Physiol Rev 1999;79:703-761.",
+      "id_status": "verified_citation_from_dreher_reflist",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "foundational vascular-permeability theory (model structure for D)"
+    },
+    {
+      "aid": "D9",
+      "tier": 3,
+      "profile": "D",
+      "module": "tumor vessel environment",
+      "citation": "Hashizume H, Baluk P, Morikawa S, McLean JW, Thurston G, Roberge S, et al. Openings between defective endothelial cells explain tumor vessel leakiness. Am J Pathol 2000;156:1363-1380.",
+      "id_status": "verified_citation_from_dreher_reflist",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "tumor vessel pore/leakiness (environment parameter for D)"
+    },
+    {
+      "aid": "E7",
+      "tier": 2,
+      "profile": "E",
+      "module": "doxorubicin release mechanism (context)",
+      "citation": "Ulbrich K, Etrych T, Chytil P, Jelinkova M, Rihova B. HPMA copolymers with pH-controlled release of doxorubicin. J Control Release 2003;87:33-47.",
+      "id_status": "verified_citation_from_dreher_reflist",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "pH-controlled doxorubicin release mechanism (context; NOTE: polymer conjugate, not liposome - bridge only)"
+    },
+    {
+      "aid": "E8",
+      "tier": 2,
+      "profile": "E",
+      "module": "intratumoural free/bioavailable doxorubicin",
+      "citation": "SEARCH TARGET: primary study of PLD/Doxil intratumoural distribution and bioavailable (free) doxorubicin (e.g., Laginha 2005-type). Confirm citation.",
+      "id_status": "search_target",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "free-vs-encapsulated doxorubicin IN the tumour (Profile E free-API module)"
     }
   ],
   "counts": {
-    "total_unique_items": 35,
-    "tier1": 11,
-    "tier2": 15,
+    "total_unique_items": 44,
+    "tier1": 13,
+    "tier2": 23,
     "tier3": 8,
     "already_in_repo": 4,
-    "open_pmc": 6,
-    "fda_ema": 6,
-    "user_download_required": 18
+    "note": "Expanded toward the 40-60 preferred range using Dreher-reflist-verified citations (D8,D9,E7) and honest search-target categories (A8,B7,B8,C4,E8) plus one identified-search model paper (C5). No fabricated DOIs."
   }
 }

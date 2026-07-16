@@ -66,3 +66,13 @@ penetration (>35/15/5 µm), Kedem–Katchalsky model — all read from the image
 and 70 kDa P_app appear in Fig 3 / dossier but not in the provided text pages →
 DIRECT_PARTIAL.) Web-fetch remains blocked; Chen 2024, Potts & Guy 1992, celastrol NLC,
 Doxil/Abraxane labels are still not opened.
+
+---
+
+## Stage-2 CONTINUATION 4 (duplicate images)
+The user uploaded 5 more images (IMG_8082,8083,8084,8085,8086). Verified by opening:
+they are **exact duplicates** of the already-ingested Dreher 2006 pages 339-343
+(Figs 3-6, Table 1, References 18-65). No new content; no action beyond confirming.
+The acquisition registry was expanded (35 -> 44 items) using Dreher-reflist-verified
+citations (Michel & Curry 1999; Hashizume 2000; Ulbrich 2003) plus honest
+search-target categories for under-covered profiles. No fabricated DOIs.

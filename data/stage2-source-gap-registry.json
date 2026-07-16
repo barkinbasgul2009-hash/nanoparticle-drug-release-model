@@ -2,19 +2,166 @@
   "$schema_version": "1.0",
   "description": "Machine-readable gap registry. Each gap links to the acquisition item(s) that would close it. status codes match docs/stage2-profile-completion-matrix.md.",
   "gaps": [
-    {"profile":"A","module":"skin permeability model coefficients","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["A4"],"blocking":true},
-    {"profile":"A","module":"dermal clearance","status":"NO_SOURCE_IDENTIFIED_or_ASSUMED","closes_with":["A7"],"blocking":false},
-    {"profile":"A","module":"independent validation","status":"NO_SOURCE_IDENTIFIED","closes_with":["A6"],"blocking":false},
-    {"profile":"B","module":"exact formulation+release+permeation","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["B1","B2"],"blocking":true},
-    {"profile":"B","module":"independent/comparator","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["B3","B4","B6"],"blocking":false},
-    {"profile":"C","module":"carrier penetration primary + SI","status":"UNVERIFIED_SECONDARY","closes_with":["C1"],"blocking":true},
-    {"profile":"C","module":"uptake-return model","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["C2"],"blocking":true},
-    {"profile":"D","module":"transport/permeability/penetration","status":"VERIFIED_COMPLETE","closes_with":["D1"],"blocking":false},
-    {"profile":"D","module":"independent validation","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["D2","D3"],"blocking":false},
-    {"profile":"E","module":"official formulation+PK","status":"UNVERIFIED_SECONDARY","closes_with":["E1","E3"],"blocking":true},
-    {"profile":"E","module":"release-rate -> PK/tumour coupling","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["E5"],"blocking":true},
-    {"profile":"E","module":"free vs encapsulated doxorubicin","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["E2","E1"],"blocking":true},
-    {"profile":"F","module":"official formulation+PK","status":"UNVERIFIED_SECONDARY","closes_with":["F1","F3"],"blocking":true},
-    {"profile":"F","module":"free vs bound API","status":"SOURCE_IDENTIFIED_NOT_ACQUIRED","closes_with":["F2","F5"],"blocking":false}
+    {
+      "profile": "A",
+      "module": "skin permeability model coefficients",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "A4"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "A",
+      "module": "dermal clearance",
+      "status": "NO_SOURCE_IDENTIFIED_or_ASSUMED",
+      "closes_with": [
+        "A7"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "A",
+      "module": "independent validation",
+      "status": "NO_SOURCE_IDENTIFIED",
+      "closes_with": [
+        "A6"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "B",
+      "module": "exact formulation+release+permeation",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "B1",
+        "B2"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "B",
+      "module": "independent/comparator",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "B3",
+        "B4",
+        "B6"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "C",
+      "module": "carrier penetration primary + SI",
+      "status": "UNVERIFIED_SECONDARY",
+      "closes_with": [
+        "C1"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "C",
+      "module": "uptake-return model",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "C2"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "D",
+      "module": "transport/permeability/penetration",
+      "status": "VERIFIED_COMPLETE",
+      "closes_with": [
+        "D1"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "D",
+      "module": "independent validation",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "D2",
+        "D3"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "E",
+      "module": "official formulation+PK",
+      "status": "UNVERIFIED_SECONDARY",
+      "closes_with": [
+        "E1",
+        "E3"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "E",
+      "module": "release-rate -> PK/tumour coupling",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "E5"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "E",
+      "module": "free vs encapsulated doxorubicin",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "E2",
+        "E1"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "F",
+      "module": "official formulation+PK",
+      "status": "UNVERIFIED_SECONDARY",
+      "closes_with": [
+        "F1",
+        "F3"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "F",
+      "module": "free vs bound API",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "F2",
+        "F5"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "C",
+      "module": "penetration/uptake model equations",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "C5"
+      ],
+      "blocking": true
+    },
+    {
+      "profile": "E",
+      "module": "intratumoural free doxorubicin",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "E8"
+      ],
+      "blocking": false
+    },
+    {
+      "profile": "A",
+      "module": "species/site transferability",
+      "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+      "closes_with": [
+        "A8"
+      ],
+      "blocking": false
+    }
   ]
 }
