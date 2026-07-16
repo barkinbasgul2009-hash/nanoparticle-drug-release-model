@@ -1,0 +1,93 @@
+{
+  "$schema_version": "1.0",
+  "status": "DESIGN BLUEPRINT - not implemented",
+  "purpose": "Reusable, parameter-driven animation MODULES (not hardcoded scenes). Each module declares its inputs, the evidence that gates it, and what it may/may not do. A parameter changes the animation ONLY where the frozen package supports that relationship; otherwise the module is display-only or emits a HYPOTHESIZED info note.",
+  "design_principles": [
+    "Data-driven: modules read preset + parameter values from data/profile-b-simulator-presets.json; no per-preset hardcoding.",
+    "Evidence-gated: each module has an evidence_gate; if the gate is not met the module renders display-only or a labelled info note.",
+    "Composable: a scene is a sequence of module instances bound to a preset's stage-applicability matrix.",
+    "Deterministic-timing forbidden unless a value exists: qualitative modules use eased, unlabelled motion."
+  ],
+  "modules": [
+    {
+      "id": "mod_administration",
+      "inputs": ["route"],
+      "evidence_gate": "route defined by preset",
+      "behavior": "selects the administration sub-scene by route: topical (skin surface) for B1; systemic (contextual) for B2; none for B3 (comparator panel).",
+      "may_not": "imply an injection/IV journey for a topical preset"
+    },
+    {
+      "id": "mod_skin_depth_transport",
+      "inputs": ["preset=B1"],
+      "evidence_gate": "Chen 2012 skin permeation + depth sections 0-30/30-60/60-90 um",
+      "behavior": "animates particle/released-drug progression across three labelled skin depth bands (qualitative front); band labels = measured section boundaries.",
+      "may_not": "show blood-vessel extravasation or ECM traversal (DO_NOT_ANIMATE); assign a per-depth concentration not in the package"
+    },
+    {
+      "id": "mod_surface_charge_uptake",
+      "inputs": ["surface_charge (cationic|neutral|anionic)"],
+      "evidence_gate": "Chen 2012 uptake order cationic > neutral > anionic (HaCaT/B16BL6)",
+      "behavior": "maps the selected charge to a RELATIVE uptake-intensity visual (ordinal ranking only, not a rate).",
+      "mandatory_info_note": "confound: charge co-varies with lipid identity in Chen 2012; ranking is an observed association, not an isolated charge effect",
+      "may_not": "produce a numeric uptake rate or a size-driven change"
+    },
+    {
+      "id": "mod_particle_size_display",
+      "inputs": ["particle_size"],
+      "evidence_gate": "sizes 84.5-90.2 nm reported (too close to differentiate outcomes)",
+      "behavior": "DISPLAY-ONLY size label (~85-90 nm region).",
+      "may_not": "drive a penetration-depth or uptake change from size (no supporting evidence; would be invented)"
+    },
+    {
+      "id": "mod_release",
+      "inputs": ["preset"],
+      "evidence_gate": "B1: first-order selected + delayed release (qualitative); B2/B3: release NOT REPORTED",
+      "behavior": "B1 -> qualitative sustained/delayed-release visual (particles gradually emitting drug), NO plotted curve; B2/B3 -> release module DISABLED.",
+      "mandatory_info_note": "Sustained/delayed release reported; exact release kinetics were not available (Chen 2012 selected a first-order model).",
+      "may_not": "draw a specific release curve or state a release time/percentage not in the package"
+    },
+    {
+      "id": "mod_er_targeting_icd",
+      "inputs": ["preset=B2"],
+      "evidence_gate": "Wang 2025 abstract: ER localization -> ER stress -> CRT/HMGB1/ATP -> DC maturation -> CD8+ activation",
+      "behavior": "qualitative mechanism chain (abstract-supported); each node labelled 'abstract-supported'.",
+      "may_not": "attach numeric labels, sliders, or deterministic timing; imply a measured release curve"
+    },
+    {
+      "id": "mod_therapeutic_effect",
+      "inputs": ["preset"],
+      "evidence_gate": "B1: reduced tumor burden (antimelanoma efficacy, cationic highest); B2: antitumor/anti-metastasis via ICD (abstract)",
+      "behavior": "qualitative reduction-of-tumor-cell visual for B1 (endpoint-supported); immune-activation visual for B2 (abstract).",
+      "may_not": "quantify tumor shrinkage %, survival, or dose-response not in the package"
+    },
+    {
+      "id": "mod_solubility_stability_panel",
+      "inputs": ["preset=B3"],
+      "evidence_gate": "Shukla 2020: 30-fold solubility increase (SBE-betaCD), stability up in PBS pH7.4 + rat/human plasma, improved intestinal permeability, BCS IV",
+      "behavior": "static comparator INFO panel (bar/badge), not a body animation.",
+      "may_not": "animate precipitation/aggregation timing or nanoparticle growth (it is a molecular complex)"
+    },
+    {
+      "id": "mod_hypothesized_property",
+      "inputs": ["coating|PEG|charge-reversal|stimulus-response (generic requests)"],
+      "evidence_gate": "NONE in the Profile-B package for PK/circulation effects",
+      "behavior": "emits a HYPOTHESIZED / greyed info note instead of an animation. Example: PEG->longer circulation is a general nanomedicine expectation with NO Profile-B PK evidence.",
+      "may_not": "animate 'PEG = longer circulation', 'positive charge = more uptake as a rate', or size-dependent penetration as if quantified"
+    },
+    {
+      "id": "mod_do_not_animate_guard",
+      "inputs": ["requested_event"],
+      "evidence_gate": "package DO_NOT_ANIMATE list",
+      "behavior": "blocks precipitation, aggregation, degradation-onset, metabolic conversion, extravasation, ECM traversal from rendering as timed events; may show only a text risk note where the package allows a qualitative statement.",
+      "may_not": "render any of the blocked events as a deterministic animation"
+    }
+  ],
+  "parameter_to_animation_map": {
+    "surface_charge": "mod_surface_charge_uptake (ordinal, B1 only, confound note)",
+    "particle_size": "mod_particle_size_display (display-only; NO penetration effect)",
+    "route": "mod_administration + stage graph selection",
+    "coating_PEG": "mod_hypothesized_property (info note only; no circulation animation)",
+    "target_organ_disease": "selects anatomical scene by preset (B1 skin/melanoma; B2 tumor/lung-met; B3 intestinal model)",
+    "release_type": "mod_release (B1 qualitative sustained; B2/B3 disabled)"
+  }
+}

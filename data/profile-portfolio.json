@@ -46,7 +46,8 @@
       "package_notes": "Package marks PDI/zeta/drug-loading/PK NOT REPORTED and uses abstract-level size/EE ordering; it supersedes the earlier table-level preset library and DEACTIVATES prior candidates P2/P4/P5. P3 corrected to Wang 2025 = B2.",
       "preset_library_superseded": "data/profile-b-preset-library.json - retained for traceability with SUPERSEDED_NOTICE; NOT the simulator source.",
       "stability_precipitation": "celastrol amorphous in NLC (low intra-carrier crystallization, S1); NO opened colloidal-stability time-series or precipitation-kinetics -> precise aggregation/precipitation timing NOT modelable (qualitative risk only). See data/profile-b-stability-registry.json + precipitation-registry.json.",
-      "animation_help_spec": "scientific animation + help content architecture defined (data/profile-b-animation-events.json, profile-b-help-content.json) - NOT implemented (Stage 3)."
+      "animation_help_spec": "scientific animation + help content architecture defined (data/profile-b-animation-events.json, profile-b-help-content.json) - NOT implemented (Stage 3).",
+      "animation_design_document": "MASTER BLUEPRINT: docs/profile-b-animation-design-document.md + docs/profile-b-animation-tech-stack.md; registries data/profile-b-animation-{pipeline,modules,info-panels,asset-inventory}.json. Evidence-gated per preset (B1 topical = NO circulation stage; B2 abstract-supported; B3 non-NP comparator). Web-first tech (Canvas/SVG core; optional Three.js/3Dmol.js; Z-Anatomy assets). Design only - NOT implemented."
     },
     {
       "id": "C_aunp_tumor_spheroid",

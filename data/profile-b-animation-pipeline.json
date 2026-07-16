@@ -1,0 +1,69 @@
+{
+  "$schema_version": "1.0",
+  "status": "DESIGN BLUEPRINT - not implemented",
+  "purpose": "Master animation stage graph for Profile B + per-preset stage-applicability matrix, evidence-gated to data/profile-b-evidence-package.json. A stage is only animated where the frozen package supports it; otherwise it is CONTEXTUAL, ABSTRACT_SUPPORTED, NOT_APPLICABLE, or DO_NOT_ANIMATE.",
+  "stage_status_enum": {
+    "SUPPORTED": "directly supported by the preset's evidence - animate (quantitatively where a value exists, else qualitatively)",
+    "ABSTRACT_SUPPORTED": "supported only at abstract/mechanism level - animate qualitatively, NO numeric labels or deterministic timing",
+    "CONTEXTUAL": "shown for orientation only, visibly marked 'illustrative', not a quantified process",
+    "NOT_APPLICABLE": "the preset's route/system does not include this stage",
+    "DO_NOT_ANIMATE": "explicitly unsupported by the package - must not appear as a real event"
+  },
+  "master_stage_graph": [
+    {"stage":"S0_select_profile","label":"Select Profile B","type":"UI"},
+    {"stage":"S1_select_preset","label":"Select formulation/preset (B1/B2/B3)","type":"UI"},
+    {"stage":"S2_select_parameters","label":"Select parameter values (evidence-gated)","type":"UI"},
+    {"stage":"S3_administration","label":"Administration","type":"scene"},
+    {"stage":"S4_transport","label":"Transport to site","type":"scene"},
+    {"stage":"S5_arrival","label":"Target-tissue arrival / targeting","type":"scene"},
+    {"stage":"S6_cell_interaction","label":"Cellular interaction / uptake","type":"scene"},
+    {"stage":"S7_release","label":"Drug release","type":"scene"},
+    {"stage":"S8_effect","label":"Therapeutic effect","type":"scene"},
+    {"stage":"S9_panels","label":"Evidence information panels","type":"overlay (persistent)"}
+  ],
+  "per_preset_applicability": {
+    "B1_chen2012_topical_nlc": {
+      "route": "topical (skin) - NOT systemic; there is NO bloodstream-circulation stage",
+      "S3_administration": {"status":"SUPPORTED","scene":"topical NLC dispersion applied to skin surface (rat abdominal skin context)","evidence":"Chen 2012 topical application"},
+      "S4_transport": {"status":"SUPPORTED","scene":"permeation through skin depth layers 0-30 / 30-60 / 60-90 um (Franz-cell context)","evidence":"Chen 2012 skin permeation + depth sections","note":"blood-vessel extravasation and ECM traversal = DO_NOT_ANIMATE"},
+      "S5_arrival": {"status":"SUPPORTED","scene":"reaching local melanoma tissue in skin","evidence":"melanoma-bearing mouse, percutaneous treatment"},
+      "S6_cell_interaction": {"status":"SUPPORTED","scene":"uptake in HaCaT / B16BL6 (rank cationic>neutral>anionic)","evidence":"Chen 2012 uptake order","note":"intact-skin-tissue cell-identity uptake = UNSUPPORTED; show only as separate cell-assay context; intracellular transport = DO_NOT_ANIMATE"},
+      "S7_release": {"status":"SUPPORTED_QUALITATIVE","scene":"delayed/sustained release from NLC (qualitative; first-order selected)","evidence":"Chen 2012 first-order selected","note":"show release occurring; exact per-config release-% not in package -> qualitative + info note"},
+      "S8_effect": {"status":"SUPPORTED","scene":"reduced tumor burden in melanoma-bearing mouse","evidence":"antimelanoma efficacy (cationic highest, P<0.05)"},
+      "DO_NOT_ANIMATE": ["precipitation","aggregation","intracellular degradation","metabolic conversion","blood-vessel extravasation","ECM traversal"]
+    },
+    "B2_wang2025_ER_targeting": {
+      "route": "systemic (tumor-bearing mice) - physicochemical/PK NOT REPORTED",
+      "S3_administration": {"status":"CONTEXTUAL","scene":"systemic administration implied","evidence":"tumor-bearing mice; route details NOT REPORTED"},
+      "S4_transport": {"status":"CONTEXTUAL","scene":"nanoparticle reaches tumor (abstract)","evidence":"NOT REPORTED for PK/biodistribution -> no timing, no numeric labels"},
+      "S5_arrival": {"status":"ABSTRACT_SUPPORTED","scene":"nanoparticle at B16F10 tumor cell","evidence":"B16F10 in vitro; melanoma + lung-metastasis models"},
+      "S6_cell_interaction": {"status":"ABSTRACT_SUPPORTED","scene":"cell uptake -> ER localization","evidence":"TSE-CEL/NP accumulates in ER (flow/confocal/TEM/IF)"},
+      "S7_release": {"status":"NOT_APPLICABLE","scene":"no release curve reported","evidence":"release NOT REPORTED -> do not show a release curve"},
+      "S8_effect": {"status":"ABSTRACT_SUPPORTED","scene":"ER stress -> CRT/HMGB1/ATP -> DC maturation -> CD8+ activation -> antitumor/anti-metastasis","evidence":"Wang 2025 ICD mechanism chain"},
+      "rule": "abstract-supported only: NO sliders, NO numeric labels, NO deterministic timing for any physicochemical parameter",
+      "DO_NOT_ANIMATE": ["degradation","precipitation","aggregation","quantitative size/zeta/EE/PK read-outs"]
+    },
+    "B3_shukla2020_SBEbetaCD": {
+      "route": "in-vitro / comparator (NON-nanoparticle inclusion complex)",
+      "S3_administration": {"status":"NOT_APPLICABLE"},
+      "S4_transport": {"status":"NOT_APPLICABLE"},
+      "S5_arrival": {"status":"CONTEXTUAL","scene":"EpiIntestinal 3D tissue-model context"},
+      "S6_cell_interaction": {"status":"NOT_APPLICABLE","note":"uptake NOT REPORTED"},
+      "S7_release": {"status":"NOT_APPLICABLE","note":"release NOT REPORTED"},
+      "S8_effect": {"status":"CONTEXTUAL","scene":"improved intestinal permeability (info panel), 30-fold solubility, stability in PBS/plasma"},
+      "rule": "render as an INFO/COMPARATOR panel, not a body-travel animation. No precipitation/aggregation/particle-growth animation.",
+      "DO_NOT_ANIMATE": ["precipitation timing","aggregation timing","nanoparticle growth","nanoparticle morphology (it is a molecular complex, not an NP)"]
+    }
+  },
+  "review_identified_only": {
+    "records": ["yang_2019","yin_2017","zhao_2018","zhou_2019"],
+    "animation_policy": "NOT animated. Appear only in a 'research candidates / future evidence' panel with title + DOI."
+  },
+  "global_fidelity_rules": [
+    "Every animated event carries an evidence badge (see data/profile-b-animation-info-panels.json).",
+    "When timing is unknown, show a qualitative event + an info note (e.g. 'Sustained release reported; exact kinetics not available').",
+    "Never invent a numeric value, curve, rate, or onset time.",
+    "Route determines which stages exist; B1 has no circulation stage.",
+    "Confounded relationships (e.g. surface charge vs lipid in B1) must carry the confound note."
+  ]
+}
