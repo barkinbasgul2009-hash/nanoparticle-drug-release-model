@@ -1,0 +1,104 @@
+{
+  "$schema_version": "1.0",
+  "status": "FROZEN - derived ONLY from data/profile-b-evidence-package.json",
+  "purpose": "Simulator-ready formulation + parameter presets, faithful to the frozen package. Preset choices and locked/exposed variables follow the package's explicit Claude Instructions. NOT a Stage-3 implementation.",
+  "user_exposure_policy": {
+    "B1": {"exposable":["preset choice","surface-charge class (cationic/neutral/anionic)","dose ONLY if implemented exactly as paper-reported topical treatment"],"locked":["lipid identity","surfactant system","preparation method","animal/tissue model","size region","release model","stability assumptions"]},
+    "B2": {"exposable":["preset choice only"],"locked":["core material","surface modifier","targeting mechanism","disease model","cell model","in vivo model","all quantitative physicochemical parameters"]},
+    "B3": {"exposable":["preset choice only if non-nanoparticle carriers are allowed in Profile B"],"locked":["cyclodextrin derivative identity","complexation system","tissue model","disease model","all absent quantitative fields"]}
+  },
+  "formulation_presets": [
+    {
+      "id": "B1",
+      "name": "Surface-charged tripterine-loaded NLC (Chen 2012)",
+      "source": "chen_2012",
+      "evidence_level": "FULL_TEXT_PRIMARY",
+      "role": "PRIMARY VERIFIED preset (active)",
+      "api": "Tripterine / celastrol",
+      "carrier": "Nanostructured lipid carrier",
+      "lipids": "Stearylamine OR glyceryl behenate OR Precirol ATO-5 (by config); IPM OR MCTs; soybean lecithin",
+      "surfactants": "TPGS; Pluronic F68",
+      "stabilizers": "NOT REPORTED",
+      "surface_coating": "None beyond formulation-defined charge architecture",
+      "targeting_ligand": "None reported",
+      "surface_charge_configs": ["cationic","neutral","anionic"],
+      "particle_size": "Approximately 84.5-90.2 nm (cationic 90.2+/-9.7; anionic 87.8+/-7.4; neutral 84.5+/-10.2)",
+      "PDI": "NOT REPORTED",
+      "zeta_potential": "NOT REPORTED",
+      "encapsulation_efficiency": "cationic 64.3%+/-5.1%; anionic 67.8%+/-4.4%; neutral 72.5%+/-4.9% (abstract)",
+      "drug_loading_pct": "NOT REPORTED (15 mg tripterine used)",
+      "preparation_method": "Solvent evaporation method",
+      "release_model": "first-order (selected); sampling 1,2,4,8,10,12,18,24,36,48 h",
+      "disease": "Melanoma; skin disease treatment context",
+      "tissue": "Rat abdominal skin (sections 0-30/30-60/60-90 um); melanoma tissue in mice",
+      "species": "Sprague-Dawley rats; C57BL/6 mice; HaCaT human skin cells; B16BL6 melanoma cells",
+      "uptake_order": "cationic > neutral > anionic",
+      "status": "SELECTED (active simulator preset)"
+    },
+    {
+      "id": "B2",
+      "name": "ER-targeting celastrol nanoparticle (Wang 2025)",
+      "source": "wang_2025",
+      "evidence_level": "PRIMARY_ARTICLE_PREVIEW",
+      "role": "SECONDARY selectable RESEARCH preset (mechanism-rich, abstract-supported; NOT a quantitative transport preset)",
+      "api": "Celastrol",
+      "carrier": "ER-targeting nanoparticle (TSE-CEL/NP): PLGA celastrol core + TSE-modified DSPE-PEG surface",
+      "lipids": "DSPE-PEG (surface material); others NOT REPORTED",
+      "surfactants": "NOT REPORTED",
+      "stabilizers": "NOT REPORTED",
+      "surface_coating": "TSE-modified DSPE-PEG",
+      "targeting_ligand": "p-tosylethylenediamine (TSE) ER-targeting moiety",
+      "surface_charge": "NOT REPORTED",
+      "particle_size": "NOT REPORTED", "PDI": "NOT REPORTED", "zeta_potential": "NOT REPORTED", "encapsulation_efficiency": "NOT REPORTED", "drug_loading": "NOT REPORTED", "release_model": "NOT REPORTED",
+      "preparation_method": "Self-assembly",
+      "disease": "Melanoma (incl. lung metastasis model)",
+      "tissue": "B16F10 tumor cells; tumor tissue; lung metastasis model",
+      "species": "Melanoma tumor-bearing mice; exact strain NOT REPORTED",
+      "mechanism": "ER localization -> ER stress -> CRT/HMGB1/ATP -> DC maturation -> CD8+ activation -> antitumor/anti-metastasis",
+      "status": "SELECTED as research preset (all quantitative physicochemical fields must display NOT REPORTED; no sliders/numeric labels/deterministic timing)"
+    },
+    {
+      "id": "B3",
+      "name": "Celastrol-SBE-betaCD inclusion complex (Shukla 2020)",
+      "source": "shukla_2020",
+      "evidence_level": "PRIMARY_ARTICLE_PREVIEW; NON-NANOPARTICLE_DELIVERY_SYSTEM",
+      "role": "NON-nanoparticle COMPARATOR module (do NOT force into the nanoparticle preset list)",
+      "api": "Celastrol",
+      "carrier": "SBE-betaCD inclusion complex",
+      "lipids": "NOT REPORTED", "surfactants": "NOT REPORTED",
+      "stabilizers": "SBE-betaCD and HP-betaCD (solubilizing/complexing agents)",
+      "surface_coating": "NOT REPORTED", "targeting_ligand": "NOT REPORTED", "surface_charge": "NOT REPORTED",
+      "particle_size": "NOT REPORTED", "PDI": "NOT REPORTED", "zeta_potential": "NOT REPORTED", "encapsulation_efficiency": "NOT REPORTED", "drug_loading": "NOT REPORTED", "release_model": "NOT REPORTED",
+      "preparation_method": "Inclusion complex formation with substituted betaCDs",
+      "disease": "Human non-small cell lung cancer in vitro",
+      "tissue": "EpiIntestinal 3D small intestine tissue model",
+      "species": "Rat plasma; human plasma; human lung cancer cells",
+      "supported_use": "ONLY to support: celastrol poor solubility / physiological instability, and SBE-betaCD-driven increase in solubility (30-fold vs intrinsic), stability (PBS pH7.4, rat/human plasma), and intestinal permeability. Do NOT derive time-to-precipitation, aggregation kinetics, particle growth, or NP morphology.",
+      "status": "SELECTED as comparator module (not an NP preset)"
+    }
+  ],
+  "review_identified_candidate_presets": {
+    "policy": "NOT selectable as quantitative presets. Show ONLY in a 'future evidence acquisition' / 'research candidates' panel with DOI and title.",
+    "records": [
+      {"id":"yang_2019","carrier":"HA-functionalized bilosome","disease":"arthritis","evidence_level":"REVIEW_IDENTIFIED_ONLY","doi":"10.1080/10717544.2019.1636423"},
+      {"id":"zhao_2018","carrier":"celastrol-loaded micelle","disease":"lung metastasis + breast tumor","evidence_level":"REVIEW_IDENTIFIED_ONLY","doi":"10.1080/10717544.2018.1425778"},
+      {"id":"yin_2017","carrier":"polymeric nanoparticle (RES saturation)","disease":"NOT REPORTED here","evidence_level":"REVIEW_IDENTIFIED_ONLY","doi":"10.1080/10717544.2017.1410260"},
+      {"id":"zhou_2019","carrier":"bio-mimicking nanoparticle (PEG-PLGA per review)","disease":"malignant melanoma","evidence_level":"REVIEW_IDENTIFIED_ONLY","doi":"10.1166/jbn.2019.2739"}
+    ]
+  },
+  "parameter_presets": {
+    "B1_reportable_parameters": {
+      "particle_size_nm": {"cationic":"90.2 +/- 9.7","anionic":"87.8 +/- 7.4","neutral":"84.5 +/- 10.2","confidence":"HIGH (full-text primary)"},
+      "encapsulation_efficiency_pct": {"cationic":"64.3 +/- 5.1","anionic":"67.8 +/- 4.4","neutral":"72.5 +/- 4.9","confidence":"HIGH (abstract)"},
+      "release_model": {"value":"first-order","confidence":"HIGH"},
+      "release_sampling_h": [1,2,4,8,10,12,18,24,36,48],
+      "permeation_sampling_h": [1,2,4,6,8,10,12],
+      "uptake_sampling_h": [1,2,3,4],
+      "skin_depth_layers_um": ["0-30","30-60","60-90"],
+      "uptake_rank": "cationic > neutral > anionic",
+      "PDI": "NOT REPORTED", "zeta_potential": "NOT REPORTED", "drug_loading_pct": "NOT REPORTED", "pharmacokinetics": "NOT REPORTED"
+    },
+    "B2_reportable_parameters": {"all_physicochemical": "NOT REPORTED","mechanism_states":["ER localization","ER stress","CRT/HMGB1/ATP release","DC recruitment/maturation","CD8+ activation"],"confidence":"MODERATE (article-page/abstract level)"},
+    "B3_reportable_parameters": {"solubility_change":"30-fold increase vs intrinsic after SBE-betaCD complexation","stability":"increased in PBS pH7.4, rat & human plasma","BCS_class":"IV","permeability_model":"EpiIntestinal 3D","confidence":"MODERATE (preview)","all_NP_fields":"NOT REPORTED"}
+  }
+}
