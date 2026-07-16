@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "description": "Batched download order for the user. Batches map to docs/stage2-manual-download-checklist.md.",
+  "batches": [
+    {"batch":1,"name":"Foundational (unlock most profiles)","aids":["A4","A5","E1","E3","E5","F1","C1","B1"],"expected_files":"~10 (E1/F1/C1 each have a supplement)","priority":"highest"},
+    {"batch":2,"name":"Profile B & C primaries","aids":["B2","B3","B4","B6","C2","C3"],"expected_files":"~6-7","priority":"high"},
+    {"batch":3,"name":"Doxil official + primary","aids":["E2","E4","E6"],"expected_files":"~3-4","priority":"high"},
+    {"batch":4,"name":"Profile F comparison","aids":["F2","F3","F4","F5","F6"],"expected_files":"~5","priority":"medium"},
+    {"batch":5,"name":"Modeling/environment/validation","aids":["A6","A7","D2","D3","D4","D5","D6"],"expected_files":"~7","priority":"medium"}
+  ],
+  "access_summary": {"open_pmc_download_now":["B1","B3","B6","F2","F4"],"fda_ema":["E1","E6","F1","F6"],"user_download_required":["A4","A5","A6","A7","B2","B4","C1","C2","C3","D2","D4","D5","D6","D7","E2","E3","E5","F3","F5"]}
+}

@@ -182,10 +182,6 @@
           "2MDa": "1.7 [0.7-2.6]",
           "serum_albumin": "4.9 [3.8-5.9]"
         },
-        "apparent_permeability_figure_or_dossier_only": {
-          "10kDa": "32 [24-39]",
-          "70kDa": "9.8 [7.1-12.4]"
-        },
         "plasma_half_life_min": {
           "3.3kDa": "3.8 [2.5-4.2]",
           "70kDa": "19.6 [18.3-21.0]"
@@ -202,10 +198,32 @@
         },
         "spearman_r": -0.8,
         "model": "Kedem-Katchalsky (Eq1); P_app Eq2-3; HCT~20%; Stokes-Einstein radius",
-        "system": "dextran/albumin, IV, nude BALB/c mouse, FaDu dorsal window chamber, LSM510 confocal (460x460um, 7.1um slice)"
+        "system": "dextran/albumin, IV, nude BALB/c mouse, FaDu dorsal window chamber, LSM510 confocal (460x460um, 7.1um slice)",
+        "apparent_permeability_1e-7_cm_s_TABLE1_VERIFIED": {
+          "3.3kDa": "154 [134-174]",
+          "10kDa": "32 [24-39]",
+          "40kDa": "9.5 [7.5-11.4]",
+          "70kDa": "9.8 [7.1-12.4]",
+          "2MDa": "1.7 [0.7-2.6]",
+          "serum_albumin": "4.9 [3.8-5.9]"
+        },
+        "vascular_AUC_pctVmax_min_TABLE1": {
+          "3.3kDa": "1060 [1047-1072]",
+          "10kDa": "1178 [1159-1197]",
+          "40kDa": "3405 [3080-3730]",
+          "70kDa": "3427 [3158-3695]",
+          "2MDa": "5065 [4967-5163]"
+        },
+        "extravascular_AUC_pctVmax_min_TABLE1": {
+          "3.3kDa": "887 [881-893]",
+          "10kDa": "846 [841-852]",
+          "40kDa": "2398 [2344-2451]",
+          "70kDa": "2497 [2182-2811]",
+          "2MDa": "2068 [2015-2120]"
+        }
       },
       "pending_full_text": false,
-      "note": "PRIMARY VERIFIED from user images pp.335-339. Dextran = model macromolecule (benchmark, not a drug). 10/70 kDa values figure/dossier-consistent, not in provided text pages."
+      "note": "FULLY PRIMARY-VERIFIED from user images pp.335-343 INCLUDING Table 1 (p.340). All P_app + vascular/extravascular AUC now table-verified. Dextran = benchmark macromolecule (not a drug). Sizes: 2MDa~50nm, 40-70kDa~11.2-14.6nm."
     },
     {
       "id": "chen-2024-spheroid",

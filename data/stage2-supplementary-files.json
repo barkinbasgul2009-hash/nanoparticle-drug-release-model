@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "description": "Supplementary materials to request SEPARATELY from the main article/label PDFs.",
+  "items": [
+    {"aid":"C1","main":"Chen 2024 article PDF","supplement":"Supporting Information (raw spatial penetration profiles / source data)","why":"size-dependent depth curves likely only in SI"},
+    {"aid":"E1","main":"Doxil FDA Label PDF","supplement":"Clinical Pharmacology & Biopharmaceutics Review PDF","why":"PK params, encapsulated vs free"},
+    {"aid":"F1","main":"Abraxane FDA Label PDF","supplement":"Clinical Pharmacology Review PDF","why":"PK, dissociation"},
+    {"aid":"B1","main":"Tripterine NLC PDF","supplement":"SI tables if present","why":"release/permeation raw data"},
+    {"aid":"E5","main":"Charrois 2004 PDF","supplement":"SI if present","why":"release-rate vs PK tables"},
+    {"aid":"D3","main":"Pluen 2001 PNAS PDF","supplement":"SI if present","why":"interstitial diffusion coefficients"}
+  ]
+}
