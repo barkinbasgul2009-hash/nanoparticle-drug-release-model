@@ -1,0 +1,33 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Profile-B precipitation/aggregation evidence, distinguishing SIX distinct phenomena (task section 6.3) that are NOT interchangeable. No fabricated onset times.",
+  "distinct_phenomena": [
+    "1. precipitation of the intact nanoparticle system",
+    "2. precipitation of RELEASED celastrol",
+    "3. crystallization WITHIN the carrier",
+    "4. aggregation of nanoparticles",
+    "5. sedimentation of particles",
+    "6. chemical degradation"
+  ],
+  "precipitation_evidence_status_enum": ["directly_observed","analytically_measured","inferred_from_solubility","prevented_by_encapsulation","possible_after_release","possible_after_dilution","possible_after_pH_change","possible_after_carrier_degradation","not_investigated"],
+  "presets": [
+    {
+      "preset": "P1_chen2012_topical_nlc",
+      "phenomena": {
+        "intact_NP_precipitation": {"status":"not_investigated"},
+        "released_celastrol_precipitation": {"status":["inferred_from_solubility","possible_after_release","possible_after_dilution"],"basis":"celastrol poorly water-soluble; once released from the NLC into aqueous skin/receptor medium it MAY supersaturate/precipitate - but NO time-to-precipitation experiment exists","modelable":"qualitative RISK only (no onset time)"},
+        "crystallization_within_carrier": {"status":"prevented_by_encapsulation","basis":"DSC shows celastrol amorphous in the NLC (no melting peak) -> crystallization within the intact carrier is unlikely","modelable":"S1 qualitative (low risk)"},
+        "NP_aggregation": {"status":"not_investigated","basis":"no size-vs-time data"},
+        "sedimentation": {"status":"not_investigated"},
+        "chemical_degradation": {"status":"not_investigated_in_paper","basis":"celastrol instability known generally (reviews); not measured for this formulation"}
+      }
+    }
+  ],
+  "precipitation_logic": {
+    "encapsulated_state": "while celastrol is amorphous/encapsulated in the NLC, precipitation/crystallization is suppressed",
+    "release_trigger": "precipitation risk is a POST-RELEASE, dilution/pH-dependent phenomenon for the free drug",
+    "honest_limit": "no compatible time-to-precipitation data for any Profile-B preset -> the model may express precipitation as a RISK CATEGORY / solubility-margin indicator, NOT a deterministic event time"
+  },
+  "recommended_precipitation_model": "Model type A/B only (no explicit kinetic precipitation model; at most an empirical qualitative risk indicator). Model type E (solubility/supersaturation) is NOT justified - no dissolution/nucleation/concentration dataset for celastrol in the relevant environments.",
+  "forbidden": "Do NOT state a precise precipitation time (e.g. 'precipitates after 5 h'); no experiment supports a timescale under compatible conditions."
+}

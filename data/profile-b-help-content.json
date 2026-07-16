@@ -1,0 +1,41 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Content architecture for the always-accessible educational help/explanation system (task section 11). Definitions + contextual help + 'why did the result change?' logic. NOT a UI implementation.",
+  "global_help_panel": {
+    "what_is_profile_B": "A topical celastrol (tripterine) nanoparticle delivery scenario - a lipid nanocarrier applied to skin, studied for cutaneous melanoma.",
+    "celastrol": "A poorly-water-soluble, chemically-reactive triterpenoid from Tripterygium wilfordii; encapsulated to improve solubility/stability.",
+    "NLC": "Nanostructured lipid carrier - a nanoparticle of mixed solid+liquid lipids that carries the drug.",
+    "formulation_preset": "A complete, experimentally-defined formulation package. You pick a preset, not individual ingredients, because the literature only supports specific tested combinations.",
+    "why_not_free_combine": "Most excipient combinations have never been tested; letting users mix them would invent untested formulations.",
+    "particle_size": "Nanoparticle diameter (here ~85-90 nm). Affects transport and uptake.",
+    "PDI": "Polydispersity index - how uniform the sizes are (lower = more uniform).",
+    "zeta_potential": "Surface charge in mV; influences stability and cell/skin interaction.",
+    "cationic_neutral_anionic": "Positive / near-zero / negative surface charge configurations - here each also uses a different lipid, so charge is not the only difference.",
+    "encapsulation_efficiency": "Fraction of drug trapped in the carrier.",
+    "apparent_release": "Release measured through a dialysis membrane, where membrane transport and true carrier release cannot be fully separated.",
+    "permeation": "Drug crossing skin (measured ex vivo on rat skin here).",
+    "tissue_retention": "Drug deposited/retained in skin.",
+    "cellular_uptake": "Drug/carrier taken into cells.",
+    "precipitation": "Released drug coming out of solution as solid - a RISK for poorly-soluble celastrol, with no known precise timing.",
+    "aggregation": "Nanoparticles clumping - not measured over time for this formulation.",
+    "degradation": "Chemical breakdown of celastrol - known generally, not timed here.",
+    "what_is_modeled": "release, skin permeation, and (optionally) uptake compartments.",
+    "what_is_visual_only": "surrounding cells, ECM, vasculature, precise precipitation/aggregation timing.",
+    "evidence_limitations": "single study, rat skin (not human), no independent validation, surface charge confounded with lipid identity."
+  },
+  "contextual_help_fields": ["plain_language_name","scientific_name","value","unit","role","why_it_matters","evidence_source","expected_effect","limitations","adjustable","locked","directly_measured","inferred","assumed"],
+  "why_did_the_result_change": {
+    "release_differs": "Different surface configurations released celastrol at different rates - but the configurations also differ in lipid composition, so this is an observed association, not a pure charge effect.",
+    "permeation_differs": "Cationic showed the highest skin permeation; note the cationic formulation also uses a different lipid (stearylamine/IPM) - do not attribute the difference to charge alone.",
+    "uptake_differs": "Charge-dependent uptake observed in HaCaT/B16BL6; same confound caveat.",
+    "lag_time_differs": "Small differences in Franz lag time between configurations (0.42-0.52 h).",
+    "stability_differs": "Not measured over time - the tool must NOT claim a stability difference it did not observe.",
+    "precipitation_risk_differs": "Governed by released-drug solubility, not directly measured per configuration - present as qualitative risk only.",
+    "mandatory_wording": "This difference was observed between formulations that differed in BOTH surface charge and lipid composition; it should not be interpreted as a pure isolated charge effect."
+  },
+  "adjustable_vs_locked": {
+    "user_adjustable_after_verification": ["surface configuration (cationic/neutral/anionic)","exposure time (within measured domain)","dose (within tested range)"],
+    "preset_locked": ["lipids","surfactant (lecithin/TPGS)","stabilizer (Pluronic F68)","manufacturing method","particle-size region"],
+    "informational_only": ["surrounding cell types","ECM","vasculature","pH/oxygenation"]
+  }
+}

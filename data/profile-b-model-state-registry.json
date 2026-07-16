@@ -1,0 +1,29 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Model states each Profile-B preset would need (task section 17), each tagged measurable/calibratable/inferable/assumed/unsupported. Stage-3 design reference only - NOT implemented.",
+  "state_status_enum": ["directly_measurable","calibratable","inferable","assumed","unsupported"],
+  "preset_P1_chen2012": {
+    "states": {
+      "donor_compartment": {"status":"directly_measurable","evidence":"applied dose known"},
+      "intact_carrier": {"status":"inferable","evidence":"NLC present; no time-resolved carrier tracking"},
+      "encapsulated_API": {"status":"calibratable","evidence":"EE 67-72%; first-order release curve"},
+      "released_dissolved_API": {"status":"calibratable","evidence":"release + Franz flux (dialysis-apparent)"},
+      "precipitated_API": {"status":"unsupported","evidence":"no precipitation data -> do NOT create this state (at most a qualitative risk flag)"},
+      "aggregated_carrier": {"status":"unsupported","evidence":"no aggregation time-series"},
+      "degraded_carrier": {"status":"unsupported","evidence":"not measured"},
+      "tissue_free_API": {"status":"calibratable","evidence":"cumulative permeation ug/cm2"},
+      "tissue_bound_API": {"status":"inferable","evidence":"skin deposition measured; binding mechanism not resolved"},
+      "intracellular_API": {"status":"inferable","evidence":"HaCaT/B16BL6 uptake qualitative"},
+      "cleared_API": {"status":"assumed","evidence":"no local clearance rate"},
+      "metabolized_API": {"status":"unsupported","evidence":"not measured"}
+    },
+    "recommended_state_set": ["donor","encapsulated","released/dissolved","tissue-free","tissue-bound(optional)","intracellular(optional)"],
+    "excluded_states": ["precipitated (risk-flag only)","aggregated","degraded","metabolized"]
+  },
+  "candidate_presets_P2_P5": "state sets pending full text; do NOT define until PDFs opened",
+  "stability_model_recommendation_per_preset": {
+    "P1": {"type":"A/B","meaning":"No explicit stability model, or at most an empirical qualitative risk WARNING (amorphous-state crystallization note + released-drug precipitation-risk note)","precipitation_model":"none (type A) or qualitative risk indicator (type B)","justification":"only S1 qualitative + S0 time-series evidence"},
+    "P2_P5": {"type":"pending","meaning":"cannot recommend until stability data opened"}
+  },
+  "forbidden": "Do NOT create a precipitation or aggregation STATE with kinetics for any preset - no time-series/nucleation data exist. Model types D (aggregation kinetics), E (supersaturation), F (coupled degradation+precipitation) are all UNSUPPORTED at present."
+}

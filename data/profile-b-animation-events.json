@@ -1,0 +1,38 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Scientific animation SPECIFICATION for Profile B (task section 10 & 19). Defines what MAY be animated and at what confidence. NOT an implementation. Every event is tied to evidence + confidence.",
+  "confidence_enum": ["DIRECTLY_OBSERVED","QUANTITATIVELY_MODELED","QUALITATIVELY_SUPPORTED","CONTEXTUAL_VISUAL","UNSUPPORTED_DO_NOT_SHOW"],
+  "anchor_preset": "P1_chen2012_topical_nlc",
+  "scene_sequence": [
+    {"step":1,"scene":"formulation at skin surface","confidence":"CONTEXTUAL_VISUAL","evidence":"topical application (Chen)"},
+    {"step":2,"scene":"celastrol release from NLC","confidence":"QUANTITATIVELY_MODELED","evidence":"first-order release r2 0.95-0.96 (dialysis-apparent) - label as apparent release"},
+    {"step":3,"scene":"contact with stratum corneum","confidence":"CONTEXTUAL_VISUAL","evidence":"skin barrier context"},
+    {"step":4,"scene":"movement through skin layers","confidence":"QUANTITATIVELY_MODELED","evidence":"Franz flux/Kp/lag (RAT skin - label species)"},
+    {"step":5,"scene":"distribution toward melanoma tissue","confidence":"QUALITATIVELY_SUPPORTED","evidence":"in-vivo antimelanoma efficacy; spatial route not measured"},
+    {"step":6,"scene":"interaction with ECM","confidence":"CONTEXTUAL_VISUAL"},
+    {"step":7,"scene":"encounter melanoma cells","confidence":"QUALITATIVELY_SUPPORTED","evidence":"B16BL6 uptake"},
+    {"step":8,"scene":"uptake / binding","confidence":"QUALITATIVELY_SUPPORTED","evidence":"HaCaT/B16BL6 uptake (charge-dependent)"},
+    {"step":9,"scene":"intracellular localization","confidence":"CONTEXTUAL_VISUAL","evidence":"uptake shown; sub-cellular localization not resolved for P1"},
+    {"step":10,"scene":"pharmacodynamic outcome","confidence":"QUALITATIVELY_SUPPORTED","evidence":"antimelanoma efficacy endpoint (separate outcome timeline)"},
+    {"step":11,"scene":"clearance/degradation/aggregation/precipitation","confidence":"UNSUPPORTED_DO_NOT_SHOW as deterministic","evidence":"no time-series; at most a qualitative risk cue"}
+  ],
+  "formulation_specific_visuals": {
+    "surface_charge": {"confidence":"QUALITATIVELY_SUPPORTED","note":"cationic/neutral/anionic visually distinct; explain confound (lipid also differs)"},
+    "particle_size_region": {"confidence":"CONTEXTUAL_VISUAL","note":"show ~85-90 nm as one region; do NOT animate 84.5 vs 90.2 as distinct"},
+    "encapsulated_vs_released_API": {"confidence":"QUANTITATIVELY_MODELED","note":"release curve"},
+    "aggregated_particles": {"confidence":"UNSUPPORTED_DO_NOT_SHOW","note":"no aggregation data"},
+    "precipitated_API": {"confidence":"QUALITATIVELY_SUPPORTED as RISK only","note":"poorly-soluble released drug -> 'precipitation risk increases' cue, NEVER a timed event"},
+    "intracellular_API": {"confidence":"CONTEXTUAL_VISUAL"}
+  },
+  "stability_animation": {
+    "P1": {"stable_dispersed":"CONTEXTUAL_VISUAL","size_growth":"UNSUPPORTED_DO_NOT_SHOW","aggregation":"UNSUPPORTED_DO_NOT_SHOW","API_leakage":"QUALITATIVELY_SUPPORTED (release)","carrier_breakdown":"UNSUPPORTED_DO_NOT_SHOW","precipitation":"QUALITATIVELY_SUPPORTED as risk cue only","crystallization":"low-risk note (amorphous)","degradation":"QUALITATIVELY_SUPPORTED as risk only"}
+  },
+  "surrounding_structures": {
+    "corneocytes_lipid_lamellae":"CONTEXTUAL_VISUAL","keratinocytes":"CONTEXTUAL_VISUAL","melanoma_cells":"QUALITATIVELY_SUPPORTED","fibroblasts":"CONTEXTUAL_VISUAL","endothelial_cells":"CONTEXTUAL_VISUAL","immune_cells":"CONTEXTUAL_VISUAL","collagen_ECM":"CONTEXTUAL_VISUAL","blood_vessels":"CONTEXTUAL_VISUAL","intracellular_compartments":"CONTEXTUAL_VISUAL",
+    "rule":"contextual-visual elements must be visibly distinguished from quantitatively-modeled ones (e.g. greyed/labelled 'illustrative')"
+  },
+  "time_mapping": {
+    "release":"minutes-hours compressed to seconds","permeation":"hours (up to 24h Franz) compressed to a short sequence","pharmacodynamics":"days shown as a SEPARATE outcome timeline","rule":"do NOT imply all processes occur at the same rate; label each timescale"
+  },
+  "global_rule": "No visual effect may contradict the scientific state. Any event marked UNSUPPORTED_DO_NOT_SHOW must be absent or shown only as an explicitly-labelled qualitative risk, never as a deterministic timed animation."
+}

@@ -40,7 +40,10 @@
       "is_nanoparticle": true,
       "stage3_ready": true,
       "stage3_label": "RESEARCH_SUPPORTED nanoparticle release->skin submodel (celastrol/tripterine NLC, single primary) - first VERIFIED genuine-NP profile; label 'single-study, rat skin, not externally validated'",
-      "residual_gaps": "absolute D (cm2/s) needs SC/skin thickness; drug loading (mg/g) not transcribed; independent NP-skin validation study still wanted (aid B2 celastrol+indomethacin NLC)"
+      "residual_gaps": "absolute D (cm2/s) needs SC/skin thickness; drug loading (mg/g) not transcribed; independent NP-skin validation study still wanted (aid B2 celastrol+indomethacin NLC)",
+      "preset_library": "data/profile-b-preset-library.json - P1 (Chen, VERIFIED, 3 surface configs) + 4 identified candidate celastrol-NP presets (P2-P5, pending full text). Architecture = formulation presets, NOT free ingredient menus. See docs/profile-b-*.md.",
+      "stability_precipitation": "celastrol amorphous in NLC (low intra-carrier crystallization, S1); NO opened colloidal-stability time-series or precipitation-kinetics -> precise aggregation/precipitation timing NOT modelable (qualitative risk only). See data/profile-b-stability-registry.json + precipitation-registry.json.",
+      "animation_help_spec": "scientific animation + help content architecture defined (data/profile-b-animation-events.json, profile-b-help-content.json) - NOT implemented (Stage 3)."
     },
     {
       "id": "C_aunp_tumor_spheroid",

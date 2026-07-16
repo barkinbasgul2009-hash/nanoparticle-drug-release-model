@@ -1,0 +1,121 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Profile-B celastrol/tripterine nanoparticle formulation PRESET library (Stage-2 research artifact). A preset = a complete, experimentally-defined formulation package. Users select among presets; they do NOT freely combine excipients. NOT a Stage-3 implementation. No fabricated values.",
+  "provenance_rule": "id_status VERIFIED_FULLTEXT = primary opened in this project; IDENTIFIED_SEARCH = bibliographic identity from web search, values NOT verified (do not use numbers as data); SECONDARY_REVIEW = review-reported. Search-summary numbers are recorded as 'search_reported_UNVERIFIED', never as parameters.",
+  "api_identity": {
+    "name": "celastrol",
+    "synonyms": ["tripterine"],
+    "class": "quinone-methide triterpenoid",
+    "source_plant": "Tripterygium wilfordii (thunder god vine)",
+    "well_established_properties": {
+      "aqueous_solubility": "poorly water-soluble (consensus across reviews PMC7751759, PMC10904542) - exact value pending primary",
+      "chemical_stability": "unstable under aqueous/physiological/oxidative conditions; Michael-acceptor quinone methide reacts with thiols",
+      "why_nanoparticle": "encapsulation used to overcome poor solubility, instability, narrow therapeutic window and toxicity"
+    },
+    "note": "Physicochemical NUMBERS (solubility mg/mL, logP, degradation %) NOT recorded here - search returned figures but no primary opened. See data/profile-b-solubility-registry.json for the honest gap."
+  },
+  "presets": [
+    {
+      "id": "P1_chen2012_topical_nlc",
+      "name": "Surface-charged topical celastrol NLC (Chen 2012)",
+      "id_status": "VERIFIED_FULLTEXT",
+      "source": "chen-2012-tripterine-nlc (Int J Nanomedicine 2012;7:3023-3033, DOI 10.2147/IJN.S32476, PMC3392146)",
+      "is_preset_family": true,
+      "family_note": "ONE preset family with THREE surface-charge configurations (cationic/neutral/anionic). NOT three size choices - sizes 84.5-90.2 nm are too close to be distinct options.",
+      "api": "celastrol (tripterine)",
+      "carrier": "nanostructured lipid carrier (NLC)",
+      "composition_Table1_mg": {
+        "cationic": {"stearylamine_charge_modifier":180,"IPM_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+        "neutral": {"glyceryl_behenate_solid_lipid":180,"MCTs_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+        "anionic": {"Precirol_ATO5_solid_lipid":180,"IPM_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+        "common": "solid:liquid lipid 3:1; +Pluronic F68 aqueous; 15 mg tripterine",
+        "critical_caveat": "surface charge is CONFOUNDED with lipid identity - cationic uses stearylamine, neutral uses glyceryl behenate, anionic uses Precirol ATO-5. Charge differences are NOT isolated causal effects."
+      },
+      "surfactant_stabilizer": "soybean lecithin (emulsifier) + TPGS (d-alpha-tocopheryl PEG succinate; surfactant/stabilizer) + Pluronic F68; all held constant across the 3 configs",
+      "manufacturing": "solvent evaporation (drug+lipids in acetone/ethanol -> aqueous Pluronic F68)",
+      "particle_size_display": "approximately 85-90 nm (do NOT expose a size selector for 84.5/87.8/90.2 nm)",
+      "size_by_config_nm": {"cationic":"90.2","neutral":"87.8","anionic":"84.5","method":"photon correlation spectroscopy (hydrodynamic)"},
+      "PDI": "0.109-0.116",
+      "zeta_mV": {"cationic":"+26.4","neutral":"-2.7","anionic":"-24.3"},
+      "EE_pct": {"cationic":69.3,"neutral":67.8,"anionic":72.5},
+      "api_state": "AMORPHOUS / molecularly dispersed in the NLC (DSC: tripterine melting peaks 175.7/211.4 C absent in the NLC) - low intra-carrier crystallization risk",
+      "morphology": "spherical, smooth surface (TEM)",
+      "release": {"model":"first-order best fit (r2 0.95-0.96)","values":"24h 49.7-75.7%, 48h 68-95%","label":"dialysis-APPARENT release (MWCO 8-14 kDa, 2:8 EtOH:PBS pH7.4) - membrane transport not separable from true carrier release"},
+      "permeation": {"tissue":"Sprague-Dawley RAT full-thickness abdominal skin, Franz cell","flux_ug_cm2_h":{"cationic":1.26,"neutral":1.10,"anionic":0.91},"Kp_1e-3_cm_h":{"cationic":2.10,"neutral":1.83,"anionic":1.52},"lag_h":{"cationic":0.43,"neutral":0.42,"anionic":0.52},"cumulative_24h_ug_cm2":{"cationic":16.3,"neutral":13.5,"anionic":11.9}},
+      "cellular_uptake": "HaCaT (keratinocyte) + B16BL6 (melanoma); charge-dependent",
+      "efficacy": "B16BL6 melanoma-bearing C57BL/6 mice; cationic NLC highest antimelanoma efficacy (P<0.05)",
+      "route": "topical", "dosage_form": "NLC dispersion", "disease": "murine cutaneous melanoma",
+      "stability": {"crystallization":"S1 (amorphous state -> low intra-carrier crystallization risk)","colloidal_time_series":"S0 (no size/PDI/zeta-vs-time data in paper)","storage_claim":"'limited drug leakage during storage' = generic NLC claim, NOT a measured time-series"},
+      "precipitation": "not investigated in Chen; released-celastrol precipitation is a RISK (poorly soluble) but no compatible onset-time data",
+      "applicability_limits": ["rat skin (NOT human)","ex vivo permeation","single study, no independent validation","charge confounded with lipid identity","permeation != efficacy endpoint"],
+      "preset_status": "SELECTED - the anchor Profile-B preset"
+    },
+    {
+      "id": "P2_celastrol_indomethacin_nlc",
+      "name": "Celastrol+Indomethacin transdermal NLC (rheumatoid arthritis)",
+      "id_status": "IDENTIFIED_SEARCH",
+      "source": "Zhang et al. Transdermal delivery system of NLC loaded with Celastrol and Indomethacin: optimization, characterization and efficacy for rheumatoid arthritis. (tandfonline)",
+      "doi": "10.1080/21691401.2018.1503599",
+      "api": "celastrol + indomethacin (COMBINATION - not a single-API celastrol preset)",
+      "carrier": "NLC", "route": "transdermal", "disease": "rheumatoid arthritis",
+      "search_reported_UNVERIFIED": {"size_nm":"26.92","PDI":"0.201","EE_pct":"96.56","drug_load_pct":"3.65"},
+      "distinguishing_feature": "much smaller (~27 nm) vs Chen ~85-90 nm; combination drug; different disease (RA, not melanoma)",
+      "why_candidate": "genuinely different size region + carrier optimization; but COMBINATION formulation - not directly comparable to single-API celastrol",
+      "preset_status": "CANDIDATE - pending full text; if selected, must be labelled a combination (celastrol+indomethacin) RA transdermal preset, distinct from Chen"
+    },
+    {
+      "id": "P3_celastrol_plga_peg_ER_melanoma",
+      "name": "ER-targeting celastrol PLGA/DSPE-PEG nanoparticle (melanoma immunotherapy)",
+      "id_status": "IDENTIFIED_SEARCH",
+      "source": "Nanoparticle-mediated celastrol ER targeting delivery amplify immunogenic cell death in melanoma (Bioactive Materials / ScienceDirect S2090123224002480, 2024)",
+      "doi": "confirm from full text",
+      "api": "celastrol", "carrier": "PLGA core + p-tosylethylenediamine(TSE)-modified DSPE-PEG surface (polymeric)",
+      "route": "systemic/intratumoral (NOT topical)", "disease": "melanoma",
+      "distinguishing_feature": "polymeric (not lipid) carrier; ER-targeting ligand (TSE); immunogenic cell death mechanism; different ROUTE from Chen",
+      "why_candidate": "same disease (melanoma) but different carrier class + route + mechanism; a real distinct system",
+      "preset_status": "CANDIDATE - pending full text; different route (systemic) than the topical Profile-B core"
+    },
+    {
+      "id": "P4_celastrol_HA_redox_micelle_breast",
+      "name": "HA redox-responsive celastrol polymeric micelle + folic acid (breast cancer)",
+      "id_status": "IDENTIFIED_SEARCH",
+      "source": "Tumor-targeting and redox dual-responsive hyaluronic acid-based polymeric micelles loaded with celastrol for breast cancer (ScienceDirect S014181302507922X)",
+      "doi": "confirm from full text",
+      "api": "celastrol", "carrier": "HA-based redox-responsive polymeric micelle; folic-acid targeting",
+      "route": "systemic", "disease": "breast cancer",
+      "search_reported_UNVERIFIED": {"size_nm":"~120","EE_pct":"89.52","drug_load_pct":"15.9"},
+      "distinguishing_feature": "hyaluronic-acid coating + redox-responsive + folic-acid ligand; ~120 nm (larger); systemic",
+      "preset_status": "CANDIDATE - pending full text; demonstrates coated/stimulus-responsive/targeted celastrol NP exists"
+    },
+    {
+      "id": "P5_celastrol_mixed_micelle_4T1",
+      "name": "Celastrol polymeric mixed micelle (breast cancer, spatial targeting)",
+      "id_status": "IDENTIFIED_SEARCH",
+      "source": "Celastrol-loaded polymeric mixed micelles shows improved antitumor efficacy in 4T1 xenograft through spatial targeting (ScienceDirect S037851732400468X)",
+      "doi": "confirm from full text",
+      "api": "celastrol", "carrier": "polymeric mixed micelle", "route": "systemic", "disease": "breast cancer (4T1)",
+      "preset_status": "CANDIDATE - pending full text; a distinct micelle carrier"
+    }
+  ],
+  "supporting_not_a_delivery_preset": [
+    {
+      "id": "S1_celastrol_beta_cyclodextrin",
+      "name": "Celastrol-beta-cyclodextrin (SBE-betaCD) inclusion complex",
+      "id_status": "IDENTIFIED_SEARCH",
+      "source": "Enhanced solubility, stability, permeation and anti-cancer efficacy of Celastrol-beta-cyclodextrin inclusion complex (ScienceDirect S0167732220338319)",
+      "role": "solubility/stability ENHANCER (molecular complex, not a nanoparticle) - useful for the solubility/precipitation registry, NOT a nanoparticle preset",
+      "search_reported_UNVERIFIED": "solubility increased ~30-fold; degradation reduced (values pending full text)"
+    }
+  ],
+  "discovery_reviews": [
+    {"id":"celastrol-delivery-review-2024","citation":"Recent advances in drug delivery of celastrol for enhancing efficiency and reducing the toxicity. Front Pharmacol 2024.","doi":"10.3389/fphar.2024.1137289","pmcid":"PMC10904542","role":"discovery/secondary only - do not extract numbers as data"},
+    {"id":"celastrol-strategies-review-2020","citation":"Celastrol: A Review of Useful Strategies Overcoming its Limitation in Anticancer Application. Front Pharmacol 2020;11:558741.","doi":"10.3389/fphar.2020.558741","pmcid":"PMC7751759","role":"discovery/secondary - solubility/stability context"}
+  ],
+  "selection_summary": {
+    "verified_fulltext_presets": 1,
+    "verified_note": "Only P1 (Chen 2012) is full-text-verified = a complete, usable preset family (3 surface configs).",
+    "identified_candidate_presets": 4,
+    "candidate_note": "P2-P5 are REAL, distinct celastrol NP systems (literature genuinely supports >=5 distinct systems) but are search-identified only - full texts required before they become usable presets.",
+    "honest_statement": "The literature supports the EXISTENCE of at least five scientifically distinct celastrol nanoparticle systems, but only ONE (Chen NLC, topical melanoma) is verified here. Do not present P2-P5 numbers as data until their PDFs are opened."
+  }
+}
