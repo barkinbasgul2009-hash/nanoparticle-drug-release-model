@@ -55,20 +55,23 @@
   {
    "profile": "C",
    "module": "carrier penetration primary + SI",
-   "status": "UNVERIFIED_SECONDARY",
+   "status": "GAP_RESOLVED_BATCH2",
    "closes_with": [
     "C1"
    ],
-   "blocking": true
+   "blocking": true,
+   "resolved_by": "huang-2012-aunp-spheroid (ACS Nano 6(5):4483-4493) opened; Au@tiopronin 2.6/6.1/14.8 nm size-dependent spheroid+tumour penetration",
+   "note": "Huang replaces the unverified Chen-2024 dossier target as the Profile-C anchor. Penetration is semi-quantitative (imaging), not conc-vs-radius."
   },
   {
    "profile": "C",
    "module": "uptake-return model",
-   "status": "SOURCE_IDENTIFIED_NOT_ACQUIRED",
+   "status": "BENCHMARK_ONLY_BATCH2",
    "closes_with": [
     "C2"
    ],
-   "blocking": true
+   "blocking": true,
+   "note": "Huang supports size-dependent uptake ranking (ICP-MS + imaging) but NOT a fitted uptake-return rate model; keep as mechanistic benchmark."
   },
   {
    "profile": "D",
@@ -112,13 +115,14 @@
   {
    "profile": "E",
    "module": "free vs encapsulated doxorubicin",
-   "status": "PARTIALLY_RESOLVED_BATCH1",
+   "status": "GAP_RESOLVED_BATCH2",
    "closes_with": [
     "E2",
     "E1"
    ],
    "blocking": true,
-   "resolved_by": "E1/S-050: >=90% encapsulated; free = mass-balance (unreliable per FDA). Directly-measured free still open (E9 Jiang 2011 methodology; E8 intratumoral free)."
+   "resolved_by": "li-2022-pld-be (Front Oncol 12:1070001) - DIRECTLY assays free (SPE) + encapsulated doxorubicin; reference=Caelyx (EU Doxil twin). DIRECT_PARTIAL.",
+   "note": "More defensible than the FDA S-050 mass-balance estimate. Systemic only; free/encapsulated in TUMOUR still missing (index 15)."
   },
   {
    "profile": "F",
@@ -157,7 +161,7 @@
     "E8"
    ],
    "blocking": true,
-   "note": "STILL MISSING - no spatial tumour concentration in any uploaded doc; blocks Profile E tumour-penetration output"
+   "note": "STILL MISSING after batch-2 - Li 2022 is systemic plasma only; no tumour tissue free/encapsulated. Blocks Profile E tumour output."
   },
   {
    "profile": "A",
@@ -169,5 +173,6 @@
    "blocking": false
   }
  ],
- "batch1_update": "B formulation/release/permeation and E formulation/systemic-PK gaps RESOLVED. E tumour-distribution and independent-validation gaps remain open."
+ "batch1_update": "B formulation/release/permeation and E formulation/systemic-PK gaps RESOLVED. E tumour-distribution and independent-validation gaps remain open.",
+ "batch2_update": "C carrier-penetration gap RESOLVED (Huang 2012). E free-vs-encapsulated (systemic) RESOLVED (Li 2022, direct SPE). Still open: E intratumoral distribution; independent model-validation for all profiles."
 }

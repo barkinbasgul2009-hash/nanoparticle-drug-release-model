@@ -80,3 +80,36 @@ data exist. The "release at the tumour" step (Barenholz koff) stays **ASSUMED**
 (in-vitro release numbers are redacted (b)(4) in the approval package). Tumour-
 penetration outputs for Profile E must remain **disabled** until a spatial primary
 (aid E4 / Charrois and Allen aid E5 / Gabizon aid E2) is opened.
+
+---
+
+## Stage-2 BATCH-2 update — free doxorubicin now DIRECTLY assayed (Li 2022)
+
+The Front Oncol 2022 bioequivalence trial (`li-2022-pld-be`, DOI 10.3389/fonc.2022.1070001)
+**separately and directly** assays free and encapsulated doxorubicin, resolving the
+key weakness of the earlier FDA S-050 mass-balance estimate.
+
+**§13 answers:**
+1. **Directly assays free doxorubicin?** Yes.
+2. **Separation method?** Free doxorubicin isolated by **solid-phase extraction (SPE)**;
+   encapsulated pretreated separately — measured directly, not by subtraction.
+3. **More defensible than mass balance?** Yes — avoids the 42%-negative artifact seen in
+   the FDA S-050 total-minus-encapsulated approach.
+4. **Resolves the FDA free-drug uncertainty?** Substantially — supplies a defensible,
+   directly-measured free-dox PK profile (though it is a different trial/product, not the US label study).
+5. **Formulations comparable to Doxil/Caelyx?** Reference arm = **Caelyx** (Janssen-Cilag,
+   the EU twin of Doxil) → directly comparable; test arm = a generic shown bioequivalent.
+6. **Usable as?** **DIRECT_PARTIAL** for Profile E (via the Caelyx reference arm; generic is BE).
+
+| State | Test (generic) | Reference (Caelyx) | Unit |
+|---|---|---|---|
+| **Free** Cmax | 133.45 | 114.23 | ng/mL |
+| **Free** t½ | 97.31 | 97.98 | h |
+| **Free** CLz | 2.60 | 2.88 | L/h/m² |
+| **Encapsulated** Cmax | 34.37 | 33.73 | µg/mL |
+| **Encapsulated** t½ | 81.31 | 78.89 | h |
+| **Encapsulated** CLz | 12.51 | 13.16 | mL/h/m² |
+
+Free Cmax (~130 ng/mL) is ~250× lower than encapsulated Cmax (~34 µg/mL) — the plasma
+pool is overwhelmingly encapsulated, consistent with the ≥90% figure. **States kept
+separate; not merged.** Systemic only — still **no tumour-tissue** free/encapsulated data.

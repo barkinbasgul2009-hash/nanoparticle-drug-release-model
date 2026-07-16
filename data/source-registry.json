@@ -325,6 +325,42 @@
       "quantitative_data_extracted": false,
       "role": "identified from FDA S-050 review (footnote 2): basis for >=90% encapsulated + total/encapsulated/free assay methodology. Acquisition E9.",
       "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "huang-2012-aunp-spheroid",
+      "type": "peer_reviewed_study",
+      "title": "Size-Dependent Localization and Penetration of Ultrasmall Gold Nanoparticles in Cancer Cells, Multicellular Spheroids, and Tumors in Vivo",
+      "authors": "Huang K, Ma H, Liu J, Huo S, Kumar A, Wei T, Zhang X, Jin S, Gan Y, Wang PC, He S, Zhang X, Liang X-J",
+      "journal": "ACS Nano 2012;6(5):4483-4493",
+      "doi": "10.1021/nn301282m",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-2",
+      "quantitative_data_extracted": "partial (ICP-MS uptake quantitative; penetration semi-quantitative imaging; SI not provided)",
+      "role": "Profile C primary: Au@tiopronin 2.6/6.1/14.8 nm size-dependent spheroid + tumour penetration (intact carrier, no API).",
+      "api_class": "NANOPARTICLE (carrier only)"
+    },
+    {
+      "id": "li-2022-pld-be",
+      "type": "peer_reviewed_study",
+      "title": "A multicenter randomized trial to compare the bioequivalence and safety of a generic doxorubicin hydrochloride liposome injection with Caelyx in advanced breast cancer",
+      "authors": "Li Y, Qi L, Wang Y, Li Y, Lei C, Zhang Y, ... Wang X",
+      "journal": "Frontiers in Oncology 2022;12:1070001",
+      "doi": "10.3389/fonc.2022.1070001",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-2",
+      "quantitative_data_extracted": true,
+      "role": "Profile E free-vs-encapsulated PK: directly-assayed (SPE) free + encapsulated doxorubicin; reference=Caelyx (EU Doxil twin). DIRECT_PARTIAL.",
+      "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "cern-2012-remote-loading-qspr",
+      "type": "modeling_study",
+      "title": "Quantitative structure-property relationship modeling of remote liposome loading of drugs",
+      "authors": "Cern A, Golbraikh A, Sedykh A, Tropsha A, Barenholz Y, Goldblum A",
+      "journal": "Journal of Controlled Release 2012;160(2):147-157",
+      "doi": "10.1016/j.jconrel.2011.11.029",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-2",
+      "quantitative_data_extracted": "qualitative (model-structure; per-drug data in SI)",
+      "role": "Profile E remote-loading mechanistic/modeling support ONLY (60 drugs/366 experiments; 5-fold external validation). NOT release/PK/tumour evidence.",
+      "api_class": "NANOPARTICLE (mechanism)"
     }
   ],
   "pending": {

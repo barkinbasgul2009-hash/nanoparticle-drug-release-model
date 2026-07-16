@@ -80,3 +80,32 @@ Two genuine-nanoparticle profiles moved from *blocked* to *primary-verified*:
 **Revised Stage-3-ready set: A, D, B, E** (each with mandatory labels above); **C** as
 illustrative mechanism; **F** still search-summary only. Still **no** profile with an
 independent external validation dataset → OUTCOME B stands. Stage 3 remains **not started**.
+
+---
+
+## BATCH-2 UPDATE (Profile C upgraded; Profile E free/encapsulated strengthened)
+
+- **Profile C — AuNP tumour-spheroid penetration: now LEVEL 2 (PRIMARY VERIFIED).**
+  `huang-2012-aunp-spheroid` (ACS Nano 2012;6(5):4483–4493, DOI 10.1021/nn301282m) gives
+  Au@tiopronin **2.6/6.1/14.8 nm**, ICP-MS cell uptake (quantitative), size-dependent
+  spheroid penetration (**semi-quantitative imaging** — 2 & 6 nm reach the core/nucleus,
+  15 nm peripheral), and in-vivo MCF-7 tumour accumulation. Implement as a **size-dependent
+  intact-carrier penetration benchmark** labelled *"carrier transport only — NOT therapeutic
+  API penetration; spatial output is qualitative/ranking, not concentration-vs-radius."*
+  Do **not** fit uptake-return rate constants (imaging only). This **replaces** the
+  unopened Chen-2024 dossier target as the Profile-C anchor.
+
+- **Profile E — free/encapsulated now DIRECTLY assayed.** `li-2022-pld-be` (Front Oncol
+  2022;12:1070001) separately assays **free (SPE-separated)** and **encapsulated**
+  doxorubicin (reference arm = **Caelyx**, the EU twin of Doxil): free Cmax ~130 ng/mL,
+  t½ ~97 h vs encapsulated Cmax ~34 µg/mL, t½ ~81 h; BE established for both. This is
+  **more defensible than the FDA S-050 mass-balance** estimate and grades **DIRECT_PARTIAL**
+  for Profile E. `cern-2012-remote-loading-qspr` adds remote-loading QSPR **mechanistic
+  support only** (not release/PK data). The current **S-064** label (Ref ID 5758049,
+  rev 03/2026) confirms E1. **Tumour penetration stays disabled** — Li 2022 is systemic
+  plasma only; no intratumoral distribution.
+
+**Stage-3-ready set after batch-2: A, D, B, E, and C** (C as a carrier-only benchmark with
+qualitative spatial output). **F** still search-summary only. **No** profile has an
+independent model-validation dataset (Li 2022 is a product bioequivalence study, not a
+mechanistic validation set) → **OUTCOME B stands. Stage 3 remains NOT started.**

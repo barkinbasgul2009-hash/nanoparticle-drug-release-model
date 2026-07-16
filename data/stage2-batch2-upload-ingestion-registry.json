@@ -1,0 +1,75 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Machine-readable audit of Stage-2 Batch-2 uploaded files. Identified from internal content, not filename. See docs/stage2-batch2-upload-ingestion-audit.md.",
+  "batch": "batch-2 (2026-07-16)",
+  "files": [
+    {
+      "uploaded_filename": "729ea011-fonc121070001.pdf",
+      "verified_title": "A multicenter randomized trial to compare the bioequivalence and safety of a generic doxorubicin hydrochloride liposome injection with Caelyx in advanced breast cancer",
+      "authors": "Li Y, Qi L, Wang Y, Li Y, Lei C, Zhang Y, ... Wang X (equal-contribution first authors; corresponding Wang X, Li Y)",
+      "journal": "Frontiers in Oncology", "year": 2022, "volume": "12", "article": "1070001",
+      "doi": "10.3389/fonc.2022.1070001",
+      "doc_type": "clinical trial (bioequivalence)", "evidence_class": "primary (clinical)",
+      "complete": true, "open_access": true,
+      "profile": "E", "module": "free vs encapsulated systemic PK",
+      "status": ["EXACT_MATCH"],
+      "resolves": "directly-assayed (SPE-separated) FREE and ENCAPSULATED doxorubicin PK; reference arm = Caelyx (Janssen, EU Doxil twin)",
+      "acquisition_id": "E8/E-free (fills the free/encapsulated-clinical need; not the intratumoral gap)"
+    },
+    {
+      "uploaded_filename": "33d94ac4-huang2012.pdf",
+      "verified_title": "Size-Dependent Localization and Penetration of Ultrasmall Gold Nanoparticles in Cancer Cells, Multicellular Spheroids, and Tumors in Vivo",
+      "authors": "Huang K, Ma H, Liu J, Huo S, Kumar A, Wei T, Zhang X, Jin S, Gan Y, Wang PC, He S, Zhang X, Liang X-J",
+      "journal": "ACS Nano", "year": 2012, "volume": "6", "issue": "5", "pages": "4483-4493",
+      "doi": "10.1021/nn301282m",
+      "doc_type": "primary research article", "evidence_class": "primary",
+      "complete": true, "pages_count": 11, "supplement": "SI (Figures S1-S3) referenced, not provided",
+      "profile": "C", "module": "intact-carrier size-dependent spheroid + tumour penetration",
+      "status": ["EXACT_MATCH"],
+      "resolves": "Profile C primary: Au@tiopronin 2.6/6.1/14.8 nm; MCF-7 spheroids; ICP-MS uptake (quantitative) + dark-field/TEM penetration (semi-quantitative); in-vivo tumour accumulation",
+      "note": "NO API, NO drug release - intact gold carrier only. Different system from the earlier Chen-2024 (15/22/60 nm) dossier target."
+    },
+    {
+      "uploaded_filename": "3eed6093-ijn73023_2.pdf",
+      "verified_title": "Formulation, characterization, and evaluation of in vitro skin permeation and in vivo pharmacodynamics of surface-charged tripterine-loaded nanostructured lipid carriers",
+      "authors": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q",
+      "journal": "International Journal of Nanomedicine", "year": 2012, "volume": "7", "pages": "3023-3033",
+      "doi": "10.2147/IJN.S32476", "pmcid": "PMC3392146",
+      "doc_type": "primary research article", "evidence_class": "primary",
+      "complete": true,
+      "profile": "B", "module": "formulation composition + release + permeation",
+      "status": ["DUPLICATE"],
+      "resolves": "byte-identical to batch-1 B1; re-mined for full Table-1 lipid composition and release/permeation method. Batch-1 values re-verified - no corrections.",
+      "acquisition_id": "B1"
+    },
+    {
+      "uploaded_filename": "1082d72c-050718s064lbl.pdf",
+      "verified_title": "DOXIL (doxorubicin hydrochloride liposome injection) Prescribing Information",
+      "issuer": "FDA Drugs@FDA / Baxter Healthcare Corporation",
+      "regulatory_id": "NDA 050718/S-064", "revision_date": "03/2026", "reference_id": "5758049",
+      "doc_type": "official prescribing information (current)", "evidence_class": "primary (regulatory)",
+      "complete": true, "pages_count": 30,
+      "profile": "E", "module": "official formulation + systemic PK",
+      "status": ["UPDATED_VERSION"],
+      "resolves": "current official Drugs@FDA DOXIL label; composition + PK Table 8 identical to batch-1 DailyMed PI; SUPERSEDES the S-060 authorized-generic label (rev 5/2022)",
+      "acquisition_id": "E1"
+    },
+    {
+      "uploaded_filename": "cd10eadf-cern2012.pdf",
+      "verified_title": "Quantitative structure-property relationship modeling of remote liposome loading of drugs",
+      "authors": "Cern A, Golbraikh A, Sedykh A, Tropsha A, Barenholz Y, Goldblum A",
+      "journal": "Journal of Controlled Release", "year": 2012, "volume": "160", "issue": "2", "pages": "147-157",
+      "doi": "10.1016/j.jconrel.2011.11.029",
+      "doc_type": "QSPR / modeling", "evidence_class": "modeling support",
+      "complete": true, "pages_count": 11, "supplement": "per-drug loading data in SI, not provided",
+      "profile": "E (support)", "module": "remote-loading mechanism (QSPR)",
+      "status": ["EXACT_MATCH"],
+      "classification": "MECHANISTIC_TRANSFER / MODELING_SUPPORT",
+      "resolves": "remote-loading requirements (amphipathic weak base/acid, logD window, transmembrane ammonium-sulfate/pH gradient); dataset 60 drugs / 366 loading experiments; 5-fold external validation",
+      "not_evidence_for": "Doxil release kinetics, plasma PK, tumour penetration, or intratumoral release",
+      "note": "doxorubicin present in dataset (6 mentions) but per-drug values in SI (not provided)"
+    }
+  ],
+  "acquisition_items_touched": ["B1 (dup)","E1 (updated S-064)","free/encapsulated clinical need (Li 2022)","Profile C primary (Huang 2012)","remote-loading support (Cern 2012)"],
+  "corrections_to_prior_batches": "none - Chen 2012 batch-1 values re-verified byte-identical."
+}

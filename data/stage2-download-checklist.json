@@ -199,5 +199,83 @@
    "E1 (uploaded, incl. Clin-Pharm review)",
    "E3 Barenholz (uploaded)"
   ]
+ },
+ "batch2_ingestion_status": {
+  "ingested_batch2": [
+   "C1b (Huang 2012)",
+   "E10 (Li 2022 free/encap)",
+   "E11 (Cern 2012 support)",
+   "E1 confirmed via S-064 label",
+   "B1 duplicate re-mined"
+  ],
+  "note": "Profile C anchored (Huang), Profile E free/encapsulated resolved (Li 2022, direct SPE)."
+ },
+ "next_batch_after_batch2": {
+  "tier1_critical": [
+   {
+    "aid": "E4/E8",
+    "what": "Doxil/PLD INTRATUMORAL distribution primary (spatial free/total doxorubicin in tumour)",
+    "why": "STILL the only missing piece to enable a Profile E tumour output; Li 2022 is systemic only",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "B2",
+    "what": "Celastrol+Indomethacin transdermal NLC (DOI 10.1080/21691401.2018.1503599)",
+    "why": "INDEPENDENT NP-skin study to validate Profile B (still single-study)",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   }
+  ],
+  "tier2_strengthening": [
+   {
+    "aid": "E2",
+    "what": "Gabizon 2003 Clin Pharmacokinet (PMID 12739982)",
+    "why": "primary tumour/free-encapsulated PK behind Barenholz secondary numbers",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "E5",
+    "what": "Charrois & Allen 2004 (BBA 1663:167-77)",
+    "why": "release-rate -> tumour coupling",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "F1",
+    "what": "Abraxane SmPC/label + PK primary",
+    "why": "Profile F still search-summary only",
+    "access": "FDA/EMA + library"
+   },
+   {
+    "aid": "Huang-SI",
+    "what": "Huang 2012 Supporting Information (Figs S1-S3)",
+    "why": "atoms/NP + XPS detail (not model-critical)",
+    "access": "publisher"
+   }
+  ],
+  "tier3_validation": [
+   {
+    "aid": "A4",
+    "what": "Potts & Guy 1992 (PMID 1608900)",
+    "why": "skin-permeability QSPR coefficients (earlier upload was wrong paper)",
+    "access": "library"
+   },
+   {
+    "aid": "C1",
+    "what": "Chen 2024 AuNP spheroid (15/22/60 nm) + SI (optional)",
+    "why": "second/larger size range for Profile C",
+    "access": "library"
+   },
+   {
+    "aid": "D2",
+    "what": "independent tumour-vascular validation dataset",
+    "why": "external validation for Profile D",
+    "access": "library"
+   }
+  ],
+  "no_longer_required": [
+   "C anchor primary (Huang uploaded)",
+   "E free/encapsulated systemic PK (Li 2022 uploaded)",
+   "E remote-loading mechanism (Cern uploaded)",
+   "current DOXIL label (S-064 uploaded)"
+  ]
  }
 }

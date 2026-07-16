@@ -216,6 +216,24 @@
     {"name":"doxil_be_free_dox_massbalance","value":"free = total - encapsulated; 42% samples negative; approach unreliable","unit":"-","source":"doxil-nda050718-s050","locator":"Clin Pharm review (Subramaniam), Reference ID 3853431","label":"DIRECT_PARTIAL","verified_here":true,"note":"free doxorubicin NOT directly measurable by the assay"},
     {"name":"doxil_bioassay_LLOQ","value":"0.5","unit":"ug/mL","source":"doxil-nda050718-s050","locator":"Biopharmaceutics review","label":"DIRECT_EXACT","verified_here":true,"note":"calibration 0.5-50 ug/mL; QCs 1.50/10.0/37.5; total-dox accuracy 96.7-98.9%/precision 2.7-3.3%, encapsulated 98.4-100%/6.4-7.3%"},
 
+    {"name":"aunp_size_tiopronin","value":"2.6 / 6.1 / 14.8","unit":"nm (TEM, +/-0.3/0.7/1.8)","source":"huang-2012-aunp-spheroid","locator":"Fig 1A / text","label":"CARRIER_SPECIFIC","verified_here":true,"system":"Au@tiopronin, MCF-7 spheroid","note":"MEASURED sizes (not nominal 2/6/15)"},
+    {"name":"aunp_zeta_tiopronin","value":"-23.8 to -35.3","unit":"mV (paper prints eV, typo)","source":"huang-2012-aunp-spheroid","locator":"text","label":"CARRIER_SPECIFIC","verified_here":true},
+    {"name":"aunp_atoms_per_NP","value":"3248 (6.1nm) / 22523 (14.8nm)","unit":"Au atoms/NP","source":"huang-2012-aunp-spheroid","locator":"text","label":"CARRIER_SPECIFIC","verified_here":true},
+    {"name":"aunp_spheroid_penetration","value":"2 & 6 nm penetrate deep (core + cytoplasm/nucleus); 15 nm peripheral","unit":"semi-quantitative (dark-field/TEM)","source":"huang-2012-aunp-spheroid","locator":"Fig 4","label":"BENCHMARK","verified_here":true,"note":"NOT a concentration-vs-radius profile; imaging-based ranking only"},
+    {"name":"aunp_cell_uptake","value":"smaller NP -> more Au per cell","unit":"ICP-MS Au atoms/cell (quantitative)","source":"huang-2012-aunp-spheroid","locator":"Fig 2b","label":"CARRIER_SPECIFIC","verified_here":true,"note":"1 nM exposure, 24 h; MCF-7"},
+
+    {"name":"pld_free_dox_Cmax","value":"133.45 (test) / 114.23 (Caelyx ref)","unit":"ng/mL","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"system":"PLD/Caelyx, breast cancer, 50 mg/m2 IV","note":"FREE doxorubicin, SPE-separated (directly assayed)"},
+    {"name":"pld_free_dox_t_half","value":"97.31 (test) / 97.98 (ref)","unit":"h","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"note":"free-dox terminal half-life (release-rate-limited)"},
+    {"name":"pld_free_dox_CL","value":"2.60 / 2.88","unit":"L/h/m2","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"note":"free-dox CLz; Vd 358.96/403.57 L/m2"},
+    {"name":"pld_encapsulated_dox_Cmax","value":"34.37 / 33.73","unit":"ug/mL (paper prints mg/mL)","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true,"note":"ENCAPSULATED doxorubicin; consistent with DOXIL label scale"},
+    {"name":"pld_encapsulated_dox_t_half","value":"81.31 / 78.89","unit":"h","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true},
+    {"name":"pld_encapsulated_dox_CL","value":"12.51 / 13.16","unit":"mL/h/m2","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true,"note":"= 0.0125 L/h/m2, order-consistent with DOXIL label 0.041 L/h/m2; Vd 1.41/1.47 L/m2"},
+    {"name":"pld_BE_GMR_free","value":"Cmax 114.75 / AUC0t 112.27 / AUC0inf 111.80","unit":"% (90% CI within 80-125)","source":"li-2022-pld-be","locator":"Table 5/6","label":"DIRECT_EXACT","verified_here":true,"note":"free-dox bioequivalence test vs Caelyx"},
+    {"name":"pld_BE_GMR_encapsulated","value":"Cmax 102.01 / AUC0t 104.50 / AUC0inf 105.26","unit":"% (90% CI within 80-125)","source":"li-2022-pld-be","locator":"Table 5/6","label":"DIRECT_EXACT","verified_here":true},
+
+    {"name":"doxil_label_current_refid","value":"NDA 050718/S-064, Reference ID 5758049, rev 03/2026 (Baxter)","unit":"-","source":"doxil-fda-pi","locator":"S-064 label","label":"DIRECT_EXACT","verified_here":true,"note":"current Drugs@FDA label; supersedes S-060; PK Table 8 + composition identical to batch-1 DailyMed PI"},
+    {"name":"remote_loading_dataset","value":"60 drugs / 366 loading experiments; 5-fold external validation","unit":"-","source":"cern-2012-remote-loading-qspr","locator":"text","label":"MECHANISTIC_TRANSFER","verified_here":true,"note":"QSPR modeling support for ammonium-sulfate remote loading; NOT direct Doxil release/PK/tumour data"},
+
     {
       "name": "dermal_clearance_k",
       "value": null,

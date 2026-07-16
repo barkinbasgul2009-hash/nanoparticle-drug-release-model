@@ -329,6 +329,87 @@
         "secondary_tumour": {"value":"malignant-effusion drug levels 4-16x higher than free doxorubicin (Gabizon [96])","label":"UNVERIFIED_SECONDARY"}
       },
       "note": "Resolves acquisition E3 (formulation/mechanism). PK/tumour numbers are review-reported (secondary) - primary is Gabizon (aid E2)."
+    },
+    {
+      "id": "chen-2012-tripterine-nlc-formulation-detail",
+      "identity": "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (batch-2 duplicate upload re-mined for full composition).",
+      "doi": "10.2147/IJN.S32476", "pmcid": "PMC3392146",
+      "type": "Profile B formulation + release-method detail (supplements chen-2012-tripterine-nlc)",
+      "full_text_opened": true, "opened_batch": "batch-2 (duplicate)",
+      "extracted_values": {
+        "composition_Table1_mg": {
+          "cationic": {"stearylamine":180,"IPM_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+          "neutral": {"glyceryl_behenate_solid_lipid":180,"MCTs_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+          "anionic": {"Precirol_ATO5_solid_lipid":180,"IPM_liquid_lipid":60,"soybean_lecithin":30,"TPGS":30},
+          "note": "charge set by primary lipid/modifier: cationic=stearylamine(+), neutral=glyceryl behenate, anionic=Precirol ATO-5; solid:liquid lipid = 3:1; +Pluronic F68 aqueous; 15 mg tripterine"
+        },
+        "prep_method": "solvent evaporation (drug + lipids dissolved in acetone/ethanol, added to aqueous Pluronic F68)",
+        "release_method": "dialysis (MWCO 8,000-14,000), receptor 2:8 ethanol:PBS pH 7.4, 37 C, sink",
+        "release_interpretation": "APPARENT (dialysis-membrane-coupled) release, NOT pure carrier-release kinetics - the membrane and dissolution steps are convolved",
+        "permeation_method": "Sprague-Dawley RAT full-thickness abdominal skin, Franz cell, receptor 2:8 ethanol:PBS pH 7.4, 400 rpm, 37 C"
+      },
+      "corrections_to_batch1": "none - size/PDI/zeta/EE/release/flux values re-verified byte-identical.",
+      "note": "Adds full lipid composition + method context. Species caveat reinforced: permeation = rat, PD = mouse."
+    },
+    {
+      "id": "huang-2012-aunp-spheroid",
+      "identity": "Huang K, Ma H, Liu J, Huo S, Kumar A, Wei T, Zhang X, Jin S, Gan Y, Wang PC, He S, Zhang X, Liang X-J. Size-Dependent Localization and Penetration of Ultrasmall Gold Nanoparticles in Cancer Cells, Multicellular Spheroids, and Tumors in Vivo. ACS Nano 2012;6(5):4483-4493.",
+      "doi": "10.1021/nn301282m",
+      "type": "primary intact-carrier transport study (Profile C)",
+      "api_class": "NANOPARTICLE (gold, intact carrier) - NO API, NO drug release",
+      "full_text_opened": true, "opened_batch": "batch-2",
+      "system": {"carrier":"Au@tiopronin (tiopronin-coated gold)","sizes_TEM_nm":["2.6+/-0.3","6.1+/-0.7","14.8+/-1.8"],"cell_line":"MCF-7 breast cancer","spheroid":"multicellular tumor spheroid (7- and 14-day, 600 cells/well)","in_vivo":"MCF-7 tumour-bearing mice, single IV"},
+      "extracted_values": {
+        "zeta_mV": "-23.8 to -35.3 (paper prints 'eV', typo for mV); more negative for larger NP",
+        "au_atoms_per_NP": {"6.1nm":3248,"14.8nm":22523,"2.6nm":"reported (small)"},
+        "tiopronin_surface_density": {"2.6nm":19,"6.1nm":29,"14.8nm":32},
+        "SPR_wavelength_nm": {"2.6nm":505,"6.1nm":517,"14.8nm":523},
+        "PDI_15nm": 0.22,
+        "exposure": "1 nM AuNPs, 3 and 24 h",
+        "uptake": "ICP-MS gold-atom concentration per cell (QUANTITATIVE): smaller NPs -> more Au per cell",
+        "spheroid_penetration": "SEMI-QUANTITATIVE (dark-field + TEM imaging): 2 and 6 nm penetrate deeply into spheroid core and reach cytoplasm+nucleus; 15 nm stays peripheral",
+        "in_vivo": "ICP-MS tumour accumulation after single IV (n=3); higher tumour accumulation / deeper localization for 2-6 nm"
+      },
+      "endpoint_types": "total cellular uptake = quantitative (ICP-MS); radial/spatial penetration = semi-quantitative imaging (NOT concentration-vs-radius)",
+      "limitations": "no exact concentration-vs-radius profile (imaging only); MCF-7 single line; no API payload; SI (Figs S1-S3) not provided; no independent external validation",
+      "note": "Upgrades Profile C from illustrative-only to a RESEARCH-SUPPORTED size-dependent intact-carrier penetration benchmark. Do NOT convert imaging to exact concentration profiles; do NOT infer API release."
+    },
+    {
+      "id": "li-2022-pld-be",
+      "identity": "Li Y, Qi L, Wang Y, Li Y, Lei C, Zhang Y, ... Wang X. A multicenter randomized trial to compare the bioequivalence and safety of a generic doxorubicin hydrochloride liposome injection with Caelyx in advanced breast cancer. Front Oncol 2022;12:1070001.",
+      "doi": "10.3389/fonc.2022.1070001",
+      "type": "primary clinical bioequivalence study (Profile E)",
+      "api_class": "NANOPARTICLE (PEGylated liposomal doxorubicin)",
+      "full_text_opened": true, "opened_batch": "batch-2",
+      "design": {"type":"randomized 2-sequence 2-period single-dose crossover","population":"advanced breast cancer","dose":"50 mg/m2 IV q4w","washout_days":"28-35","N_BES":44,"reference":"Caelyx (Janssen-Cilag International NV, Belgium) - EU twin of Doxil, 20 mg/10 mL","test":"generic PLD 'libaoduo' 20 mg/10 mL"},
+      "free_dox_assay": "DIRECTLY assayed: free doxorubicin separated by solid-phase extraction (SPE); encapsulated pretreated separately (NOT total-minus-encapsulated mass balance)",
+      "extracted_values": {
+        "free_dox_Table3_T_R": {"Cmax_ng_mL":"133.45+/-36.99 / 114.23+/-24.14","AUC0t_h_ug_mL":"18.72+/-4.89 / 16.47+/-3.84","AUC0inf":"20.67+/-5.36 / 18.27+/-4.29","AUC0_48h":"5.24+/-1.28 / 4.49+/-0.83","AUC48h_t":"13.48+/-3.80 / 11.98+/-3.13","Tmax_h":"25.5 / 9.5 (median)","t_half_h":"97.31+/-21.21 / 97.98+/-19.50","Vd_L_m2":"358.96+/-110.66 / 403.57+/-113.35","CLz_L_h_m2":"2.60+/-0.77 / 2.88+/-0.75"},
+        "encapsulated_dox_Table4_T_R": {"Cmax_ug_mL":"34.37+/-3.83 / 33.73+/-3.82","AUC0t_h_ug_mL":"3.90+/-0.68 / 3.70+/-0.60","AUC0inf":"4.19+/-0.82 / 3.93+/-0.74","AUC0_48h":"1.26+/-0.14 / 1.22+/-0.13","AUC48h_t":"2.64+/-0.58 / 2.48+/-0.51","Tmax_h":"2.06 / 2.0 (median)","t_half_h":"81.31+/-17.26 / 78.89+/-16.57","Vd_L_m2":"1.41+/-0.21 / 1.47+/-0.30","CLz_mL_h_m2":"12.51+/-3.02 / 13.16+/-2.52"},
+        "unit_caveat":"paper prints AUC/Cmax of encapsulated as 'mg/mL' but context (and consistency with the DOXIL label) indicates ug/mL; transcribed verbatim with this note",
+        "GMR_free_pct": {"Cmax":114.75,"AUC0t":112.27,"AUC0inf":111.80,"AUC0_48h":115.10,"AUC48h_t":111.06},
+        "GMR_encapsulated_pct": {"Cmax":102.01,"AUC0t":104.50,"AUC0inf":105.26,"AUC0_48h":103.06,"AUC48h_t":105.05},
+        "BE_conclusion":"all 90% CIs within 80-125% for both free and encapsulated -> bioequivalent"
+      },
+      "compatibility_assessment": "reference arm = Caelyx = Janssen EU twin of Doxil (same formulation) -> Caelyx values directly applicable to Profile E; test (generic) shown bioequivalent. Grade DIRECT_PARTIAL for Profile E (Caelyx reference, different trial than the US label).",
+      "resolves_fda_uncertainty": "provides directly-measured (SPE) free-dox PK, more defensible than the FDA S-050 mass-balance estimate (which gave 42% negative values). Does not merge free/encapsulated; keeps them separate.",
+      "note": "Key new Profile-E evidence for the FREE-vs-ENCAPSULATED module. Systemic PK only - NO tumour tissue distribution."
+    },
+    {
+      "id": "cern-2012-remote-loading-qspr",
+      "identity": "Cern A, Golbraikh A, Sedykh A, Tropsha A, Barenholz Y, Goldblum A. Quantitative structure-property relationship modeling of remote liposome loading of drugs. J Control Release 2012;160(2):147-157.",
+      "doi": "10.1016/j.jconrel.2011.11.029",
+      "type": "QSPR / machine-learning modeling (Profile E mechanistic support ONLY)",
+      "full_text_opened": true, "opened_batch": "batch-2",
+      "extracted_values": {
+        "dataset":"60 drugs, 366 remote-loading experiments (Barenholz lab, ~15 y)",
+        "validation":"5-fold external validation; binary + continuous ML models; high external prediction accuracy",
+        "mechanism":"remote loading of amphipathic weak bases/acids via transmembrane ammonium-sulfate / pH gradient; requires a logD window",
+        "doxorubicin_specific":"doxorubicin present in dataset (6 mentions) but per-drug loading values are in SI (not provided)"
+      },
+      "classification": "MECHANISTIC_TRANSFER / MODELING_SUPPORT",
+      "not_evidence_for": "Doxil release kinetics, plasma PK, tumour penetration, intratumoral release",
+      "note": "Supports the remote-loading formulation module qualitatively; do NOT use as direct Doxil release/PK data."
     }
   ]
 }

@@ -47,16 +47,21 @@
       "name": "Intact nanoparticle penetration in a tumour spheroid (carrier transport)",
       "api": "none (gold nanoparticle carrier)", "carrier": "gold nanoparticle (15/22/60 nm)", "route": "in vitro incubation", "tissue": "MDA-MB-231 spheroid",
       "purpose": "size-dependent intact-carrier penetration benchmark (uptake-return, not pure Fickian)",
-      "profile_level": "LEVEL_1_MECHANISTIC_BENCHMARK (UNVERIFIED)",
+      "profile_level": "LEVEL_2_RESEARCH_SUPPORTED_SUBMODEL (mechanistic benchmark; PRIMARY VERIFIED this batch via Huang 2012)",
+      "primary_source": "huang-2012-aunp-spheroid (ACS Nano 2012;6(5):4483-4493, DOI 10.1021/nn301282m) - opened batch-2. Replaces the unverified Chen-2024 dossier target as the anchor.",
+      "carrier_note": "Huang uses Au@tiopronin 2.6/6.1/14.8 nm (MEASURED); different system from the Chen-2024 (15/22/60 nm) dossier target, which remains unopened.",
       "modules": {
-        "carrier_size": {"label":"UNVERIFIED_SECONDARY","source":"chen-2024 (dossier)","verified_here":false},
-        "penetration_depth": {"label":"UNVERIFIED_SECONDARY","note":"peaks 924/187 ppm; depths 21/22/15 um - dossier only","verified_here":false},
-        "transport_mechanism": {"label":"MECHANISTIC_TRANSFER","note":"needs extracellular<->cell uptake-return state (M_cell)"},
-        "api_release": {"label":"INSUFFICIENT_EVIDENCE","note":"no API present"}
+        "carrier_size": {"label":"CARRIER_SPECIFIC","source":"huang-2012-aunp-spheroid","verified_here":true,"values":"TEM 2.6+/-0.3 / 6.1+/-0.7 / 14.8+/-1.8 nm; zeta -23.8..-35.3 mV"},
+        "cell_uptake": {"label":"CARRIER_SPECIFIC","source":"huang-2012-aunp-spheroid","verified_here":true,"values":"ICP-MS Au/cell (quantitative); smaller NP -> more uptake; 1 nM, MCF-7"},
+        "penetration_depth": {"label":"BENCHMARK","source":"huang-2012-aunp-spheroid Fig4","verified_here":true,"values":"2 & 6 nm penetrate spheroid core + cytoplasm/nucleus; 15 nm peripheral","note":"SEMI-QUANTITATIVE (dark-field/TEM imaging); NOT a concentration-vs-radius profile"},
+        "in_vivo_tumour": {"label":"CARRIER_SPECIFIC","source":"huang-2012-aunp-spheroid","verified_here":true,"note":"MCF-7 tumour mice, single IV, ICP-MS accumulation (n=3)"},
+        "transport_mechanism": {"label":"MECHANISTIC_TRANSFER","note":"size-dependent extracellular<->cell uptake; supports a benchmark, not a fitted uptake-return rate model (imaging only)"},
+        "api_release": {"label":"INSUFFICIENT_EVIDENCE","note":"NO API present - intact gold carrier only; never present as therapeutic API penetration"}
       },
       "is_nanoparticle": true,
-      "stage3_ready": false,
-      "blocker": "Chen 2024 primary not opened (dossier-secondary only). Ready as illustrative mechanism; NOT for quantitative use until primary + SI verified."
+      "stage3_ready": true,
+      "stage3_label": "RESEARCH_SUPPORTED intact-carrier size-dependent penetration BENCHMARK (Au@tiopronin, MCF-7) - carrier transport only, NOT API delivery; spatial outputs qualitative/ranking",
+      "residual_gaps": "no concentration-vs-radius calibration (imaging only); Huang SI (Figs S1-S3) not provided; no independent external validation; Chen-2024 (15/22/60 nm) still optional for a second size range"
     },
     {
       "id": "D_dreher_tumor_vascular",
@@ -88,7 +93,8 @@
         "formulation": {"label":"DIRECT_EXACT","source":"doxil-fda-pi Section 11","verified_here":true,"values":"per mL: doxorubicin HCl 2 mg (=1.87 mg dox base); cholesterol 3.19 mg; HSPC 9.58 mg; MPEG-DSPE(PEG2000) 3.19 mg; ammonium sulfate ~0.6 mg; histidine 1.55 mg; sucrose 94 mg; pH 6.0-7.0; >90% encapsulated; dox HCl MW 579.99","note":"label gives composition but NOT liposome diameter (~100 nm from Barenholz)"},
         "particle_size": {"label":"BENCHMARK","source":"barenholz-2012 (Fig4)","verified_here":true,"note":"PEGylated unilamellar liposome <100 nm (~100 nm); label itself omits size"},
         "systemic_PK": {"label":"DIRECT_EXACT","source":"doxil-fda-pi Table 8 (AIDS-KS, N=23, single dose)","verified_here":true,"values":"total dox: Cmax 4.12/8.34 ug/mL; CL 0.056/0.041 L/h/m2; Vss 2.83/2.72 L/m2; AUC 277/590 ug/mL.h; lambda1 t1/2 4.7/5.2 h; lambda2 t1/2 52.3/55.0 h at 10/20 mg/m2; linear 10-20, nonlinear at 50 mg/m2","note":"contrast: conventional doxorubicin Vd 700-1100 L/m2, CL 24-35 L/h/m2 (label)"},
-        "free_vs_encapsulated": {"label":"DIRECT_PARTIAL","source":"doxil-fda-pi + doxil-nda050718-s050 (Subramaniam Clin Pharm review)","verified_here":true,"values":">=90% remains liposome-encapsulated in circulation; assay cannot quantify <5-10% free; BE study estimated free = total-encapsulated (mass balance), 42% of samples negative, reviewer: 'may not yield reliable estimates of free doxorubicin'","note":"KEY teaching point: total != free; free not directly measurable by this assay"},
+        "free_vs_encapsulated": {"label":"DIRECT_PARTIAL","source":"doxil-fda-pi + doxil-nda050718-s050 + li-2022-pld-be","verified_here":true,"values":">=90% remains encapsulated in circulation; FDA S-050 mass-balance free estimate unreliable (42% negative). Li 2022 DIRECTLY assays free (SPE): free Cmax 133/114 ng/mL vs encapsulated Cmax 34.37/33.73 ug/mL; free t1/2 97 h vs encapsulated 81 h; BE established for BOTH free & encapsulated (GMR 90% CI within 80-125%)","note":"Li 2022 (reference=Caelyx=EU Doxil twin) gives directly-measured free-dox PK - more defensible than mass balance. DIRECT_PARTIAL (Caelyx ref, different trial than US label)"},
+        "remote_loading_mechanism": {"label":"MECHANISTIC_TRANSFER","source":"cern-2012-remote-loading-qspr + barenholz-2012","verified_here":true,"note":"QSPR (60 drugs/366 experiments) supports ammonium-sulfate remote loading; modeling support only, not release/PK data"},
         "metabolism": {"label":"DIRECT_EXACT","source":"doxil-fda-pi","verified_here":true,"values":"doxorubicinol 0.8-26.2 ng/mL plasma at 10/20 mg/m2; plasma protein binding of doxorubicin ~70% (Doxil not determined)"},
         "tumour_accumulation": {"label":"INSUFFICIENT_EVIDENCE","verified_here":false,"note":"label/reviews give NO spatial tumour penetration; Barenholz cites (secondary) malignant-effusion levels 4-16x free-dox from Gabizon [96]. Need primary intratumoral-distribution study (aid E4/Charrois-Allen aid E5)"},
         "local_release": {"label":"ASSUMED","note":"in-vitro release/dissolution profiles exist in S-050 but numeric values REDACTED (b)(4); release mechanism qualitative (Barenholz koff)"},
@@ -125,10 +131,12 @@
       "B_celastrol_nlc_skin (PRIMARY VERIFIED this batch - first genuine-NP release->skin submodel; single study, rat skin)",
       "E_doxil_liposomal_doxorubicin (formulation + systemic PK DIRECT_EXACT from FDA label; tumour-penetration outputs disabled)"
     ],
-    "ready_as_illustrative_mechanism_only": ["C_aunp_tumor_spheroid (until Chen 2024 spheroid primary verified)"],
+    "ready_as_illustrative_mechanism_only": [],
     "blocked_pending_sources": ["F_nab_paclitaxel_abraxane (still search-summary only)"],
     "no_profile_externally_validated": true,
     "batch1_upgrades": "B and E moved from blocked/UNVERIFIED_SECONDARY to PRIMARY-VERIFIED, Stage-3-ready with mandatory labels. E tumour-transport remains INSUFFICIENT (no spatial primary).",
-    "outcome": "OUTCOME B - portfolio of research-supported submodels/benchmarks; still no single externally-validated end-to-end NP drug profile, but two genuine-NP profiles (B, E) now have primary-verified modules"
+    "batch2_upgrades": "C upgraded from illustrative-only to LEVEL_2 research-supported intact-carrier benchmark (Huang 2012, primary). E free-vs-encapsulated strengthened with DIRECTLY-assayed (SPE) free-dox PK (Li 2022, ref=Caelyx) + remote-loading QSPR support (Cern 2012). E1 confirmed by current S-064 label. B formulation fully detailed (Table 1 lipids). Still NO independent external validation for any profile; E tumour-penetration still disabled.",
+    "stage3_ready_after_batch2": ["A","D","B","E","C (benchmark, carrier-only, qualitative spatial)"],
+    "outcome": "OUTCOME B - portfolio of research-supported submodels/benchmarks; still no single externally-validated end-to-end NP drug profile. Five of six profiles now have primary-verified modules; F remains search-summary only."
   }
 }
