@@ -255,6 +255,80 @@
       "extracted_values": null,
       "pending_full_text": true,
       "note": "STILL MISSING (uploaded file was wrong paper)"
+    },
+    {
+      "id": "chen-2012-tripterine-nlc",
+      "identity": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q. Formulation, characterization, and evaluation of in vitro skin permeation and in vivo pharmacodynamics of surface-charged tripterine-loaded nanostructured lipid carriers. Int J Nanomedicine 2012;7:3023-3033.",
+      "doi": "10.2147/IJN.S32476", "pmcid": "PMC3392146",
+      "type": "primary NP-skin study (formulation + release + permeation + in vivo)",
+      "api_class": "NANOPARTICLE (nanostructured lipid carrier) loaded with tripterine=celastrol",
+      "full_text_opened": true, "opened_batch": "batch-1",
+      "system": {"carrier":"NLC (solvent evaporation)","charge_variants":["cationic","neutral","anionic"],"skin_permeation_species":"rat full-thickness abdominal skin (Franz)","in_vivo_species":"C57BL/6 melanoma-bearing mice (B16BL6)","cell_lines":["HaCaT (normal human skin)","B16BL6 (melanoma)"]},
+      "extracted_values": {
+        "size_nm": {"cationic":"90.2+/-9.7","neutral":"87.8+/-7.4","anionic":"84.5+/-10.2","source":"Table 2"},
+        "PDI": {"cationic":"0.109+/-0.018","neutral":"0.113+/-0.029","anionic":"0.116+/-0.024","source":"Table 2"},
+        "zeta_mV": {"cationic":"26.4+/-4.2","neutral":"-2.7+/-0.9","anionic":"-24.3+/-3.7","source":"Table 2"},
+        "EE_pct": {"cationic":"69.3+/-5.1","neutral":"67.8+/-4.4","anionic":"72.5+/-4.9","source":"Table 2","note":"abstract lists 64.3/67.8/72.5 in different order; Table 2 authoritative"},
+        "release_best_model": {"model":"first-order","r2":{"cationic":0.9559,"neutral":0.9521,"anionic":0.9614},"source":"Table 3 + text"},
+        "release_pct": {"24h":{"a":64.77,"b":75.69,"c":49.70},"48h":{"a":83.14,"b":95.15,"c":68.01},"source":"Results text","note":"order per text sequence; map to formulations with care"},
+        "flux_ug_cm2_h": {"cationic":"1.26+/-0.29","neutral":"1.10+/-0.25","anionic":"0.91+/-0.04","source":"Table 4"},
+        "perm_coeff_1e-3_cm_h": {"cationic":"2.10+/-0.49","neutral":"1.83+/-0.43","anionic":"1.52+/-0.06","source":"Table 4"},
+        "lag_time_h": {"cationic":"0.43+/-0.02","neutral":"0.42+/-0.05","anionic":"0.52+/-0.02","source":"Table 4"},
+        "cumulative_24h_ug_cm2": {"cationic":"16.3+/-0.81","neutral":"13.5+/-0.79","anionic":"11.9+/-0.85","source":"Fig 4A/text"}
+      },
+      "not_transcribed": "drug loading (mg/g); absolute D (needs skin thickness); exact per-timepoint release table (only 24/48 h in text)",
+      "limitations": "single study; species mismatch (permeation=rat, PD=mouse); no independent external validation; within-study comparators only",
+      "note": "First VERIFIED genuine-nanoparticle release->skin chain in the project. Resolves acquisition B1."
+    },
+    {
+      "id": "doxil-fda-pi",
+      "identity": "DOXIL (doxorubicin HCl liposome injection) Prescribing Information, Baxter Healthcare (DailyMed rev 3/2026); cross-validated by NDA 050718/S-060 authorized-generic label (rev 5/2022).",
+      "regulatory_id": "NDA 050718",
+      "type": "official prescribing information (regulatory primary)",
+      "api_class": "NANOPARTICLE (PEGylated STEALTH liposome) + doxorubicin",
+      "full_text_opened": true, "opened_batch": "batch-1",
+      "extracted_values": {
+        "composition_per_mL": {"doxorubicin_HCl_mg":"2 (=1.87 base)","cholesterol_mg":3.19,"HSPC_mg":9.58,"MPEG_DSPE_mg":3.19,"ammonium_sulfate_mg":"~0.6","histidine_mg":1.55,"sucrose_mg":94,"pH":"6.0-7.0","encapsulated":">=90%","dox_HCl_MW":579.99,"source":"Section 11"},
+        "PK_total_doxorubicin": {"population":"AIDS-KS, N=23, single dose over 30 min","dose_10":{"Cmax_ug_mL":"4.12+/-0.215","CL_L_h_m2":"0.056+/-0.01","Vss_L_m2":"2.83+/-0.145","AUC_ug_mL_h":"277+/-32.9","t_half_1_h":"4.7+/-1.1","t_half_2_h":"52.3+/-5.6"},"dose_20":{"Cmax_ug_mL":"8.34+/-0.49","CL_L_h_m2":"0.041+/-0.004","Vss_L_m2":"2.72+/-0.120","AUC_ug_mL_h":"590+/-58.7","t_half_1_h":"5.2+/-1.4","t_half_2_h":"55.0+/-4.8"},"linearity":"linear 10-20 mg/m2; nonlinear at 50 mg/m2","source":"Table 8 / Section 12.3"},
+        "contrast_conventional_doxorubicin": {"Vd_L_m2":"700-1100","CL_L_h_m2":"24-35","protein_binding_pct":70,"source":"Section 12.3"},
+        "metabolism": {"doxorubicinol_ng_mL":"0.8-26.2","source":"Section 12.3"}
+      },
+      "not_resolved": "liposome diameter (omitted); tumour tissue concentration / penetration depth (not in label)",
+      "note": "Resolves acquisition E1 (formulation + systemic PK). DIRECT_EXACT."
+    },
+    {
+      "id": "doxil-nda050718-s050",
+      "identity": "FDA NDA 50-718/S-050 Approval Package (Doxil, Janssen, approved 2015-12-28) - CMC site-change supplement incl. BE study DOXILNAP1004 + Clinical Pharmacology/Biopharmaceutics Review (S. Subramaniam).",
+      "regulatory_id": "NDA 050718/S-050",
+      "type": "official regulatory review package",
+      "api_class": "NANOPARTICLE (PEGylated liposomal doxorubicin)",
+      "full_text_opened": true, "opened_batch": "batch-1", "complete": false,
+      "extracted_values": {
+        "BE_study": {"id":"DOXILNAP1004","design":"randomized open-label 2-cycle crossover, refractory solid tumours","dose":"50 mg/m2 IV over 90 min","N":"35 (29 evaluable)","measured":["encapsulated doxorubicin (primary)","total doxorubicin","free = total - encapsulated (secondary, mass balance)"],"sampling_h":"0-600 h (21 timepoints)","result":"GSK vs BVL sites bioequivalent on encapsulated + total dox"},
+        "free_dox_caveat": {"finding":"42% of samples gave negative free-dox estimates; among positive, 64% within 10% of total","reviewer_conclusion":"mass-balance approach may not yield reliable free-doxorubicin estimates","basis_for_90pct":"cites Jiang, Lionberger & Yu 2011 Bioanalysis 3(3):333-344"},
+        "bioanalytical": {"LLOQ_ug_mL":0.5,"calibration_ug_mL":"0.5-50","QC_ug_mL":"1.50, 10.0, 37.5","accuracy_total_pct":"96.7-98.9","precision_total_pct":"2.7-3.3","accuracy_encap_pct":"98.4-100","precision_encap_pct":"6.4-7.3"},
+        "in_vitro_release": {"method":"dissolution, f2 similarity","timepoints_h":[0.5,1.5,3,6],"values":"REDACTED (b)(4) trade secret"}
+      },
+      "not_resolved": "actual BE geometric-mean-ratio/90%CI tables (scanned/partly redacted); in-vitro release curve numbers (redacted); no tumour tissue data",
+      "note": "Supplement to acquisition E1. Key contribution: free/encapsulated/total methodology + the FDA position that free doxorubicin is not reliably measurable."
+    },
+    {
+      "id": "barenholz-2012",
+      "identity": "Barenholz Y. Doxil - the first FDA-approved nano-drug: lessons learned. J Control Release 2012;160(2):117-134.",
+      "doi": "10.1016/j.jconrel.2012.03.020",
+      "type": "authoritative review (by the formulation inventor)",
+      "api_class": "NANOPARTICLE (PEGylated liposomal doxorubicin)",
+      "full_text_opened": true, "opened_batch": "batch-1",
+      "extracted_values": {
+        "size": "PEGylated unilamellar liposome <100 nm (~100 nm) (Fig 4)",
+        "loading": "remote loading driven by transmembrane ammonium sulfate gradient; high & stable",
+        "bilayer": "liquid-ordered phase, high-Tm (53 C) HSPC + cholesterol",
+        "release_mechanism": "koff (drug release rate) governs efficacy/toxicity balance; release at tumour by as-yet-unknown means",
+        "targeting": "passive (EPR); extravasation via porous tumour capillaries permeable to particles <=100 nm",
+        "secondary_PK": {"value":"bi-exponential t1/2 ~2 h and ~45 h (median, Gabizon [96])","label":"UNVERIFIED_SECONDARY","note":"review-reported; consistent with FDA label lambda2 52-55 h"},
+        "secondary_tumour": {"value":"malignant-effusion drug levels 4-16x higher than free doxorubicin (Gabizon [96])","label":"UNVERIFIED_SECONDARY"}
+      },
+      "note": "Resolves acquisition E3 (formulation/mechanism). PK/tumour numbers are review-reported (secondary) - primary is Gabizon (aid E2)."
     }
   ]
 }

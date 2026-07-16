@@ -1,0 +1,89 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Machine-readable audit of the Stage-2 Batch-1 uploaded files. Each file identified from internal content, not filename. See docs/stage2-upload-ingestion-audit.md.",
+  "batch": "batch-1 (2026-07-16)",
+  "status_enum": ["EXACT_REQUESTED_SOURCE","CORRECT_OFFICIAL_DOCUMENT","CORRECT_PRIMARY_STUDY","CORRECT_SECONDARY_SOURCE","SUPPORTING_SOURCE","CORRECT_SOURCE_DIFFERENT_FILENAME","PARTIAL_DOCUMENT","MISSING_APPENDIX","MISSING_SUPPLEMENT","DUPLICATE","WRONG_SOURCE","UNREADABLE","UNVERIFIED"],
+  "files": [
+    {
+      "uploaded_filename": "4a5ec47c-j.jconrel.2012.03.020",
+      "verified_title": "Doxil - the first FDA-approved nano-drug: lessons learned",
+      "authors": "Barenholz Y",
+      "journal": "Journal of Controlled Release",
+      "year": 2012, "volume": "160", "issue": "2", "pages": "117-134",
+      "doi": "10.1016/j.jconrel.2012.03.020",
+      "doc_type": "review article", "evidence_class": "secondary (authoritative, by inventor)",
+      "complete": true, "pages_count": 26,
+      "acquisition_id": "E3", "profile": "E", "tier": 1,
+      "status": ["CORRECT_PRIMARY_STUDY"],
+      "gap_status": "GAP_FULLY_RESOLVED",
+      "resolves": "Doxil formulation principles, remote ammonium-sulfate loading, koff/release role, EPR passive targeting, ~100 nm size",
+      "provenance_note": "PK values (2/45 h; effusion 4-16x) are review-reported from Gabizon primaries -> UNVERIFIED_SECONDARY for those numbers"
+    },
+    {
+      "uploaded_filename": "50b51426-ijn73023.pdf",
+      "verified_title": "Formulation, characterization, and evaluation of in vitro skin permeation and in vivo pharmacodynamics of surface-charged tripterine-loaded nanostructured lipid carriers",
+      "authors": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q",
+      "journal": "International Journal of Nanomedicine",
+      "year": 2012, "volume": "7", "pages": "3023-3033",
+      "doi": "10.2147/IJN.S32476", "pmcid": "PMC3392146",
+      "doc_type": "primary research article", "evidence_class": "primary",
+      "complete": true, "pages_count": 11,
+      "acquisition_id": "B1", "profile": "B", "tier": 1,
+      "status": ["CORRECT_PRIMARY_STUDY","CORRECT_SOURCE_DIFFERENT_FILENAME"],
+      "filename_caveat": "filename 'ijn73023' is a Dovepress internal article id, NOT the DOI (10.2147/IJN.S32476)",
+      "gap_status": "GAP_FULLY_RESOLVED",
+      "resolves": "full NP-skin chain: NLC composition, size/PDI/zeta, EE, first-order release, Franz permeation (rat skin), retention, in-vivo antimelanoma PD (mouse)",
+      "api_note": "tripterine = celastrol (synonym)"
+    },
+    {
+      "uploaded_filename": "1e7ff6bb-20260318_917eddf91d3f4abe8c81d33b066e5bae.pdf",
+      "verified_title": "DOXIL (doxorubicin hydrochloride liposome injection) - Highlights of Prescribing Information / Full Prescribing Information",
+      "issuer": "Baxter Healthcare Corporation (DailyMed)",
+      "regulatory_id": "NDA 050718 (reference-listed drug)",
+      "revision_date": "3/2026", "initial_us_approval": "1995",
+      "doc_type": "official prescribing information (current)", "evidence_class": "primary (regulatory)",
+      "complete": true, "pages_count": 37, "text_extractable": true,
+      "acquisition_id": "E1", "profile": "E", "tier": 1,
+      "status": ["CORRECT_OFFICIAL_DOCUMENT"],
+      "gap_status": "GAP_FULLY_RESOLVED (E1 formulation + systemic PK)",
+      "resolves": "Section 11 composition (HSPC/chol/MPEG-DSPE/ammonium sulfate/histidine/sucrose); Section 12.3 PK Table 8 (total doxorubicin); >=90% encapsulated; metabolism (doxorubicinol)",
+      "not_resolved": "liposome diameter (omitted in label); tumour concentration/penetration (not in label)"
+    },
+    {
+      "uploaded_filename": "b89f5b31-050718Orig1s060lbl.pdf",
+      "verified_title": "Doxorubicin Hydrochloride Liposome Injection - Prescribing Information (authorized-generic labeling under NDA 050718)",
+      "issuer": "FDA Drugs@FDA",
+      "regulatory_id": "NDA 050718/S-060",
+      "revision_date": "05/2022",
+      "doc_type": "official label (archived)", "evidence_class": "primary (regulatory)",
+      "complete": true, "pages_count": 9, "text_extractable": true,
+      "acquisition_id": "E1", "profile": "E", "tier": 1,
+      "status": ["CORRECT_OFFICIAL_DOCUMENT","DUPLICATE"],
+      "gap_status": "DUPLICATE (independent cross-validation of E1)",
+      "resolves": "identical composition (chol 3.19/HSPC 9.58/MPEG-DSPE 3.19 mg/mL) and identical Table-8 PK (CL 0.041, AUC 590, lambda2 55.0 h at 20 mg/m2) as the DailyMed PI",
+      "note": "confirms two independent official documents agree exactly"
+    },
+    {
+      "uploaded_filename": "5ca587c7-050718Orig1s050.pdf",
+      "verified_title": "NDA 50-718/S-050 Approval Package for Doxil (CMC manufacturing-site-change supplement + bioequivalence study DOXILNAP1004)",
+      "issuer": "FDA CDER", "sponsor": "Janssen Products, L.P.",
+      "regulatory_id": "NDA 050718/S-050", "approval_date": "2015-12-28",
+      "doc_type": "official regulatory review package", "evidence_class": "primary (regulatory)",
+      "complete": false, "pages_count": 97, "text_extractable": "partial (some scanned; in-vitro release values redacted (b)(4))",
+      "reviews_present": ["Approval Letter","Labeling","Summary Review","Cross Discipline Team Leader Review","Medical Review","Chemistry Review","Clinical Pharmacology/Biopharmaceutics Review (Subramaniam)"],
+      "acquisition_id": "E1", "profile": "E", "tier": 1,
+      "status": ["CORRECT_OFFICIAL_DOCUMENT","PARTIAL_DOCUMENT"],
+      "gap_status": "OFFICIAL_LABEL_PRESENT_REVIEW_PRESENT; tumour-distribution STILL_MISSING",
+      "resolves": "BE study measured total + encapsulated doxorubicin (dose 50 mg/m2 IV/90 min, N=35, 29 evaluable); free-dox = mass-balance (total - encapsulated), 42% negative, reviewer 'may not yield reliable estimates'; bioanalytical LLOQ 0.5 ug/mL, QCs 1.50/10.0/37.5 ug/mL; in-vitro release method (f2, 0.5/1.5/3/6 h)",
+      "not_resolved": "actual BE geometric-mean-ratios/90%CI tables and in-vitro release curve values are redacted/scanned; no tumour tissue data"
+    }
+  ],
+  "acquisition_items_resolved": ["B1","E1","E3"],
+  "acquisition_items_still_open_same_profiles": ["B2 (celastrol+indomethacin NLC, independent NP-skin validation)","E2 (Gabizon 2003 PMID 12739982)","E4 (Doxil intratumoral distribution primary)","E5 (Charrois & Allen 2004 release-rate->tumour)"],
+  "new_source_identified_from_uploads": {
+    "citation": "Jiang W, Lionberger R, Yu LX. In vitro and in vivo characterizations of PEGylated liposomal doxorubicin. Bioanalysis 2011;3(3):333-344.",
+    "found_in": "NDA 050718/S-050 Clinical Pharmacology review (footnote 2)",
+    "profile": "E", "module": "free/encapsulated methodology + basis for >=90% encapsulated",
+    "id_status": "verified_citation_from_fda_review"
+  }
+}

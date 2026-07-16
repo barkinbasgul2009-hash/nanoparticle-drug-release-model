@@ -5,6 +5,9 @@
   "candidate_notes": [
     {"system":"solid_tumor_local","typical_measurement":"carrier_label or total_API","usable_as_free_API_input":false,"note":"most quantitative tumour/spheroid data are carrier penetration; released-API deconvolution needed"},
     {"system":"topical_skin","typical_measurement":"free_API (released)","usable_as_free_API_input":true,"note":"intact NP retained in SC/follicle; skin data read as released-API diffusion"},
-    {"system":"intravesical_bladder","typical_measurement":"total_API in wall","usable_as_free_API_input":false,"note":"depth-concentration typically total drug; check free vs total"}
-  ]
+    {"system":"intravesical_bladder","typical_measurement":"total_API in wall","usable_as_free_API_input":false,"note":"depth-concentration typically total drug; check free vs total"},
+    {"system":"B_celastrol_nlc_skin","typical_measurement":"released_API + permeated (skin) + tissue_bound (deposited)","usable_as_free_API_input":true,"source":"chen-2012-tripterine-nlc","verified_here":true,"note":"Batch-1: full chain in one primary; first-order release; Franz permeation on rat skin; states internally consistent"},
+    {"system":"E_doxil_systemic","typical_measurement":"total_API (plasma) + encapsulated_API; free_API not reliably measurable; metabolite (doxorubicinol)","usable_as_free_API_input":false,"source":"doxil-fda-pi + doxil-nda050718-s050","verified_here":true,"note":"Batch-1: total != free; free estimated by mass-balance is unreliable (42% negative); >=90% encapsulated; NO tumour-tissue concentration available -> tumour outputs disabled"}
+  ],
+  "batch1_note": "Two genuine-NP systems now typed from opened primaries. Profile B endpoints are released/permeated/deposited API (usable). Profile E endpoints are total/encapsulated plasma states (systemic only); free and intratumoral states are NOT usable as production inputs."
 }

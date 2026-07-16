@@ -5,7 +5,11 @@
     {"id":"dreher-2006","system":"solid_tumor_local","possible_role":"calibration","independence_confirmed":false,"opened":false,"pending_full_text":true},
     {"id":"spheroid-2024","system":"solid_tumor_local","possible_role":"validation(in vitro)","independence_confirmed":false,"opened":false,"pending_full_text":true},
     {"id":"franz-raman-2020","system":"topical_skin","possible_role":"calibration/IVIVC","independence_confirmed":false,"opened":false,"pending_full_text":true},
-    {"id":"rothe-2017","system":"topical_skin","possible_role":"parameter source (D,K)","independence_confirmed":false,"opened":false,"pending_full_text":true}
+    {"id":"rothe-2017","system":"topical_skin","possible_role":"parameter source (D,K)","independence_confirmed":false,"opened":false,"pending_full_text":true},
+    {"id":"chen-2012-tripterine-nlc","system":"B_celastrol_nlc_skin","possible_role":"parameter + within-study comparison (formulation charge)","independence_confirmed":false,"opened":true,"opened_batch":"batch-1","note":"single study; within-study comparators (cationic/neutral/anionic) only; NO independent external validation set. Needs aid B2 (celastrol+indomethacin NLC) for independence."},
+    {"id":"doxil-fda-pi","system":"E_doxil_systemic","possible_role":"parameter source (systemic PK, total dox)","independence_confirmed":false,"opened":true,"opened_batch":"batch-1","note":"official PK Table 8; DIRECT_EXACT but no independent validation cohort here."},
+    {"id":"doxil-nda050718-s050","system":"E_doxil_systemic","possible_role":"bioequivalence (site-to-site) - NOT biological validation","independence_confirmed":false,"opened":true,"opened_batch":"batch-1","note":"BE demonstrates manufacturing-site equivalence (encapsulated+total dox), not model validation against an independent biological dataset."}
   ],
-  "conclusion": "No calibration/validation pairing can be finalized in this environment; requires full-text access."
+  "batch1_update": "B and E parameter sources are now opened primaries, but NO profile has a confirmed INDEPENDENT external validation dataset. B has only within-study comparators; E-s050 is a site-to-site bioequivalence study, not a model-validation set. Independent validation remains the key missing ingredient for L5.",
+  "conclusion": "No calibration/validation pairing can be finalized in this environment; requires full-text access to independent datasets (e.g. Gabizon 2003 aid E2, Charrois & Allen 2004 aid E5, celastrol+indomethacin NLC aid B2)."
 }

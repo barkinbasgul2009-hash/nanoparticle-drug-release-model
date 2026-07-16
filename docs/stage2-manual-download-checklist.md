@@ -44,3 +44,32 @@ A6 Frasch/Barbero SC diffusivity; A7 Kretsos/Kasting dermal clearance; D2 Yuan 1
 - **FDA/EMA (agency site, may be multiple PDFs):** E1, E6, F1, F6.
 - **Subscription/library (USER_DOWNLOAD_REQUIRED):** A4, A5, A6, A7, B2, B4, C1(+SI),
   C2, C3, D2, D4, D5, D6, D7, E2, E3, E5, F3, F5.
+
+---
+
+## BATCH-1 INGESTED (2026-07-16) — remove from download list
+- **B1** Chen 2012 tripterine/celastrol NLC (Int J Nanomedicine 2012;7:3023-3033, DOI 10.2147/IJN.S32476) — uploaded, fully extracted.
+- **E1** Doxil FDA PI (DailyMed rev 3/2026) + NDA 050718/S-060 authorized-generic label + NDA 050718/S-050 approval package (incl. Clinical Pharmacology/Biopharmaceutics review) — uploaded, extracted.
+- **E3** Barenholz 2012 (J Control Release 160:117-134, DOI 10.1016/j.jconrel.2012.03.020) — uploaded, extracted.
+
+## NEXT DOWNLOAD BATCH (only what is still genuinely needed)
+### Tier 1 — critical (unlock blocked modules)
+| aid | file | why | access | suggested filename |
+|---|---|---|---|---|
+| E4/E8 | Doxil/PLD **intratumoral distribution** primary (spatial free/total doxorubicin in tumour; e.g. Laginha 2005-type) | ONLY missing piece to enable a Profile E tumour output (now disabled) | library/subscription | `E4_PLD_intratumoral_distribution.pdf` |
+| E2 | Gabizon A et al. Clin Pharmacokinet 2003;42:419-436 (PMID 12739982) | primary free/encapsulated/tumour PK behind Barenholz's secondary numbers | library | `E2_Gabizon_2003_PLD_PK.pdf` |
+| E5 | Charrois & Allen 2004, Biochim Biophys Acta 1663:167-77 | release-rate → PK/tumour coupling for PLD | library | `E5_Charrois_Allen_2004.pdf` |
+| B2 | Celastrol+Indomethacin transdermal NLC (DOI 10.1080/21691401.2018.1503599) | INDEPENDENT NP-skin study to validate Profile B beyond one paper | library | `B2_celastrol_indomethacin_NLC.pdf` |
+
+### Tier 2 — profile-completing
+| aid | file | why | access |
+|---|---|---|---|
+| E9 | Jiang, Lionberger & Yu 2011, Bioanalysis 3(3):333-344 (DOI 10.4155/bio.10.204) | basis for ≥90% encapsulated + total/encapsulated/free assay methodology (cited by FDA S-050) | library |
+| F1 | Abraxane SmPC/label + nab-paclitaxel PK primary | Profile F still search-summary only | FDA/EMA + library |
+| C1 | Chen 2024 AuNP spheroid primary + SI (DOI 10.1002/smll.202304693) | upgrade Profile C from dossier-secondary to verified | library |
+
+### Tier 3 — validation & uncertainty
+| aid | file | why | access |
+|---|---|---|---|
+| A4 | Potts & Guy 1992 (PMID 1608900) | still-missing skin-permeability QSPR coefficients (earlier upload was the wrong paper) | library |
+| D2 | independent tumour-vascular validation dataset | external validation for Profile D benchmark | library |

@@ -31,8 +31,14 @@
         "B7",
         "B8"
       ],
-      "verified_in_repo": [],
-      "target_range": "8-12"
+      "verified_in_repo": [
+        "B1"
+      ],
+      "acquired_verified_batch1": [
+        "B1"
+      ],
+      "target_range": "8-12",
+      "status": "PRIMARY VERIFIED - B1 (chen-2012-tripterine-nlc) opened; full release+permeation chain extracted. B2 still wanted for independent validation."
     },
     "C_aunp_spheroid": {
       "items": [
@@ -71,10 +77,19 @@
         "E5",
         "E6",
         "E7",
-        "E8"
+        "E8",
+        "E9"
       ],
-      "verified_in_repo": [],
-      "target_range": "8-12"
+      "verified_in_repo": [
+        "E1",
+        "E3"
+      ],
+      "acquired_verified_batch1": [
+        "E1",
+        "E3"
+      ],
+      "target_range": "8-12",
+      "status": "PRIMARY VERIFIED - E1 (FDA PI + S-050 package incl. Clin-Pharm review) and E3 (Barenholz) opened. Formulation + systemic PK DIRECT_EXACT. STILL MISSING: E2 (Gabizon), E4 (intratumoral), E5 (Charrois-Allen); E9 (Jiang 2011) newly identified."
     },
     "F_abraxane_onivyde": {
       "items": [

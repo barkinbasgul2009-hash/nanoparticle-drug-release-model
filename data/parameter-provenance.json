@@ -176,14 +176,46 @@
       "verified_here": false
     },
     {
-      "name": "celastrol_nlc_EE",
+      "name": "celastrol_nlc_EE_SUPERSEDED",
       "value": "~96.56 (celastrol-indomethacin NLC)",
       "unit": "%",
       "source": "celastrol-tripterine-nlc-skin (search)",
       "locator": "pending primary",
       "label": "UNVERIFIED_SECONDARY",
-      "verified_here": false
+      "verified_here": false,
+      "note": "SUPERSEDED by verified chen-2012-tripterine-nlc entries below (batch-1). This search-summary value referred to a DIFFERENT paper (celastrol+indomethacin, aid B2, still not opened)."
     },
+
+    {"name":"tripterine_nlc_size_cationic","value":"90.2 +/- 9.7","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2 (n=3)","label":"FORMULATION_SPECIFIC","verified_here":true,"system":"celastrol/tripterine NLC, cationic"},
+    {"name":"tripterine_nlc_size_neutral","value":"87.8 +/- 7.4","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true},
+    {"name":"tripterine_nlc_size_anionic","value":"84.5 +/- 10.2","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true},
+    {"name":"tripterine_nlc_PDI","value":"0.109-0.116","unit":"-","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic 0.109+/-0.018, neutral 0.113+/-0.029, anionic 0.116+/-0.024"},
+    {"name":"tripterine_nlc_zeta","value":"+26.4 / -2.7 / -24.3","unit":"mV","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic/neutral/anionic (+/-4.2, 0.9, 3.7)"},
+    {"name":"tripterine_nlc_EE","value":"69.3 / 67.8 / 72.5","unit":"%","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic/neutral/anionic entrapment efficiency (+/-5.1, 4.4, 4.9); abstract lists slightly different ordering (64.3/67.8/72.5) - Table 2 taken as authoritative"},
+    {"name":"tripterine_nlc_release_model","value":"first-order best fit","unit":"-","source":"chen-2012-tripterine-nlc","locator":"Table 3 + text","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"r2 0.9559/0.9521/0.9614 cationic/neutral/anionic; also fit zero-order/Higuchi/Ritger-Peppas"},
+    {"name":"tripterine_nlc_release_24h","value":"64.77 / 75.69 / 49.70","unit":"% released","source":"chen-2012-tripterine-nlc","locator":"Results text","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"48h: 83.14 / 95.15 / 68.01%"},
+    {"name":"tripterine_nlc_flux_franz","value":"1.26 / 1.10 / 0.91","unit":"ug/cm2/h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true,"system":"rat full-thickness abdominal skin, Franz cell","note":"cationic/neutral/anionic steady-state flux"},
+    {"name":"tripterine_nlc_perm_coeff","value":"2.10 / 1.83 / 1.52","unit":"1e-3 cm/h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true,"note":"cationic/neutral/anionic permeability coefficient (+/-0.49, 0.43, 0.06)"},
+    {"name":"tripterine_nlc_lag_time","value":"0.43 / 0.42 / 0.52","unit":"h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"tripterine_nlc_cumulative_24h","value":"16.3 / 13.5 / 11.9","unit":"ug/cm2","source":"chen-2012-tripterine-nlc","locator":"Fig 4A / text","label":"DIRECT_EXACT","verified_here":true,"note":"cumulative permeation cationic/neutral/anionic (+/-0.81, 0.79, 0.85)"},
+
+    {"name":"doxil_composition_HSPC","value":"9.58","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11 Description","label":"DIRECT_EXACT","verified_here":true,"system":"Doxil PEGylated liposome"},
+    {"name":"doxil_composition_cholesterol","value":"3.19","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_composition_MPEG_DSPE","value":"3.19","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true,"note":"N-(carbonyl-methoxyPEG2000)-DSPE Na salt"},
+    {"name":"doxil_doxorubicin_HCl","value":"2 (=1.87 base)","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_ammonium_sulfate","value":"~0.6","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true,"note":"remote-loading gradient agent; histidine 1.55 mg/mL buffer; sucrose 94 mg/mL isotonicity; pH 6.0-7.0"},
+    {"name":"doxil_encapsulated_fraction","value":">=90","unit":"%","source":"doxil-fda-pi","locator":"Section 11 + 12.3 Distribution","label":"DIRECT_EXACT","verified_here":true,"note":"assay cannot quantify <5-10% free doxorubicin"},
+    {"name":"doxil_diameter","value":"<100 (~100)","unit":"nm","source":"barenholz-2012","locator":"Fig 4","label":"BENCHMARK","verified_here":true,"note":"label itself omits diameter"},
+    {"name":"doxil_Cmax_totaldox","value":"4.12 / 8.34","unit":"ug/mL","source":"doxil-fda-pi","locator":"Table 8 (AIDS-KS, N=23)","label":"DIRECT_EXACT","verified_here":true,"note":"10 / 20 mg/m2; total doxorubicin"},
+    {"name":"doxil_clearance_totaldox","value":"0.056 / 0.041","unit":"L/h/m2","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"10/20 mg/m2; conventional doxorubicin CL 24-35 L/h/m2 by contrast"},
+    {"name":"doxil_Vss_totaldox","value":"2.83 / 2.72","unit":"L/m2","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"conventional doxorubicin Vd 700-1100 L/m2 by contrast (confined to vascular fluid)"},
+    {"name":"doxil_AUC_totaldox","value":"277 / 590","unit":"ug/mL.h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_t_half_lambda1","value":"4.7 / 5.2","unit":"h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"first phase"},
+    {"name":"doxil_t_half_lambda2","value":"52.3 / 55.0","unit":"h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"second phase; label mislabels as lambda1; consistent with Barenholz/Gabizon 45 h median (secondary)"},
+    {"name":"doxil_doxorubicinol_plasma","value":"0.8-26.2","unit":"ng/mL","source":"doxil-fda-pi","locator":"Section 12.3 Metabolism","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_be_free_dox_massbalance","value":"free = total - encapsulated; 42% samples negative; approach unreliable","unit":"-","source":"doxil-nda050718-s050","locator":"Clin Pharm review (Subramaniam), Reference ID 3853431","label":"DIRECT_PARTIAL","verified_here":true,"note":"free doxorubicin NOT directly measurable by the assay"},
+    {"name":"doxil_bioassay_LLOQ","value":"0.5","unit":"ug/mL","source":"doxil-nda050718-s050","locator":"Biopharmaceutics review","label":"DIRECT_EXACT","verified_here":true,"note":"calibration 0.5-50 ug/mL; QCs 1.50/10.0/37.5; total-dox accuracy 96.7-98.9%/precision 2.7-3.3%, encapsulated 98.4-100%/6.4-7.3%"},
+
     {
       "name": "dermal_clearance_k",
       "value": null,

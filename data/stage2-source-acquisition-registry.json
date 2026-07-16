@@ -97,13 +97,14 @@
       "tier": 1,
       "profile": "B",
       "module": "NLC formulation+release+permeation",
-      "citation": "Surface-charged tripterine (celastrol)-loaded NLC: in vitro skin permeation + in vivo PD.",
+      "citation": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q. Formulation, characterization, and evaluation of in vitro skin permeation and in vivo pharmacodynamics of surface-charged tripterine-loaded nanostructured lipid carriers. Int J Nanomedicine 2012;7:3023-3033.",
       "pmcid": "PMC3392146",
-      "doi": "confirm (Dovepress Int J Nanomedicine)",
-      "id_status": "identified_search",
+      "doi": "10.2147/IJN.S32476",
+      "id_status": "ACQUIRED_VERIFIED (batch-1)",
       "access": "OPEN_PMC",
       "need": "exact NLC composition, size/PDI/zeta, EE/loading, release curve, Franz permeation, skin retention, in vivo PD",
-      "supplement": "check SI"
+      "acquired": "GAP_FULLY_RESOLVED - all extracted (see data/study-level-extraction.json chen-2012-tripterine-nlc)",
+      "supplement": "no SI required; drug-loading (mg/g) not in main text"
     },
     {
       "aid": "B2",
@@ -274,11 +275,12 @@
       "tier": 1,
       "profile": "E",
       "module": "official formulation+PK",
-      "citation": "DOXIL (doxorubicin HCl liposome injection) - FDA Prescribing Information + Drugs@FDA approval package (NDA 050718).",
-      "id_status": "identified_search",
+      "citation": "DOXIL (doxorubicin HCl liposome injection) - FDA Prescribing Information (DailyMed rev 3/2026) + NDA 050718/S-060 authorized-generic label (rev 5/2022) + NDA 050718/S-050 approval package incl. Clinical Pharmacology/Biopharmaceutics review.",
+      "id_status": "ACQUIRED_VERIFIED (batch-1)",
       "access": "FDA",
       "need": "authoritative composition (HSPC/chol/DSPE-PEG2000), particle size, PK, encapsulated fraction",
-      "supplement": "Clinical Pharmacology & Biopharmaceutics review (separate PDF)"
+      "acquired": "GAP_FULLY_RESOLVED for formulation + systemic PK + free/encapsulated methodology. Clin-Pharm/Biopharmaceutics review PRESENT in S-050. STILL MISSING: tumour tissue concentration/penetration (not in any label); numeric in-vitro release curve (redacted (b)(4)).",
+      "supplement": "Clinical Pharmacology & Biopharmaceutics review = INCLUDED in the S-050 package (opened)"
     },
     {
       "aid": "E2",
@@ -297,10 +299,11 @@
       "profile": "E",
       "module": "formulation lessons",
       "citation": "Barenholz Y. Doxil - the first FDA-approved nano-drug: lessons learned. J Control Release 2012;160(2):117-134.",
-      "doi": "10.1016/j.jconrel.2012.03.020 (confirm)",
-      "id_status": "identified_search",
+      "doi": "10.1016/j.jconrel.2012.03.020",
+      "id_status": "ACQUIRED_VERIFIED (batch-1)",
       "access": "USER_DOWNLOAD_REQUIRED",
-      "need": "definitive Doxil formulation/loading/stability/release mechanism"
+      "need": "definitive Doxil formulation/loading/stability/release mechanism",
+      "acquired": "GAP_FULLY_RESOLVED - formulation principles, ammonium-sulfate remote loading, koff role, EPR, ~100 nm. PK/tumour numbers within are review-reported (secondary; primary = Gabizon aid E2)."
     },
     {
       "aid": "E4",
@@ -484,14 +487,27 @@
       "id_status": "search_target",
       "access": "USER_DOWNLOAD_REQUIRED",
       "need": "free-vs-encapsulated doxorubicin IN the tumour (Profile E free-API module)"
+    },
+    {
+      "aid": "E9",
+      "tier": 2,
+      "profile": "E",
+      "module": "free/encapsulated bioanalytical methodology",
+      "citation": "Jiang W, Lionberger R, Yu LX. In vitro and in vivo characterizations of PEGylated liposomal doxorubicin. Bioanalysis 2011;3(3):333-344.",
+      "doi": "10.4155/bio.10.204",
+      "id_status": "verified_citation_from_fda_review",
+      "access": "USER_DOWNLOAD_REQUIRED",
+      "need": "basis for the >=90% encapsulated statement and total/encapsulated/free assay methodology (cited by FDA S-050 Clin Pharm review)",
+      "discovered_in": "NDA 050718/S-050 Clinical Pharmacology review, footnote 2"
     }
   ],
   "counts": {
-    "total_unique_items": 44,
+    "total_unique_items": 45,
     "tier1": 13,
-    "tier2": 23,
+    "tier2": 24,
     "tier3": 8,
     "already_in_repo": 4,
-    "note": "Expanded toward the 40-60 preferred range using Dreher-reflist-verified citations (D8,D9,E7) and honest search-target categories (A8,B7,B8,C4,E8) plus one identified-search model paper (C5). No fabricated DOIs."
+    "acquired_verified_batch1": ["B1","E1","E3"],
+    "note": "Batch-1 uploads resolved B1, E1 (incl. its Clin-Pharm supplement) and E3. Added E9 (Jiang 2011, verified from the FDA S-050 review). Still no fabricated DOIs."
   }
 }

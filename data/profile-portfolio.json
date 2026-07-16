@@ -27,16 +27,20 @@
       "name": "Topical NLC (celastrol/tripterine) release + skin permeation",
       "api": "celastrol (tripterine)", "carrier": "nanostructured lipid carrier (NLC)", "route": "topical", "tissue": "skin",
       "purpose": "genuine nanoparticle release -> skin transport (target profile)",
-      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (candidate; currently UNVERIFIED)",
+      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (PRIMARY VERIFIED this batch; single study, no external validation)",
+      "primary_source": "chen-2012-tripterine-nlc (Int J Nanomedicine 2012:7 3023-3033, DOI 10.2147/IJN.S32476, PMC3392146) - full text opened this batch (aid B1)",
       "modules": {
-        "formulation_size_EE": {"label":"UNVERIFIED_SECONDARY","source":"celastrol-tripterine-nlc-skin (search)","verified_here":false,"note":"e.g. celastrol-indomethacin NLC 26.92 nm, EE 96.56% - search summary only"},
-        "release_kinetics": {"label":"UNVERIFIED_SECONDARY","verified_here":false},
-        "skin_permeation": {"label":"UNVERIFIED_SECONDARY","verified_here":false,"note":"cationic NLC 1.35x/1.95x vs neutral/anionic - search summary"},
-        "validation": {"label":"INSUFFICIENT_EVIDENCE"}
+        "formulation_size_EE": {"label":"FORMULATION_SPECIFIC","source":"chen-2012-tripterine-nlc Table 2","verified_here":true,"values":"cationic 90.2+/-9.7 nm, PI 0.109, zeta +26.4 mV, EE 69.3%; neutral 87.8 nm, PI 0.113, zeta -2.7 mV, EE 67.8%; anionic 84.5 nm, PI 0.116, zeta -24.3 mV, EE 72.5% (n=3)","note":"tripterine=celastrol; solvent-evaporation NLC, 3 surface-charge variants"},
+        "release_kinetics": {"label":"FORMULATION_SPECIFIC","source":"chen-2012-tripterine-nlc Table 3/text","verified_here":true,"values":"best fit FIRST-ORDER (r2 0.9559/0.9521/0.9614 cationic/neutral/anionic); 24h 64.77/75.69/49.70%; 48h 83.14/95.15/68.01%","note":"connects directly to existing first-order release model in the tool"},
+        "skin_permeation": {"label":"DIRECT_EXACT","source":"chen-2012-tripterine-nlc Table 4/Fig4","verified_here":true,"values":"rat full-thickness abdominal skin, Franz; flux 1.26/1.10/0.91 ug/cm2/h; perm coeff 2.10/1.83/1.52 x1e-3 cm/h; lag 0.43/0.42/0.52 h; cumulative(24h) 16.3/13.5/11.9 ug/cm2 (cationic/neutral/anionic)","note":"species mismatch: permeation=RAT skin, in-vivo PD=MOUSE"},
+        "cellular_uptake": {"label":"CARRIER_SPECIFIC","source":"chen-2012-tripterine-nlc","verified_here":true,"note":"HaCaT + B16BL6 cells; surface charge affects uptake"},
+        "in_vivo_PD": {"label":"API_SPECIFIC","source":"chen-2012-tripterine-nlc","verified_here":true,"note":"B16BL6 melanoma-bearing C57BL/6 mice; cationic NLC highest antimelanoma efficacy (P<0.05)"},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE","note":"single study; no INDEPENDENT external validation dataset; within-study comparators only"}
       },
       "is_nanoparticle": true,
-      "stage3_ready": false,
-      "blocker": "primaries web-blocked/not uploaded (PMC3392146; 10.1080/21691401.2018.1503599) - need PDFs to verify/extract"
+      "stage3_ready": true,
+      "stage3_label": "RESEARCH_SUPPORTED nanoparticle release->skin submodel (celastrol/tripterine NLC, single primary) - first VERIFIED genuine-NP profile; label 'single-study, rat skin, not externally validated'",
+      "residual_gaps": "absolute D (cm2/s) needs SC/skin thickness; drug loading (mg/g) not transcribed; independent NP-skin validation study still wanted (aid B2 celastrol+indomethacin NLC)"
     },
     {
       "id": "C_aunp_tumor_spheroid",
@@ -77,18 +81,24 @@
       "id": "E_doxil_liposomal_doxorubicin",
       "name": "PEGylated liposomal doxorubicin (Doxil) systemic PK + tumour delivery",
       "api": "doxorubicin", "carrier": "PEGylated liposome (HSPC/chol/DSPE-PEG2000)", "route": "intravenous", "tissue": "systemic + solid tumour",
-      "purpose": "clinically established nanoformulation; modular composite (formulation+PK verified-elsewhere; local transport transferred/benchmarked)",
-      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (candidate; modules UNVERIFIED here)",
+      "purpose": "clinically established nanoformulation; modular composite (formulation+PK now PRIMARY VERIFIED from FDA label; local tumour transport still missing)",
+      "profile_level": "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE (formulation+systemic PK DIRECT_EXACT this batch; tumour-transport module INSUFFICIENT)",
+      "primary_sources": "doxil-fda-pi (DailyMed PI Baxter rev 3/2026 + NDA 050718/S-060 authorized-generic label rev 5/2022, identical values), doxil-nda050718-s050 (FDA approval package incl. Clinical Pharmacology/Biopharmaceutics review + BE study DOXILNAP1004), barenholz-2012 (J Control Release 160:117-134) - all opened this batch (aids E1, E3)",
       "modules": {
-        "formulation": {"label":"UNVERIFIED_SECONDARY","note":"HSPC/chol/DSPE-PEG2000; ammonium-sulfate loading (search) - needs FDA label","verified_here":false},
-        "systemic_PK": {"label":"UNVERIFIED_SECONDARY","note":"elimination t1/2 ~20-30 h; ~90-95% encapsulated in plasma (search) - needs FDA label / Gabizon 2003 PMID 12739982","verified_here":false},
-        "tumour_accumulation": {"label":"INSUFFICIENT_EVIDENCE","note":"needs primary"},
-        "local_release": {"label":"ASSUMED"},
-        "validation": {"label":"INSUFFICIENT_EVIDENCE"}
+        "formulation": {"label":"DIRECT_EXACT","source":"doxil-fda-pi Section 11","verified_here":true,"values":"per mL: doxorubicin HCl 2 mg (=1.87 mg dox base); cholesterol 3.19 mg; HSPC 9.58 mg; MPEG-DSPE(PEG2000) 3.19 mg; ammonium sulfate ~0.6 mg; histidine 1.55 mg; sucrose 94 mg; pH 6.0-7.0; >90% encapsulated; dox HCl MW 579.99","note":"label gives composition but NOT liposome diameter (~100 nm from Barenholz)"},
+        "particle_size": {"label":"BENCHMARK","source":"barenholz-2012 (Fig4)","verified_here":true,"note":"PEGylated unilamellar liposome <100 nm (~100 nm); label itself omits size"},
+        "systemic_PK": {"label":"DIRECT_EXACT","source":"doxil-fda-pi Table 8 (AIDS-KS, N=23, single dose)","verified_here":true,"values":"total dox: Cmax 4.12/8.34 ug/mL; CL 0.056/0.041 L/h/m2; Vss 2.83/2.72 L/m2; AUC 277/590 ug/mL.h; lambda1 t1/2 4.7/5.2 h; lambda2 t1/2 52.3/55.0 h at 10/20 mg/m2; linear 10-20, nonlinear at 50 mg/m2","note":"contrast: conventional doxorubicin Vd 700-1100 L/m2, CL 24-35 L/h/m2 (label)"},
+        "free_vs_encapsulated": {"label":"DIRECT_PARTIAL","source":"doxil-fda-pi + doxil-nda050718-s050 (Subramaniam Clin Pharm review)","verified_here":true,"values":">=90% remains liposome-encapsulated in circulation; assay cannot quantify <5-10% free; BE study estimated free = total-encapsulated (mass balance), 42% of samples negative, reviewer: 'may not yield reliable estimates of free doxorubicin'","note":"KEY teaching point: total != free; free not directly measurable by this assay"},
+        "metabolism": {"label":"DIRECT_EXACT","source":"doxil-fda-pi","verified_here":true,"values":"doxorubicinol 0.8-26.2 ng/mL plasma at 10/20 mg/m2; plasma protein binding of doxorubicin ~70% (Doxil not determined)"},
+        "tumour_accumulation": {"label":"INSUFFICIENT_EVIDENCE","verified_here":false,"note":"label/reviews give NO spatial tumour penetration; Barenholz cites (secondary) malignant-effusion levels 4-16x free-dox from Gabizon [96]. Need primary intratumoral-distribution study (aid E4/Charrois-Allen aid E5)"},
+        "local_release": {"label":"ASSUMED","note":"in-vitro release/dissolution profiles exist in S-050 but numeric values REDACTED (b)(4); release mechanism qualitative (Barenholz koff)"},
+        "in_vitro_release_method": {"label":"DIRECT_PARTIAL","source":"doxil-nda050718-s050 (Biopharmaceutics review)","verified_here":true,"note":"dissolution timepoints 0.5/1.5/3/6 h, f2 similarity used; VALUES redacted as trade secret"},
+        "validation": {"label":"INSUFFICIENT_EVIDENCE","note":"S-050 shows site-to-site BE (GSK vs BVL, encapsulated+total dox) but NO independent biological/tumour validation"}
       },
       "is_nanoparticle": true,
-      "stage3_ready": false,
-      "blocker": "no opened primary/label; composition & PK are search-summary (UNVERIFIED_SECONDARY). Need Doxil FDA label + Gabizon 2003."
+      "stage3_ready": true,
+      "stage3_label": "RESEARCH_SUPPORTED liposomal-doxorubicin systemic-PK + formulation submodel (DIRECT_EXACT from FDA label) - tumour-penetration outputs MUST stay disabled (no spatial primary)",
+      "residual_gaps": "quantitative tumour concentration/penetration primary; numeric in-vitro release curve (redacted in label); Gabizon 2003 PMID 12739982 (free/encapsulated/tumour PK primary); Charrois & Allen 2004 (release-rate->tumour coupling, aid E5)"
     },
     {
       "id": "F_nab_paclitaxel_abraxane",
@@ -109,10 +119,16 @@
     }
   ],
   "portfolio_summary": {
-    "stage3_ready_now": ["A_niacinamide_human_skin (released-API skin submodel, labelled non-NP)", "D_dreher_tumor_vascular (vascular benchmark, primary-verified)"],
-    "ready_as_illustrative_mechanism_only": ["C_aunp_tumor_spheroid (until Chen primary verified)"],
-    "blocked_pending_sources": ["B_celastrol_nlc_skin","E_doxil_liposomal_doxorubicin","F_nab_paclitaxel_abraxane"],
+    "stage3_ready_now": [
+      "A_niacinamide_human_skin (released-API skin submodel, labelled non-NP)",
+      "D_dreher_tumor_vascular (vascular benchmark, primary-verified)",
+      "B_celastrol_nlc_skin (PRIMARY VERIFIED this batch - first genuine-NP release->skin submodel; single study, rat skin)",
+      "E_doxil_liposomal_doxorubicin (formulation + systemic PK DIRECT_EXACT from FDA label; tumour-penetration outputs disabled)"
+    ],
+    "ready_as_illustrative_mechanism_only": ["C_aunp_tumor_spheroid (until Chen 2024 spheroid primary verified)"],
+    "blocked_pending_sources": ["F_nab_paclitaxel_abraxane (still search-summary only)"],
     "no_profile_externally_validated": true,
-    "outcome": "OUTCOME B - portfolio of research-supported submodels/benchmarks; no complete externally-validated NP drug profile"
+    "batch1_upgrades": "B and E moved from blocked/UNVERIFIED_SECONDARY to PRIMARY-VERIFIED, Stage-3-ready with mandatory labels. E tumour-transport remains INSUFFICIENT (no spatial primary).",
+    "outcome": "OUTCOME B - portfolio of research-supported submodels/benchmarks; still no single externally-validated end-to-end NP drug profile, but two genuine-NP profiles (B, E) now have primary-verified modules"
   }
 }

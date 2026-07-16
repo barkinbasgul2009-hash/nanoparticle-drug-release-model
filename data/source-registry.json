@@ -267,6 +267,64 @@
       "full_text_opened": false,
       "quantitative_data_extracted": false,
       "role": "alternative Profile F (liposomal irinotecan); free/total SN-38 methodology; not opened"
+    },
+    {
+      "id": "chen-2012-tripterine-nlc",
+      "type": "peer_reviewed_study",
+      "title": "Formulation, characterization, and evaluation of in vitro skin permeation and in vivo pharmacodynamics of surface-charged tripterine-loaded nanostructured lipid carriers",
+      "authors": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q",
+      "journal": "International Journal of Nanomedicine 2012;7:3023-3033",
+      "doi": "10.2147/IJN.S32476", "pmcid": "PMC3392146",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-1",
+      "quantitative_data_extracted": true,
+      "role": "Profile B primary: genuine NP (NLC) release->skin chain; tripterine=celastrol. FORMULATION_SPECIFIC/DIRECT_EXACT values (Tables 2-4).",
+      "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "doxil-fda-pi",
+      "type": "regulatory_label",
+      "title": "DOXIL (doxorubicin HCl liposome injection) Prescribing Information",
+      "issuer": "Baxter Healthcare (DailyMed rev 3/2026); cross-validated by NDA 050718/S-060 authorized-generic label (rev 5/2022)",
+      "identifier": "NDA 050718",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-1",
+      "quantitative_data_extracted": true,
+      "role": "Profile E primary: composition (Section 11) + systemic PK (Table 8, total dox) + >=90% encapsulated. DIRECT_EXACT.",
+      "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "doxil-nda050718-s050",
+      "type": "regulatory_review",
+      "title": "NDA 50-718/S-050 Approval Package (CMC site change + BE study DOXILNAP1004 + Clinical Pharmacology/Biopharmaceutics review)",
+      "issuer": "FDA CDER; sponsor Janssen; approved 2015-12-28",
+      "identifier": "NDA 050718/S-050",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-1",
+      "quantitative_data_extracted": "partial (in-vitro release values redacted (b)(4))",
+      "role": "Profile E supplement: free/encapsulated/total methodology; FDA position that free dox is not reliably measurable; bioanalytical LLOQ.",
+      "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "barenholz-2012",
+      "type": "review",
+      "title": "Doxil - the first FDA-approved nano-drug: lessons learned",
+      "authors": "Barenholz Y",
+      "journal": "Journal of Controlled Release 2012;160(2):117-134",
+      "doi": "10.1016/j.jconrel.2012.03.020",
+      "identity_verified": true, "full_text_opened": true, "opened_batch": "batch-1",
+      "quantitative_data_extracted": "qualitative + secondary-reported PK",
+      "role": "Profile E: formulation/loading/release-mechanism (authoritative). PK/tumour numbers are review-reported (secondary; primary=Gabizon).",
+      "api_class": "NANOPARTICLE"
+    },
+    {
+      "id": "jiang-2011",
+      "type": "peer_reviewed_study",
+      "title": "In vitro and in vivo characterizations of PEGylated liposomal doxorubicin",
+      "authors": "Jiang W, Lionberger R, Yu LX",
+      "journal": "Bioanalysis 2011;3(3):333-344",
+      "doi": "10.4155/bio.10.204",
+      "identity_verified": true, "full_text_opened": false,
+      "quantitative_data_extracted": false,
+      "role": "identified from FDA S-050 review (footnote 2): basis for >=90% encapsulated + total/encapsulated/free assay methodology. Acquisition E9.",
+      "api_class": "NANOPARTICLE"
     }
   ],
   "pending": {
