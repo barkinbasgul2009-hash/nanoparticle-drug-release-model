@@ -1,0 +1,78 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Cell atlas for Profile B. Each cell carries a role (required/optional/context/excluded) per preset and a confidence label. Morphology cited to open sources; NO invented densities/dimensions/colors. A cell is included only if relevant to the tissue+disease+experiment+purpose.",
+  "role_enum": ["REQUIRED","OPTIONAL_CONTEXT","LABEL_ONLY","EXCLUDED"],
+  "cells": [
+    {
+      "cell": "corneocyte",
+      "b1_role": "REQUIRED (stratum corneum barrier)",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "morphology": "flattened, ANUCLEATE, keratin-filled; bricks-and-mortar with lipid lamellae",
+      "cite": "OpenStax 5.1; StatPearls",
+      "visual_rule": "no nucleus; primary barrier the released API must cross"
+    },
+    {
+      "cell": "keratinocyte (HaCaT in the in-vitro uptake scene)",
+      "b1_role": "REQUIRED",
+      "confidence": "QUALITATIVELY_SUPPORTED (uptake, HaCaT); CONTEXTUAL_ANATOMY (tissue keratinocytes)",
+      "morphology": "viable epidermal: polygonal, nucleated, desmosomal junctions; HaCaT in vitro: spindle -> cobblestone epithelial monolayer on differentiation",
+      "cite": "OpenStax; HaCaT organotypic refs (PubMed 10084313); ATCC",
+      "visual_rule": "HaCaT scene = in-vitro monolayer context, labelled 'in vitro human keratinocyte model', separate from tissue"
+    },
+    {
+      "cell": "melanocyte",
+      "b1_role": "OPTIONAL_CONTEXT (normal skin)",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "morphology": "dendritic cell at the stratum basale; produces melanin",
+      "cite": "OpenStax 5.1; StatPearls",
+      "visual_rule": "basal, dendritic; do NOT conflate with melanoma cells"
+    },
+    {
+      "cell": "melanoma cell (B16BL6 / B16F10)",
+      "b1_role": "REQUIRED (melanoma context, murine)", "b2_role": "REQUIRED (B16F10)",
+      "confidence": "QUALITATIVELY_SUPPORTED (B1 uptake/cytotoxicity; B2 abstract)",
+      "morphology": "B16 line: monolayer, epithelial-like + spindle-shaped, melanin-pigmented (black); can form dendrites",
+      "cite": "ATCC B16-F10 CRL-6475; PMC3916207; Cytion",
+      "visual_rule": "label as MURINE melanoma line; pigment optional; do NOT depict human invasive-melanoma histology as this model"
+    },
+    {
+      "cell": "fibroblast",
+      "b1_role": "OPTIONAL_CONTEXT (dermis)",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "morphology": "spindle-shaped; produces dermal ECM (collagen/elastin)",
+      "cite": "OpenStax 5.1",
+      "visual_rule": "dermal context only; not load-bearing for B1 events"
+    },
+    {
+      "cell": "endothelial cell / pericyte",
+      "b1_role": "OPTIONAL_CONTEXT (dermal vessels)",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "morphology": "flat endothelium lining vessel lumen; pericytes wrap capillaries",
+      "visual_rule": "dermal vessels as context ONLY; no nanoparticle entry/extravasation animation for B1"
+    },
+    {
+      "cell": "Langerhans cell",
+      "b1_role": "LABEL_ONLY",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "morphology": "dendritic epidermal immune cell (spinosum)",
+      "visual_rule": "label-only; not part of a supported B1 event"
+    },
+    {
+      "cell": "dendritic cell / CD8+ T cell",
+      "b1_role": "EXCLUDED", "b2_role": "REQUIRED (ICD, abstract)",
+      "confidence": "ABSTRACT_SUPPORTED (B2 only)",
+      "visual_rule": "immune-activation cells appear ONLY in B2 ICD scene (Wang 2025), never in B1"
+    },
+    {
+      "cell": "macrophage / neutrophil / other immune",
+      "b1_role": "EXCLUDED",
+      "confidence": "NOT_REPORTED",
+      "visual_rule": "not included - not part of the B1 evidence; decorative immune cells are prohibited"
+    }
+  ],
+  "density_policy": {
+    "rule": "NO invented cell densities/ratios. Where a proportion is needed, use qualitative 'sparse/moderate/dense' or NOT_REPORTED. The scene must NOT place equal random numbers of every cell type.",
+    "known_relationships": "melanocytes are a minority basal population relative to keratinocytes (qualitative, OpenStax); exact ratios NOT specified for the B1 specimen -> qualitative only"
+  }
+}

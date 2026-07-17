@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Microscopic tissue atlas for Profile B (primarily B1 skin). General skin/melanoma anatomy is CONTEXTUAL_ANATOMY scaffolding cited to open atlases; it is NOT the B1 experimental specimen. Quantitative specifics are cited or marked qualitative/NOT_REPORTED. No invented structures/dimensions.",
+  "anatomy_sources": {
+    "skin_general": ["OpenStax Anatomy & Physiology 5.1 (CC BY 4.0)","StatPearls Histology, Skin NBK537325 (NIH)","Open Histology, Univ. of Galway"],
+    "species_differences": ["Transdermal Permeation of Drugs in Various Animal Species, Pharmaceutics 2017;9(3):33, PMC5620574","Allometric scaling of skin thickness, PMC5698453"],
+    "melanoma": ["DermNet NZ melanoma pathology","Libre Pathology malignant melanoma","Nature Modern Pathology histologic criteria 3800508"]
+  },
+  "layers": [
+    {
+      "layer": "stratum_corneum",
+      "confidence": "CONTEXTUAL_ANATOMY (structure) + DIRECTLY_OBSERVED (B1 depth deposition 0-30 um band)",
+      "structure": "flattened ANUCLEATE corneocytes in a 'bricks-and-mortar' arrangement with extracellular lipid lamellae (mortar)",
+      "cite": "OpenStax 5.1 (SC keratinocytes are dead/anucleate); StatPearls",
+      "visual_rule": "no nuclei in the SC; show corneocyte stacks + lipid lamellae as the primary barrier; nanoparticle deposition and released-API diffusion shown here",
+      "b1_link": "0-30 um depth band (Chen sections)",
+      "do_not": "show living nucleated cells or blood vessels in the SC; assign a specific SC thickness for the B1 rat specimen (NOT REPORTED in package)"
+    },
+    {
+      "layer": "viable_epidermis",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "sublayers": ["stratum basale","stratum spinosum","stratum granulosum","(stratum lucidum in thick skin only)"],
+      "structure": "keratinized stratified squamous epithelium; nucleated keratinocytes; melanocytes at the basale; Langerhans cells (immune) in spinosum",
+      "cite": "OpenStax 5.1; StatPearls",
+      "avascular": true,
+      "visual_rule": "EPIDERMIS IS AVASCULAR - never draw blood vessels inside it. Basale can carry melanocytes (dendritic, basal). Simplified 2-3 band grouping acceptable if labelled.",
+      "b1_link": "30-60 um depth band (approx; species-dependent) - label as approximate, not exact for the specimen",
+      "do_not": "vessels in epidermis; exact per-layer thickness for the B1 specimen"
+    },
+    {
+      "layer": "dermis",
+      "confidence": "CONTEXTUAL_ANATOMY",
+      "sublayers": ["papillary dermis","reticular dermis"],
+      "structure": "dense irregular connective tissue: collagen bundles, elastin, ground substance (GAGs/hyaluronan); fibroblasts; capillary loops (papillary) + deeper plexus (reticular); appendages (hair follicles, sweat/sebaceous glands); immune cells",
+      "cite": "OpenStax 5.1; StatPearls",
+      "visual_rule": "vessels appear HERE as anatomical context; denser ECM than epidermis; appendages optional/context-only",
+      "b1_link": "60-90 um depth band (approx); deeper deposition context",
+      "do_not": "imply nanoparticle entry into dermal vessels -> systemic circulation (UNSUPPORTED for B1)"
+    },
+    {
+      "layer": "subcutis_hypodermis",
+      "confidence": "NOT_APPLICABLE / orientation-only",
+      "structure": "adipocytes, larger vessels",
+      "visual_rule": "orientation-only or omit; B1 supported depth (<=~90 um sections) does NOT reach hypodermis",
+      "do_not": "show nanoparticles reaching subcutaneous tissue (no evidence)"
+    }
+  ],
+  "melanoma_tissue": {
+    "confidence": "CONTEXTUAL_ANATOMY for human histopathology; B1 model is MURINE B16BL6 (culture + subcutaneous mouse) - NOT human invasive cutaneous melanoma",
+    "human_histopathology_features": "nuclear pleomorphism, prominent nucleoli, loosely cohesive cells, nests + single cells, dermal invasion with loss of maturation, atypia retained with depth (DermNet/Libre/Modern Pathology)",
+    "b1_melanoma_representation": "murine B16BL6 tumour context (pigmented mouse melanoma); label as murine model; do NOT depict human clinical invasive melanoma as the B1 result",
+    "do_not": "portray advanced invasive human melanoma histology as the B1 experimental outcome"
+  },
+  "species_compatibility_note": "rodent (rat/mouse) viable epidermis ~20 um, thinner SC, higher hair-follicle density (rat ~1.84%, mouse ~2.02%) than human; rat skin typically OVER-predicts human permeation (PMC5620574). Every skin scene must state which species/model it represents. Rat permeation data must NOT be shown as human skin behavior without an explicit transfer label.",
+  "scale_bands_B1": {"0-30_um":"stratum corneum region","30-60_um":"viable epidermis region (approx)","60-90_um":"upper dermis region (approx)","note":"bands are the Chen section boundaries; do NOT assign a continuous concentration field"}
+}

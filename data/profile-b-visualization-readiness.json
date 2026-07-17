@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Readiness assessment per B1 scene across the readiness ladder. A scene is IMPLEMENTATION_READY only when route/tissue/species/structures/cells/scale/movement/evidence/exclusions/labels/assets/licensing are all defined.",
+  "readiness_ladder": ["ENGINEERING_READY","BIOLOGICALLY_SPECIFIED","VISUALLY_SPECIFIED","ASSET_READY","IMPLEMENTATION_READY","VALIDATION_READY"],
+  "overall": {
+    "ENGINEERING_READY": true,
+    "BIOLOGICALLY_SPECIFIED": true,
+    "VISUALLY_SPECIFIED": true,
+    "ASSET_READY": "partial (procedural assets specified; open anatomy/microscopy references identified but individual files not license-verified/collected)",
+    "IMPLEMENTATION_READY": "conditional (assets to be collected/verified; no code written per stop gate)",
+    "VALIDATION_READY": false,
+    "note": "The software architecture existing does NOT make the whole animation ready - biological+visual specs now exist, but asset collection + a future approved build remain."
+  },
+  "b1_scene_readiness": [
+    {"scene":"S1_application_site","status":"BIOLOGICALLY_SPECIFIED + VISUALLY_SPECIFIED","assets":"procedural","note":"contextual anatomy; ready as context"},
+    {"scene":"S2_formulation_on_skin","status":"VISUALLY_SPECIFIED","assets":"procedural (particles)","note":"ready pending scale-indicator design"},
+    {"scene":"S3_stratum_corneum_barrier","status":"VISUALLY_SPECIFIED","assets":"procedural + TEM lipid-lamellae reference","note":"label carrier-vs-released limitation"},
+    {"scene":"S4_depth_layer_deposition","status":"IMPLEMENTATION_READY (schematic)","assets":"procedural bands","note":"strongest evidence (depth sections); ordinal only"},
+    {"scene":"S5_epidermal_cell_environment","status":"CONTEXTUAL_ANATOMY","assets":"procedural + HPA/OpenStax reference","note":"context only"},
+    {"scene":"S6_uptake_comparison","status":"IMPLEMENTATION_READY (schematic, ordinal)","assets":"procedural cells","note":"mandatory confound note"},
+    {"scene":"S7_melanoma_context","status":"BIOLOGICALLY_SPECIFIED","assets":"procedural B16 cells","note":"label murine model"},
+    {"scene":"S8_therapeutic_effect","status":"BIOLOGICALLY_SPECIFIED","assets":"procedural","note":"qualitative endpoint only"},
+    {"scene":"S9_limitation_panel","status":"IMPLEMENTATION_READY","assets":"text/UI","note":"data-driven from evidence package"}
+  ],
+  "remaining_gaps": [
+    "collect + license-verify specific open reference images (HPA CC BY, Wikimedia per-file, OpenStax)",
+    "no B1-specific quantitative depth-concentration field (only bands) - keep schematic",
+    "no time-resolved stability/precipitation data - keep qualitative risk",
+    "B2/B3 scenes remain abstract/comparator until (optionally) more evidence is added"
+  ]
+}
