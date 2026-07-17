@@ -1,0 +1,18 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUALIZATION DIRECTOR PASS - design spec only, not implemented",
+  "purpose": "Standardized scientific CAMERA LANGUAGE for scale transitions. Every transition specifies movement, zoom, FOV, clipping/cross-section, focus/DoF, label behavior, speed, narrative purpose, and a final decision. Scale is always labelled; B1 has NO body->organ->bloodstream systemic descent (topical).",
+  "decision_enum": ["IMPLEMENT","OPTIONAL","DEFER","DO_NOT_USE"],
+  "principles": ["consistent complexity (one abstraction level per scale)","a persistent scale bar + scale-name badge on every transition","cross-section reveal rather than flythrough for the skin dive","ease-in/ease-out, no whip pans","DoF used to isolate the load-bearing element, not for spectacle"],
+  "transitions": [
+    {"from":"BODY","to":"SKIN_SITE","movement":"gentle push-in to application region","zoom":"continuous dolly","fov":"wide->normal","cross_section":"none yet","dof":"shallow on site","label":"'Topical application site'","speed":"slow (2-3 s)","purpose":"orient without a systemic journey","decision":"IMPLEMENT","note":"B1: stop at skin; do NOT descend into circulation"},
+    {"from":"SKIN_SITE","to":"SKIN_SURFACE","movement":"push to surface; slight tilt","zoom":"dolly","fov":"normal","cross_section":"none","dof":"surface film in focus","label":"'Skin surface + formulation'","speed":"medium","purpose":"introduce the formulation reservoir","decision":"IMPLEMENT"},
+    {"from":"SKIN_SURFACE","to":"TISSUE_CROSS_SECTION","movement":"cutaway reveal (vertical slice opens)","zoom":"pull to frame SC/epidermis/dermis","fov":"normal","cross_section":"CLIP PLANE reveals the layered slab (the signature transition)","dof":"deep (whole cross-section)","label":"depth ruler 0-30/30-60/60-90 um appears","speed":"medium (the key story beat)","purpose":"show the barrier + depth bands","decision":"IMPLEMENT","note":"label EX VIVO RAT SKIN MODEL banner"},
+    {"from":"TISSUE_CROSS_SECTION","to":"CELL_MICROENVIRONMENT","movement":"push into one epidermal region","zoom":"dolly","fov":"normal->tight","cross_section":"local","dof":"shallow on target cells","label":"cell labels fade in","speed":"medium","purpose":"introduce keratinocytes/melanoma context","decision":"IMPLEMENT"},
+    {"from":"CELL_MICROENVIRONMENT","to":"MEMBRANE_INTERACTION","movement":"close to a cell surface","zoom":"tight dolly","fov":"tight","cross_section":"membrane in profile","dof":"very shallow on the contact point","label":"'uptake (ordinal)' + confound note","speed":"medium","purpose":"nanoparticle-membrane contact + ordinal uptake","decision":"IMPLEMENT","note":"no endocytosis machinery for B1"},
+    {"from":"MEMBRANE","to":"MOLECULE","movement":"optional micro-zoom to released celastrol","zoom":"tight","fov":"tight","dof":"shallow","label":"'released API'","speed":"fast","purpose":"show free-drug identity","decision":"OPTIONAL","note":"3Dmol.js molecule optional; not load-bearing"},
+    {"from":"CELL","to":"ORGANELLE_ER","movement":"push to perinuclear ER","zoom":"tight","fov":"tight","label":"'ER localization (abstract)'","speed":"medium","purpose":"B2 ER-targeting ONLY","decision":"OPTIONAL","note":"B2 ONLY; PROHIBITED for B1"},
+    {"transition":"BODY->ORGAN->BLOODSTREAM systemic descent for B1","decision":"DO_NOT_USE","reason":"topical preset - no supported systemic journey"}
+  ],
+  "label_behavior": {"scale_badge":"persistent, top-corner (e.g. 'Scale: tissue ~100 um')","leader_lines":"appear on hold, fade on move","model_banner":"full-width on any model change (rat skin / HaCaT / B16BL6 / mouse)","decision":"IMPLEMENT"}
+}

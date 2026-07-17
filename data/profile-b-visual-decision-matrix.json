@@ -1,0 +1,49 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUALIZATION DIRECTOR PASS - design spec only, not implemented",
+  "purpose": "Master visual DECISION MATRIX: how each biological object is shown (REALISTIC/STYLIZED/SCHEMATIC/LABEL_ONLY/HIDDEN) with justification + a final decision (IMPLEMENT/OPTIONAL/DEFER/DO_NOT_USE). No undecided rows. Consistent-complexity principle: one abstraction level per scale.",
+  "objects": [
+    {"object":"stratum corneum","show":"STYLIZED","why":"barrier is load-bearing; literal 15-20 layers add noise","decision":"IMPLEMENT"},
+    {"object":"viable epidermis","show":"STYLIZED","why":"cell environment matters; grouped bands keep clarity","decision":"IMPLEMENT"},
+    {"object":"dermis","show":"SCHEMATIC","why":"context for depth band; detail would clutter","decision":"IMPLEMENT"},
+    {"object":"corneocyte","show":"STYLIZED","why":"defines the barrier texture","decision":"IMPLEMENT"},
+    {"object":"keratinocyte","show":"STYLIZED","why":"uptake host + tissue context","decision":"IMPLEMENT"},
+    {"object":"melanoma cell (B16)","show":"STYLIZED","why":"disease target; murine label required","decision":"IMPLEMENT"},
+    {"object":"melanocyte","show":"SCHEMATIC","why":"normal-skin context only","decision":"OPTIONAL"},
+    {"object":"fibroblast","show":"SCHEMATIC","why":"minor dermal context","decision":"OPTIONAL"},
+    {"object":"dermal vessel","show":"SCHEMATIC","why":"anatomical context; must NOT imply NP entry","decision":"OPTIONAL"},
+    {"object":"collagen / ECM","show":"SCHEMATIC","why":"intentional weave gives dermis identity; avoid random fibers","decision":"OPTIONAL"},
+    {"object":"basement membrane","show":"SCHEMATIC","why":"DEJ landmark","decision":"OPTIONAL"},
+    {"object":"nanoparticle (NLC)","show":"STYLIZED","why":"the protagonist; one size class, charge halo","decision":"IMPLEMENT"},
+    {"object":"free API (celastrol)","show":"SCHEMATIC (dots)","why":"released-drug identity; molecule optional","decision":"IMPLEMENT"},
+    {"object":"formulation reservoir","show":"STYLIZED","why":"the topical dosage form","decision":"IMPLEMENT"},
+    {"object":"celastrol molecule (3D)","show":"REALISTIC (optional)","why":"nice-to-have identity; not load-bearing","decision":"OPTIONAL"},
+    {"object":"organelles (general, B1)","show":"HIDDEN","why":"no evidence for B1 intracellular detail; clutter","decision":"DO_NOT_USE"},
+    {"object":"endoplasmic reticulum (B2)","show":"SCHEMATIC","why":"B2 ER-targeting mechanism","decision":"OPTIONAL"},
+    {"object":"immune cells (DC/CD8, B2)","show":"SCHEMATIC","why":"B2 ICD chain","decision":"OPTIONAL"},
+    {"object":"immune cells (B1)","show":"HIDDEN","why":"decorative; not in B1 evidence","decision":"DO_NOT_USE"},
+    {"object":"hair follicle / glands","show":"LABEL_ONLY","why":"optional appendage context; can distract","decision":"DEFER"},
+    {"object":"subcutis / adipocytes","show":"HIDDEN","why":"depth not reached by B1","decision":"DO_NOT_USE"},
+    {"object":"nerves","show":"HIDDEN","why":"irrelevant to B1 events","decision":"DO_NOT_USE"},
+    {"object":"red blood cells","show":"SCHEMATIC","why":"vessel-lumen cue; illustrative color","decision":"OPTIONAL"},
+    {"object":"whole-body anatomy","show":"SCHEMATIC","why":"B1 needs only a skin site; full body is orientation","decision":"DEFER"}
+  ],
+  "simplification_strategy": {
+    "intentionally_omitted": [
+      {"omit":"excessive cell density","why":"consistent-complexity: crowding hides the transport story"},
+      {"omit":"general organelles (B1)","why":"no evidence; adds noise"},
+      {"omit":"decorative immune cells (B1)","why":"implies unsupported biology"},
+      {"omit":"random ECM fibers","why":"reads as noise; use intentional weave"},
+      {"omit":"dense vasculature","why":"risks implying circulation for a topical preset"},
+      {"omit":"background anatomical clutter","why":"focus stays on barrier + particles"},
+      {"omit":"continuous concentration heat field","why":"no measured field; ordinal bands only"}
+    ],
+    "principle": "Every omission raises the signal-to-noise of the supported transport story (Front Bioinform 2022 consistent-complexity)."
+  },
+  "final_decisions_summary": {
+    "IMPLEMENT": ["SC","epidermis","dermis","corneocyte","keratinocyte","B16 cell","NLC particle","free-API dots","formulation reservoir","depth ruler","evidence badges","cross-section camera","biased-diffusion motion","ordinal uptake"],
+    "OPTIONAL": ["melanocyte","fibroblast","vessel","collagen","BM","RBC","celastrol 3D molecule","ER + immune cells (B2)","trails/glow"],
+    "DEFER": ["whole-body model","appendages"],
+    "DO_NOT_USE": ["B1 organelles/endocytosis machinery","B1 decorative immune cells","subcutis penetration","nerves","concentration heat field","cinematic FX","self-propelled particles","systemic circulation for B1"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUALIZATION DIRECTOR PASS - design spec only, not implemented",
+  "purpose": "Accepted scientific visual METAPHORS for invisible processes, each classified Recommended / Optional / Avoid, plus the final decision and the fidelity constraint. Grounded in molecular-animation practice (Front Bioinform 2022 PMC9580893; PMC11371733).",
+  "classification_enum": ["RECOMMENDED","OPTIONAL","AVOID"],
+  "decision_enum": ["IMPLEMENT","OPTIONAL","DEFER","DO_NOT_USE"],
+  "metaphors": [
+    {"process":"concentration gradient","metaphor":"particle DENSITY gradient (more dots = more) with a legend","class":"RECOMMENDED","decision":"IMPLEMENT","note":"do NOT render a smooth concentration field as if measured; density is qualitative"},
+    {"process":"diffusion front","metaphor":"advancing soft boundary / density front","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"depth deposition (bands)","metaphor":"per-band shading tied to the 0-30/30-60/60-90 um ruler, ORDINAL","class":"RECOMMENDED","decision":"IMPLEMENT","note":"ordinal band emphasis, not a continuous heat field"},
+    {"process":"release","metaphor":"slow emission of free-API dots from particles","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"uptake","metaphor":"ordinal glow/opacity difference by charge","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"uncertainty / qualitative","metaphor":"dashed outlines + reduced opacity + amber badge","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"inferred risk (e.g. precipitation)","metaphor":"GHOST overlay + warning badge, never a timed event","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"unsupported event","metaphor":"NOT depicted; text note in 'what is not shown'","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"qualitative comparison (configs)","metaphor":"side-by-side ordinal bars/opacity, with confound caption","class":"RECOMMENDED","decision":"IMPLEMENT"},
+    {"process":"arrows / leader lines","metaphor":"labels & pointers on hold","class":"OPTIONAL","decision":"OPTIONAL","note":"avoid arrow clutter during motion"},
+    {"process":"trails","metaphor":"short fading random-walk trails","class":"OPTIONAL","decision":"OPTIONAL","note":"random-walk look; never straight streaks"},
+    {"process":"glow / pulse","metaphor":"gentle emphasis pulse on the active element","class":"OPTIONAL","decision":"OPTIONAL","note":"use sparingly; not sci-fi neon"},
+    {"process":"quantitative heat map of concentration","metaphor":"continuous color field","class":"AVOID","decision":"DO_NOT_USE","note":"no measured concentration field exists (bands only) -> misleading"},
+    {"process":"lens-flare / cinematic FX","metaphor":"-","class":"AVOID","decision":"DO_NOT_USE"},
+    {"process":"pulsing 'energy' auras / sci-fi beams","metaphor":"-","class":"AVOID","decision":"DO_NOT_USE"},
+    {"process":"red-for-everything","metaphor":"-","class":"AVOID","decision":"DO_NOT_USE","note":"distinct hues for blood/concentration/danger/effect"}
+  ]
+}
