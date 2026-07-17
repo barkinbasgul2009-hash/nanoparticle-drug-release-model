@@ -9,10 +9,11 @@ import sceneRegistration from './sceneRegistration.test.mjs';
 import stateTransitions from './stateTransitions.test.mjs';
 import cameraInit from './cameraInit.test.mjs';
 import bootstrap from './bootstrap.test.mjs';
+import anatomy from './anatomy.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap,
+  stateTransitions, cameraInit, bootstrap, anatomy,
 ];
 
 for (const suite of suites) {

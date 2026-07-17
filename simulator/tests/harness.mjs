@@ -46,9 +46,15 @@ export function summary(label) {
  */
 export function nodeFetcher() {
   return async (url) => {
-    // url looks like '../data/<file>.json'; strip the leading '../'.
-    const rel = url.replace(/^\.\.\//, '');
-    const abs = resolve(REPO_ROOT, rel);
+    // Two bases are used by the app:
+    //  - '../data/<file>'  -> the repo's data/ registries (basePath '../data/')
+    //  - './data/<file>'   -> the simulator-local data/ (basePath './data/')
+    let abs;
+    if (url.startsWith('./data/')) {
+      abs = resolve(REPO_ROOT, 'simulator', url.replace(/^\.\//, ''));
+    } else {
+      abs = resolve(REPO_ROOT, url.replace(/^\.\.\//, ''));
+    }
     return readFile(abs, 'utf8');
   };
 }

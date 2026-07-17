@@ -1,0 +1,91 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-2 anatomical registry for the Profile-B simulator. Defines ONLY the five skin layers, their biologically correct ORDERING, schematic draw weights, the scale-level -> visibility mapping, static scenes, labels, and an illustrative palette. Loaded by the app; the code hardcodes NO biological values.",
+  "scientific_integrity": {
+    "ordering_confidence": "CONTEXTUAL_ANATOMY - the top-to-bottom ordering (air -> surface -> stratum corneum -> viable epidermis -> dermis -> subcutis) is textbook consensus (OpenStax A&P 5.1 CC BY; StatPearls NBK537325).",
+    "proportion_confidence": "NOT_REPORTED as measured layer thicknesses in the frozen evidence. Chen 2012 reports 0-30/30-60/60-90 um SAMPLING sections (NOT layer thicknesses); PMC5620574 notes rodent viable epidermis ~20 um. Therefore draw weights below are ORDINAL-consensus only and the whole cross-section is flagged not_to_scale.",
+    "not_to_scale": true,
+    "rule": "draw weights encode the qualitative rank (SC thinnest < viable epidermis < dermis thickest; subcutis variable). They are NOT measured ratios and must be labelled 'schematic, not to scale' in the UI."
+  },
+  "palette": {
+    "note": "ILLUSTRATIVE_COLOR only - restrained, muted, flat fills to DISTINGUISH regions. No gradients, no glow, no concentration/activity encoding.",
+    "air": "transparent",
+    "skin_surface": "#b9a98c",
+    "stratum_corneum": "#d9cbb2",
+    "viable_epidermis": "#e7d9c3",
+    "dermis": "#e6cbc4",
+    "subcutis": "#efe4b0",
+    "label_text": "#33302b",
+    "boundary_line": "#8a8072"
+  },
+  "layers": [
+    {
+      "id": "air", "name": "Air", "order": 0, "tissue": false,
+      "draw_weight": 0.6, "role": "ambient boundary (not tissue)",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "air", "label": false
+    },
+    {
+      "id": "skin_surface", "name": "Skin Surface", "order": 1, "tissue": true,
+      "draw_weight": 0.3, "role": "air/skin interface (boundary strip)",
+      "thickness_basis": "interface boundary (no measured thickness)",
+      "measured_thickness": "NOT_REPORTED",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "skin_surface", "label": true
+    },
+    {
+      "id": "stratum_corneum", "name": "Stratum Corneum", "order": 2, "tissue": true,
+      "draw_weight": 1, "role": "outermost keratinized barrier layer",
+      "thickness_basis": "ordinal consensus: thinnest tissue band (OpenStax/StatPearls)",
+      "measured_thickness": "NOT_REPORTED (Chen 0-30 um SAMPLING section, not a layer thickness)",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "stratum_corneum", "label": true
+    },
+    {
+      "id": "viable_epidermis", "name": "Viable Epidermis", "order": 3, "tissue": true,
+      "draw_weight": 2, "role": "living epidermal layers below the stratum corneum",
+      "thickness_basis": "ordinal consensus: thicker than SC, thinner than dermis",
+      "measured_thickness": "NOT_REPORTED (rodent viable epidermis ~20 um per PMC5620574; not a Profile-B measured value)",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "viable_epidermis", "label": true
+    },
+    {
+      "id": "dermis", "name": "Dermis", "order": 4, "tissue": true,
+      "draw_weight": 6, "role": "connective-tissue layer beneath the epidermis",
+      "thickness_basis": "ordinal consensus: thickest of SC/epidermis/dermis",
+      "measured_thickness": "NOT_REPORTED",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "dermis", "label": true
+    },
+    {
+      "id": "subcutis", "name": "Subcutaneous Tissue", "order": 5, "tissue": true,
+      "draw_weight": 3, "role": "hypodermis (orientation-only; not reached by Profile-B evidence)",
+      "thickness_basis": "orientation-only; variable in reality",
+      "measured_thickness": "NOT_REPORTED",
+      "confidence": "CONTEXTUAL_ANATOMY", "color_token": "subcutis", "label": true
+    }
+  ],
+  "scale_levels": {
+    "note": "Populates the Phase-1 ScaleSystem (L1..L6). depth_window is a [top,bottom] fraction of the full tissue stack (0=surface top, 1=subcutis bottom). emphasized = layers drawn at full opacity; others dimmed. clip = cross-section exposes all layers at overview.",
+    "L1": { "visible": ["air","skin_surface","stratum_corneum","viable_epidermis","dermis","subcutis"], "emphasized": [], "depth_window": [0,1], "clip": "cross_section_all", "framing": "overview" },
+    "L2": { "visible": ["skin_surface","stratum_corneum","viable_epidermis","dermis","subcutis"], "emphasized": [], "depth_window": [0,1], "clip": "cross_section_all", "framing": "overview" },
+    "L3": { "visible": ["skin_surface","stratum_corneum","viable_epidermis","dermis"], "emphasized": ["stratum_corneum","viable_epidermis","dermis"], "depth_window": [0,0.7], "clip": "cross_section_all", "framing": "tissue" },
+    "L4": { "visible": ["skin_surface","stratum_corneum","viable_epidermis"], "emphasized": ["stratum_corneum","viable_epidermis"], "depth_window": [0,0.35], "clip": "cross_section_all", "framing": "layer" },
+    "L5": { "visible": ["stratum_corneum","viable_epidermis"], "emphasized": ["stratum_corneum"], "depth_window": [0,0.18], "clip": "cross_section_all", "framing": "layer_close" },
+    "L6": { "visible": ["stratum_corneum"], "emphasized": ["stratum_corneum"], "depth_window": [0,0.08], "clip": "cross_section_all", "framing": "layer_max" }
+  },
+  "scenes": [
+    { "id": "overview_skin", "title": "Overview Skin", "scale": "L1", "note": "full cross-section, all layers (default)" },
+    { "id": "surface", "title": "Surface", "scale": "L2", "note": "surface + full stack" },
+    { "id": "cross_section", "title": "Cross Section", "scale": "L1", "note": "clean cross-sectional cut exposing all layers" },
+    { "id": "sc_focus", "title": "SC Focus", "scale": "L5", "note": "stratum corneum dominant" },
+    { "id": "epidermis_focus", "title": "Epidermis Focus", "scale": "L4", "note": "SC + viable epidermis" },
+    { "id": "dermis_focus", "title": "Dermis Focus", "scale": "L3", "note": "SC/epidermis/dermis" },
+    { "id": "subcutaneous_layer", "title": "Subcutaneous Layer", "scale": "L1", "note": "full stack incl. hypodermis (orientation-only)" }
+  ],
+  "labels": {
+    "note": "Anatomical names only (no explanatory text in Phase 2). Placed at band centre; hidden when a band is below the min pixel height.",
+    "min_band_px_for_label": 14
+  },
+  "provenance_sources": [
+    "OpenStax Anatomy & Physiology 5.1 (CC BY 4.0) - layer ordering",
+    "StatPearls 'Histology, Skin' NBK537325 (NIH) - layer ordering",
+    "Chen 2012 evidence package - 0-30/30-60/60-90 um sampling sections (NOT thicknesses)",
+    "Pharmaceutics 2017;9(3):33 / PMC5620574 (CC BY) - rodent viable epidermis ~20 um (species note)"
+  ]
+}

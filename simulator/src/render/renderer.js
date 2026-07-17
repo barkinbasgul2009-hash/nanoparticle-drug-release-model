@@ -33,14 +33,21 @@ export class NullRenderer {
 }
 
 /**
- * Renderer factory. Phase 1 always returns the NullRenderer. Later phases can
- * return a WebGL renderer here without touching call sites.
+ * Renderer factory. Selects a renderer by kind. Phase 1 shipped 'null'; Phase 2
+ * adds the static-anatomy 'canvas' renderer behind the same interface. No call
+ * sites change - only the requested kind. The canvas renderer is imported lazily
+ * so the null path stays dependency-free.
  * @param {{ kind?: string, logger?: object }} [opts]
- * @returns {Renderer}
+ * @returns {Renderer | Promise<Renderer>}
  */
 export function createRenderer(opts = {}) {
-  // Only 'null' is available in Phase 1.
-  return new NullRenderer(opts);
+  const kind = opts.kind || 'null';
+  if (kind === 'null') return new NullRenderer(opts);
+  if (kind === 'canvas') {
+    // Lazy import keeps the null path free of the anatomy layout engine.
+    return import('./canvasRenderer.js').then((m) => new m.CanvasRenderer(opts));
+  }
+  throw new Error(`unknown renderer kind: ${kind}`);
 }
 
 export default createRenderer;

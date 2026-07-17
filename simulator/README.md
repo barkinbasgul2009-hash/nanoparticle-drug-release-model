@@ -1,9 +1,32 @@
-# Profile-B Simulator — Foundation (Phase 1)
+# Profile-B Simulator — Phases 1–2
 
-This directory is the **software foundation** for the Profile-B animation simulator. It is
-deliberately **infrastructure only**: there is **zero biological rendering, zero particles,
-zero animation, zero shaders, zero skin/cells/microscopy, and no B1/B2/B3 scene
-implementation**. Later phases build on top of this without changing its wiring.
+This directory is the Profile-B animation simulator. It is completely separate from the
+project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
+
+- **Phase 1 — Foundation (infrastructure only):** config, logging, events, state, JSON
+  loading + validation, preset/scene/scale/camera systems, evidence + citation engines, UI
+  framework, debug tools, and the TypeScript interface contract. No rendering.
+- **Phase 2 — Anatomical world (static anatomy only):** the five skin layers rendered as an
+  evidence-driven cross-section with a clip plane, continuous zoom, scene switching, and
+  anatomical labels. **Still zero biology**: no particles, diffusion, motion, cells, vessels,
+  collagen, lamellae, microscopy, animation, shaders, or lighting.
+
+## Phase 2 at a glance
+- **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five
+  layers, their biologically-correct ordering, **schematic ordinal draw weights (explicitly
+  `not_to_scale`)**, the scale-level -> visibility mapping, scenes, labels, and an
+  illustrative palette. The code hardcodes **no** biological values.
+- **Scientific honesty:** measured layer thicknesses are `NOT_REPORTED` in the frozen
+  evidence (Chen's 0-30/30-60/60-90 um are *sampling sections*, not thicknesses), so the
+  cross-section shows the correct **ordering** and an **ordinal** SC<epidermis<dermis rank,
+  labelled "schematic - not to scale". Ordering provenance: OpenStax CC BY / StatPearls.
+- **Renderer:** `CanvasRenderer` (static 2D bands) behind the Phase-1 `createRenderer`
+  interface. A pure `computeAnatomyLayout()` engine computes bands/labels and is unit-tested
+  headless (no canvas needed).
+
+## Original Phase-1 note
+The foundation remains **infrastructure**; Phase 2 adds only static anatomy on top of it
+without changing its wiring.
 
 It is completely separate from the project's production artifacts (`web/`, `R/`, `app/`,
 `tests/`), which are untouched.

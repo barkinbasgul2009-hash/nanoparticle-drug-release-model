@@ -20,6 +20,12 @@ import { EvidenceEngine } from './evidence/evidenceEngine.js';
 import { CitationEngine } from './references/citationEngine.js';
 import { UiFramework } from './ui/uiFramework.js';
 import { DebugTools } from './debug/debugTools.js';
+import { JsonLoader as _JsonLoader } from './data/jsonLoader.js';
+import { AnatomyModel } from './anatomy/anatomyModel.js';
+import { ZoomController } from './anatomy/zoomController.js';
+import { LabelSystem } from './anatomy/labelSystem.js';
+import { registerAnatomyScenes } from './anatomy/anatomyScenes.js';
+import { buildAnatomyPanelModels, renderAnatomyPanels } from './ui/panels/anatomyPanels.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -53,8 +59,51 @@ export async function createApp(opts = {}) {
 
   const scale = new ScaleSystem({ levels: config.scaleLevels, logger });
   const camera = new CameraSystem({ config, logger });
-  const scenes = new SceneManager({ bus, logger });     // no scenes registered in Phase 1
-  const renderer = createRenderer({ logger });          // NullRenderer
+  const scenes = new SceneManager({ bus, logger });
+
+  // Phase 2: load the simulator-local anatomy registry and build the model.
+  const anatomyLoader = new _JsonLoader({
+    basePath: config.simulatorDataBasePath,
+    fetcher: opts.fetcher,
+    logger,
+  });
+  let anatomy = null;
+  try {
+    const anatomyReg = await anatomyLoader.load(config.anatomySources.anatomy, 'generic');
+    anatomy = new AnatomyModel(anatomyReg);
+    // Populate the Phase-1 ScaleSystem from the registry (no hardcoded values).
+    for (const levelId of scale.ids()) {
+      const cfg = anatomy.levelConfig(levelId);
+      if (cfg) {
+        scale.configureLevel(levelId, {
+          visibleStructures: cfg.visible || [],
+          allowedLabels: (cfg.visible || []).filter((id) => anatomy.layer(id) && anatomy.layer(id).label),
+          cameraLimits: { depthWindow: cfg.depth_window, framing: cfg.framing, clip: cfg.clip },
+        });
+      }
+    }
+  } catch (err) {
+    logger.warn('load', 'anatomy registry not loaded', { err: String(err) });
+  }
+
+  // Renderer (Phase 2 default: static-anatomy canvas). createRenderer may return
+  // a promise for non-null kinds.
+  const renderer = await createRenderer({ kind: (config.render && config.render.kind) || 'null', logger });
+  if (anatomy && renderer.setModel) renderer.setModel(anatomy);
+
+  // Zoom + labels (anatomy only; static frames, no animation).
+  const zoom = new ZoomController({
+    scaleSystem: scale,
+    state,
+    logger,
+    onChange: (levelId) => { if (renderer.setLevel) renderer.setLevel(levelId); },
+  });
+  const labels = anatomy ? new LabelSystem({ model: anatomy }) : null;
+
+  // Register the anatomy scenes (contain anatomy only).
+  if (anatomy) {
+    registerAnatomyScenes({ model: anatomy, sceneManager: scenes, zoom, renderer, state, logger });
+  }
 
   const ui = new UiFramework({ panels: config.panels, logger });
   const debug = new DebugTools({
@@ -70,14 +119,30 @@ export async function createApp(opts = {}) {
   const app = {
     config, logger, bus, state, loader, data,
     evidence, citations, presets, scale, camera, scenes, renderer, ui, debug,
+    // Phase 2 additions:
+    anatomy, anatomyLoader, zoom, labels,
   };
 
   if (opts.mount !== false && typeof document !== 'undefined') {
     mountBrowser(app, opts.containerResolver);
   }
 
-  logger.info('app', 'foundation ready (no biological rendering)');
-  bus.emit('app:ready', { presets: presets.list().map((p) => p.id) });
+  // Activate the default static anatomy scene (a clean cross-section).
+  if (anatomy && scenes.has(config.defaultScene)) {
+    await scenes.transitionTo(config.defaultScene);
+  }
+
+  // Populate the (previously empty) UI panels with anatomy content.
+  if (anatomy) {
+    const models = buildAnatomyPanelModels({
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(),
+    });
+    app.panelModels = models;
+    renderAnatomyPanels(ui, models);
+  }
+
+  logger.info('app', 'anatomy world ready (static; no biological processes)');
+  bus.emit('app:ready', { presets: presets.list().map((p) => p.id), scenes: scenes.list().map((s) => s.id) });
   return app;
 }
 

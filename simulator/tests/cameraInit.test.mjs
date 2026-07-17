@@ -21,8 +21,8 @@ export default async function run() {
 
   cam.addClipPlane({ enabled: true, normal: [0, 1, 0], constant: 0 });
   eq(cam.get().clipPlanes.length, 1, 'clip plane stored');
-  // clip planes are inert in Phase 1 (config disables them)
-  eq(cam.get().clipPlanes[0].enabled, false, 'clip plane inert in Phase 1');
+  // Phase 2 activates the cross-section clip plane (config.camera.clipPlanesEnabled=true).
+  eq(cam.get().clipPlanes[0].enabled, true, 'clip plane active in Phase 2 cross-section');
 
   // Scale system.
   const scale = new ScaleSystem({ levels: APP_CONFIG.scaleLevels });

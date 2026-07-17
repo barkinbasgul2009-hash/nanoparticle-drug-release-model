@@ -58,8 +58,18 @@ export const APP_CONFIG = Object.freeze({
     fovDegrees: 45,
     near: 0.1,
     far: 1000,
-    clipPlanesEnabled: false, // cross-section is a later phase
+    clipPlanesEnabled: true, // Phase 2: cross-section clip plane is active
   }),
+
+  // Phase 2 rendering: static-anatomy canvas renderer behind the Phase-1 interface.
+  render: Object.freeze({ kind: 'canvas' }), // 'null' | 'canvas'
+
+  // Simulator-local data (anatomy registry lives with the app, loaded not hardcoded).
+  simulatorDataBasePath: './data/',
+  anatomySources: Object.freeze({ anatomy: 'anatomy.registry.json' }),
+
+  // Default anatomy scene shown at boot (a clean cross-section of all layers).
+  defaultScene: 'cross_section',
 
   logging: Object.freeze({ level: 'info' }),
   debug: Object.freeze({ enabled: true, showFps: true }),

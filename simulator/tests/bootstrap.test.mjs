@@ -7,12 +7,13 @@ export default async function run() {
   // (no DOM). Proves the app boots with zero biological rendering.
   const app = await createApp({ fetcher: nodeFetcher(), mount: false });
 
-  ok(app && app.config && app.config.phase === 1, 'app booted at phase 1');
+  ok(app && app.config && app.config.phase === 1, 'app booted (foundation config)');
   eq(app.presets.list().map((p) => p.id), ['B1', 'B2', 'B3'], 'presets built during boot');
   ok(app.citations.size() > 0, 'citation index built');
   eq(app.scale.ids().length, 6, 'six scale levels');
-  ok(app.renderer.kind === 'null', 'NullRenderer in use (no rendering)');
-  eq(app.scenes.list().length, 0, 'zero scenes registered');
+  // Phase 2: renderer kind is config-driven (canvas); Phase 1 default was 'null'.
+  ok(app.renderer.kind === app.config.render.kind, 'renderer matches configured kind');
+  ok(app.scenes.list().length > 0, 'anatomy scenes registered (Phase 2)');
   ok(app.ui.list().length === 8, 'eight ui panels registered');
 
   // Evidence gate works end-to-end.
