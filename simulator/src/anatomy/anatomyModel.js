@@ -4,8 +4,11 @@
 // comes from simulator/data/anatomy.registry.json.
 
 export class AnatomyModel {
-  /** @param {any} registry parsed anatomy.registry.json */
-  constructor(registry) {
+  /**
+   * @param {any} registry parsed anatomy.registry.json
+   * @param {{ species?: string }} [opts] initial species selection (a choice, NOT a fallback)
+   */
+  constructor(registry, opts = {}) {
     if (!registry || !Array.isArray(registry.layers)) {
       throw new Error('AnatomyModel requires a registry with layers[]');
     }
@@ -17,6 +20,21 @@ export class AnatomyModel {
     this.scenes = registry.scenes || [];
     this.labelsCfg = registry.labels || {};
     this.notToScale = !!(registry.scientific_integrity && registry.scientific_integrity.not_to_scale);
+
+    // Phase 2.6: species-driven. Independent per-species profiles; no hidden fallback.
+    this.speciesProfiles = registry.species_profiles || {};
+    this.speciesScope = registry.species_scope || {};
+    const supported = Array.isArray(this.speciesScope.supported) && this.speciesScope.supported.length
+      ? this.speciesScope.supported
+      : Object.keys(this.speciesProfiles).filter((k) => k !== 'note');
+    /** @type {string[]} supported species ids */
+    this._supported = supported;
+    const initial = opts.species || this.speciesScope.initial || supported[0];
+    if (!initial || !this._supported.includes(initial)) {
+      throw new Error(`AnatomyModel: unsupported initial species '${initial}' (supported: ${this._supported.join(', ')})`);
+    }
+    /** @type {string} the active species; weights() always follows this. */
+    this.activeSpecies = initial;
   }
 
   /** Ordered layer ids top -> bottom. */
@@ -44,35 +62,68 @@ export class AnatomyModel {
     return this.tissueLayers().map((l) => l.id);
   }
 
-  /** Default draw weights keyed by layer id (schematic, evidence-anchored - NOT measured). */
-  weights() {
-    const out = {};
-    for (const l of this.layers) out[l.id] = typeof l.draw_weight === 'number' ? l.draw_weight : 1;
-    return out;
+  /** Supported species ids (Phase 2.6). */
+  species() { return [...this._supported]; }
+
+  /** Alias kept for callers: the list of available anatomy profiles. */
+  profiles() { return this.species(); }
+
+  /** The boot/initial species selection (a choice, NOT an anatomical fallback). */
+  initialSpecies() { return this.speciesScope.initial || this._supported[0]; }
+
+  /** @deprecated Phase 2.5 name; returns the initial species id. */
+  defaultProfile() { return this.initialSpecies(); }
+
+  /** The full independent profile object for a species (throws if unsupported). */
+  profileFor(speciesId) {
+    if (!this._supported.includes(speciesId)) {
+      throw new Error(`AnatomyModel: unsupported species '${speciesId}' (supported: ${this._supported.join(', ')})`);
+    }
+    const p = this.speciesProfiles[speciesId];
+    if (!p) throw new Error(`AnatomyModel: species '${speciesId}' has no profile in the registry`);
+    return p;
   }
 
-  /** Available per-species weight profile ids. */
-  profiles() { return Object.keys(this.registry.weight_profiles || {}).filter((k) => k !== 'note'); }
+  /**
+   * Select the active species. The engine is species-driven: weights() and every
+   * layout derived from it will follow this selection. There is NO silent fallback
+   * to human - an unsupported species throws.
+   * @param {string} speciesId
+   */
+  setSpecies(speciesId) {
+    this.profileFor(speciesId); // validates (throws if unsupported)
+    this.activeSpecies = speciesId;
+    return this.activeSpecies;
+  }
 
-  /** Default profile id from model_scope. */
-  defaultProfile() { return (this.registry.model_scope && this.registry.model_scope.default_profile) || 'human_contextual'; }
+  /** True if a species profile declares a subcutis layer present. */
+  subcutisPresent(speciesId = this.activeSpecies) {
+    return !!this.profileFor(speciesId).subcutis_present;
+  }
 
   /**
-   * Draw weights for a named species/model profile. Falls back to the default
-   * layer weights if the profile is unknown. Profiles are data (registry), never
-   * hardcoded here.
-   * @param {string} profileId
+   * Draw weights for a species, keyed by layer id (schematic - NOT measured).
+   * Tissue weights come from that species' INDEPENDENT profile; 'air' uses the
+   * structural layer default. No fallback to human: an unsupported species, or a
+   * profile missing a tissue weight, throws.
+   * @param {string} speciesId
    */
-  weightsForSpecies(profileId) {
-    const profiles = this.registry.weight_profiles || {};
-    const p = profiles[profileId];
-    if (!p) return this.weights();
+  weightsForSpecies(speciesId) {
+    const profile = this.profileFor(speciesId);
+    const dw = profile.draw_weights || {};
     const out = {};
     for (const l of this.layers) {
-      out[l.id] = typeof p[l.id] === 'number' ? p[l.id] : (typeof l.draw_weight === 'number' ? l.draw_weight : 1);
+      if (l.id === 'air') { out[l.id] = typeof l.draw_weight === 'number' ? l.draw_weight : 0.6; continue; }
+      if (typeof dw[l.id] !== 'number') {
+        throw new Error(`species profile '${speciesId}' is missing a draw weight for layer '${l.id}'`);
+      }
+      out[l.id] = dw[l.id];
     }
     return out;
   }
+
+  /** Draw weights for the ACTIVE species (schematic, per-species - NOT measured). */
+  weights() { return this.weightsForSpecies(this.activeSpecies); }
 
   /** True if a tissue layer carries located literature evidence for a species. */
   hasThicknessEvidence(layerId, species = 'human') {

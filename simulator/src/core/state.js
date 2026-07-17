@@ -6,6 +6,7 @@
  * @typedef {object} AppState
  * @property {string|null} currentPreset
  * @property {string|null} currentScene
+ * @property {string|null} species        // active anatomy species (Phase 2.6)
  * @property {string} currentScale       // one of the scale-level ids (L1..L6)
  * @property {string|null} selectedStructure
  * @property {string|null} selectedEvidence
@@ -20,6 +21,7 @@ export function createInitialState() {
   return {
     currentPreset: null,
     currentScene: null,
+    species: null,
     currentScale: 'L1',
     selectedStructure: null,
     selectedEvidence: null,
@@ -57,6 +59,7 @@ export class StateStore {
   /** Convenience transitions used across the app. */
   setPreset(id) { return this.set({ currentPreset: id }); }
   setScene(id) { return this.set({ currentScene: id }); }
+  setSpecies(id) { return this.set({ species: id }); }
   setScale(levelId) { return this.set({ currentScale: levelId }); }
   select(kind, id) {
     const key = kind === 'structure' ? 'selectedStructure'

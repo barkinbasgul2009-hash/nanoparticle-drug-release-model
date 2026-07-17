@@ -70,7 +70,10 @@ export async function createApp(opts = {}) {
   let anatomy = null;
   try {
     const anatomyReg = await anatomyLoader.load(config.anatomySources.anatomy, 'generic');
-    anatomy = new AnatomyModel(anatomyReg);
+    // Phase 2.6: species-driven. Boot species comes from config (a selection, not a
+    // fallback); the model refuses unsupported species (no silent human fallback).
+    anatomy = new AnatomyModel(anatomyReg, { species: config.anatomy && config.anatomy.species });
+    state.setSpecies(anatomy.activeSpecies);
     // Populate the Phase-1 ScaleSystem from the registry (no hardcoded values).
     for (const levelId of scale.ids()) {
       const cfg = anatomy.levelConfig(levelId);
@@ -121,6 +124,21 @@ export async function createApp(opts = {}) {
     evidence, citations, presets, scale, camera, scenes, renderer, ui, debug,
     // Phase 2 additions:
     anatomy, anatomyLoader, zoom, labels,
+  };
+
+  // Phase 2.6: species-driven switch. Prepares the architecture for a future
+  // Species selector (no UI added here): selecting a species loads that profile
+  // and redraws the current static frame. Throws on an unsupported species -
+  // there is NO silent fallback to human.
+  app.setSpecies = (speciesId) => {
+    if (!anatomy) throw new Error('anatomy not loaded');
+    anatomy.setSpecies(speciesId);
+    state.setSpecies(speciesId);
+    const level = state.get().currentScale;
+    if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
+    logger.info('anatomy', `species -> ${speciesId}`);
+    bus.emit('anatomy:species', { species: speciesId });
+    return speciesId;
   };
 
   if (opts.mount !== false && typeof document !== 'undefined') {

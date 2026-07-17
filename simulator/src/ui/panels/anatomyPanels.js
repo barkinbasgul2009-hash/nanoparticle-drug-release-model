@@ -29,6 +29,7 @@ export function buildAnatomyPanelModels(deps) {
       currentLayer: currentLayer || '(none selected)',
       visibleLayers: visible,
       notToScale: model.notToScale,
+      species: (s.species || model.activeSpecies || null),
     },
     navigation: {
       title: 'Navigation',

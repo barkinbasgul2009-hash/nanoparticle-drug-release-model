@@ -1,18 +1,20 @@
 {
-  "$schema_version": "1.1",
-  "purpose": "Phase-2 anatomical registry for the Profile-B simulator, with Phase-2.5 evidence-anchored schematic drawing weights. Defines ONLY the five skin layers, their biologically correct ORDERING, evidence-anchored schematic draw weights, per-species weight profiles, the scale-level -> visibility mapping, static scenes, labels, and an illustrative palette. Loaded by the app; the code hardcodes NO biological values.",
+  "$schema_version": "1.2",
+  "purpose": "Anatomical registry for the Profile-B simulator. Phase 2: five skin layers + correct ordering. Phase 2.5: evidence-anchored schematic draw weights. Phase 2.6: SPECIES-DRIVEN architecture - INDEPENDENT human/mouse/rat anatomy profiles (species_profiles), selected by species with NO silent fallback to human. Defines ONLY the five skin layers, their ordering, per-species schematic draw weights, the scale-level -> visibility mapping, static scenes, labels, and an illustrative palette. Loaded by the app; the code hardcodes NO biological values.",
   "scientific_integrity": {
     "ordering_confidence": "CONTEXTUAL_ANATOMY - the top-to-bottom ordering (air -> surface -> stratum corneum -> viable epidermis -> dermis -> subcutis) is textbook consensus (OpenStax A&P 5.1 CC BY; StatPearls NBK537325).",
-    "proportion_basis": "Phase 2.5: draw weights are now EVIDENCE-ANCHORED (were purely ordinal in Phase 2). For each tissue layer with located literature, the default (human) weight = log10(representative thickness in um); this display-compression keeps thin layers legible. Per-species profiles are kept separately; NO cross-source averaging was performed. See docs/profile-b-anatomy-scale-validation.md.",
+    "proportion_basis": "Phase 2.5: draw weights are EVIDENCE-ANCHORED (were purely ordinal in Phase 2). Phase 2.6: weights live in INDEPENDENT per-species profiles (species_profiles) - human is evidence-anchored (log10 representative um); mouse/rat use an evidence-supported ORDINAL prominence ladder because per-layer rodent um are not established. NO species copies another's values; NO cross-source averaging. See docs/profile-b-anatomy-scale-validation.md and docs/profile-b-multi-species-anatomy.md.",
     "weight_basis": "draw_weight = log10(representative_um) for evidence-anchored layers (display-compression, NOT a measurement); subcutis is an ILLUSTRATIVE orientation-only weight (thickness genuinely variable); skin_surface is an interface strip (not a measured layer).",
     "not_to_scale": true,
     "why_still_not_to_scale": "Even with literature values the dynamic range is ~100x (dermis ~2000 um vs SC ~18 um); a true-to-scale cross-section would render the SC sub-pixel. Weights are therefore log-compressed SCHEMATIC values and the UI must keep the 'schematic - not to scale' caption.",
     "rule": "Never invent measurements; never average conflicting sources; record disagreement; every value has provenance."
   },
-  "model_scope": {
-    "default_profile": "human_contextual",
-    "statement": "The anatomy scaffold is a CONTEXTUAL/generic skin cross-section. The Profile-B evidence spans FOUR separate experimental contexts (ex vivo RAT skin permeation; in vitro HaCaT human keratinocytes; in vitro B16BL6 murine melanoma; in vivo C57BL/6 mouse) kept separate per the frozen biological-visualization blueprint. Human per-layer thicknesses are the best-supported in the literature, so the default scaffold uses the HUMAN profile; RAT and MOUSE profiles are provided but flagged INCOMPLETE. No universal average is invented.",
-    "multi_model": true
+  "species_scope": {
+    "supported": ["human", "mouse", "rat"],
+    "initial": "human",
+    "fallback": null,
+    "statement": "Phase 2.6: the anatomy engine is SPECIES-DRIVEN. The active anatomy profile ALWAYS follows the selected species (see species_profiles). Each species profile is INDEPENDENT - no species inherits or copies another's values. 'initial' is only the boot selection (a choice, configurable via app.config anatomy.species and a future Species selector calling app.setSpecies); it is NOT an anatomical fallback. An unknown/unsupported species is an ERROR - there is NO silent fallback to human.",
+    "context": "The Profile-B evidence spans FOUR separate experimental contexts (ex vivo RAT skin permeation; in vitro HaCaT human keratinocytes; in vitro B16BL6 murine melanoma; in vivo C57BL/6 mouse), kept separate per the frozen biological-visualization blueprint. Human, mouse and rat each get their own profile below."
   },
   "palette": {
     "note": "ILLUSTRATIVE_COLOR only - restrained, muted, flat fills to DISTINGUISH regions. No gradients, no glow, no concentration/activity encoding.",
@@ -86,11 +88,44 @@
       "confidence": "CONTEXTUAL_ANATOMY", "color_token": "subcutis", "label": true
     }
   ],
-  "weight_profiles": {
-    "note": "Per-species draw-weight profiles. The layer-level draw_weight above equals the human_contextual profile (the default). rat/mouse profiles retain evidence where located and stay ordinal (flagged INCOMPLETE) where per-layer um were not found. No cross-source averaging.",
-    "human_contextual": { "skin_surface": 0.3, "stratum_corneum": 1.26, "viable_epidermis": 1.75, "dermis": 3.30, "subcutis": 2.0, "basis": "log10(representative_um) for SC/epidermis/dermis; illustrative for surface/subcutis" },
-    "rat": { "skin_surface": 0.3, "stratum_corneum": 1.0, "viable_epidermis": 1.30, "dermis": 3.0, "subcutis": 2.0, "basis": "viable epidermis log10(20 um) anchored (PMC5620574); SC/dermis ORDINAL (no per-layer um located); INCOMPLETE" },
-    "mouse": { "skin_surface": 0.3, "stratum_corneum": 1.0, "viable_epidermis": 1.30, "dermis": 3.0, "subcutis": 2.0, "basis": "total ~540 um known; per-layer um NOT located -> ORDINAL; INCOMPLETE" }
+  "species_profiles": {
+    "note": "Phase 2.6: INDEPENDENT per-species anatomy DRAWING profiles (supersedes the Phase-2.5 weight_profiles). Each profile is self-contained - NO species inherits another's values. draw_weights are SCHEMATIC drawing weights, NOT physical measurements. Human is EVIDENCE-ANCHORED (log10 representative um). Mouse and rat use an evidence-supported ORDINAL prominence ladder (very_thin 0.7 / thin 1.2 / medium 2.0 / thick 2.8) because per-layer um are NOT established for rodents; magnitudes are schematic, only the ORDERING and relative prominence are claimed. skin_surface (0.3) is a NON-biological interface strip shared as a rendering constant, not a copied measurement. The engine selects a profile by species; the top-level layers[].draw_weight is a structural default equal to the human profile and is NOT used for rodent rendering.",
+    "human": {
+      "species": "human",
+      "display_name": "Human skin",
+      "layer_order": ["skin_surface", "stratum_corneum", "viable_epidermis", "dermis", "subcutis"],
+      "prominence": { "stratum_corneum": "thin", "viable_epidermis": "medium", "dermis": "thick", "subcutis": "variable" },
+      "draw_weights": { "skin_surface": 0.3, "stratum_corneum": 1.26, "viable_epidermis": 1.75, "dermis": 3.30, "subcutis": 2.0 },
+      "subcutis_present": true,
+      "weight_basis": "EVIDENCE-ANCHORED: draw_weight = log10(representative_um) for SC (18.3)/epidermis (56.6)/dermis (2000 display anchor); subcutis illustrative; skin_surface interface strip.",
+      "confidence": "HIGH - human per-layer um are well established.",
+      "references": ["Sandby-Moller et al. 2003 (PubMed 14690333) - SC + viable epidermis um by site", "OpenStax A&P 5.1 (CC BY) - ordering + general thickness", "StatPearls NBK537325 - ordering", "Turkish J Plast Surg 2018 - dermis 1-3 mm range"],
+      "uncertainty": "Dermis 1-3 mm (display anchor = flagged range midpoint, not a measurement). Epidermis site-dependent (palms/soles up to ~1 mm); the general non-glabrous value is used."
+    },
+    "mouse": {
+      "species": "mouse",
+      "display_name": "Mouse skin (C57BL/6 context)",
+      "layer_order": ["skin_surface", "stratum_corneum", "viable_epidermis", "dermis", "subcutis"],
+      "prominence": { "stratum_corneum": "very_thin", "viable_epidermis": "thin", "dermis": "medium", "subcutis": "medium" },
+      "draw_weights": { "skin_surface": 0.3, "stratum_corneum": 0.7, "viable_epidermis": 1.2, "dermis": 2.0, "subcutis": 2.0 },
+      "subcutis_present": true,
+      "weight_basis": "ORDINAL prominence ladder (NOT human-derived): mouse skin is thin overall (total ~540 um) with a very thin SC, thin epidermis (~20 um), a medium dermis, and a PRESENT, relatively prominent subcutis owing to the panniculus carnosus (subcutaneous striated muscle).",
+      "confidence": "LOW-MEDIUM - ordering + relative prominence supported; per-layer um NOT established.",
+      "references": ["Pharmaceutics 2017;9(3):33 / PMC5620574 (CC BY) - rodent viable epidermis ~20 um, thin SC", "Annex JVSAH - C57BL/6 total skin ~540 um", "panniculus carnosus (rodent subcutaneous muscle) - standard dermatology histology"],
+      "uncertainty": "Per-layer SC and dermis um NOT located (~20 um epidermis corroborates 'thin'). Hair-cycle-driven dermal/hypodermal thickness changes are not modelled. Mouse vs rat per-layer distinction is limited to the dermis (rodent skins are otherwise similar)."
+    },
+    "rat": {
+      "species": "rat",
+      "display_name": "Rat skin (ex-vivo permeation context)",
+      "layer_order": ["skin_surface", "stratum_corneum", "viable_epidermis", "dermis", "subcutis"],
+      "prominence": { "stratum_corneum": "very_thin", "viable_epidermis": "thin", "dermis": "thick", "subcutis": "medium" },
+      "draw_weights": { "skin_surface": 0.3, "stratum_corneum": 0.7, "viable_epidermis": 1.2, "dermis": 2.8, "subcutis": 2.0 },
+      "subcutis_present": true,
+      "weight_basis": "ORDINAL prominence ladder (NOT human-derived): rat skin is thicker than mouse skin overall; the dermis is the dominant tissue layer (thick) while SC is very thin and epidermis is thin (~20 um). Subcutis present (panniculus carnosus).",
+      "confidence": "LOW-MEDIUM - ordering + relative prominence supported; per-layer um NOT established.",
+      "references": ["Pharmaceutics 2017;9(3):33 / PMC5620574 (CC BY) - rodent viable epidermis ~20 um", "Chen 2012 (Int J Nanomedicine) - Profile-B ex-vivo RAT full-thickness abdominal skin permeation context", "panniculus carnosus (rodent subcutaneous muscle) - standard histology"],
+      "uncertainty": "Per-layer SC and dermis um NOT located. Rat abdominal (Chen permeation) vs dorsal site thickness differences are not resolved. The rat-thicker-than-mouse dermis difference is a general, low-confidence claim."
+    }
   },
   "scale_levels": {
     "note": "Populates the Phase-1 ScaleSystem (L1..L6). depth_window is a [top,bottom] fraction of the full tissue stack (0=surface top, 1=subcutis bottom). emphasized = layers drawn at full opacity; others dimmed. clip = cross-section exposes all layers at overview. UNCHANGED from Phase 2.",

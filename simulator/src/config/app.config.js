@@ -68,6 +68,12 @@ export const APP_CONFIG = Object.freeze({
   simulatorDataBasePath: './data/',
   anatomySources: Object.freeze({ anatomy: 'anatomy.registry.json' }),
 
+  // Phase 2.6: species-driven anatomy. `species` is the BOOT selection (a choice),
+  // NOT a fallback - a future Species selector calls app.setSpecies() to switch
+  // between the independent human/mouse/rat profiles. Supported species come from
+  // the registry's species_scope; there is no silent fallback to human.
+  anatomy: Object.freeze({ species: 'human' }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

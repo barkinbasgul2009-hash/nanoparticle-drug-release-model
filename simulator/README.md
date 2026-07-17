@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–2.5
+# Profile-B Simulator — Phases 1–2.6
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -16,13 +16,24 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   evidence). Per-species profiles (human / rat / mouse) are kept separate — **no universal
   average is invented** — and the cross-section stays **`not_to_scale`**. Registry + tests +
   evidence doc only; no rendering or biology added.
+- **Phase 2.6 — Multi-species anatomy architecture (registry + engine):** the anatomy engine is
+  now **species-driven** with **independent** human / mouse / rat profiles (`species_profiles`).
+  The active profile **always follows the selected species** and there is **no silent fallback
+  to human** — an unsupported species is an error. Human stays evidence-anchored; mouse/rat use
+  an evidence-supported **ordinal prominence ladder** (per-layer rodent µm are not established).
+  `app.setSpecies()` + `state.species` prepare a future Species selector **without redesigning
+  the UI**. Still zero biology. Audit: `docs/profile-b-multi-species-anatomy.md`.
 
-## Phase 2 + 2.5 at a glance
+## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five
-  layers, their biologically-correct ordering, **evidence-anchored schematic draw weights
-  (explicitly `not_to_scale`)**, per-species weight profiles, the scale-level -> visibility
+  layers, their biologically-correct ordering, **independent per-species draw-weight profiles
+  (evidence-anchored schematic, explicitly `not_to_scale`)**, the scale-level -> visibility
   mapping, scenes, labels, and an illustrative palette. The code hardcodes **no** biological
   values.
+- **Species-driven (Phase 2.6):** `species_scope` lists the supported species and the boot
+  selection; `AnatomyModel` tracks an `activeSpecies` and refuses unsupported species (no silent
+  fallback to human). `computeAnatomyLayout` reads `model.weights()`, so the cross-section
+  follows the selected species automatically.
 - **Scientific honesty:** Phase 2 encoded the correct **ordering** with **ordinal** weights
   because measured thicknesses are `NOT_REPORTED` in the frozen Profile-B evidence (Chen's
   0-30/30-60/60-90 µm are *sampling sections*, not thicknesses). Phase 2.5 then located

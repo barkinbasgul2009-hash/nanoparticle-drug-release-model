@@ -5,6 +5,12 @@ weights from **purely ordinal** (Phase 2) to **evidence-anchored schematic** (Ph
 Scope: `simulator/data/anatomy.registry.json` only. No biology/rendering/production changes;
 PR #3 not merged.
 
+> **Superseded architecture note (Phase 2.6):** the `weight_profiles` / `model_scope` structures
+> described here were later folded into **independent per-species `species_profiles`** with a
+> `species_scope`, making the engine species-driven with no human fallback. The Phase-2.5
+> *values* below are unchanged (they became the human profile); the *structure* evolved. See
+> `docs/profile-b-multi-species-anatomy.md` and `docs/profile-b-simulator-phase2.6-implementation.md`.
+
 ## Ground rules honored
 - Never invent a measurement · never average conflicting sources · never pick a value because
   it is most common · record disagreement · every value has provenance · weights remain
