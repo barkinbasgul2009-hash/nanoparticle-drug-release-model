@@ -1,0 +1,68 @@
+// Application configuration for the Profile-B simulator foundation (Phase 1).
+//
+// RULE: no hardcoded SCIENTIFIC values live here. Scientific content (presets,
+// evidence, atlases, references) is loaded at runtime from the repository's
+// data/ JSON files that previous phases produced. This file holds only app
+// wiring: data paths, scale-level identifiers, panel ids, and defaults.
+
+export const APP_CONFIG = Object.freeze({
+  appName: 'Profile-B Simulator (foundation)',
+  phase: 1,
+  // Base directory (relative to simulator/index.html) where the repo data lives.
+  dataBasePath: '../data/',
+
+  // Data files the loaders know about. Values are FILE NAMES only; the science
+  // is inside them. Keeping this list here (not in code) means later phases add
+  // sources by editing config, not logic.
+  dataSources: Object.freeze({
+    presetLibrary: 'profile-b-preset-library.json',
+    simulatorPresets: 'profile-b-simulator-presets.json',
+    evidencePackage: 'profile-b-evidence-package.json',
+    biologicalScenes: 'profile-b-biological-scenes.json',
+    sceneEvidenceMap: 'profile-b-scene-evidence-map.json',
+    animationPipeline: 'profile-b-animation-pipeline.json',
+    infoPanels: 'profile-b-animation-info-panels.json',
+    referenceLibrary: 'profile-b-reference-library.json',
+    licenseRegistry: 'profile-b-license-registry.json',
+    cameraLanguage: 'profile-b-camera-language.json',
+    visualDecisionMatrix: 'profile-b-visual-decision-matrix.json',
+  }),
+
+  // Presets exposed by the foundation. Metadata is derived from the loaded data;
+  // this only declares which preset ids the app offers and their active state.
+  presets: Object.freeze([
+    { id: 'B1', active: true, sourceKey: 'chen_2012' },
+    { id: 'B2', active: true, sourceKey: 'wang_2025' },
+    { id: 'B3', active: true, sourceKey: 'shukla_2020' },
+  ]),
+
+  // Global scale hierarchy (architectural ids only; the biological structures
+  // visible at each level are read from the loaded blueprint, not hardcoded).
+  scaleLevels: Object.freeze([
+    { id: 'L1', name: 'Body' },
+    { id: 'L2', name: 'Organ' },
+    { id: 'L3', name: 'Tissue' },
+    { id: 'L4', name: 'Layer' },
+    { id: 'L5', name: 'Cell' },
+    { id: 'L6', name: 'Molecule' },
+  ]),
+
+  // UI panel ids (framework only; no biological content in Phase 1).
+  panels: Object.freeze([
+    'mainView', 'navigation', 'evidence', 'citation',
+    'legend', 'information', 'timeline', 'debug',
+  ]),
+
+  camera: Object.freeze({
+    defaultMode: 'perspective', // 'perspective' | 'orthographic'
+    fovDegrees: 45,
+    near: 0.1,
+    far: 1000,
+    clipPlanesEnabled: false, // cross-section is a later phase
+  }),
+
+  logging: Object.freeze({ level: 'info' }),
+  debug: Object.freeze({ enabled: true, showFps: true }),
+});
+
+export default APP_CONFIG;
