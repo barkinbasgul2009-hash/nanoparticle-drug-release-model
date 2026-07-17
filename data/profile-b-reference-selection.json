@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUAL REFERENCE VALIDATION - documentation only",
+  "purpose": "Final selected reference per structure + reuse mode + gaps. reuse_mode: DIRECT_REUSE_CANDIDATE (pending per-file CC check) / REFERENCE_ONLY. Nothing is collected/embedded in this phase.",
+  "selections": [
+    {"structure":"stratum_corneum + lipid_lamellae","selected":"pmc_sc_lamellae_tem (PMC4920276/PMC2025644)","reuse_mode":"REFERENCE_ONLY (until article CC verified)","appearance_ref":"laminated overlapping plates + parallel bilamellar mortar"},
+    {"structure":"corneocyte / epidermal layers / keratinocyte","selected":"openstax_anatomy (CC BY) + human_protein_atlas (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"graded polygonal layers; basal palisade; anucleate SC plates"},
+    {"structure":"melanocyte","selected":"human_protein_atlas (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"dendritic basal cell"},
+    {"structure":"melanoma_cell_B16 (murine)","selected":"atcc CRL-6475 description","reuse_mode":"REFERENCE_ONLY","appearance_ref":"epithelial/spindle, pigmented; label murine"},
+    {"structure":"keratinocyte_HaCaT","selected":"atcc description + human_protein_atlas","reuse_mode":"REFERENCE_ONLY (ATCC image) / DIRECT candidate (HPA)","appearance_ref":"cobblestone epithelial monolayer"},
+    {"structure":"fibroblast / endothelial / pericyte","selected":"human_protein_atlas (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"spindle fibroblast; flat endothelium; pericyte wrap"},
+    {"structure":"dermis / collagen I & III / reticular fibers","selected":"wikimedia_histology_skin","reuse_mode":"REFERENCE_ONLY (per-file verify) ","appearance_ref":"interwoven wavy bundles; finer reticular fibers"},
+    {"structure":"collagen_IV / basement_membrane","selected":"openstax_anatomy (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"thin undulating DEJ line"},
+    {"structure":"elastin","selected":"wikimedia_histology_skin","reuse_mode":"REFERENCE_ONLY (per-file verify)","appearance_ref":"thin branching wavy fibers"},
+    {"structure":"normal_skin cross-section","selected":"openstax_anatomy (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"ordered stratification"},
+    {"structure":"rat_skin / mouse_skin / human_skin (species)","selected":"pmc_species_review (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"thickness + follicle-density differences (label the model)"},
+    {"structure":"melanoma_tissue (human context)","selected":"nci_visuals (PD, verify) / librepathology (CC BY-SA)","reuse_mode":"DIRECT_REUSE_CANDIDATE (verify)","appearance_ref":"atypical nests, pleomorphism, invasion; label CONTEXTUAL/human"},
+    {"structure":"dermal_vessels","selected":"human_protein_atlas (CC BY)","reuse_mode":"DIRECT_REUSE_CANDIDATE","appearance_ref":"endothelial tube + lumen (context only)"},
+    {"structure":"nanoparticle / free API / ER (B2)","selected":"procedural (no external reference needed)","reuse_mode":"N/A","appearance_ref":"smooth sphere; dots; lacy perinuclear network"}
+  ],
+  "gaps": [
+    {"gap":"a directly-reusable (CC) TEM of SC lipid lamellae","status":"identified PMC articles; CC status pending per-article verification","mitigation":"reference-only until confirmed, or procedural lamellae"},
+    {"gap":"an open-licensed B16BL6/B16F10 micrograph","status":"ATCC images copyrighted; no confirmed CC micrograph located","mitigation":"use ATCC morphology DESCRIPTION + procedural cell; label murine"},
+    {"gap":"open-licensed rat-skin cross-section micrograph (specific)","status":"species review (CC BY) gives structural data, not necessarily a reusable rat cross-section image","mitigation":"procedural rat cross-section informed by the review"},
+    {"gap":"confirmed-CC dermal collagen micrograph","status":"Wikimedia candidates exist; per-file license unverified (fetch blocked)","mitigation":"per-file verification is a user step"}
+  ],
+  "overall": "Every structure has at least one policy-known source. DIRECT-reuse candidates concentrate in HPA/OpenStax/PMC-species (CC BY). Cell-line micrographs and some ultrastructure/dermal collagen remain REFERENCE_ONLY pending per-file checks -> procedural assets recommended there, informed by the extracted appearance."
+}

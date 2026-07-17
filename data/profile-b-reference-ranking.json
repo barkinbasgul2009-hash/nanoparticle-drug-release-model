@@ -1,0 +1,30 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUAL REFERENCE VALIDATION - documentation only",
+  "purpose": "Scores per reference source (1-5): scientific fidelity, microscopy quality, license confidence, educational usefulness, animation usefulness, visual clarity, overall recommendation. License confidence is capped because per-file verification is pending (fetch blocked).",
+  "scale": "1=poor .. 5=excellent",
+  "rankings": [
+    {"source":"human_protein_atlas","sci_fidelity":5,"microscopy_quality":5,"license_confidence":4,"educational":5,"animation":5,"clarity":4,"overall":"TOP PICK (CC BY; verify specific image)","recommend":"USE_AS_REFERENCE + candidate DIRECT_REUSE after per-file check"},
+    {"source":"openstax_anatomy","sci_fidelity":4,"microscopy_quality":3,"license_confidence":5,"educational":5,"animation":5,"clarity":5,"overall":"TOP PICK for skin-layer schematic (CC BY)","recommend":"DIRECT_REUSE candidate (check 3rd-party figures)"},
+    {"source":"pmc_species_review","sci_fidelity":5,"microscopy_quality":4,"license_confidence":5,"educational":4,"animation":3,"clarity":4,"overall":"BEST for species differences (CC BY)","recommend":"DIRECT_REUSE candidate"},
+    {"source":"pmc_sc_lamellae_tem","sci_fidelity":5,"microscopy_quality":5,"license_confidence":3,"educational":4,"animation":4,"clarity":3,"overall":"BEST for SC lamellae ultrastructure","recommend":"USE_AS_REFERENCE; DIRECT_REUSE only if the specific article is CC BY"},
+    {"source":"wikimedia_histology_skin","sci_fidelity":4,"microscopy_quality":4,"license_confidence":2,"educational":4,"animation":4,"clarity":4,"overall":"GOOD for dermal collagen/H&E; license per-file","recommend":"USE_AS_REFERENCE; DIRECT_REUSE only after per-file CC verification"},
+    {"source":"nci_visuals","sci_fidelity":4,"microscopy_quality":4,"license_confidence":3,"educational":4,"animation":4,"clarity":4,"overall":"GOOD for melanoma/anatomy (mostly PD)","recommend":"USE_AS_REFERENCE; DIRECT_REUSE if PD confirmed per image"},
+    {"source":"librepathology","sci_fidelity":4,"microscopy_quality":4,"license_confidence":3,"educational":4,"animation":3,"clarity":3,"overall":"melanoma histology (CC BY-SA)","recommend":"USE_AS_REFERENCE; share-alike if reused"},
+    {"source":"statpearls_ncbi","sci_fidelity":4,"microscopy_quality":3,"license_confidence":2,"educational":4,"animation":2,"clarity":3,"overall":"strong TEXT reference; figures restricted","recommend":"REFERENCE_ONLY (text)"},
+    {"source":"open_histology_galway","sci_fidelity":4,"microscopy_quality":4,"license_confidence":2,"educational":5,"animation":3,"clarity":4,"overall":"good layered histology; confirm license","recommend":"USE_AS_REFERENCE pending license"},
+    {"source":"histology_siu","sci_fidelity":4,"microscopy_quality":4,"license_confidence":1,"educational":5,"animation":3,"clarity":4,"overall":"excellent layout reference; no open license","recommend":"REFERENCE_ONLY"},
+    {"source":"atcc_celllines","sci_fidelity":5,"microscopy_quality":4,"license_confidence":1,"educational":4,"animation":3,"clarity":4,"overall":"authoritative cell-line morphology; images copyrighted","recommend":"REFERENCE_ONLY (description)"},
+    {"source":"dermnet_nz","sci_fidelity":4,"microscopy_quality":4,"license_confidence":1,"educational":4,"animation":2,"clarity":4,"overall":"melanoma principles; proprietary","recommend":"REFERENCE_ONLY"},
+    {"source":"modern_pathology_nature","sci_fidelity":5,"microscopy_quality":4,"license_confidence":1,"educational":3,"animation":2,"clarity":3,"overall":"authoritative criteria; copyrighted","recommend":"REFERENCE_ONLY (text)"}
+  ],
+  "top_picks_by_tissue": {
+    "skin_layers_schematic":"openstax_anatomy (CC BY)",
+    "skin/cell_micrographs":"human_protein_atlas (CC BY)",
+    "SC_lamellae_ultrastructure":"pmc_sc_lamellae_tem (verify CC)",
+    "dermal_collagen":"wikimedia_histology_skin (per-file verify)",
+    "species_differences":"pmc_species_review (CC BY)",
+    "melanoma_histology_context":"nci_visuals (PD) / librepathology (CC BY-SA)",
+    "cell_line_morphology":"atcc description (reference-only)"
+  }
+}
