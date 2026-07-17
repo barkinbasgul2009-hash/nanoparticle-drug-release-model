@@ -8,7 +8,7 @@ import { createApp } from '../src/main.js';
 import APP_CONFIG from '../src/config/app.config.js';
 
 export default async function run() {
-  section('anatomy (Phase 2)');
+  section('anatomy (Phase 2 + 2.5 scale validation)');
 
   // --- JSON loading of the anatomy registry ---
   const loader = new JsonLoader({ basePath: APP_CONFIG.simulatorDataBasePath, fetcher: nodeFetcher() });
@@ -20,11 +20,42 @@ export default async function run() {
   ok(model.validateOrdering().ok, 'ordering validates (monotonic + correct sequence + all present)');
   eq(model.tissueLayers().length, 5, 'five tissue layers');
 
-  // --- proportions (schematic ordinal; SC < epidermis < dermis; not to scale) ---
+  // --- proportions (Phase 2.5: evidence-anchored schematic; SC < epidermis < dermis; not to scale) ---
   const w = model.weights();
-  ok(w.stratum_corneum < w.viable_epidermis, 'SC thinner than viable epidermis (ordinal)');
-  ok(w.viable_epidermis < w.dermis, 'viable epidermis thinner than dermis (ordinal)');
-  ok(model.notToScale === true, 'cross-section flagged not-to-scale');
+  ok(w.stratum_corneum < w.viable_epidermis, 'SC thinner than viable epidermis (ordering preserved)');
+  ok(w.viable_epidermis < w.dermis, 'viable epidermis thinner than dermis (ordering preserved)');
+  ok(model.notToScale === true, 'cross-section still flagged not-to-scale (Phase 2.5)');
+  // Phase 2.5: weights are read from the registry, never hardcoded in code
+  const scLayer = reg.layers.find((l) => l.id === 'stratum_corneum');
+  eq(w.stratum_corneum, scLayer.draw_weight, 'draw weight comes from the registry (no hardcoded biological value)');
+  // Phase 2.5: the evidence-anchored layers derive draw_weight = log10(representative um)
+  for (const id of ['stratum_corneum', 'viable_epidermis', 'dermis']) {
+    const ev = reg.layers.find((l) => l.id === id).thickness_evidence.human;
+    ok(typeof ev.representative_um === 'number', `${id} has a numeric human representative thickness`);
+    ok(Math.abs(w[id] - Math.log10(ev.representative_um)) < 0.01, `${id} weight = log10(representative um) - evidence-anchored, not pure ordinal`);
+    ok(typeof ev.source === 'string' && ev.source.length > 0, `${id} evidence carries a provenance source`);
+    ok(typeof ev.confidence === 'string' && ev.confidence.length > 0, `${id} evidence carries a confidence level`);
+  }
+
+  // --- Phase 2.5: located-evidence gate (auditable; never invented) ---
+  ok(model.hasThicknessEvidence('stratum_corneum', 'human'), 'human SC has located thickness evidence');
+  ok(model.hasThicknessEvidence('viable_epidermis', 'human'), 'human viable epidermis has located thickness evidence');
+  ok(model.hasThicknessEvidence('dermis', 'human'), 'human dermis has a (flagged) thickness anchor');
+  ok(!model.hasThicknessEvidence('subcutis', 'human'), 'subcutis intentionally NOT anchored (thickness genuinely variable)');
+  ok(!model.hasThicknessEvidence('stratum_corneum', 'mouse'), 'mouse SC per-layer um not located -> no false evidence claimed');
+
+  // --- Phase 2.5: multi-species profiles kept separate (no invented universal average) ---
+  const profs = model.profiles();
+  for (const p of ['human_contextual', 'rat', 'mouse']) ok(profs.includes(p), `weight profile present: ${p}`);
+  eq(model.defaultProfile(), 'human_contextual', 'default profile is the human contextual scaffold');
+  const human = model.weightsForSpecies('human_contextual');
+  eq(human.stratum_corneum, w.stratum_corneum, 'default layer weights equal the human profile (single source of truth)');
+  const rat = model.weightsForSpecies('rat');
+  for (const id of ['skin_surface', 'stratum_corneum', 'viable_epidermis', 'dermis', 'subcutis']) {
+    ok(typeof rat[id] === 'number', `rat profile defines a weight for ${id}`);
+  }
+  ok(rat.stratum_corneum < rat.viable_epidermis && rat.viable_epidermis < rat.dermis, 'rat profile keeps SC < epidermis < dermis');
+  eq(model.weightsForSpecies('does_not_exist').dermis, w.dermis, 'unknown profile safely falls back to default weights');
 
   // --- clip-plane cross section: overview exposes ALL tissue layers ---
   const viewport = { width: 640, height: 400 };

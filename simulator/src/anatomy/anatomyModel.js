@@ -44,11 +44,41 @@ export class AnatomyModel {
     return this.tissueLayers().map((l) => l.id);
   }
 
-  /** Draw weights keyed by layer id (schematic, ordinal - not measured). */
+  /** Default draw weights keyed by layer id (schematic, evidence-anchored - NOT measured). */
   weights() {
     const out = {};
     for (const l of this.layers) out[l.id] = typeof l.draw_weight === 'number' ? l.draw_weight : 1;
     return out;
+  }
+
+  /** Available per-species weight profile ids. */
+  profiles() { return Object.keys(this.registry.weight_profiles || {}).filter((k) => k !== 'note'); }
+
+  /** Default profile id from model_scope. */
+  defaultProfile() { return (this.registry.model_scope && this.registry.model_scope.default_profile) || 'human_contextual'; }
+
+  /**
+   * Draw weights for a named species/model profile. Falls back to the default
+   * layer weights if the profile is unknown. Profiles are data (registry), never
+   * hardcoded here.
+   * @param {string} profileId
+   */
+  weightsForSpecies(profileId) {
+    const profiles = this.registry.weight_profiles || {};
+    const p = profiles[profileId];
+    if (!p) return this.weights();
+    const out = {};
+    for (const l of this.layers) {
+      out[l.id] = typeof p[l.id] === 'number' ? p[l.id] : (typeof l.draw_weight === 'number' ? l.draw_weight : 1);
+    }
+    return out;
+  }
+
+  /** True if a tissue layer carries located literature evidence for a species. */
+  hasThicknessEvidence(layerId, species = 'human') {
+    const l = this.layer(layerId);
+    const ev = l && l.thickness_evidence && l.thickness_evidence[species];
+    return !!(ev && (typeof ev.representative_um === 'number'));
   }
 
   /** Verify ordering is monotonic and the five required tissue layers exist. */

@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–2
+# Profile-B Simulator — Phases 1–2.5
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -10,16 +10,29 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   evidence-driven cross-section with a clip plane, continuous zoom, scene switching, and
   anatomical labels. **Still zero biology**: no particles, diffusion, motion, cells, vessels,
   collagen, lamellae, microscopy, animation, shaders, or lighting.
+- **Phase 2.5 — Anatomical scale validation (registry only):** the layer draw weights were
+  upgraded from **purely ordinal** to **evidence-anchored schematic** using located
+  literature (`draw_weight = log10(representative µm)` for the layers with real thickness
+  evidence). Per-species profiles (human / rat / mouse) are kept separate — **no universal
+  average is invented** — and the cross-section stays **`not_to_scale`**. Registry + tests +
+  evidence doc only; no rendering or biology added.
 
-## Phase 2 at a glance
+## Phase 2 + 2.5 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five
-  layers, their biologically-correct ordering, **schematic ordinal draw weights (explicitly
-  `not_to_scale`)**, the scale-level -> visibility mapping, scenes, labels, and an
-  illustrative palette. The code hardcodes **no** biological values.
-- **Scientific honesty:** measured layer thicknesses are `NOT_REPORTED` in the frozen
-  evidence (Chen's 0-30/30-60/60-90 um are *sampling sections*, not thicknesses), so the
-  cross-section shows the correct **ordering** and an **ordinal** SC<epidermis<dermis rank,
-  labelled "schematic - not to scale". Ordering provenance: OpenStax CC BY / StatPearls.
+  layers, their biologically-correct ordering, **evidence-anchored schematic draw weights
+  (explicitly `not_to_scale`)**, per-species weight profiles, the scale-level -> visibility
+  mapping, scenes, labels, and an illustrative palette. The code hardcodes **no** biological
+  values.
+- **Scientific honesty:** Phase 2 encoded the correct **ordering** with **ordinal** weights
+  because measured thicknesses are `NOT_REPORTED` in the frozen Profile-B evidence (Chen's
+  0-30/30-60/60-90 µm are *sampling sections*, not thicknesses). Phase 2.5 then located
+  general anatomical thickness literature (Sandby-Møller 2003 for human SC/epidermis; a
+  flagged 1–3 mm dermis range; rodent epidermis ~20 µm) and replaced the ordinal ranks with
+  **log-compressed, evidence-anchored** draw weights — still schematic, still
+  "schematic - not to scale", every value with provenance and confidence. Rat/mouse per-layer
+  µm were **not located**, so those profiles stay ordinal and flagged `INCOMPLETE` rather than
+  invented. Full audit trail: `docs/profile-b-anatomy-scale-validation.md`. Ordering
+  provenance: OpenStax CC BY / StatPearls.
 - **Renderer:** `CanvasRenderer` (static 2D bands) behind the Phase-1 `createRenderer`
   interface. A pure `computeAnatomyLayout()` engine computes bands/labels and is unit-tested
   headless (no canvas needed).
