@@ -20,12 +20,18 @@ export class CanvasRenderer {
     this.viewport = { width: 640, height: 400 };
     this.lastLayout = null;      // exposed for tests / debug
     this.showNotToScale = true;
+    // Phase 3: optional transport particle overlay (static anatomy stays beneath).
+    this.engine = null;          // TransportEngine (source of particles)
+    this.lastParticleFrame = null; // [{id,x,y,state,status}] exposed for tests
+    this.particleColor = '#3a3f4b';
   }
 
   /** @param {import('../anatomy/anatomyModel.js').AnatomyModel} model */
   setModel(model) { this.model = model; return this; }
   /** @param {string} levelId */
   setLevel(levelId) { this.levelId = levelId; this.draw(); return this; }
+  /** Phase 3: attach the transport engine whose particles are drawn as flat dots. */
+  setEngine(engine) { this.engine = engine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -57,6 +63,8 @@ export class CanvasRenderer {
     if (!this.model) return null;
     const layout = computeAnatomyLayout(this.model, this.levelId, this.viewport);
     this.lastLayout = layout;
+    // Phase 3: compute the particle frame (headless-testable) whether or not we paint.
+    this.lastParticleFrame = this._particleFrame(layout);
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -80,12 +88,45 @@ export class CanvasRenderer {
     this.ctx.textBaseline = 'middle';
     for (const l of labels) this.ctx.fillText(l.text, 8, l.y);
 
+    // Phase 3: particles as flat muted dots (no glow, no trail, no gaming FX).
+    if (this.lastParticleFrame && this.lastParticleFrame.length) {
+      const r = this.engine && this.engine.transport ? this.engine.transport.particleRadiusPx() : 3;
+      this.ctx.fillStyle = this.particleColor;
+      for (const pt of this.lastParticleFrame) {
+        this.ctx.globalAlpha = pt.status === 'arrived' ? 1 : 0.85;
+        this.ctx.beginPath();
+        this.ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+      this.ctx.globalAlpha = 1;
+    }
+
     if (this.showNotToScale && layout.notToScale) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
       this.ctx.font = '10px system-ui, sans-serif';
       this.ctx.fillText('schematic - not to scale', 8, this.viewport.height - 8);
     }
     return layout;
+  }
+
+  /**
+   * Map engine particles (normalized x in [0,1], depth d in [0,1]) into pixel
+   * positions using the CURRENT layout's depth window. Pure - returns the frame.
+   * @param {{ window:[number,number] }} layout
+   */
+  _particleFrame(layout) {
+    if (!this.engine || !this.engine.particles || !this.engine.particles.length) return [];
+    const [wTop, wBot] = layout.window || [0, 1];
+    const span = Math.max(1e-6, wBot - wTop);
+    const H = this.viewport.height;
+    const W = this.viewport.width;
+    return this.engine.particles.map((p) => ({
+      id: p.id,
+      x: p.x * W,
+      y: Math.max(0, Math.min(1, (p.d - wTop) / span)) * H,
+      state: p.state,
+      status: p.transportStatus,
+    }));
   }
 
   dispose() {

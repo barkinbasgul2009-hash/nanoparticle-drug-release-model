@@ -26,6 +26,10 @@ import { ZoomController } from './anatomy/zoomController.js';
 import { LabelSystem } from './anatomy/labelSystem.js';
 import { registerAnatomyScenes } from './anatomy/anatomyScenes.js';
 import { buildAnatomyPanelModels, renderAnatomyPanels } from './ui/panels/anatomyPanels.js';
+import { TransportModel } from './biology/transportModel.js';
+import { BiologicalStateMachine } from './biology/transportStates.js';
+import { TransportEngine } from './biology/transportEngine.js';
+import { TransportAnimator } from './biology/transportAnimator.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -108,6 +112,39 @@ export async function createApp(opts = {}) {
     registerAnatomyScenes({ model: anatomy, sceneManager: scenes, zoom, renderer, state, logger });
   }
 
+  // Phase 3: biological transport engine (topical NLC -> skin). Built on the
+  // anatomy model; evidence-gated + species-driven; no drug release / cell entry.
+  let transport = null;
+  if (anatomy) {
+    try {
+      const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
+      const transportModel = new TransportModel(transportReg);
+      const stateMachine = new BiologicalStateMachine(transportReg);
+      const engine = new TransportEngine({
+        transportModel, anatomyModel: anatomy, stateMachine,
+        evidenceEngine: evidence, species: anatomy.activeSpecies,
+        seed: config.transport && config.transport.seed, logger,
+      });
+      if (renderer.setEngine) renderer.setEngine(engine);
+      const animator = new TransportAnimator({
+        engine, renderer, logger,
+        spawnCount: (config.transport && config.transport.spawnCount) || 14,
+      });
+      transport = {
+        model: transportModel, stateMachine, engine, animator,
+        start: (dt) => animator.start(dt),
+        stop: () => animator.stop(),
+        reset: () => animator.reset(),
+        spawn: (n) => engine.spawn(n),
+        step: (dt) => engine.step(dt),
+        isBlocked: () => engine.isBlocked(),
+      };
+      logger.info('transport', `engine ready (species ${engine.species}: ${engine.isBlocked() ? 'BLOCKED - ' + engine.blockReason() : 'supported'})`);
+    } catch (err) {
+      logger.warn('load', 'transport registry not loaded', { err: String(err) });
+    }
+  }
+
   const ui = new UiFramework({ panels: config.panels, logger });
   const debug = new DebugTools({
     state, presetEngine: presets, sceneManager: scenes, citationEngine: citations,
@@ -124,6 +161,8 @@ export async function createApp(opts = {}) {
     evidence, citations, presets, scale, camera, scenes, renderer, ui, debug,
     // Phase 2 additions:
     anatomy, anatomyLoader, zoom, labels,
+    // Phase 3 addition (may be null if the transport registry failed to load):
+    transport,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -134,6 +173,9 @@ export async function createApp(opts = {}) {
     if (!anatomy) throw new Error('anatomy not loaded');
     anatomy.setSpecies(speciesId);
     state.setSpecies(speciesId);
+    // Phase 3: the transport engine follows the selected species (recomputes barrier
+    // depths + re-evaluates the evidence gate; unsupported species become blocked).
+    if (transport) transport.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     logger.info('anatomy', `species -> ${speciesId}`);

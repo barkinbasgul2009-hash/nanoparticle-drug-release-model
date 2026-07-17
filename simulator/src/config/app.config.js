@@ -74,6 +74,12 @@ export const APP_CONFIG = Object.freeze({
   // the registry's species_scope; there is no silent fallback to human.
   anatomy: Object.freeze({ species: 'human' }),
 
+  // Phase 3: biological transport engine (topical NLC -> skin). Evidence-gated and
+  // species-driven; the engine only animates species with reported transport
+  // evidence (rat). autoStart stays false so the app boots as static anatomy.
+  transportSources: Object.freeze({ transport: 'transport.registry.json' }),
+  transport: Object.freeze({ autoStart: false, spawnCount: 14, seed: 12345 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

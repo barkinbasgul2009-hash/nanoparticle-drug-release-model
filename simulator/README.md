@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–2.6
+# Profile-B Simulator — Phases 1–3
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -23,6 +23,17 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   an evidence-supported **ordinal prominence ladder** (per-layer rodent µm are not established).
   `app.setSpecies()` + `state.species` prepare a future Species selector **without redesigning
   the UI**. Still zero biology. Audit: `docs/profile-b-multi-species-anatomy.md`.
+- **Phase 3 — Biological transport engine (first biology):** passive transport of the topical
+  NLC carrier **through the skin** (Topical Formulation → Skin Surface → Stratum Corneum →
+  Viable Epidermis → Dermis → Target Region). A cited **biological state machine**, passive
+  **mechanisms** (Brownian + concentration drift + SC barrier slowing; active transport
+  **excluded**), evidence-based per-layer **mobility**, independent **particle objects**, a flat-
+  dot renderer overlay (no glow/FX), and a deterministic engine. **Evidence-gated + species-
+  driven with no fallback:** only **rat** has topical-permeation evidence (Chen 2012), so human
+  and mouse are **blocked (NOT REPORTED)**. **Transport only** — no drug release, cell entry,
+  uptake, payload, PK or PD. Docs: `docs/profile-b-simulator-phase3-implementation.md`,
+  `docs/profile-b-transport-architecture.md`, `docs/profile-b-biological-transport.md`,
+  `docs/profile-b-transport-evidence-report.md`, `docs/profile-b-transport-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five
