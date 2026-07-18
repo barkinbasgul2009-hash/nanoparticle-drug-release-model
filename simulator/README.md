@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–4
+# Profile-B Simulator — Phases 1–4B
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -53,6 +53,17 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   crossing, endocytosis, PK, PD, etc. Docs: `docs/profile-b-simulator-phase4-implementation.md`,
   `docs/profile-b-drug-release.md`, `docs/profile-b-release-evidence-report.md`,
   `docs/profile-b-phase4-validation-report.md`.
+- **Phase 4B — Cellular microenvironment & passive uptake (separate layer):** the released payload
+  becomes independent **free drug molecules** that diffuse (Brownian) through the extracellular
+  space and **passively** cross the membrane of schematic **cells** (membrane + cytoplasm only)
+  into the cytoplasm, where they keep diffusing. Molecule count equals the released payload;
+  molecules enter the cytoplasm **only after membrane contact** (no teleport). Cell uptake is
+  **Predictive for all species** (passive free-drug crossing is a general principle, not the
+  measured carrier uptake); the evidence panel now shows **three** independent levels
+  (Transport / Release / Cell Uptake). **Passive entry only** — no receptors, endocytosis,
+  organelles, nucleus, PK or PD. Docs: `docs/profile-b-simulator-phase4b-implementation.md`,
+  `docs/profile-b-cellular-microenvironment.md`, `docs/profile-b-passive-uptake-evidence-report.md`,
+  `docs/profile-b-phase4b-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

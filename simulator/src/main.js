@@ -32,6 +32,8 @@ import { TransportEngine } from './biology/transportEngine.js';
 import { TransportAnimator } from './biology/transportAnimator.js';
 import { ReleaseModel } from './biology/releaseModel.js';
 import { ReleaseEngine } from './biology/releaseEngine.js';
+import { CellField } from './biology/cellField.js';
+import { UptakeEngine } from './biology/uptakeEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -119,6 +121,7 @@ export async function createApp(opts = {}) {
   // Phase 4: drug release engine (separate process; released alongside).
   let transport = null;
   let release = null;
+  let uptake = null; // Phase 4B: cellular microenvironment + passive uptake layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -153,8 +156,35 @@ export async function createApp(opts = {}) {
         logger.warn('load', 'release registry not loaded', { err: String(err) });
       }
 
+      // Phase 4B: cellular microenvironment + passive uptake - a SEPARATE layer that
+      // turns released payload into free molecules, diffuses them, and lets them
+      // passively enter schematic cells. It never moves carriers or touches release.
+      if (release) {
+        try {
+          const microReg = await anatomyLoader.load(config.microenvironmentSources.microenvironment, 'generic');
+          const cellField = new CellField(microReg);
+          const uptakeEngine = new UptakeEngine({
+            registry: microReg, cellField, transportEngine: engine, releaseEngine: release.engine,
+            evidenceEngine: evidence, species: engine.species,
+            params: config.uptake, seed: config.uptake && config.uptake.seed, logger,
+          });
+          if (renderer.setUptakeEngine) renderer.setUptakeEngine(uptakeEngine);
+          uptake = {
+            engine: uptakeEngine, cellField,
+            step: (dt) => uptakeEngine.step(dt),
+            stats: () => uptakeEngine.stats(),
+            reset: () => uptakeEngine.reset(),
+            evidenceLevel: () => uptakeEngine.evidenceLevelName(),
+            message: () => uptakeEngine.message(),
+          };
+        } catch (err) {
+          logger.warn('load', 'microenvironment registry not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
-        engine, releaseEngine: release ? release.engine : null, renderer, logger,
+        engine, releaseEngine: release ? release.engine : null,
+        uptakeEngine: uptake ? uptake.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -197,6 +227,8 @@ export async function createApp(opts = {}) {
     transport,
     // Phase 4 addition (may be null if the release registry failed to load):
     release,
+    // Phase 4B addition (may be null if the microenvironment registry failed to load):
+    uptake,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -210,11 +242,14 @@ export async function createApp(opts = {}) {
     // Phase 3: the transport engine follows the selected species (recomputes barrier
     // depths + re-evaluates the evidence gate; unsupported species become blocked).
     if (transport) transport.engine.setSpecies(speciesId);
+    // Phase 4: transport particles were cleared, so clear stale release + uptake state.
+    if (release) release.engine.reset();
+    if (uptake) uptake.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -234,7 +269,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

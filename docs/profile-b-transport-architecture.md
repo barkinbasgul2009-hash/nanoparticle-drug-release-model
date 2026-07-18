@@ -132,3 +132,39 @@ biology/transportAnimator.js      after each transport step, steps the release e
   arrived, experimental or predictive, using the same model.
 - The lifecycle ends at `empty`; `integrity.excluded_downstream` lists every downstream process
   that is deliberately NOT implemented (uptake, endocytosis, PK, PD, …).
+
+## Phase 4B update — Cellular microenvironment & passive uptake (separate layer)
+A **third independent layer** is added after release: free drug molecules, a schematic cell field,
+and passive membrane crossing. Transport and release are untouched.
+
+```
+data/microenvironment.registry.json   (cells, molecule spec, passive model, diffusion, species_uptake, integrity)
+        │
+        ├─ biology/cellField.js        schematic cells (membrane + cytoplasm ONLY); containment/contact (pure)
+        └─ biology/drugMolecule.js     independent free-drug object (id/pos/vel/D/species/timestamp/alive/evidence)
+                    │
+                    ▼
+biology/uptakeEngine.js ── reads ──▶ transportEngine.particles + releaseEngine.stateFor(id)
+   │   spawnFromRelease()  molecules count = released payload quantised
+   │   diffuse()           Brownian in extracellular + cytoplasm (bounded steps)
+   │   attemptUptake()     PASSIVE crossing on membrane contact (probability); cytoplasm confinement
+   │   evidence-gated per species (PREDICTIVE for all; UNAVAILABLE blocks)
+   ▼
+render/canvasRenderer.js  semi-transparent cells + membranes + tiny free-drug dots
+biology/transportAnimator.js  steps the uptake layer AFTER release each tick
+```
+
+**Separation guarantees**
+- The uptake engine **reads** transport + release state and **never writes** them; it **never
+  moves carriers**. Molecule state lives in the uptake engine (not on the transport `Particle`).
+- Molecules exist **only after release** (`molecule count == expectedMoleculeCount`), and a
+  molecule enters the cytoplasm **only after** membrane contact (no teleport).
+- Four concerns stay separate: **Transport / Release / Diffusion / Passive Uptake** — future
+  phases extend each independently.
+
+**Evidence**
+- Uptake is `MECHANISTIC_TRANSFER` (Predictive) for all species — passive free-drug crossing is a
+  general principle, not the measured carrier uptake; diffusion/permeability are NOT REPORTED
+  (schematic). The evidence panel exposes three independent levels: Transport / Release / Cell
+  Uptake.
+- `integrity.forbidden` lists 31 downstream/intracellular structures that remain unimplemented.

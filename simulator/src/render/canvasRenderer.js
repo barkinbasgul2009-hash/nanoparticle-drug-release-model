@@ -23,8 +23,14 @@ export class CanvasRenderer {
     // Phase 3: optional transport particle overlay (static anatomy stays beneath).
     this.engine = null;          // TransportEngine (source of particles)
     this.releaseEngine = null;   // Phase 4: ReleaseEngine (payload state per particle)
+    this.uptakeEngine = null;    // Phase 4B: UptakeEngine (free molecules + cells)
     this.lastParticleFrame = null; // [{id,x,y,state,status,payload,releaseState}] for tests
+    this.lastMoleculeFrame = null; // Phase 4B: [{id,x,y,compartment,alive}] for tests
+    this.lastCellFrame = null;     // Phase 4B: [{id,x,y,r}] for tests
     this.particleColor = '#3a3f4b';
+    this.moleculeColor = '#7a5a3c';
+    this.cellFill = 'rgba(150,170,175,0.16)';
+    this.membraneColor = '#6f8a86';
   }
 
   /** @param {import('../anatomy/anatomyModel.js').AnatomyModel} model */
@@ -35,6 +41,8 @@ export class CanvasRenderer {
   setEngine(engine) { this.engine = engine; return this; }
   /** Phase 4: attach the release engine so payload emptying is drawn per particle. */
   setReleaseEngine(releaseEngine) { this.releaseEngine = releaseEngine; return this; }
+  /** Phase 4B: attach the uptake engine so cells + free drug molecules are drawn. */
+  setUptakeEngine(uptakeEngine) { this.uptakeEngine = uptakeEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -68,6 +76,10 @@ export class CanvasRenderer {
     this.lastLayout = layout;
     // Phase 3: compute the particle frame (headless-testable) whether or not we paint.
     this.lastParticleFrame = this._particleFrame(layout);
+    // Phase 4B: compute the cell + molecule frames (headless-testable too).
+    const micro = this._microFrames(layout);
+    this.lastCellFrame = micro.cells;
+    this.lastMoleculeFrame = micro.molecules;
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -90,6 +102,20 @@ export class CanvasRenderer {
     this.ctx.font = '12px system-ui, sans-serif';
     this.ctx.textBaseline = 'middle';
     for (const l of labels) this.ctx.fillText(l.text, 8, l.y);
+
+    // Phase 4B: cellular microenvironment beneath the carriers - semi-transparent
+    // schematic cells (membrane + cytoplasm only), drawn once molecules exist.
+    if (this.lastCellFrame && this.lastCellFrame.length) {
+      for (const c of this.lastCellFrame) {
+        this.ctx.fillStyle = this.cellFill;
+        this.ctx.beginPath();
+        this.ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.strokeStyle = this.membraneColor; // thin visible membrane
+        this.ctx.lineWidth = 1.2;
+        this.ctx.stroke();
+      }
+    }
 
     // Phase 3: particles as flat muted dots (no glow, no trail, no gaming FX).
     // Phase 3.1: carrier shell is dashed for PREDICTIVE, solid for EXPERIMENTAL.
@@ -117,6 +143,19 @@ export class CanvasRenderer {
         }
       }
       this.ctx.setLineDash([]);
+      this.ctx.globalAlpha = 1;
+    }
+
+    // Phase 4B: free drug molecules - tiny muted dots (much smaller than carriers),
+    // slightly dimmer inside the cytoplasm. No glow / trails / FX.
+    if (this.lastMoleculeFrame && this.lastMoleculeFrame.length) {
+      this.ctx.fillStyle = this.moleculeColor;
+      for (const mo of this.lastMoleculeFrame) {
+        this.ctx.globalAlpha = mo.compartment === 'cytoplasm' ? 0.9 : 0.7;
+        this.ctx.beginPath();
+        this.ctx.arc(mo.x, mo.y, mo.r, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
       this.ctx.globalAlpha = 1;
     }
 
@@ -171,5 +210,29 @@ export class CanvasRenderer {
 
 /** Title-case an EVIDENCE_LEVEL for display (EXPERIMENTAL -> Experimental). */
 function cap(s) { return typeof s === 'string' && s.length ? s[0] + s.slice(1).toLowerCase() : s; }
+
+// Phase 4B micro-frame helper attached to the prototype below (kept out of draw()).
+CanvasRenderer.prototype._microFrames = function _microFrames(layout) {
+  const empty = { cells: [], molecules: [] };
+  const up = this.uptakeEngine;
+  if (!up || !up.molecules || !up.molecules.length) return empty; // cells appear with molecules
+  const band = (this.engine && this.engine.layerBands ? this.engine.layerBands : []).find((b) => b.id === 'dermis') || { start: 0.3, end: 0.7 };
+  const span = Math.max(1e-6, band.end - band.start);
+  const [wTop, wBot] = layout.window || [0, 1];
+  const win = Math.max(1e-6, wBot - wTop);
+  const H = this.viewport.height; const W = this.viewport.width;
+  const yOf = (u) => {
+    const d = band.start + u * span;               // (x,u) patch -> global depth
+    return Math.max(0, Math.min(1, (d - wTop) / win)) * H;
+  };
+  const bandPx = Math.abs(yOf(1) - yOf(0)) || H;    // dermis band height in px (u scale)
+  const cells = (up.cells && up.cells.cells ? up.cells.cells : []).map((c) => ({
+    id: c.id, x: c.x * W, y: yOf(c.u), r: Math.max(2, c.radius * bandPx),
+  }));
+  const molecules = up.molecules.map((m) => ({
+    id: m.id, x: m.x * W, y: yOf(m.u), r: 1.3, compartment: m.compartment, alive: m.alive,
+  }));
+  return { cells, molecules };
+};
 
 export default CanvasRenderer;

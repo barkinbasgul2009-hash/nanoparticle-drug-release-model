@@ -1,0 +1,63 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-4B CELLULAR MICROENVIRONMENT + PASSIVE UPTAKE registry. Defines ONLY: schematic minimal cells (membrane + cytoplasm), the extracellular compartment, free drug-molecule spec, the PASSIVE membrane-crossing model, schematic diffusion, and per-species uptake evidence. It is a SEPARATE layer from transport and release. The code hardcodes NO biology; everything is data here with provenance + confidence. NOTHING beyond simple passive entry is defined (no receptors, endocytosis, organelles, nucleus, PK, PD, etc.).",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012 assessed CELLULAR UPTAKE in HaCaT (human keratinocytes) and B16BL6 (mouse melanoma) cells (order cationic > neutral > anionic); this is CARRIER uptake with the mechanism unresolved. Free-drug PASSIVE membrane crossing is NOT directly measured for this formulation in any species -> it is a general principle (PREDICTIVE).",
+  "microenvironment": {
+    "compartments": ["extracellular", "cytoplasm"],
+    "note": "The microenvironment is the target (dermis) tissue patch, parameterised as an isotropic (x,u) unit square where u is the RELATIVE position within the dermis band (0=top, 1=bottom). Cells occupy PART of this patch; the rest is extracellular fluid. No interstitial flow, no blood, no lymphatics - pure diffusion.",
+    "excluded_flows": ["interstitial_flow", "blood_circulation", "lymphatics"]
+  },
+  "cells": {
+    "note": "SCHEMATIC minimal cells: MEMBRANE + CYTOPLASM only. NOT tissue-specific histology; positions/sizes are ILLUSTRATIVE schematic, not measured densities/dimensions. Explicitly NO nucleus, organelles, mitochondria, ER, Golgi, lysosome, receptors, proteins or any intracellular structure.",
+    "representation": "SCHEMATIC",
+    "membrane_thickness": 0.008,
+    "cytoplasm_note": "cytoplasm is simply the cell interior inside the membrane; it holds nothing but drug molecules that have passively entered.",
+    "list": [
+      { "id": "cell_1", "x": 0.27, "u": 0.42, "radius": 0.11 },
+      { "id": "cell_2", "x": 0.55, "u": 0.6, "radius": 0.12 },
+      { "id": "cell_3", "x": 0.78, "u": 0.38, "radius": 0.1 },
+      { "id": "cell_4", "x": 0.45, "u": 0.28, "radius": 0.1 }
+    ]
+  },
+  "molecule": {
+    "drug": "tripterine (celastrol)",
+    "note": "A released free drug molecule is an INDEPENDENT simulation object (no chemistry, reactions, degradation or metabolism - only diffusion). Much smaller than the NLC carrier.",
+    "representation": "SCHEMATIC",
+    "appearance": { "style": "small_dot", "radius_px": 1.3, "glow": false, "trail": false },
+    "conservation": "molecule count equals the released payload (moleculesPerCarrier per carrier x released fraction)."
+  },
+  "diffusion": {
+    "note": "SCHEMATIC diffusion (normalised sim units in the (x,u) patch). No measured diffusion coefficient for celastrol in extracellular fluid or cytoplasm is reported in the frozen package (NOT REPORTED). ONLY Brownian motion; no drift, no interstitial flow, no active transport.",
+    "extracellular": { "value": null, "status": "NOT REPORTED", "schematic": true },
+    "cytoplasm": { "value": null, "status": "NOT REPORTED", "schematic": true, "note": "cytoplasm diffusion is schematically slower (crowded interior) - qualitative only." },
+    "confidence": "MECHANISTIC_TRANSFER"
+  },
+  "uptake_model": {
+    "id": "passive_membrane_crossing",
+    "name": "Passive membrane crossing",
+    "mechanism": "PASSIVE",
+    "description": "A free drug molecule that CONTACTS the membrane may passively cross into the cytoplasm with a per-contact probability. On success it appears just inside the membrane and then diffuses in the cytoplasm. NO transporters, receptors, channels, pumps, vesicles, endocytosis, phagocytosis, caveolae, clathrin or macropinocytosis.",
+    "confidence": "MECHANISTIC_TRANSFER",
+    "references": [],
+    "principle_basis": "Celastrol is a small lipophilic molecule (BCS class IV; Shukla 2020). Passive diffusion of a small lipophilic molecule across a lipid membrane is a general biophysical principle. Chen 2012 observed CELLULAR uptake in HaCaT/B16BL6 (carrier uptake, charge-dependent, mechanism unresolved) - NOT free-drug passive crossing - so this specific mechanism is PREDICTIVE for every species.",
+    "notes": "Passive only. The crossing probability and the diffusion are SCHEMATIC (no measured membrane permeability); no exact rate or fraction is claimed."
+  },
+  "species_uptake": {
+    "note": "Cell Uptake Evidence per species (evidence-levelled like Phase 3.1). The animated process - PASSIVE free-drug membrane crossing - is a general principle not directly measured for this formulation, so uptake is PREDICTIVE for ALL species. Per-species observational CONTEXT differs (human/mouse have observed cellular uptake; rat has none), but that does not upgrade the animated passive mechanism to experimental. No rat fallback; no fabricated per-species rate.",
+    "rat": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "principle_refs": ["general passive membrane-diffusion principles", "Shukla 2020 - celastrol small lipophilic (BCS IV)"], "observational_support": "NONE - Chen used rat for SKIN PERMEATION only; no rat cellular-uptake data.", "message": "Cell Uptake Evidence: Predictive. Passive membrane crossing is shown from general membrane-transport principles; there is no rat cellular-uptake data for this formulation, and no quantitative uptake is claimed." },
+    "human": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "principle_refs": ["general passive membrane-diffusion principles", "Shukla 2020 - celastrol small lipophilic (BCS IV)"], "observational_support": "Cellular uptake observed in vitro in HaCaT human keratinocytes (Chen 2012; carrier uptake, charge-dependent; mechanism unresolved).", "message": "Cell Uptake Evidence: Predictive. This visualization is based on general passive membrane-transport principles. Cellular uptake was observed in vitro (HaCaT) but the specific free-drug passive-crossing mechanism and its rate have not been experimentally validated for this formulation." },
+    "mouse": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "principle_refs": ["general passive membrane-diffusion principles", "Shukla 2020 - celastrol small lipophilic (BCS IV)"], "observational_support": "Cellular uptake observed in vitro in B16BL6 mouse melanoma cells (Chen 2012; carrier uptake, charge-dependent; mechanism unresolved).", "message": "Cell Uptake Evidence: Predictive. This visualization is based on general passive membrane-transport principles. Cellular uptake was observed in vitro (B16BL6) but the specific free-drug passive-crossing mechanism and its rate have not been experimentally validated for this formulation." }
+  },
+  "integrity": {
+    "separation": "The microenvironment/uptake layer is SEPARATE from transport and release. Free drug molecules are produced from the release engine's released fraction, then diffuse and (passively) enter cells. Transport and release engines are untouched and unaware of molecules.",
+    "passive_only": "ONLY passive membrane crossing. Active transport, receptor-mediated uptake, vesicles and all endocytic routes are forbidden.",
+    "ends_at_cytoplasm": "This phase ends when a molecule has passively entered the cytoplasm and diffuses there. Nothing further.",
+    "not_to_scale": true,
+    "forbidden": ["nucleus", "DNA", "RNA", "lysosome", "endosome", "endocytosis", "clathrin", "caveolin", "caveolae", "macropinocytosis", "phagocytosis", "receptors", "target_proteins", "enzymes", "drug_metabolism", "pharmacokinetics", "pharmacodynamics", "immune_response", "macrophages", "tumor_killing", "gene_expression", "cell_signaling", "apoptosis", "necrosis", "exocytosis", "mitochondria", "endoplasmic_reticulum", "golgi", "organelles", "intracellular_trafficking", "target_interaction"]
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - Chen 2012 cellular uptake in HaCaT + B16BL6 (order cationic > neutral > anionic); uptake time series 1-4 h",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476) - primary full-text source",
+    "Shukla SK et al. J Mol Liq 2020;318:113936 - celastrol small lipophilic, BCS class IV (supports passive-diffusion general principle)"
+  ]
+}

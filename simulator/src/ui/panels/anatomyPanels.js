@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -30,6 +30,28 @@ export function buildAnatomyPanelModels(deps) {
     empty: release.engine.stats().empty,
     releasing: release.engine.stats().releasing,
   } : null;
+  // Phase 4B: the three independent evidence levels (Transport / Release / Cell Uptake).
+  // Release is a formulation-experimental MODEL, but the shown chain level is bounded by
+  // transport (experimental only where transport is experimental, i.e. rat).
+  const transportLevel = transport && transport.engine ? transport.engine.evidenceLevelName() : null;
+  const uptakeLevel = uptake && uptake.engine ? uptake.engine.evidenceLevelName() : null;
+  const releaseLevel = release ? (transportLevel || 'EXPERIMENTAL') : null;
+  const evidenceLevels = {
+    transport: transportLevel,
+    release: releaseLevel,
+    uptake: uptakeLevel,
+    messages: {
+      transport: transport && transport.engine ? transport.engine.message() : null,
+      uptake: uptake && uptake.engine ? uptake.engine.message() : null,
+    },
+  };
+  // Phase 4B: uptake status (data only).
+  const uptakeInfo = uptake && uptake.engine ? {
+    model: 'passive_membrane_crossing',
+    molecules: uptake.engine.stats().total,
+    cytoplasm: uptake.engine.stats().cytoplasm,
+    extracellular: uptake.engine.stats().extracellular,
+  } : null;
 
   // Evidence references: the anatomy registry's provenance sources + the active
   // preset's references (resolved to citations where possible).
@@ -46,6 +68,7 @@ export function buildAnatomyPanelModels(deps) {
       species,
       transportEvidence,
       release: releaseInfo,
+      uptake: uptakeInfo,
     },
     navigation: {
       title: 'Navigation',
@@ -60,6 +83,8 @@ export function buildAnatomyPanelModels(deps) {
       title: 'Evidence References',
       provenance,
       presetReferences: presetRefs.map((c) => ({ id: c.id, citation: c.citation || c.id, doi: c.doi || null })),
+      // Phase 4B: three independent evidence levels (each Experimental/Predictive/Unavailable).
+      evidenceLevels,
     },
     timeline: {
       title: 'Scene Selector',

@@ -86,6 +86,12 @@ export const APP_CONFIG = Object.freeze({
   releaseSources: Object.freeze({ release: 'release.registry.json' }),
   release: Object.freeze({ schematicKPerHour: 0.0625, emptyThreshold: 0.99 }),
 
+  // Phase 4B: cellular microenvironment + PASSIVE uptake (SEPARATE layer). Released
+  // payload becomes free molecules that diffuse and passively enter schematic cells.
+  // Diffusion + crossing probability are SCHEMATIC (NOT REPORTED); passive only.
+  microenvironmentSources: Object.freeze({ microenvironment: 'microenvironment.registry.json' }),
+  uptake: Object.freeze({ moleculesPerCarrier: 5, crossProbability: 0.35, seed: 24680 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

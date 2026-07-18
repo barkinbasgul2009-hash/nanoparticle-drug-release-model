@@ -18,6 +18,7 @@ export class TransportAnimator {
     if (!deps || !deps.engine) throw new Error('TransportAnimator requires an engine');
     this.engine = deps.engine;
     this.releaseEngine = deps.releaseEngine || null; // Phase 4: separate release process
+    this.uptakeEngine = deps.uptakeEngine || null;   // Phase 4B: separate uptake layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -35,6 +36,7 @@ export class TransportAnimator {
   reset() {
     this.engine.reset();
     if (this.releaseEngine) this.releaseEngine.reset();
+    if (this.uptakeEngine) this.uptakeEngine.reset();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -55,6 +57,9 @@ export class TransportAnimator {
     // Phase 4: after transport advances, the SEPARATE release engine releases payload
     // from any particles that have ARRIVED. Transport and release never mix.
     if (this.releaseEngine) events.push(...this.releaseEngine.step(dtHours));
+    // Phase 4B: the SEPARATE uptake layer turns released payload into free molecules,
+    // diffuses them, and lets them passively enter cells. It never moves carriers.
+    if (this.uptakeEngine) events.push(...this.uptakeEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -80,6 +85,7 @@ export class TransportAnimator {
       blocked: this.engine.isBlocked(),
       stats: this.engine.stats(),
       release: this.releaseEngine ? this.releaseEngine.stats() : null,
+      uptake: this.uptakeEngine ? this.uptakeEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }
