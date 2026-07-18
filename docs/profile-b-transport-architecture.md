@@ -96,3 +96,39 @@ uiPanels         information panel exposes { evidenceLevel, message }
   depth bands, so predictive species use their *own* anatomy — rat parameters are never copied.
 - **Mode isolation:** the active species selects its own level; experimental (rat) and predictive
   (human/mouse) never mix, and experimental data is never overwritten by a prediction.
+
+## Phase 4 update — Drug Release Engine (separate process)
+Release is a **second, independent engine** bolted on *after* transport, never merged with it.
+
+```
+data/release.registry.json        (first-order model, k NOT REPORTED, states, trigger, integrity)
+        │
+        ▼
+biology/releaseModel.js           F(t)=1-e^(-k t); evidence; scope guard (pure)
+        │
+        ▼
+biology/releaseEngine.js  ── reads ──▶ transportEngine.particles (transportStatus only)
+   │   per-particle payload state in its OWN Map (not on the transport Particle)
+   │   steps ONLY 'arrived' particles: payload↓ / released↑ ; aggregate release curve
+   │   emits: release_start / release_complete ; allEmpty()
+   ▼
+render/canvasRenderer.js          carrier shell + inner payload disc (shrinks to empty)
+biology/transportAnimator.js      after each transport step, steps the release engine
+                                  (untilReleased runs transport→arrival→release→empty)
+```
+
+**Separation guarantees**
+- The release engine **reads** `transportStatus` and **never writes** transport state
+  (`x`, `d`, status unchanged across a release run — asserted in tests).
+- Release state lives in `ReleaseEngine.states` (keyed by particle id), **not** on the transport
+  `Particle` — the two domains share only the particle identity.
+- Release **cannot start before arrival**: `step()` skips any particle whose `transportStatus`
+  is not `'arrived'`.
+
+**Evidence & scope**
+- The first-order **model** is registry data (evidence-selected, cites Chen 2012); the rate `k`
+  is a **schematic** engine config value because it is NOT REPORTED.
+- Release is **formulation-level** (species-independent); it runs for whichever particles
+  arrived, experimental or predictive, using the same model.
+- The lifecycle ends at `empty`; `integrity.excluded_downstream` lists every downstream process
+  that is deliberately NOT implemented (uptake, endocytosis, PK, PD, …).

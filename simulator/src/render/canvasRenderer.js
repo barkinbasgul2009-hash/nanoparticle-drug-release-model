@@ -22,7 +22,8 @@ export class CanvasRenderer {
     this.showNotToScale = true;
     // Phase 3: optional transport particle overlay (static anatomy stays beneath).
     this.engine = null;          // TransportEngine (source of particles)
-    this.lastParticleFrame = null; // [{id,x,y,state,status}] exposed for tests
+    this.releaseEngine = null;   // Phase 4: ReleaseEngine (payload state per particle)
+    this.lastParticleFrame = null; // [{id,x,y,state,status,payload,releaseState}] for tests
     this.particleColor = '#3a3f4b';
   }
 
@@ -32,6 +33,8 @@ export class CanvasRenderer {
   setLevel(levelId) { this.levelId = levelId; this.draw(); return this; }
   /** Phase 3: attach the transport engine whose particles are drawn as flat dots. */
   setEngine(engine) { this.engine = engine; return this; }
+  /** Phase 4: attach the release engine so payload emptying is drawn per particle. */
+  setReleaseEngine(releaseEngine) { this.releaseEngine = releaseEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -89,20 +92,31 @@ export class CanvasRenderer {
     for (const l of labels) this.ctx.fillText(l.text, 8, l.y);
 
     // Phase 3: particles as flat muted dots (no glow, no trail, no gaming FX).
-    // Phase 3.1: EXPERIMENTAL = filled dots; PREDICTIVE = outlined (hollow) dots so
-    // the viewer can always tell which evidence mode is on screen.
+    // Phase 3.1: carrier shell is dashed for PREDICTIVE, solid for EXPERIMENTAL.
+    // Phase 4: an inner payload disc (area proportional to remaining payload)
+    // shrinks as the drug releases, until the carrier is empty (shell only).
     if (this.lastParticleFrame && this.lastParticleFrame.length) {
       const r = this.engine && this.engine.transport ? this.engine.transport.particleRadiusPx() : 3;
       const predictive = !!(this.engine && this.engine.isPredictive && this.engine.isPredictive());
-      this.ctx.fillStyle = this.particleColor;
       this.ctx.strokeStyle = this.particleColor;
-      this.ctx.lineWidth = 1.5;
+      this.ctx.fillStyle = this.particleColor;
+      this.ctx.lineWidth = 1.2;
       for (const pt of this.lastParticleFrame) {
         this.ctx.globalAlpha = pt.status === 'arrived' ? 1 : 0.85;
+        // carrier shell
+        this.ctx.setLineDash(predictive ? [2, 2] : []);
         this.ctx.beginPath();
         this.ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
-        if (predictive) this.ctx.stroke(); else this.ctx.fill();
+        this.ctx.stroke();
+        // payload inside (shrinks to nothing when empty)
+        const pr = r * Math.sqrt(Math.max(0, Math.min(1, pt.payload)));
+        if (pr > 0.3) {
+          this.ctx.beginPath();
+          this.ctx.arc(pt.x, pt.y, pr, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
       }
+      this.ctx.setLineDash([]);
       this.ctx.globalAlpha = 1;
     }
 
@@ -132,13 +146,19 @@ export class CanvasRenderer {
     const span = Math.max(1e-6, wBot - wTop);
     const H = this.viewport.height;
     const W = this.viewport.width;
-    return this.engine.particles.map((p) => ({
-      id: p.id,
-      x: p.x * W,
-      y: Math.max(0, Math.min(1, (p.d - wTop) / span)) * H,
-      state: p.state,
-      status: p.transportStatus,
-    }));
+    const rel = this.releaseEngine || null;
+    return this.engine.particles.map((p) => {
+      const rs = rel ? rel.stateFor(p.id) : null;
+      return {
+        id: p.id,
+        x: p.x * W,
+        y: Math.max(0, Math.min(1, (p.d - wTop) / span)) * H,
+        state: p.state,
+        status: p.transportStatus,
+        payload: rs ? rs.payloadFraction : 1,
+        releaseState: rs ? rs.releaseState : null,
+      };
+    });
   }
 
   dispose() {

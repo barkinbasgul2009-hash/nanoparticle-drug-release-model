@@ -30,6 +30,8 @@ import { TransportModel } from './biology/transportModel.js';
 import { BiologicalStateMachine } from './biology/transportStates.js';
 import { TransportEngine } from './biology/transportEngine.js';
 import { TransportAnimator } from './biology/transportAnimator.js';
+import { ReleaseModel } from './biology/releaseModel.js';
+import { ReleaseEngine } from './biology/releaseEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -113,8 +115,10 @@ export async function createApp(opts = {}) {
   }
 
   // Phase 3: biological transport engine (topical NLC -> skin). Built on the
-  // anatomy model; evidence-gated + species-driven; no drug release / cell entry.
+  // anatomy model; evidence-gated + species-driven.
+  // Phase 4: drug release engine (separate process; released alongside).
   let transport = null;
+  let release = null;
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -126,9 +130,33 @@ export async function createApp(opts = {}) {
         seed: config.transport && config.transport.seed, logger,
       });
       if (renderer.setEngine) renderer.setEngine(engine);
+
+      // Phase 4: drug release engine - a SEPARATE process that releases payload from
+      // ARRIVED particles (first-order model; schematic k). It never moves particles.
+      try {
+        const releaseReg = await anatomyLoader.load(config.releaseSources.release, 'generic');
+        const releaseModel = new ReleaseModel(releaseReg);
+        const releaseEngine = new ReleaseEngine({
+          releaseModel, transportEngine: engine, evidenceEngine: evidence,
+          params: config.release, logger,
+        });
+        if (renderer.setReleaseEngine) renderer.setReleaseEngine(releaseEngine);
+        release = {
+          model: releaseModel, engine: releaseEngine,
+          step: (dt) => releaseEngine.step(dt),
+          curve: () => releaseEngine.curve(),
+          stats: () => releaseEngine.stats(),
+          allEmpty: () => releaseEngine.allEmpty(),
+          reset: () => releaseEngine.reset(),
+        };
+      } catch (err) {
+        logger.warn('load', 'release registry not loaded', { err: String(err) });
+      }
+
       const animator = new TransportAnimator({
-        engine, renderer, logger,
+        engine, releaseEngine: release ? release.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
+        untilReleased: true,
       });
       transport = {
         model: transportModel, stateMachine, engine, animator,
@@ -141,8 +169,9 @@ export async function createApp(opts = {}) {
         evidenceLevel: () => engine.evidenceLevelName(),
         message: () => engine.message(),
         isPredictive: () => engine.isPredictive(),
+        release, // Phase 4 (may be null if the release registry failed to load)
       };
-      logger.info('transport', `engine ready (species ${engine.species}: evidence ${engine.evidenceLevelName()}${engine.isBlocked() ? ' BLOCKED - ' + engine.blockReason() : ''})`);
+      logger.info('transport', `engine ready (species ${engine.species}: evidence ${engine.evidenceLevelName()}${engine.isBlocked() ? ' BLOCKED - ' + engine.blockReason() : ''}${release ? '; release: ' + release.model.modelId() : ''})`);
     } catch (err) {
       logger.warn('load', 'transport registry not loaded', { err: String(err) });
     }
@@ -166,6 +195,8 @@ export async function createApp(opts = {}) {
     anatomy, anatomyLoader, zoom, labels,
     // Phase 3 addition (may be null if the transport registry failed to load):
     transport,
+    // Phase 4 addition (may be null if the release registry failed to load):
+    release,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -183,7 +214,7 @@ export async function createApp(opts = {}) {
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -203,7 +234,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

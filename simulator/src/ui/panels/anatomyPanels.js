@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -22,6 +22,13 @@ export function buildAnatomyPanelModels(deps) {
     evidenceLevel: transport.engine.evidenceLevelName(),
     message: transport.engine.message(),
     blocked: transport.engine.isBlocked(),
+  } : null;
+  // Phase 4: drug release status (data only; model + mean released + empty count).
+  const releaseInfo = release && release.engine ? {
+    model: release.model.modelId(),
+    meanReleased: release.engine.stats().meanReleased,
+    empty: release.engine.stats().empty,
+    releasing: release.engine.stats().releasing,
   } : null;
 
   // Evidence references: the anatomy registry's provenance sources + the active
@@ -38,6 +45,7 @@ export function buildAnatomyPanelModels(deps) {
       notToScale: model.notToScale,
       species,
       transportEvidence,
+      release: releaseInfo,
     },
     navigation: {
       title: 'Navigation',

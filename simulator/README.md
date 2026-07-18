@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–3.1
+# Profile-B Simulator — Phases 1–4
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -43,6 +43,16 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   an evidence caption; experimental data is never replaced by a prediction. Docs:
   `docs/profile-b-simulator-phase3.1-implementation.md`, `docs/profile-b-predictive-transport.md`,
   `docs/profile-b-predictive-evidence-justification.md`, `docs/profile-b-phase3.1-validation-report.md`.
+- **Phase 4 — Drug release engine (separate process):** after a particle **arrives**, its payload
+  releases by the evidence-**selected first-order** model (`F(t)=1−e^(−k·t)`; Chen 2012) — drug
+  inside decreases, released amount increases, a release curve updates, and the carrier eventually
+  **empties**. Release is **completely separate** from transport (reads, never writes, transport
+  state; never moves particles; release begins only after arrival). The rate `k` is **schematic**
+  (NOT REPORTED); the model is **formulation-level** (no per-species k). The particle glyph gains
+  an inner **payload disc** that shrinks to empty. **Release only** — no uptake, membrane
+  crossing, endocytosis, PK, PD, etc. Docs: `docs/profile-b-simulator-phase4-implementation.md`,
+  `docs/profile-b-drug-release.md`, `docs/profile-b-release-evidence-report.md`,
+  `docs/profile-b-phase4-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

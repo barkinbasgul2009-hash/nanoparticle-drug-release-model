@@ -17,11 +17,13 @@ export class TransportAnimator {
   constructor(deps) {
     if (!deps || !deps.engine) throw new Error('TransportAnimator requires an engine');
     this.engine = deps.engine;
+    this.releaseEngine = deps.releaseEngine || null; // Phase 4: separate release process
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
     this.spawnBatches = Math.max(1, deps.spawnBatches || 6);
     this.maxSteps = deps.maxSteps || 1200;
+    this.untilReleased = !!deps.untilReleased; // continue until payloads empty, not just arrival
     this.onEvent = deps.onEvent || null;
     this.running = false;
     this._raf = null;
@@ -29,9 +31,10 @@ export class TransportAnimator {
     this._spawned = 0;
   }
 
-  /** Reset the run (clears particles + counters). */
+  /** Reset the run (clears particles + release state + counters). */
   reset() {
     this.engine.reset();
+    if (this.releaseEngine) this.releaseEngine.reset();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -49,24 +52,36 @@ export class TransportAnimator {
       this._spawned += n;
     }
     const events = this.engine.step(dtHours);
+    // Phase 4: after transport advances, the SEPARATE release engine releases payload
+    // from any particles that have ARRIVED. Transport and release never mix.
+    if (this.releaseEngine) events.push(...this.releaseEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
     return { blocked: false, events, step: this._step };
   }
 
-  /** Have all spawned particles arrived (run complete)? */
+  /** Have all spawned particles arrived (and, if requested, emptied)? */
   isComplete() {
     if (this.engine.isBlocked()) return true;
     const s = this.engine.stats();
-    return this._spawned >= this.spawnCount && s.arrived >= this._spawned && s.total > 0;
+    const arrived = this._spawned >= this.spawnCount && s.arrived >= this._spawned && s.total > 0;
+    if (!arrived) return false;
+    if (this.untilReleased && this.releaseEngine) return this.releaseEngine.allEmpty();
+    return true;
   }
 
   /** Headless run to completion (deterministic): returns the final summary. */
   runHeadless(dtHours) {
     this.reset();
     while (!this.isComplete() && this._step < this.maxSteps) this.tick(dtHours);
-    return { steps: this._step, blocked: this.engine.isBlocked(), stats: this.engine.stats(), timeH: this.engine.timeH };
+    return {
+      steps: this._step,
+      blocked: this.engine.isBlocked(),
+      stats: this.engine.stats(),
+      release: this.releaseEngine ? this.releaseEngine.stats() : null,
+      timeH: this.engine.timeH,
+    };
   }
 
   /** Browser animation loop. Auto-stops when complete or at maxSteps. */

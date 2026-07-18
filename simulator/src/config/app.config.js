@@ -80,6 +80,12 @@ export const APP_CONFIG = Object.freeze({
   transportSources: Object.freeze({ transport: 'transport.registry.json' }),
   transport: Object.freeze({ autoStart: false, spawnCount: 14, seed: 12345 }),
 
+  // Phase 4: drug release engine (SEPARATE from transport). First-order model from
+  // evidence; schematicKPerHour is a SCHEMATIC simulation rate (k is NOT REPORTED),
+  // anchored to span the reported 1-48 h release window - not a measured constant.
+  releaseSources: Object.freeze({ release: 'release.registry.json' }),
+  release: Object.freeze({ schematicKPerHour: 0.0625, emptyThreshold: 0.99 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
