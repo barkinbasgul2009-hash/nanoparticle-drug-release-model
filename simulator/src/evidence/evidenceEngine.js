@@ -28,9 +28,11 @@ export const BLOCKED_FOR_ANIMATION = Object.freeze([
  * top of the per-item confidence vocabulary. EXPERIMENTAL always outranks
  * PREDICTIVE; predictions are never presented as experimental observations.
  */
-export const EVIDENCE_LEVELS = Object.freeze(['EXPERIMENTAL', 'PREDICTIVE', 'UNAVAILABLE']);
+// Phase 4D adds NOT_REPORTED - a behaviour whose data is not reported (distinct from
+// UNAVAILABLE, which means no profile at all). Neither animates.
+export const EVIDENCE_LEVELS = Object.freeze(['EXPERIMENTAL', 'PREDICTIVE', 'UNAVAILABLE', 'NOT_REPORTED']);
 
-/** Map an Evidence Level to whether it may animate. */
+/** Map an Evidence Level to whether it may animate. Only EXPERIMENTAL + PREDICTIVE do. */
 export function levelAnimates(level) { return level === 'EXPERIMENTAL' || level === 'PREDICTIVE'; }
 
 /**

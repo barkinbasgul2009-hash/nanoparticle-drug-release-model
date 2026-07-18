@@ -25,14 +25,20 @@ export class CanvasRenderer {
     this.releaseEngine = null;   // Phase 4: ReleaseEngine (payload state per particle)
     this.uptakeEngine = null;    // Phase 4B: UptakeEngine (free molecules + cells)
     this.endocytosisEngine = null; // Phase 4C: EndocytosisEngine (carrier fate)
+    this.intracellularEngine = null; // Phase 4D: IntracellularReleaseEngine (nucleus + intra drug)
     this.lastParticleFrame = null; // [{id,x,y,state,status,payload,releaseState}] for tests
     this.lastMoleculeFrame = null; // Phase 4B: [{id,x,y,compartment,alive}] for tests
     this.lastCellFrame = null;     // Phase 4B: [{id,x,y,r}] for tests
     this.lastEndocytosisFrame = null; // Phase 4C: [{carrierId,x,y,state,pathway,compartment,wrap}]
+    this.lastNucleusFrame = null;  // Phase 4D: [{cellId,x,y,r}]
+    this.lastIntracellularFrame = null; // Phase 4D: [{id,x,y,compartment,alive,target}]
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
+    this.intracellularColor = '#8a4b6b';
     this.cellFill = 'rgba(150,170,175,0.16)';
     this.membraneColor = '#6f8a86';
+    this.nucleusFill = 'rgba(195,183,214,0.28)';
+    this.nucleusColor = '#8b7aa8';
     this.compartmentColors = { early_endosome: '#bcd0a8', late_endosome: '#a8bcd0', lysosome: '#d0a8bc' };
   }
 
@@ -48,6 +54,8 @@ export class CanvasRenderer {
   setUptakeEngine(uptakeEngine) { this.uptakeEngine = uptakeEngine; return this; }
   /** Phase 4C: attach the endocytosis engine so carrier fate (vesicles) is drawn. */
   setEndocytosisEngine(endocytosisEngine) { this.endocytosisEngine = endocytosisEngine; return this; }
+  /** Phase 4D: attach the intracellular engine so nucleus + intracellular drug are drawn. */
+  setIntracellularEngine(intracellularEngine) { this.intracellularEngine = intracellularEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -87,6 +95,9 @@ export class CanvasRenderer {
     this.lastMoleculeFrame = micro.molecules;
     // Phase 4C: endocytosis carrier-fate frame.
     this.lastEndocytosisFrame = this._endocytosisFrame(layout);
+    // Phase 4D: nucleus + intracellular drug frames.
+    this.lastNucleusFrame = this._nucleusFrame();
+    this.lastIntracellularFrame = this._intracellularFrame(layout);
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -120,6 +131,21 @@ export class CanvasRenderer {
         this.ctx.fill();
         this.ctx.strokeStyle = this.membraneColor; // thin visible membrane
         this.ctx.lineWidth = 1.2;
+        this.ctx.stroke();
+      }
+    }
+
+    // Phase 4D: schematic nucleus (membrane + interior + label) inside each cell.
+    if (this.lastNucleusFrame && this.lastNucleusFrame.length) {
+      this.ctx.font = '9px system-ui, sans-serif';
+      this.ctx.textBaseline = 'middle';
+      for (const n of this.lastNucleusFrame) {
+        this.ctx.fillStyle = this.nucleusFill;
+        this.ctx.beginPath();
+        this.ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.strokeStyle = this.nucleusColor; // nuclear membrane
+        this.ctx.lineWidth = 1;
         this.ctx.stroke();
       }
     }
@@ -202,6 +228,19 @@ export class CanvasRenderer {
       }
     }
 
+    // Phase 4D: intracellular free drug (released inside the cell) - tiny dots; a
+    // subtle tick toward the nucleus when targeting is active. Degraded molecules fade.
+    if (this.lastIntracellularFrame && this.lastIntracellularFrame.length) {
+      for (const mo of this.lastIntracellularFrame) {
+        this.ctx.globalAlpha = mo.alive ? (mo.compartment === 'nuclear_membrane' ? 1 : 0.85) : 0.25;
+        this.ctx.fillStyle = this.intracellularColor;
+        this.ctx.beginPath();
+        this.ctx.arc(mo.x, mo.y, 1.3, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+      this.ctx.globalAlpha = 1;
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -281,6 +320,27 @@ CanvasRenderer.prototype._endocytosisFrame = function _endocytosisFrame(layout) 
     carrierId: e.carrierId, x: e.x * W, y: yOf(e.u),
     state: e.state, pathway: e.pathway, compartment: e.compartment, wrap: e.wrap,
   }));
+};
+
+// Phase 4D: schematic nucleus per cell (concentric), derived from the cell frame.
+CanvasRenderer.prototype._nucleusFrame = function _nucleusFrame() {
+  const eng = this.intracellularEngine;
+  if (!eng || !this.lastCellFrame || !this.lastCellFrame.length) return [];
+  const frac = (eng.nucleusCfg && eng.nucleusCfg.radius_fraction) || 0.42;
+  return this.lastCellFrame.map((c) => ({ cellId: c.id, x: c.x, y: c.y, r: Math.max(1.5, c.r * frac) }));
+};
+
+// Phase 4D: intracellular free drug molecules mapped into pixel space via the dermis band.
+CanvasRenderer.prototype._intracellularFrame = function _intracellularFrame(layout) {
+  const eng = this.intracellularEngine;
+  if (!eng || !eng.molecules || !eng.molecules.length) return [];
+  const band = (this.engine && this.engine.layerBands ? this.engine.layerBands : []).find((b) => b.id === 'dermis') || { start: 0.3, end: 0.7 };
+  const span = Math.max(1e-6, band.end - band.start);
+  const [wTop, wBot] = layout.window || [0, 1];
+  const win = Math.max(1e-6, wBot - wTop);
+  const H = this.viewport.height; const W = this.viewport.width;
+  const yOf = (u) => Math.max(0, Math.min(1, ((band.start + u * span) - wTop) / win)) * H;
+  return eng.molecules.map((m) => ({ id: m.id, x: m.x * W, y: yOf(m.u), compartment: m.compartment, alive: m.alive, target: m.targetCompartment }));
 };
 
 // Phase 4B micro-frame helper attached to the prototype below (kept out of draw()).

@@ -201,3 +201,39 @@ biology/transportAnimator.js  steps the endocytosis layer AFTER uptake each tick
   NLC (NOT REPORTED). The evidence panel now exposes **five** independent levels: Transport /
   Release / Passive Uptake / Endocytosis / Intracellular Trafficking.
 - `integrity.forbidden` lists 32 downstream/intracellular structures that remain unimplemented.
+
+## Phase 4D update — Intracellular drug release (separate layer)
+A **fifth independent layer** is added after endocytosis: intracellular payload release, cytoplasmic
+diffusion, degradation, a schematic nucleus, and optional nucleus targeting.
+
+```
+data/intracellular.registry.json  (release models, degradation/targeting modes, nucleus, per-formulation profile, species evidence, integrity)
+        │
+        ├─ biology/intracellularReleaseModel.js  model math (0 when NOT REPORTED); pure
+        └─ biology/intracellularDrug.js           independent intracellular free-drug object
+                    │
+                    ▼
+biology/intracellularReleaseEngine.js ── reads (read-only) ──▶ endocytosisEngine.states (CYTOPLASM carriers) + uptakeEngine.cells
+   │   release intracellular drug (evidence-gated) ; bounded Brownian diffusion (cell-confined)
+   │   degradation (evidence-gated) ; optional nucleus targeting -> STOP at nuclear membrane (never enter)
+   ▼
+render/canvasRenderer.js  schematic nucleus (membrane + interior) + intracellular drug dots
+biology/transportAnimator.js  steps the intracellular layer AFTER endocytosis each tick
+```
+
+**Separation guarantees**
+- Reads endocytosis/uptake outputs read-only; modifies no upstream engine. Intracellular molecules
+  live only in this engine.
+- Drug diffuses **only** inside its own cell (never exits, never enters a neighbour) and **never**
+  enters the nucleus (targeting stops at the nuclear membrane).
+- Six layers now stay separate: **Transport / Release / Diffusion / Passive Uptake / Endocytosis /
+  Intracellular Release**.
+
+**Evidence & scope**
+- Release models (burst / first-order / zero-order / Higuchi / Korsmeyer–Peppas), degradation and
+  targeting are used **only when evidence exists**; otherwise **NOT REPORTED** (idle). For B1 the
+  whole intracellular stage is `NOT_REPORTED`. `NOT_REPORTED` was added to `EVIDENCE_LEVELS`.
+- The evidence panel now exposes **six** independent levels: Transport / Release / Passive Uptake /
+  Endocytosis / Intracellular Trafficking / Intracellular Release.
+- `integrity.forbidden` lists 30 downstream structures (DNA/RNA, transcription, translation, PD,
+  PK, apoptosis, nuclear-pore transport, …) that remain unimplemented.

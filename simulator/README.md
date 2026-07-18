@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–4C
+# Profile-B Simulator — Phases 1–4D
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -76,6 +76,17 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   receptor signalling, PD, PK, apoptosis, immune response, etc. Docs:
   `docs/profile-b-simulator-phase4c-implementation.md`, `docs/profile-b-endocytosis-evidence-review.md`,
   `docs/profile-b-intracellular-trafficking.md`, `docs/profile-b-phase4c-validation-report.md`.
+- **Phase 4D — Intracellular drug release (separate layer):** a carrier that has reached the
+  **cytoplasm** (post escape) may release payload via burst / first-order / zero-order / Higuchi /
+  Korsmeyer–Peppas **only if evidence exists**; released **intracellular free drug** diffuses
+  (Brownian) **only inside its own cell**, may **degrade** (evidence-gated), and — with a schematic
+  **nucleus** present — may **target the nucleus** (evidence-gated), stopping at the nuclear
+  membrane and **never entering**. For the **B1 NLC** all of this is **NOT REPORTED** (and escape
+  is Unavailable), so the intracellular stage is honestly **idle**. The evidence panel now shows
+  **six** levels (… + Intracellular Release). `NOT_REPORTED` added as an evidence level. **No** DNA/
+  RNA, transcription, PD, PK, apoptosis, nuclear-pore transport, or any downstream biology. Docs:
+  `docs/profile-b-simulator-phase4d-implementation.md`, `docs/intracellular-drug-release.md`,
+  `docs/intracellular-drug-evidence-review.md`, `docs/profile-b-phase4d-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

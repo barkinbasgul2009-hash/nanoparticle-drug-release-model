@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -39,19 +39,31 @@ export function buildAnatomyPanelModels(deps) {
   // Phase 4C: endocytosis + intracellular trafficking evidence levels.
   const endocytosisLevel = endocytosis && endocytosis.engine ? endocytosis.engine.evidenceLevelName() : null;
   const traffickingLevel = endocytosis && endocytosis.engine ? endocytosis.engine.traffickingLevelName() : null;
+  // Phase 4D: intracellular release evidence level (B1 = NOT_REPORTED).
+  const intracellularLevel = intracellular && intracellular.engine ? intracellular.engine.evidenceLevelName() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
     passiveUptake: uptakeLevel,
     endocytosis: endocytosisLevel,
     intracellularTrafficking: traffickingLevel,
+    intracellularRelease: intracellularLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
       endocytosis: endocytosis && endocytosis.engine ? endocytosis.engine.message() : null,
       intracellularTrafficking: endocytosis && endocytosis.engine ? endocytosis.engine.traffickingMessage() : null,
+      intracellularRelease: intracellular && intracellular.engine ? intracellular.engine.message() : null,
     },
   };
+  // Phase 4D: intracellular status (data only).
+  const intracellularInfo = intracellular && intracellular.engine ? {
+    level: intracellular.engine.evidenceLevelName(),
+    molecules: intracellular.engine.stats().total,
+    alive: intracellular.engine.stats().alive,
+    degraded: intracellular.engine.stats().degraded,
+    nuclearMembrane: intracellular.engine.stats().nuclearMembrane,
+  } : null;
   // Phase 4C: endocytosis status (data only).
   const endocytosisInfo = endocytosis && endocytosis.engine ? {
     escapeAllowed: endocytosis.engine.escapeAllowed(),
@@ -83,6 +95,7 @@ export function buildAnatomyPanelModels(deps) {
       release: releaseInfo,
       uptake: uptakeInfo,
       endocytosis: endocytosisInfo,
+      intracellular: intracellularInfo,
     },
     navigation: {
       title: 'Navigation',

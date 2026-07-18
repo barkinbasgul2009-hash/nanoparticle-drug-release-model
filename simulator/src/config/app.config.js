@@ -98,6 +98,12 @@ export const APP_CONFIG = Object.freeze({
   endocytosisSources: Object.freeze({ endocytosis: 'endocytosis.registry.json' }),
   endocytosis: Object.freeze({ formulationId: 'B1_nlc', seed: 1357 }),
 
+  // Phase 4D: intracellular drug release (SEPARATE layer; reads endocytosis/uptake
+  // read-only). Models/degradation/targeting come from the registry (B1 = NOT REPORTED
+  // -> idle); only schematic motion constants live here. Applies to cytoplasmic carriers.
+  intracellularSources: Object.freeze({ intracellular: 'intracellular.registry.json' }),
+  intracellular: Object.freeze({ formulationId: 'B1_nlc', seed: 9753 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
