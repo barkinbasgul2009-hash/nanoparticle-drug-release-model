@@ -130,12 +130,12 @@ export default async function run() {
   const el = app.panelModels.evidence.evidenceLevels;
   eq(el.transport, 'EXPERIMENTAL', 'panel: rat transport Experimental');
   eq(el.release, 'EXPERIMENTAL', 'panel: rat release Experimental (chain)');
-  eq(el.uptake, 'PREDICTIVE', 'panel: rat uptake Predictive');
+  eq(el.passiveUptake, 'PREDICTIVE', 'panel: rat passive uptake Predictive');
   app.setSpecies('human');
   const el2 = app.panelModels.evidence.evidenceLevels;
   eq(el2.transport, 'PREDICTIVE', 'panel: human transport Predictive');
   eq(el2.release, 'PREDICTIVE', 'panel: human release Predictive (chain)');
-  eq(el2.uptake, 'PREDICTIVE', 'panel: human uptake Predictive');
+  eq(el2.passiveUptake, 'PREDICTIVE', 'panel: human passive uptake Predictive');
   // switching species clears molecules (only the selected species exists)
   eq(app.uptake.engine.molecules.length, 0, 'species switch clears molecules (no leftover species)');
   app.setSpecies('rat');

@@ -1,0 +1,90 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-4C ENDOCYTOSIS & INTRACELLULAR TRAFFICKING registry. Defines ONLY: the endocytosis pathways, the per-formulation uptake/escape/trafficking profile, the strict finite-state machine, the intracellular compartments (early/late endosome + lysosome), and per-species evidence for endocytosis + trafficking. It is a SEPARATE layer that READS the uptake/transport outputs and modifies nothing upstream. The code hardcodes NO biology or constants - pathways, probabilities, dwell times, escape and evidence all live here. NOTHING beyond intracellular trafficking is defined (no nucleus, DNA/RNA, PD, PK, signalling, apoptosis, immune, tumour killing, etc.).",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012 observed CELLULAR UPTAKE of the NLC in HaCaT (human) and B16BL6 (mouse) cells (order cationic > neutral > anionic) but did NOT resolve the endocytic PATHWAY, and reported NO endosomal escape. Rat had no cell-uptake study. So endocytosis + trafficking are PREDICTIVE for this formulation and escape is UNAVAILABLE (no escape).",
+  "evidence_review": {
+    "note": "Literature review categorised per the phase brief. These are GENERAL mechanism strengths; the per-species FORMULATION evidence level is separate (species_endocytosis / species_trafficking).",
+    "A_strong_experimental": [
+      { "mechanism": "clathrin_mediated_endocytosis", "note": "well-established general uptake route" },
+      { "mechanism": "caveolae_mediated_endocytosis", "note": "well-established general uptake route" },
+      { "mechanism": "macropinocytosis", "note": "well-established general bulk-uptake route" },
+      { "mechanism": "endosome_maturation", "note": "early -> late endosome maturation is textbook cell biology" },
+      { "mechanism": "lysosome_trafficking", "note": "late endosome -> lysosome delivery is textbook cell biology" }
+    ],
+    "B_mechanistic": [
+      { "mechanism": "endosomal_escape", "note": "mechanistically supported, formulation-dependent" },
+      { "mechanism": "proton_sponge_hypothesis", "note": "mechanistic, debated" },
+      { "mechanism": "membrane_destabilization", "note": "mechanistic" },
+      { "mechanism": "fusion_mediated_escape", "note": "mechanistic" }
+    ],
+    "C_unsupported_not_implemented": ["intracellular_efficacy", "therapeutic_response", "downstream_signalling"],
+    "formulation_specific_note": "For THIS NLC: the pathway is NOT resolved (uptake observed, mechanism unreported) and escape is NOT REPORTED. General mechanisms are category A/B, but the formulation-specific claim is PREDICTIVE (endocytosis + trafficking) or UNAVAILABLE (escape)."
+  },
+  "pathways": {
+    "note": "ONLY these three pathways are implemented. phagocytosis, receptor-specific internalization, Fc receptors, antibody uptake, active-transporter uptake, lipid-raft signalling and exocytosis are NOT implemented.",
+    "clathrin_mediated": { "label": "Clathrin-mediated endocytosis", "visual": "hexagonal lattice pit deepens -> vesicle pinches off", "evidence_category": "A" },
+    "caveolae_mediated": { "label": "Caveolae-mediated endocytosis", "visual": "small flask-shaped membrane invagination", "evidence_category": "A" },
+    "macropinocytosis": { "label": "Macropinocytosis", "visual": "large membrane ruffle -> cup -> closure -> large vesicle", "evidence_category": "A" }
+  },
+  "formulations": {
+    "note": "Per-formulation endocytosis profile (registry data - never hard-coded). pathway_weights choose the pathway; endocytosis_probability gates whether a contacting carrier internalises; escape controls endosomal escape; trafficking_profile sets maturation dwell (schematic steps). Values are FORMULATION-level (same across species); only the per-species EVIDENCE LEVEL differs - rat parameters are never copied into human because there are no per-species parameters to copy.",
+    "B1_nlc": {
+      "carrier_kind": "NLC",
+      "size_nm": "84.5-90.2 (Chen 2012)",
+      "endocytosis_probability": 0.9,
+      "pathway_weights": { "clathrin_mediated": 0.5, "caveolae_mediated": 0.4, "macropinocytosis": 0.1 },
+      "pathway_basis": "SCHEMATIC / PREDICTIVE - Chen observed cellular uptake (HaCaT/B16BL6) but did NOT resolve the pathway. Weights reflect a ~85-90 nm carrier (small-particle routes favoured over bulk macropinocytosis). NOT a measured distribution.",
+      "escape": { "state": "no_escape", "escape_probability": 0.0, "evidence_level": "UNAVAILABLE", "basis": "Endosomal escape is NOT REPORTED for this NLC in the frozen package -> no escape is animated; carriers terminate in the lysosome." },
+      "trafficking_profile": { "early_endosome_dwell": 8, "late_endosome_dwell": 8, "lysosome_dwell": 6, "basis": "SCHEMATIC dwell (simulation steps). Maturation TIMES are not reported for this formulation (NOT REPORTED); only the ordered sequence is claimed." }
+    }
+  },
+  "fsm": {
+    "note": "Strict finite-state machine. Every carrier has exactly one state. Illegal transitions are rejected. Escape transitions are only taken when the formulation escape profile allows.",
+    "initial": "EXTRACELLULAR",
+    "states": ["EXTRACELLULAR", "MEMBRANE_CONTACT", "WRAPPING", "INTERNALIZED", "EARLY_ENDOSOME", "LATE_ENDOSOME", "LYSOSOME", "ESCAPED", "CYTOPLASM"],
+    "transitions": [
+      ["EXTRACELLULAR", "MEMBRANE_CONTACT"],
+      ["MEMBRANE_CONTACT", "WRAPPING"],
+      ["WRAPPING", "INTERNALIZED"],
+      ["INTERNALIZED", "EARLY_ENDOSOME"],
+      ["EARLY_ENDOSOME", "LATE_ENDOSOME"],
+      ["EARLY_ENDOSOME", "ESCAPED"],
+      ["LATE_ENDOSOME", "LYSOSOME"],
+      ["LATE_ENDOSOME", "ESCAPED"],
+      ["LYSOSOME", "ESCAPED"],
+      ["ESCAPED", "CYTOPLASM"]
+    ],
+    "terminal": ["LYSOSOME", "CYTOPLASM"],
+    "compartment_of": { "EARLY_ENDOSOME": "early_endosome", "LATE_ENDOSOME": "late_endosome", "LYSOSOME": "lysosome" }
+  },
+  "compartments": {
+    "note": "ONLY these intracellular compartments. NO Golgi, ER, mitochondria, nucleus, ribosomes or cytoskeleton.",
+    "early_endosome": { "label": "Early Endosome", "color": "#bcd0a8" },
+    "late_endosome": { "label": "Late Endosome", "color": "#a8bcd0" },
+    "lysosome": { "label": "Lysosome", "color": "#d0a8bc", "note": "schematic small acidic vesicle; NO enzymes, NO molecular machinery, NO degradation chemistry" }
+  },
+  "species_endocytosis": {
+    "note": "Endocytosis Evidence per species. The pathway is unresolved for this formulation, so endocytosis is PREDICTIVE for ALL species (MECHANISTIC_TRANSFER). Human/mouse have observational uptake support; rat has none. No rat parameters copied; no permeation citation claimed.",
+    "rat": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "observational_support": "none - Chen used rat for skin permeation only; no rat cellular-uptake data.", "message": "Endocytosis Evidence: Predictive. Carrier internalisation is shown from general endocytosis principles; the pathway is not resolved for this formulation and there is no rat cellular-uptake data. No quantitative uptake is claimed." },
+    "human": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "observational_support": "HaCaT cellular uptake observed in vitro (Chen 2012; pathway unresolved).", "message": "Endocytosis Evidence: Predictive. Cellular uptake was observed in vitro (HaCaT), but the endocytic pathway and its rate have not been experimentally resolved for this formulation." },
+    "mouse": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "observational_support": "B16BL6 cellular uptake observed in vitro (Chen 2012; pathway unresolved).", "message": "Endocytosis Evidence: Predictive. Cellular uptake was observed in vitro (B16BL6), but the endocytic pathway and its rate have not been experimentally resolved for this formulation." }
+  },
+  "species_trafficking": {
+    "note": "Intracellular Trafficking Evidence per species. Early->late endosome->lysosome maturation is general cell biology (category A) but is NOT measured for this formulation, so it is PREDICTIVE for all species.",
+    "rat": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "message": "Intracellular Trafficking Evidence: Predictive. Endosome -> lysosome maturation is general cell biology; it is not measured for this formulation, so only the ordered sequence is shown (no timing claimed)." },
+    "human": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "message": "Intracellular Trafficking Evidence: Predictive. Endosome -> lysosome maturation is general cell biology; not measured for this formulation." },
+    "mouse": { "evidence_level": "PREDICTIVE", "confidence": "MECHANISTIC_TRANSFER", "referenceIds": [], "message": "Intracellular Trafficking Evidence: Predictive. Endosome -> lysosome maturation is general cell biology; not measured for this formulation." }
+  },
+  "integrity": {
+    "reads_only": "The endocytosis engine READS the uptake/transport outputs (carriers + cells) read-only and modifies NO upstream engine. Its state (per-carrier FSM) lives only in the endocytosis engine.",
+    "carrier_vs_molecule": "Endocytosis applies ONLY to CARRIER nanoparticles. Free drug molecules stay free (passive uptake, Phase 4B). Carriers and molecules are never the same object.",
+    "not_to_scale": true,
+    "ends_at": "Ends at the LYSOSOME (no escape) or, only when the formulation escape profile supports it, at the CYTOPLASM after ESCAPED. Nothing beyond intracellular trafficking.",
+    "forbidden": ["nucleus", "DNA", "RNA", "transcription", "translation", "protein_synthesis", "receptor_signalling", "receptor_specific_internalization", "Fc_receptors", "antibody_uptake", "phagocytosis", "active_transporter_uptake", "lipid_raft_signalling", "exocytosis", "apoptosis", "immune_response", "complement_activation", "cytokines", "pharmacodynamics", "pharmacokinetics", "target_inhibition", "target_interaction", "tumor_killing", "blood_circulation", "efficacy_prediction", "Golgi", "endoplasmic_reticulum", "mitochondria", "ribosomes", "cytoskeleton", "degradation_chemistry", "enzymes"]
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - Chen 2012 cellular uptake in HaCaT + B16BL6 (order cationic > neutral > anionic); uptake time series 1-4 h; pathway + escape NOT REPORTED",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476) - primary full-text source",
+    "General cell-biology consensus for clathrin/caveolae/macropinocytosis + endosome maturation -> lysosome (category A mechanisms)"
+  ]
+}

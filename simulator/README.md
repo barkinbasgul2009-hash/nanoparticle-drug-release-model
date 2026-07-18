@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–4B
+# Profile-B Simulator — Phases 1–4C
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -64,6 +64,18 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   organelles, nucleus, PK or PD. Docs: `docs/profile-b-simulator-phase4b-implementation.md`,
   `docs/profile-b-cellular-microenvironment.md`, `docs/profile-b-passive-uptake-evidence-report.md`,
   `docs/profile-b-phase4b-validation-report.md`.
+- **Phase 4C — Endocytosis & intracellular trafficking (separate layer):** carrier nanoparticles
+  contact a cell membrane and are internalized via **clathrin / caveolae / macropinocytosis**
+  (registry-selected), then traffic a strict FSM **Membrane Contact → Wrapping → Internalized →
+  Early Endosome → Late Endosome → Lysosome → (Escaped → Cytoplasm, only if the formulation
+  evidence supports escape)**. Illegal transitions are rejected; maturation is gradual. Endocytosis
+  applies to **carriers only** (free molecules stay free). Endocytosis + trafficking are
+  **Predictive for all species** (pathway unresolved); escape is **Unavailable** for the B1 NLC
+  (NOT REPORTED). The evidence panel now shows **five** levels (Transport / Release / Passive
+  Uptake / Endocytosis / Intracellular Trafficking). **Intracellular entry only** — no nucleus,
+  receptor signalling, PD, PK, apoptosis, immune response, etc. Docs:
+  `docs/profile-b-simulator-phase4c-implementation.md`, `docs/profile-b-endocytosis-evidence-review.md`,
+  `docs/profile-b-intracellular-trafficking.md`, `docs/profile-b-phase4c-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

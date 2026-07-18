@@ -168,3 +168,36 @@ biology/transportAnimator.js  steps the uptake layer AFTER release each tick
   (schematic). The evidence panel exposes three independent levels: Transport / Release / Cell
   Uptake.
 - `integrity.forbidden` lists 31 downstream/intracellular structures that remain unimplemented.
+
+## Phase 4C update — Endocytosis & intracellular trafficking (separate layer)
+A **fourth independent layer** is added after uptake: carrier internalization, endosome→lysosome
+trafficking, and (evidence-gated) endosomal escape. It applies to **carriers only**.
+
+```
+data/endocytosis.registry.json  (evidence review A/B/C, pathways, formulation profile, FSM, compartments, species evidence, integrity)
+        │
+        ├─ biology/endocytosisStates.js  strict FSM (legal transitions; rejects illegal)
+        └─ biology/endocytosisEngine.js  per-carrier fate; pathway select (registry weights);
+                    │                     gradual maturation; escape only if allowed
+                    │  reads (read-only) uptakeEngine.transport.particles + uptakeEngine.cells
+                    ▼
+render/canvasRenderer.js  membrane wrapping arc + compartment vesicle rings + labels (carrier colour unchanged)
+biology/transportAnimator.js  steps the endocytosis layer AFTER uptake each tick
+```
+
+**Separation guarantees**
+- The endocytosis engine **reads** carriers + cells read-only and **modifies no upstream engine**;
+  per-carrier fate lives only in the endocytosis engine (keyed by carrier id).
+- Endocytosis applies to **carriers only** — free drug molecules (Phase 4B) are never endocytosed
+  (no molecule id ever gets an endocytosis state).
+- Five concerns now stay separate: **Transport / Release / Diffusion / Passive Uptake /
+  Endocytosis**.
+
+**Strict FSM + evidence**
+- `EXTRACELLULAR → MEMBRANE_CONTACT → WRAPPING → INTERNALIZED → EARLY/LATE_ENDOSOME → LYSOSOME →
+  (ESCAPED → CYTOPLASM)`; illegal transitions throw; maturation is gradual; escape is registry-gated.
+- Endocytosis + trafficking are `MECHANISTIC_TRANSFER` (Predictive) for all species (pathway
+  unresolved; trafficking not measured for this formulation); escape is `UNAVAILABLE` for the B1
+  NLC (NOT REPORTED). The evidence panel now exposes **five** independent levels: Transport /
+  Release / Passive Uptake / Endocytosis / Intracellular Trafficking.
+- `integrity.forbidden` lists 32 downstream/intracellular structures that remain unimplemented.

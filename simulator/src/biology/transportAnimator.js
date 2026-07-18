@@ -19,6 +19,7 @@ export class TransportAnimator {
     this.engine = deps.engine;
     this.releaseEngine = deps.releaseEngine || null; // Phase 4: separate release process
     this.uptakeEngine = deps.uptakeEngine || null;   // Phase 4B: separate uptake layer
+    this.endocytosisEngine = deps.endocytosisEngine || null; // Phase 4C: separate endocytosis layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -37,6 +38,7 @@ export class TransportAnimator {
     this.engine.reset();
     if (this.releaseEngine) this.releaseEngine.reset();
     if (this.uptakeEngine) this.uptakeEngine.reset();
+    if (this.endocytosisEngine) this.endocytosisEngine.reset();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -60,6 +62,9 @@ export class TransportAnimator {
     // Phase 4B: the SEPARATE uptake layer turns released payload into free molecules,
     // diffuses them, and lets them passively enter cells. It never moves carriers.
     if (this.uptakeEngine) events.push(...this.uptakeEngine.step(dtHours));
+    // Phase 4C: the SEPARATE endocytosis layer advances carrier fate (reads carriers +
+    // cells; never moves carriers or touches upstream engines).
+    if (this.endocytosisEngine) events.push(...this.endocytosisEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -86,6 +91,7 @@ export class TransportAnimator {
       stats: this.engine.stats(),
       release: this.releaseEngine ? this.releaseEngine.stats() : null,
       uptake: this.uptakeEngine ? this.uptakeEngine.stats() : null,
+      endocytosis: this.endocytosisEngine ? this.endocytosisEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

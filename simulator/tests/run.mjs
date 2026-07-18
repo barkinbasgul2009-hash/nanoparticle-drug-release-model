@@ -13,10 +13,11 @@ import anatomy from './anatomy.test.mjs';
 import transport from './transport.test.mjs';
 import release from './release.test.mjs';
 import uptake from './uptake.test.mjs';
+import endocytosis from './endocytosis.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis,
 ];
 
 for (const suite of suites) {

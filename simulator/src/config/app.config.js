@@ -92,6 +92,12 @@ export const APP_CONFIG = Object.freeze({
   microenvironmentSources: Object.freeze({ microenvironment: 'microenvironment.registry.json' }),
   uptake: Object.freeze({ moleculesPerCarrier: 5, crossProbability: 0.35, seed: 24680 }),
 
+  // Phase 4C: endocytosis & intracellular trafficking (SEPARATE layer; reads
+  // uptake/transport read-only). Pathways/probabilities/escape/dwell come from the
+  // registry; only schematic motion constants live here. Applies to carriers only.
+  endocytosisSources: Object.freeze({ endocytosis: 'endocytosis.registry.json' }),
+  endocytosis: Object.freeze({ formulationId: 'B1_nlc', seed: 1357 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

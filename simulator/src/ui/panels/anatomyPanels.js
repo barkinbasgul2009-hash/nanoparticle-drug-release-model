@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -36,15 +36,28 @@ export function buildAnatomyPanelModels(deps) {
   const transportLevel = transport && transport.engine ? transport.engine.evidenceLevelName() : null;
   const uptakeLevel = uptake && uptake.engine ? uptake.engine.evidenceLevelName() : null;
   const releaseLevel = release ? (transportLevel || 'EXPERIMENTAL') : null;
+  // Phase 4C: endocytosis + intracellular trafficking evidence levels.
+  const endocytosisLevel = endocytosis && endocytosis.engine ? endocytosis.engine.evidenceLevelName() : null;
+  const traffickingLevel = endocytosis && endocytosis.engine ? endocytosis.engine.traffickingLevelName() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
-    uptake: uptakeLevel,
+    passiveUptake: uptakeLevel,
+    endocytosis: endocytosisLevel,
+    intracellularTrafficking: traffickingLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
-      uptake: uptake && uptake.engine ? uptake.engine.message() : null,
+      passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
+      endocytosis: endocytosis && endocytosis.engine ? endocytosis.engine.message() : null,
+      intracellularTrafficking: endocytosis && endocytosis.engine ? endocytosis.engine.traffickingMessage() : null,
     },
   };
+  // Phase 4C: endocytosis status (data only).
+  const endocytosisInfo = endocytosis && endocytosis.engine ? {
+    escapeAllowed: endocytosis.engine.escapeAllowed(),
+    byState: endocytosis.engine.stats().byState,
+    byPathway: endocytosis.engine.stats().byPathway,
+  } : null;
   // Phase 4B: uptake status (data only).
   const uptakeInfo = uptake && uptake.engine ? {
     model: 'passive_membrane_crossing',
@@ -69,6 +82,7 @@ export function buildAnatomyPanelModels(deps) {
       transportEvidence,
       release: releaseInfo,
       uptake: uptakeInfo,
+      endocytosis: endocytosisInfo,
     },
     navigation: {
       title: 'Navigation',

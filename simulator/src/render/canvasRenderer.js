@@ -24,13 +24,16 @@ export class CanvasRenderer {
     this.engine = null;          // TransportEngine (source of particles)
     this.releaseEngine = null;   // Phase 4: ReleaseEngine (payload state per particle)
     this.uptakeEngine = null;    // Phase 4B: UptakeEngine (free molecules + cells)
+    this.endocytosisEngine = null; // Phase 4C: EndocytosisEngine (carrier fate)
     this.lastParticleFrame = null; // [{id,x,y,state,status,payload,releaseState}] for tests
     this.lastMoleculeFrame = null; // Phase 4B: [{id,x,y,compartment,alive}] for tests
     this.lastCellFrame = null;     // Phase 4B: [{id,x,y,r}] for tests
+    this.lastEndocytosisFrame = null; // Phase 4C: [{carrierId,x,y,state,pathway,compartment,wrap}]
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.cellFill = 'rgba(150,170,175,0.16)';
     this.membraneColor = '#6f8a86';
+    this.compartmentColors = { early_endosome: '#bcd0a8', late_endosome: '#a8bcd0', lysosome: '#d0a8bc' };
   }
 
   /** @param {import('../anatomy/anatomyModel.js').AnatomyModel} model */
@@ -43,6 +46,8 @@ export class CanvasRenderer {
   setReleaseEngine(releaseEngine) { this.releaseEngine = releaseEngine; return this; }
   /** Phase 4B: attach the uptake engine so cells + free drug molecules are drawn. */
   setUptakeEngine(uptakeEngine) { this.uptakeEngine = uptakeEngine; return this; }
+  /** Phase 4C: attach the endocytosis engine so carrier fate (vesicles) is drawn. */
+  setEndocytosisEngine(endocytosisEngine) { this.endocytosisEngine = endocytosisEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -80,6 +85,8 @@ export class CanvasRenderer {
     const micro = this._microFrames(layout);
     this.lastCellFrame = micro.cells;
     this.lastMoleculeFrame = micro.molecules;
+    // Phase 4C: endocytosis carrier-fate frame.
+    this.lastEndocytosisFrame = this._endocytosisFrame(layout);
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -128,6 +135,7 @@ export class CanvasRenderer {
       this.ctx.fillStyle = this.particleColor;
       this.ctx.lineWidth = 1.2;
       for (const pt of this.lastParticleFrame) {
+        if (this._isEndocytosed(pt.id)) continue; // carrier now drawn by the endocytosis layer
         this.ctx.globalAlpha = pt.status === 'arrived' ? 1 : 0.85;
         // carrier shell
         this.ctx.setLineDash(predictive ? [2, 2] : []);
@@ -157,6 +165,41 @@ export class CanvasRenderer {
         this.ctx.fill();
       }
       this.ctx.globalAlpha = 1;
+    }
+
+    // Phase 4C: endocytosis carrier fate - membrane wrapping, vesicles, compartment
+    // labels. Particle colour is unchanged; state is shown by vesicle + label + wrap.
+    if (this.lastEndocytosisFrame && this.lastEndocytosisFrame.length) {
+      this.ctx.font = '9px system-ui, sans-serif';
+      this.ctx.textBaseline = 'middle';
+      for (const e of this.lastEndocytosisFrame) {
+        const r = 3;
+        // compartment vesicle ring
+        if (e.compartment) {
+          this.ctx.strokeStyle = this.compartmentColors[e.compartment] || this.membraneColor;
+          this.ctx.lineWidth = 1.6;
+          this.ctx.setLineDash([]);
+          this.ctx.beginPath();
+          this.ctx.arc(e.x, e.y, r + 3.5, 0, Math.PI * 2);
+          this.ctx.stroke();
+          this.ctx.fillStyle = this.compartmentColors[e.compartment] || this.membraneColor;
+          this.ctx.fillText(compLabel(e.compartment), e.x + r + 6, e.y);
+        }
+        // wrapping arc (membrane curvature during internalisation)
+        if (e.state === 'WRAPPING') {
+          this.ctx.strokeStyle = this.membraneColor;
+          this.ctx.lineWidth = 1.6;
+          this.ctx.beginPath();
+          this.ctx.arc(e.x, e.y, r + 2, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0.05, e.wrap));
+          this.ctx.stroke();
+        }
+        // carrier dot (colour unchanged)
+        this.ctx.fillStyle = this.particleColor;
+        this.ctx.globalAlpha = 1;
+        this.ctx.beginPath();
+        this.ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
     }
 
     // Phase 3.1: evidence-level caption (users must always know the mode).
@@ -210,6 +253,35 @@ export class CanvasRenderer {
 
 /** Title-case an EVIDENCE_LEVEL for display (EXPERIMENTAL -> Experimental). */
 function cap(s) { return typeof s === 'string' && s.length ? s[0] + s.slice(1).toLowerCase() : s; }
+
+/** Short compartment label for the endocytosis vesicle. */
+function compLabel(c) {
+  return c === 'early_endosome' ? 'Early endosome' : c === 'late_endosome' ? 'Late endosome' : c === 'lysosome' ? 'Lysosome' : c;
+}
+
+/** True if a carrier id is being handled by the endocytosis layer (past extracellular). */
+CanvasRenderer.prototype._isEndocytosed = function _isEndocytosed(id) {
+  const eng = this.endocytosisEngine;
+  if (!eng || !eng.states) return false;
+  const s = eng.states.get(id);
+  return !!(s && s.state !== 'EXTRACELLULAR');
+};
+
+// Phase 4C endocytosis frame: per-carrier fate mapped into pixel space via the dermis band.
+CanvasRenderer.prototype._endocytosisFrame = function _endocytosisFrame(layout) {
+  const eng = this.endocytosisEngine;
+  if (!eng || !eng.states || !eng.states.size) return [];
+  const band = (this.engine && this.engine.layerBands ? this.engine.layerBands : []).find((b) => b.id === 'dermis') || { start: 0.3, end: 0.7 };
+  const span = Math.max(1e-6, band.end - band.start);
+  const [wTop, wBot] = layout.window || [0, 1];
+  const win = Math.max(1e-6, wBot - wTop);
+  const H = this.viewport.height; const W = this.viewport.width;
+  const yOf = (u) => Math.max(0, Math.min(1, ((band.start + u * span) - wTop) / win)) * H;
+  return eng.frame().map((e) => ({
+    carrierId: e.carrierId, x: e.x * W, y: yOf(e.u),
+    state: e.state, pathway: e.pathway, compartment: e.compartment, wrap: e.wrap,
+  }));
+};
 
 // Phase 4B micro-frame helper attached to the prototype below (kept out of draw()).
 CanvasRenderer.prototype._microFrames = function _microFrames(layout) {

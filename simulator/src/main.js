@@ -34,6 +34,8 @@ import { ReleaseModel } from './biology/releaseModel.js';
 import { ReleaseEngine } from './biology/releaseEngine.js';
 import { CellField } from './biology/cellField.js';
 import { UptakeEngine } from './biology/uptakeEngine.js';
+import { EndocytosisFSM } from './biology/endocytosisStates.js';
+import { EndocytosisEngine } from './biology/endocytosisEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -122,6 +124,7 @@ export async function createApp(opts = {}) {
   let transport = null;
   let release = null;
   let uptake = null; // Phase 4B: cellular microenvironment + passive uptake layer
+  let endocytosis = null; // Phase 4C: endocytosis + intracellular trafficking layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -182,9 +185,37 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 4C: endocytosis + intracellular trafficking - a SEPARATE layer that reads
+      // the uptake outputs (carriers + cells) read-only and never modifies them. Applies
+      // to carrier nanoparticles only (never free drug molecules).
+      if (uptake) {
+        try {
+          const endoReg = await anatomyLoader.load(config.endocytosisSources.endocytosis, 'generic');
+          const endoEngine = new EndocytosisEngine({
+            registry: endoReg, fsm: new EndocytosisFSM(endoReg), uptakeEngine: uptake.engine,
+            evidenceEngine: evidence, species: engine.species,
+            formulationId: config.endocytosis && config.endocytosis.formulationId,
+            seed: config.endocytosis && config.endocytosis.seed, logger,
+          });
+          if (renderer.setEndocytosisEngine) renderer.setEndocytosisEngine(endoEngine);
+          endocytosis = {
+            engine: endoEngine, fsm: endoEngine.fsm,
+            step: (dt) => endoEngine.step(dt),
+            stats: () => endoEngine.stats(),
+            reset: () => endoEngine.reset(),
+            evidenceLevel: () => endoEngine.evidenceLevelName(),
+            traffickingLevel: () => endoEngine.traffickingLevelName(),
+            escapeAllowed: () => endoEngine.escapeAllowed(),
+          };
+        } catch (err) {
+          logger.warn('load', 'endocytosis registry not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
-        uptakeEngine: uptake ? uptake.engine : null, renderer, logger,
+        uptakeEngine: uptake ? uptake.engine : null,
+        endocytosisEngine: endocytosis ? endocytosis.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -229,6 +260,8 @@ export async function createApp(opts = {}) {
     release,
     // Phase 4B addition (may be null if the microenvironment registry failed to load):
     uptake,
+    // Phase 4C addition (may be null if the endocytosis registry failed to load):
+    endocytosis,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -245,11 +278,12 @@ export async function createApp(opts = {}) {
     // Phase 4: transport particles were cleared, so clear stale release + uptake state.
     if (release) release.engine.reset();
     if (uptake) uptake.engine.setSpecies(speciesId);
+    if (endocytosis) endocytosis.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -269,7 +303,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);
