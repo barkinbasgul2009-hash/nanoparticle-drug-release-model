@@ -7,15 +7,22 @@
 /**
  * Build panel content models from app state + anatomy model. Pure - returns
  * plain objects; no DOM. The UiFramework/browser layer renders these.
- * @param {{ model: object, state: object, presets: object, citations: object, scaleLevels: string[] }} deps
+ * @param {{ model: object, state: object, presets: object, citations: object, scaleLevels: string[], transport?: object }} deps
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels } = deps;
+  const { model, state, presets, citations, scaleLevels, transport } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
   const visible = model.visibleAt(level);
+  // Phase 3.1: transport evidence level + message for the current species (data only).
+  const species = s.species || model.activeSpecies || null;
+  const transportEvidence = transport && transport.engine ? {
+    evidenceLevel: transport.engine.evidenceLevelName(),
+    message: transport.engine.message(),
+    blocked: transport.engine.isBlocked(),
+  } : null;
 
   // Evidence references: the anatomy registry's provenance sources + the active
   // preset's references (resolved to citations where possible).
@@ -29,7 +36,8 @@ export function buildAnatomyPanelModels(deps) {
       currentLayer: currentLayer || '(none selected)',
       visibleLayers: visible,
       notToScale: model.notToScale,
-      species: (s.species || model.activeSpecies || null),
+      species,
+      transportEvidence,
     },
     navigation: {
       title: 'Navigation',

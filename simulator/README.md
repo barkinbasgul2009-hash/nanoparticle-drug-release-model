@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–3
+# Profile-B Simulator — Phases 1–3.1
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -34,6 +34,15 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   uptake, payload, PK or PD. Docs: `docs/profile-b-simulator-phase3-implementation.md`,
   `docs/profile-b-transport-architecture.md`, `docs/profile-b-biological-transport.md`,
   `docs/profile-b-transport-evidence-report.md`, `docs/profile-b-transport-validation-report.md`.
+- **Phase 3.1 — Predictive human & mouse transport (Evidence Level system):** an **Evidence
+  Level** (Experimental / Predictive / Unavailable) replaces available/blocked. **Rat stays
+  Experimental** (unchanged). **Human and mouse now animate in Predictive mode** — via their
+  **own** anatomy + general passive-transport principles (`MECHANISTIC_TRANSFER`), clearly
+  labelled, **not** experimentally validated, with **no rat parameters copied** and no
+  quantitative claims. Predictive particles render as **outlined** dots (experimental = filled) +
+  an evidence caption; experimental data is never replaced by a prediction. Docs:
+  `docs/profile-b-simulator-phase3.1-implementation.md`, `docs/profile-b-predictive-transport.md`,
+  `docs/profile-b-predictive-evidence-justification.md`, `docs/profile-b-phase3.1-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

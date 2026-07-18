@@ -3,7 +3,7 @@ import { JsonLoader } from '../src/data/jsonLoader.js';
 import { AnatomyModel } from '../src/anatomy/anatomyModel.js';
 import { TransportModel } from '../src/biology/transportModel.js';
 import { BiologicalStateMachine } from '../src/biology/transportStates.js';
-import { TransportEngine } from '../src/biology/transportEngine.js';
+import { TransportEngine, computeLayerBands } from '../src/biology/transportEngine.js';
 import { TransportAnimator } from '../src/biology/transportAnimator.js';
 import { Particle } from '../src/biology/particle.js';
 import { EvidenceEngine } from '../src/evidence/evidenceEngine.js';
@@ -45,15 +45,32 @@ export default async function run() {
   ok(tm.notToScale === true, 'transport flagged not-to-scale');
   ok(Array.isArray(treg.integrity.excluded_downstream) && treg.integrity.excluded_downstream.includes('drug_release'), 'downstream biology (drug release etc.) explicitly excluded');
 
-  // --- evidence gating per species (no fallback to human/rat) ---
-  ok(tm.isSupportedForSpecies('rat'), 'rat topical transport is supported (Chen 2012)');
-  ok(!tm.isSupportedForSpecies('human'), 'human topical transport NOT supported (NOT REPORTED)');
-  ok(!tm.isSupportedForSpecies('mouse'), 'mouse topical transport NOT supported (NOT REPORTED)');
-  ok(evidence.canAnimate(tm.evidenceForSpecies('rat')), 'evidence gate allows rat transport');
-  ok(!evidence.canAnimate(tm.evidenceForSpecies('human')), 'evidence gate BLOCKS human transport');
-  ok(!evidence.canAnimate(tm.evidenceForSpecies('mouse')), 'evidence gate BLOCKS mouse transport');
-  eq(tm.evidenceForSpecies('human').referenceIds.length, 0, 'human carries NO rat references (no fallback)');
-  ok(tm.evidenceForSpecies('rat').referenceIds.includes('chen_2012'), 'rat transport cites Chen 2012');
+  // --- Phase 3.1: Evidence Level system (Experimental / Predictive / Unavailable) ---
+  eq(tm.evidenceLevelFor('rat'), 'EXPERIMENTAL', 'rat = Experimental');
+  eq(tm.evidenceLevelFor('human'), 'PREDICTIVE', 'human = Predictive');
+  eq(tm.evidenceLevelFor('mouse'), 'PREDICTIVE', 'mouse = Predictive');
+  eq(tm.evidenceLevelFor('llama'), 'UNAVAILABLE', 'unknown species = Unavailable (never silently promoted)');
+  ok(tm.canAnimateSpecies('rat') && tm.canAnimateSpecies('human') && tm.canAnimateSpecies('mouse'), 'experimental + predictive species animate');
+  ok(!tm.canAnimateSpecies('llama'), 'unavailable species does not animate');
+  // the gate: experimental + predictive pass; unavailable blocked
+  ok(evidence.canAnimate(tm.evidenceForSpecies('rat')), 'gate allows rat (experimental)');
+  ok(evidence.canAnimate(tm.evidenceForSpecies('human')), 'gate allows human (predictive)');
+  ok(evidence.canAnimate(tm.evidenceForSpecies('mouse')), 'gate allows mouse (predictive)');
+  ok(!evidence.canAnimate(tm.evidenceForSpecies('llama')), 'gate blocks an unavailable species');
+  // confidence carries the mode
+  eq(tm.evidenceForSpecies('rat').confidence, 'QUALITATIVELY_SUPPORTED', 'rat confidence = experimental (qualitatively supported)');
+  eq(tm.evidenceForSpecies('human').confidence, 'MECHANISTIC_TRANSFER', 'human confidence = predictive (mechanistic transfer)');
+  eq(tm.evidenceForSpecies('mouse').confidence, 'MECHANISTIC_TRANSFER', 'mouse confidence = predictive (mechanistic transfer)');
+  // NO rat parameters / citations leak into predictions (no fallback)
+  ok(tm.evidenceForSpecies('rat').referenceIds.includes('chen_2012'), 'rat cites Chen 2012');
+  eq(tm.evidenceForSpecies('human').referenceIds.length, 0, 'human carries NO permeation references (no rat fallback)');
+  eq(tm.evidenceForSpecies('mouse').referenceIds.length, 0, 'mouse carries NO permeation references (no rat fallback)');
+  ok(!tm.evidenceForSpecies('human').referenceIds.includes('chen_2012'), 'human never claims Chen 2012');
+  ok(tm.evidenceForSpecies('human').principleRefs.length > 0, 'human predictive mode exposes principle references (transparent basis)');
+  // clear, non-deceptive messages
+  ok(/Predictive/.test(tm.messageFor('human')) && /not .*validated/i.test(tm.messageFor('human')), 'human message: Predictive + not experimentally validated');
+  ok(/Predictive/.test(tm.messageFor('mouse')), 'mouse message: Predictive');
+  ok(/Experimental/.test(tm.messageFor('rat')), 'rat message: Experimental');
 
   // --- particle objects are independent, uniquely identified, species-tagged ---
   Particle._resetSequence();
@@ -87,24 +104,30 @@ export default async function run() {
     ok(toStates.includes('stratum_corneum') && fromStates.includes('stratum_corneum'), 'each particle entered AND exited the SC barrier');
   }
 
-  // --- engine (human/mouse): blocked, no particles, no motion, no fallback ---
+  // --- engine (human/mouse): PREDICTIVE mode - animates via its OWN anatomy, no rat copy ---
+  const ratBands = computeLayerBands(new AnatomyModel(areg, { species: 'rat' }), 'rat');
+  const ratDermisStart = ratBands.find((b) => b.id === 'dermis').start;
   for (const sp of ['human', 'mouse']) {
     const anat = new AnatomyModel(areg, { species: sp });
     const eng = new TransportEngine({ transportModel: tm, anatomyModel: anat, stateMachine: sm, evidenceEngine: evidence, species: sp, seed: 12345 });
-    ok(eng.isBlocked(), `${sp} engine blocked (NOT REPORTED)`);
-    eq(eng.spawn(14).length, 0, `${sp} spawn is a no-op (no fallback)`);
-    eq(eng.step().length, 0, `${sp} step is a no-op`);
-    eq(eng.particles.length, 0, `${sp} has zero particles`);
-    ok(typeof eng.blockReason() === 'string' && eng.blockReason().length > 0, `${sp} exposes a block reason`);
+    ok(!eng.isBlocked(), `${sp} animates (predictive, not blocked)`);
+    eq(eng.evidenceLevelName(), 'PREDICTIVE', `${sp} engine reports Predictive`);
+    ok(eng.isPredictive(), `${sp} isPredictive() true`);
+    eq(eng.spawn(12).length, 12, `${sp} spawns particles in predictive mode`);
+    eng.run(1200);
+    eq(eng.stats().arrived, 12, `${sp} predictive particles reach the target region`);
+    // uses this species' OWN anatomy depth bands (not rat's) -> not copied
+    ok(Math.abs(eng._bandById.get('dermis').start - ratDermisStart) > 1e-3, `${sp} uses its own dermis depth (not rat's)`);
   }
 
-  // --- species switching: an engine follows the selected species (gate + depths) ---
+  // --- species switching: engine follows the selection (evidence level + depths) ---
   const sw = new TransportEngine({ transportModel: tm, anatomyModel: new AnatomyModel(areg, { species: 'human' }), stateMachine: sm, evidenceEngine: evidence, species: 'human', seed: 12345 });
-  ok(sw.isBlocked(), 'starts blocked on human');
+  eq(sw.evidenceLevelName(), 'PREDICTIVE', 'starts Predictive on human');
+  ok(!sw.isBlocked(), 'human animates (predictive)');
   const humanDermis = { ...sw._bandById.get('dermis') };
   sw.anatomy.setSpecies('rat'); // anatomy follows selection first (as the app wires it)
   sw.setSpecies('rat');
-  ok(!sw.isBlocked(), 'unblocks when switched to rat');
+  eq(sw.evidenceLevelName(), 'EXPERIMENTAL', 'switches to Experimental on rat (modes do not mix)');
   const ratDermis = sw._bandById.get('dermis');
   ok(Math.abs(humanDermis.start - ratDermis.start) > 1e-3, 'barrier depths differ by species (species-driven)');
   sw.spawn(10); sw.run(1000);
@@ -121,25 +144,41 @@ export default async function run() {
   const summary = anim.runHeadless();
   ok(!summary.blocked, 'animator runs for rat');
   eq(summary.stats.arrived, 12, 'animator drives all particles to arrival');
-  const blockedAnim = new TransportAnimator({ engine: new TransportEngine({ transportModel: tm, anatomyModel: new AnatomyModel(areg, { species: 'human' }), stateMachine: sm, evidenceEngine: evidence, species: 'human' }), spawnCount: 12 });
-  ok(blockedAnim.runHeadless().blocked, 'animator is a no-op for a blocked species');
+  // UNAVAILABLE mode (third confidence mode): engine blocks; animator is a no-op.
+  const uReg = JSON.parse(JSON.stringify(treg));
+  uReg.species_transport.human.evidence_level = 'UNAVAILABLE';
+  uReg.species_transport.human.confidence = 'NOT_REPORTED';
+  const uModel = new TransportModel(uReg);
+  const uEng = new TransportEngine({ transportModel: uModel, anatomyModel: new AnatomyModel(areg, { species: 'human' }), stateMachine: sm, evidenceEngine: evidence, species: 'human' });
+  ok(uEng.isBlocked(), 'UNAVAILABLE species is blocked (third mode)');
+  eq(uEng.spawn(10).length, 0, 'UNAVAILABLE spawn is a no-op');
+  ok(new TransportAnimator({ engine: uEng, spawnCount: 12 }).runHeadless().blocked, 'animator is a no-op for an unavailable species');
 
-  // --- full app: transport wired, species-driven, renderer draws particles ---
+  // --- full app: transport wired, species-driven, evidence-labelled, renderer draws particles ---
   const app = await createApp({ fetcher: nodeFetcher(), mount: false });
   ok(app.transport && app.transport.engine, 'app exposes the transport engine');
-  ok(app.transport.isBlocked(), 'app default species (human) => transport blocked');
+  eq(app.transport.evidenceLevel(), 'PREDICTIVE', 'app default species (human) => Predictive mode');
+  ok(!app.transport.isBlocked(), 'human predictive transport animates');
+
   app.setSpecies('rat');
-  ok(!app.transport.isBlocked(), 'app.setSpecies(rat) unblocks transport (species-driven)');
+  eq(app.transport.evidenceLevel(), 'EXPERIMENTAL', 'app.setSpecies(rat) => Experimental (species-driven)');
   app.transport.spawn(12);
   app.transport.engine.run(1000);
   app.renderer.draw();
-  eq(app.transport.engine.stats().arrived, 12, 'app transport delivers particles to the target');
+  eq(app.transport.engine.stats().arrived, 12, 'rat (experimental) delivers particles to the target');
   ok(Array.isArray(app.renderer.lastParticleFrame) && app.renderer.lastParticleFrame.length === 12, 'renderer produced a particle frame');
   ok(app.renderer.lastParticleFrame.every((pt) => pt.x >= 0 && pt.x <= app.renderer.viewport.width && pt.y >= 0 && pt.y <= app.renderer.viewport.height), 'particles map inside the viewport');
   ok(app.renderer.lastLayout && app.renderer.lastLayout.bands.length >= 5, 'static anatomy still rendered beneath particles (unchanged)');
-  // switching to a blocked species clears transport (no fallback), anatomy still fine
+  ok(/Experimental/.test(app.panelModels.information.transportEvidence.message), 'info panel shows Experimental for rat');
+
+  // predictive species also delivers, via its OWN anatomy, clearly labelled - modes never mix
   app.setSpecies('mouse');
-  ok(app.transport.isBlocked(), 'switching to mouse re-blocks transport');
-  eq(app.transport.engine.particles.length, 0, 'mouse has no particles (cleared, no fallback)');
+  eq(app.transport.evidenceLevel(), 'PREDICTIVE', 'mouse => Predictive');
+  app.transport.spawn(12);
+  app.transport.engine.run(1200);
+  app.renderer.draw();
+  eq(app.transport.engine.stats().arrived, 12, 'mouse (predictive) delivers particles to the target');
+  ok(app.panelModels.information.transportEvidence && /Predictive/.test(app.panelModels.information.transportEvidence.message), 'info panel shows the Predictive evidence label for mouse');
   app.setSpecies('human');
+  eq(app.transport.evidenceLevel(), 'PREDICTIVE', 'human => Predictive; rat experimental record never overwritten');
 }

@@ -40,31 +40,60 @@ export class TransportModel {
     return Object.keys(this.mechanisms).filter((id) => (this.mechanisms[id].kind || '') !== 'EXCLUDED');
   }
 
-  /** Per-species transport support record. */
+  /** Per-species transport record. */
   speciesSupport(species) { return this.speciesTransport[species] || null; }
 
-  /** Is topical transport SUPPORTED by evidence for this species? (No fallback.) */
-  isSupportedForSpecies(species) {
+  /**
+   * Evidence Level for a species: 'EXPERIMENTAL' | 'PREDICTIVE' | 'UNAVAILABLE'.
+   * A species with no record is UNAVAILABLE (never silently promoted).
+   * @param {string} species
+   */
+  evidenceLevelFor(species) {
     const s = this.speciesSupport(species);
-    return !!(s && s.supported === true);
+    if (!s) return 'UNAVAILABLE';
+    if (s.evidence_level) return s.evidence_level;
+    return s.supported ? 'EXPERIMENTAL' : 'UNAVAILABLE';
+  }
+
+  isExperimental(species) { return this.evidenceLevelFor(species) === 'EXPERIMENTAL'; }
+  isPredictive(species) { return this.evidenceLevelFor(species) === 'PREDICTIVE'; }
+  isUnavailable(species) { return this.evidenceLevelFor(species) === 'UNAVAILABLE'; }
+
+  /** May this species animate at all? (EXPERIMENTAL or PREDICTIVE, not UNAVAILABLE.) */
+  canAnimateSpecies(species) { return this.evidenceLevelFor(species) !== 'UNAVAILABLE'; }
+
+  /** The species-facing Evidence Level message (UX). */
+  messageFor(species) {
+    const s = this.speciesSupport(species);
+    return (s && s.message) || `Evidence Level: ${this.evidenceLevelFor(species)}.`;
   }
 
   /**
    * Evidence descriptor for this species' transport, shaped for the EvidenceEngine.
-   * Unsupported species carry NOT_REPORTED so the canAnimate() gate blocks them.
+   * Confidence carries the mode: QUALITATIVELY_SUPPORTED (experimental),
+   * MECHANISTIC_TRANSFER (predictive), NOT_REPORTED (unavailable -> gate blocks).
+   * EXPERIMENTAL keeps its references; PREDICTIVE carries NONE (no rat fallback, no
+   * permeation citation claimed) - only principle_refs for transparency.
    * @param {string} species
    */
   evidenceForSpecies(species) {
     const s = this.speciesSupport(species);
+    const level = this.evidenceLevelFor(species);
     if (!s) {
-      return { confidence: 'NOT_REPORTED', referenceIds: [], species, limitations: [`no transport record for species '${species}'`] };
+      return { confidence: 'NOT_REPORTED', referenceIds: [], species, evidenceLevel: level, predictive: false, message: this.messageFor(species), limitations: [`no transport record for species '${species}'`] };
     }
+    const confidence = s.confidence
+      || (level === 'EXPERIMENTAL' ? 'QUALITATIVELY_SUPPORTED' : level === 'PREDICTIVE' ? 'MECHANISTIC_TRANSFER' : 'NOT_REPORTED');
     return {
-      confidence: s.confidence || (s.supported ? 'QUALITATIVELY_SUPPORTED' : 'NOT_REPORTED'),
-      referenceIds: s.referenceIds || [],
+      confidence,
+      referenceIds: level === 'EXPERIMENTAL' ? (s.referenceIds || []) : [],
+      principleRefs: s.principle_refs || [],
       species,
       model: s.context,
-      limitations: s.supported ? (s.notes ? [s.notes] : []) : [s.reason || 'NOT REPORTED'],
+      evidenceLevel: level,
+      predictive: level === 'PREDICTIVE',
+      message: this.messageFor(species),
+      limitations: level === 'UNAVAILABLE' ? [s.reason || 'NOT REPORTED'] : (s.notes ? [s.notes] : []),
     };
   }
 

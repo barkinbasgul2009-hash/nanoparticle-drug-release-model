@@ -49,13 +49,21 @@ export interface TransportBarrier {
   rationale: string;
 }
 
-/** Per-species transport support (evidence-gated; no fallback). */
+/** Evidence Level (Phase 3.1): how well a species' transport is supported. */
+export type EvidenceLevel = 'EXPERIMENTAL' | 'PREDICTIVE' | 'UNAVAILABLE';
+
+/** Per-species transport (evidence-gated + evidence-levelled; no fallback). */
 export interface SpeciesTransport {
   supported: boolean;
+  evidence_level: EvidenceLevel;
+  predictive?: boolean;
   context?: string;
-  referenceIds: string[];
-  confidence: Confidence;
-  reason?: string;               // present when unsupported (NOT REPORTED)
+  referenceIds: string[];        // EXPERIMENTAL only; PREDICTIVE carries none (no fallback)
+  principle_refs?: string[];     // PREDICTIVE: transparent general-principle basis
+  principle_basis?: string;
+  confidence: Confidence;        // QUALITATIVELY_SUPPORTED | MECHANISTIC_TRANSFER | NOT_REPORTED
+  message: string;               // species-facing evidence-level message (UX)
+  reason?: string;               // present when UNAVAILABLE
   notes?: string;
   tissue?: string;
   time_window_h?: [number, number];

@@ -69,3 +69,30 @@ become blocked with **no fallback**; the engine exposes `isBlocked()`, `blockRea
 The terminal state `target_region` is the hand-off point. Drug release, cell entry/uptake,
 endocytosis, payload diffusion, and PK/PD would attach *after* arrival — none exist yet, and the
 registry lists them under `integrity.excluded_downstream`.
+
+## Phase 3.1 update — Evidence Level layer
+Phase 3.1 adds an **Evidence Level** on top of the existing confidence gate, changing the choice
+from *available/blocked* to *Experimental / Predictive / Unavailable* — without weakening the
+gate.
+
+```
+transportModel.evidenceLevelFor(species)
+   EXPERIMENTAL  → confidence QUALITATIVELY_SUPPORTED → canAnimate=true  (rat)
+   PREDICTIVE    → confidence MECHANISTIC_TRANSFER    → canAnimate=true  (human, mouse)
+   UNAVAILABLE   → confidence NOT_REPORTED            → canAnimate=false (no profile)
+        │
+        ▼
+transportEngine  carries evidenceLevel + predictive flag; message()/evidenceLevelName()
+        │
+        ▼
+canvasRenderer   filled dots (experimental) vs outlined dots (predictive) + evidence caption
+uiPanels         information panel exposes { evidenceLevel, message }
+```
+
+- **`EVIDENCE_LEVELS`** lives in `evidence/evidenceEngine.js` (available throughout).
+- The level is **registry data** (`species_transport[*].evidence_level`), so it is auditable and
+  a future species is handled automatically: add anatomy + a transport record with a level.
+- **No new species coupling:** the engine still reads `anatomyModel.weightsForSpecies()` for
+  depth bands, so predictive species use their *own* anatomy — rat parameters are never copied.
+- **Mode isolation:** the active species selects its own level; experimental (rat) and predictive
+  (human/mouse) never mix, and experimental data is never overwritten by a prediction.

@@ -61,13 +61,22 @@ export class TransportEngine {
     // Target = centre of the dermis band (topical target tissue; no systemic stage).
     this.arrivalDepth = dermis ? (dermis.start + dermis.end) / 2 : 0.6;
     this.surfaceTop = 0; // first tissue band starts at depth 0
-    this.supported = this.transport.isSupportedForSpecies(this.species);
+    this.evidenceLevel = this.transport.evidenceLevelFor(this.species); // EXPERIMENTAL|PREDICTIVE|UNAVAILABLE
+    this.predictive = this.evidenceLevel === 'PREDICTIVE';
+    this.supported = this.transport.canAnimateSpecies(this.species);
     this._speciesEvidence = this.transport.evidenceForSpecies(this.species);
-    // The evidence gate: unsupported species must never animate.
+    // The evidence gate: EXPERIMENTAL + PREDICTIVE animate; UNAVAILABLE (NOT_REPORTED) is blocked.
     this.blocked = this.evidence
       ? !this.evidence.canAnimate(this._speciesEvidence)
       : !this.supported;
   }
+
+  /** Evidence Level of the active species (EXPERIMENTAL | PREDICTIVE | UNAVAILABLE). */
+  evidenceLevelName() { return this.evidenceLevel; }
+  isPredictive() { return this.predictive; }
+  isExperimental() { return this.evidenceLevel === 'EXPERIMENTAL'; }
+  /** Species-facing Evidence Level message (UX). */
+  message() { return this.transport.messageFor(this.species); }
 
   /** Switch species (species-driven; recomputes bands + gate; clears particles). */
   setSpecies(species) {

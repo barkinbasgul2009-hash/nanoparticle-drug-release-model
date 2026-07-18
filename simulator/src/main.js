@@ -138,8 +138,11 @@ export async function createApp(opts = {}) {
         spawn: (n) => engine.spawn(n),
         step: (dt) => engine.step(dt),
         isBlocked: () => engine.isBlocked(),
+        evidenceLevel: () => engine.evidenceLevelName(),
+        message: () => engine.message(),
+        isPredictive: () => engine.isPredictive(),
       };
-      logger.info('transport', `engine ready (species ${engine.species}: ${engine.isBlocked() ? 'BLOCKED - ' + engine.blockReason() : 'supported'})`);
+      logger.info('transport', `engine ready (species ${engine.species}: evidence ${engine.evidenceLevelName()}${engine.isBlocked() ? ' BLOCKED - ' + engine.blockReason() : ''})`);
     } catch (err) {
       logger.warn('load', 'transport registry not loaded', { err: String(err) });
     }
@@ -178,7 +181,12 @@ export async function createApp(opts = {}) {
     if (transport) transport.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
-    logger.info('anatomy', `species -> ${speciesId}`);
+    // Phase 3.1: refresh panels so the evidence-level label follows the species.
+    if (app.panelModels) {
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport });
+      renderAnatomyPanels(ui, app.panelModels);
+    }
+    logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
     bus.emit('anatomy:species', { species: speciesId });
     return speciesId;
   };
@@ -195,7 +203,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(),
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

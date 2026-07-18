@@ -89,16 +89,28 @@ export class CanvasRenderer {
     for (const l of labels) this.ctx.fillText(l.text, 8, l.y);
 
     // Phase 3: particles as flat muted dots (no glow, no trail, no gaming FX).
+    // Phase 3.1: EXPERIMENTAL = filled dots; PREDICTIVE = outlined (hollow) dots so
+    // the viewer can always tell which evidence mode is on screen.
     if (this.lastParticleFrame && this.lastParticleFrame.length) {
       const r = this.engine && this.engine.transport ? this.engine.transport.particleRadiusPx() : 3;
+      const predictive = !!(this.engine && this.engine.isPredictive && this.engine.isPredictive());
       this.ctx.fillStyle = this.particleColor;
+      this.ctx.strokeStyle = this.particleColor;
+      this.ctx.lineWidth = 1.5;
       for (const pt of this.lastParticleFrame) {
         this.ctx.globalAlpha = pt.status === 'arrived' ? 1 : 0.85;
         this.ctx.beginPath();
         this.ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
-        this.ctx.fill();
+        if (predictive) this.ctx.stroke(); else this.ctx.fill();
       }
       this.ctx.globalAlpha = 1;
+    }
+
+    // Phase 3.1: evidence-level caption (users must always know the mode).
+    if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+      this.ctx.font = '10px system-ui, sans-serif';
+      this.ctx.fillText(`Evidence: ${cap(this.engine.evidenceLevelName())}`, 8, this.viewport.height - 22);
     }
 
     if (this.showNotToScale && layout.notToScale) {
@@ -136,5 +148,8 @@ export class CanvasRenderer {
 
   _log(level, cat, msg, data) { if (this.logger && this.logger[level]) this.logger[level](cat, msg, data); }
 }
+
+/** Title-case an EVIDENCE_LEVEL for display (EXPERIMENTAL -> Experimental). */
+function cap(s) { return typeof s === 'string' && s.length ? s[0] + s.slice(1).toLowerCase() : s; }
 
 export default CanvasRenderer;

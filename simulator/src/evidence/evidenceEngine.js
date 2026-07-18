@@ -24,6 +24,16 @@ export const BLOCKED_FOR_ANIMATION = Object.freeze([
 ]);
 
 /**
+ * Evidence Level (Phase 3.1) - a species/feature-level classification layered on
+ * top of the per-item confidence vocabulary. EXPERIMENTAL always outranks
+ * PREDICTIVE; predictions are never presented as experimental observations.
+ */
+export const EVIDENCE_LEVELS = Object.freeze(['EXPERIMENTAL', 'PREDICTIVE', 'UNAVAILABLE']);
+
+/** Map an Evidence Level to whether it may animate. */
+export function levelAnimates(level) { return level === 'EXPERIMENTAL' || level === 'PREDICTIVE'; }
+
+/**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE
  * @property {string[]} referenceIds
