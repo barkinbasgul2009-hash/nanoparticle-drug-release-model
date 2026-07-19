@@ -21,6 +21,7 @@ export class TransportAnimator {
     this.uptakeEngine = deps.uptakeEngine || null;   // Phase 4B: separate uptake layer
     this.endocytosisEngine = deps.endocytosisEngine || null; // Phase 4C: separate endocytosis layer
     this.intracellularEngine = deps.intracellularEngine || null; // Phase 4D: separate intracellular layer
+    this.targetEngine = deps.targetEngine || null;   // Phase 5A: separate target-engagement layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -41,6 +42,7 @@ export class TransportAnimator {
     if (this.uptakeEngine) this.uptakeEngine.reset();
     if (this.endocytosisEngine) this.endocytosisEngine.reset();
     if (this.intracellularEngine) this.intracellularEngine.reset();
+    if (this.targetEngine) this.targetEngine.reset();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -71,6 +73,9 @@ export class TransportAnimator {
     // cytoplasmic carriers, diffuses it, degrades it, and (if supported) targets the
     // nucleus. It reads endocytosis/uptake read-only and never modifies them.
     if (this.intracellularEngine) events.push(...this.intracellularEngine.step(dtHours));
+    // Phase 5A: the SEPARATE target-engagement layer models drug-target binding. It
+    // reads intracellular drug read-only and never modifies it.
+    if (this.targetEngine) events.push(...this.targetEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -99,6 +104,7 @@ export class TransportAnimator {
       uptake: this.uptakeEngine ? this.uptakeEngine.stats() : null,
       endocytosis: this.endocytosisEngine ? this.endocytosisEngine.stats() : null,
       intracellular: this.intracellularEngine ? this.intracellularEngine.stats() : null,
+      targetEngagement: this.targetEngine ? this.targetEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

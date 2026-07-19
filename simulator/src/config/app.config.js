@@ -104,6 +104,12 @@ export const APP_CONFIG = Object.freeze({
   intracellularSources: Object.freeze({ intracellular: 'intracellular.registry.json' }),
   intracellular: Object.freeze({ formulationId: 'B1_nlc', seed: 9753 }),
 
+  // Phase 5A: target engagement (SEPARATE pharmacology layer; reads intracellular
+  // read-only). Targets/kon/koff/affinity come from the registry (B1 = NOT REPORTED
+  // -> idle); only the schematic encounter radius lives here. Binding only.
+  targetEngagementSources: Object.freeze({ targetEngagement: 'target-engagement.registry.json' }),
+  targetEngagement: Object.freeze({ formulationId: 'B1_nlc', seed: 8642 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

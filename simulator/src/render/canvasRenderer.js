@@ -26,12 +26,14 @@ export class CanvasRenderer {
     this.uptakeEngine = null;    // Phase 4B: UptakeEngine (free molecules + cells)
     this.endocytosisEngine = null; // Phase 4C: EndocytosisEngine (carrier fate)
     this.intracellularEngine = null; // Phase 4D: IntracellularReleaseEngine (nucleus + intra drug)
+    this.targetEngine = null;      // Phase 5A: TargetEngagementEngine (targets + binding)
     this.lastParticleFrame = null; // [{id,x,y,state,status,payload,releaseState}] for tests
     this.lastMoleculeFrame = null; // Phase 4B: [{id,x,y,compartment,alive}] for tests
     this.lastCellFrame = null;     // Phase 4B: [{id,x,y,r}] for tests
     this.lastEndocytosisFrame = null; // Phase 4C: [{carrierId,x,y,state,pathway,compartment,wrap}]
     this.lastNucleusFrame = null;  // Phase 4D: [{cellId,x,y,r}]
     this.lastIntracellularFrame = null; // Phase 4D: [{id,x,y,compartment,alive,target}]
+    this.lastTargetFrame = null;   // Phase 5A: [{id,x,y,type,occupancy,occupied,available}]
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -40,6 +42,8 @@ export class CanvasRenderer {
     this.nucleusFill = 'rgba(195,183,214,0.28)';
     this.nucleusColor = '#8b7aa8';
     this.compartmentColors = { early_endosome: '#bcd0a8', late_endosome: '#a8bcd0', lysosome: '#d0a8bc' };
+    this.targetColor = '#4b6b57';
+    this.boundDrugColor = '#a83c3c';
   }
 
   /** @param {import('../anatomy/anatomyModel.js').AnatomyModel} model */
@@ -56,6 +60,8 @@ export class CanvasRenderer {
   setEndocytosisEngine(endocytosisEngine) { this.endocytosisEngine = endocytosisEngine; return this; }
   /** Phase 4D: attach the intracellular engine so nucleus + intracellular drug are drawn. */
   setIntracellularEngine(intracellularEngine) { this.intracellularEngine = intracellularEngine; return this; }
+  /** Phase 5A: attach the target-engagement engine so targets + bound drug are drawn. */
+  setTargetEngagementEngine(targetEngine) { this.targetEngine = targetEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -98,6 +104,8 @@ export class CanvasRenderer {
     // Phase 4D: nucleus + intracellular drug frames.
     this.lastNucleusFrame = this._nucleusFrame();
     this.lastIntracellularFrame = this._intracellularFrame(layout);
+    // Phase 5A: molecular targets + binding frame.
+    this.lastTargetFrame = this._targetFrame(layout);
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -232,6 +240,7 @@ export class CanvasRenderer {
     // subtle tick toward the nucleus when targeting is active. Degraded molecules fade.
     if (this.lastIntracellularFrame && this.lastIntracellularFrame.length) {
       for (const mo of this.lastIntracellularFrame) {
+        if (this.targetEngine && this.targetEngine.isBound && this.targetEngine.isBound(mo.id)) continue; // drawn bound at its target
         this.ctx.globalAlpha = mo.alive ? (mo.compartment === 'nuclear_membrane' ? 1 : 0.85) : 0.25;
         this.ctx.fillStyle = this.intracellularColor;
         this.ctx.beginPath();
@@ -239,6 +248,36 @@ export class CanvasRenderer {
         this.ctx.fill();
       }
       this.ctx.globalAlpha = 1;
+    }
+
+    // Phase 5A: molecular targets (schematic proteins) with an occupancy halo + bound drug.
+    if (this.lastTargetFrame && this.lastTargetFrame.length) {
+      for (const t of this.lastTargetFrame) {
+        // occupancy halo (ring fraction reflects occupancy)
+        if (t.occupancy > 0) {
+          this.ctx.strokeStyle = this.boundDrugColor;
+          this.ctx.lineWidth = 1.6;
+          this.ctx.beginPath();
+          this.ctx.arc(t.x, t.y, 4.5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * t.occupancy);
+          this.ctx.stroke();
+        }
+        // schematic protein glyph (small square)
+        this.ctx.fillStyle = this.targetColor;
+        this.ctx.fillRect(t.x - 2.2, t.y - 2.2, 4.4, 4.4);
+        // bound drug dot on occupied targets
+        if (t.occupied > 0) {
+          this.ctx.fillStyle = this.boundDrugColor;
+          this.ctx.beginPath();
+          this.ctx.arc(t.x, t.y, 1.4, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+      // saturation caption
+      if (this.targetEngine && this.targetEngine.targets && this.targetEngine.targets.length) {
+        this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+        this.ctx.font = '10px system-ui, sans-serif';
+        this.ctx.fillText(`Target occupancy: ${this.targetEngine.saturationBucket()}%`, 8, this.viewport.height - 36);
+      }
     }
 
     // Phase 3.1: evidence-level caption (users must always know the mode).
@@ -341,6 +380,22 @@ CanvasRenderer.prototype._intracellularFrame = function _intracellularFrame(layo
   const H = this.viewport.height; const W = this.viewport.width;
   const yOf = (u) => Math.max(0, Math.min(1, ((band.start + u * span) - wTop) / win)) * H;
   return eng.molecules.map((m) => ({ id: m.id, x: m.x * W, y: yOf(m.u), compartment: m.compartment, alive: m.alive, target: m.targetCompartment }));
+};
+
+// Phase 5A: molecular targets mapped into pixel space via the dermis band.
+CanvasRenderer.prototype._targetFrame = function _targetFrame(layout) {
+  const eng = this.targetEngine;
+  if (!eng || !eng.targets || !eng.targets.length) return [];
+  const band = (this.engine && this.engine.layerBands ? this.engine.layerBands : []).find((b) => b.id === 'dermis') || { start: 0.3, end: 0.7 };
+  const span = Math.max(1e-6, band.end - band.start);
+  const [wTop, wBot] = layout.window || [0, 1];
+  const win = Math.max(1e-6, wBot - wTop);
+  const H = this.viewport.height; const W = this.viewport.width;
+  const yOf = (u) => Math.max(0, Math.min(1, ((band.start + u * span) - wTop) / win)) * H;
+  return eng.targets.map((t) => ({
+    id: t.id, x: t.x * W, y: yOf(t.u), type: t.type, compartment: t.compartment,
+    occupancy: t.occupancy(), occupied: t.occupiedSites, available: t.availableSites,
+  }));
 };
 
 // Phase 4B micro-frame helper attached to the prototype below (kept out of draw()).

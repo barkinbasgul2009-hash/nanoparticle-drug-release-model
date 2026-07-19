@@ -237,3 +237,37 @@ biology/transportAnimator.js  steps the intracellular layer AFTER endocytosis ea
   Endocytosis / Intracellular Trafficking / Intracellular Release.
 - `integrity.forbidden` lists 30 downstream structures (DNA/RNA, transcription, translation, PD,
   PK, apoptosis, nuclear-pore transport, …) that remain unimplemented.
+
+## Phase 5A update — Target engagement (first pharmacology layer, separate)
+A **sixth independent layer** is added after intracellular release: molecular recognition (binding)
+only. It asks whether the drug binds its target and stops there.
+
+```
+data/target-engagement.registry.json  (target types, binding models, affinity metrics, prediction labels, per-formulation profile, species evidence, integrity)
+        │
+        ├─ biology/targetProtein.js            schematic molecular target (individual protein)
+        └─ biology/targetEngagementEngine.js    encounter -> binding -> occupancy -> (reversible) dissociation
+                    │  reads (read-only) intracellularEngine.molecules + uptakeEngine.cells
+                    ▼
+render/canvasRenderer.js  schematic proteins + occupancy halo + bound-drug dots + occupancy caption
+biology/transportAnimator.js  steps the target-engagement layer AFTER intracellular release each tick
+```
+
+**Separation guarantees**
+- Reads the intracellular/uptake outputs read-only; modifies no upstream engine. Binding state
+  lives only here; the Phase-4D molecule is never modified (the renderer reconciles a bound drug at
+  its target at draw time).
+- Binding begins **only** on physical encounter (schematic reaction radius) — no attraction, no
+  teleportation. Occupancy never exceeds capacity; irreversible never dissociates; nuclear targets
+  require Phase-4D nucleus targeting.
+- Seven layers now stay separate: **Transport / Release / Diffusion / Passive Uptake / Endocytosis
+  / Intracellular Release / Target Engagement**.
+
+**Evidence & prediction**
+- A finer **prediction-label** vocabulary (`PREDICTION_LABELS`: Experimental / High-confidence /
+  Mechanistic / Literature-derived Prediction / Unavailable / Not Reported) is added; a prediction
+  is always labelled and never shown as experimental, and Kd/Ki/IC50/kon/koff are never fabricated.
+- For B1 the target and binding constants are **NOT REPORTED** → the layer is idle. The evidence
+  panel now exposes **seven** levels (… + Target Engagement).
+- `integrity.forbidden` lists 24 downstream structures (signalling, kinase cascades, transcription,
+  apoptosis, PD downstream, tumour response, …) that remain unimplemented.

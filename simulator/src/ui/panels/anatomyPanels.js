@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -41,6 +41,8 @@ export function buildAnatomyPanelModels(deps) {
   const traffickingLevel = endocytosis && endocytosis.engine ? endocytosis.engine.traffickingLevelName() : null;
   // Phase 4D: intracellular release evidence level (B1 = NOT_REPORTED).
   const intracellularLevel = intracellular && intracellular.engine ? intracellular.engine.evidenceLevelName() : null;
+  // Phase 5A: target engagement evidence level / prediction label (B1 = NOT_REPORTED).
+  const targetLevel = targetEngagement && targetEngagement.engine ? targetEngagement.engine.evidenceLevelName() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -48,14 +50,25 @@ export function buildAnatomyPanelModels(deps) {
     endocytosis: endocytosisLevel,
     intracellularTrafficking: traffickingLevel,
     intracellularRelease: intracellularLevel,
+    targetEngagement: targetLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
       endocytosis: endocytosis && endocytosis.engine ? endocytosis.engine.message() : null,
       intracellularTrafficking: endocytosis && endocytosis.engine ? endocytosis.engine.traffickingMessage() : null,
       intracellularRelease: intracellular && intracellular.engine ? intracellular.engine.message() : null,
+      targetEngagement: targetEngagement && targetEngagement.engine ? targetEngagement.engine.message() : null,
     },
   };
+  // Phase 5A: target engagement status (data only).
+  const targetInfo = targetEngagement && targetEngagement.engine ? {
+    level: targetEngagement.engine.evidenceLevelName(),
+    predicted: targetEngagement.engine.isPredicted(),
+    targets: targetEngagement.engine.stats().targets,
+    bound: targetEngagement.engine.stats().bound,
+    saturation: targetEngagement.engine.stats().saturation,
+    saturationBucket: targetEngagement.engine.saturationBucket(),
+  } : null;
   // Phase 4D: intracellular status (data only).
   const intracellularInfo = intracellular && intracellular.engine ? {
     level: intracellular.engine.evidenceLevelName(),
@@ -96,6 +109,7 @@ export function buildAnatomyPanelModels(deps) {
       uptake: uptakeInfo,
       endocytosis: endocytosisInfo,
       intracellular: intracellularInfo,
+      targetEngagement: targetInfo,
     },
     navigation: {
       title: 'Navigation',

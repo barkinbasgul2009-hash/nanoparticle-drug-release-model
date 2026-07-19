@@ -35,6 +35,33 @@ export const EVIDENCE_LEVELS = Object.freeze(['EXPERIMENTAL', 'PREDICTIVE', 'UNA
 /** Map an Evidence Level to whether it may animate. Only EXPERIMENTAL + PREDICTIVE do. */
 export function levelAnimates(level) { return level === 'EXPERIMENTAL' || level === 'PREDICTIVE'; }
 
+// Phase 5A prediction labels - a finer vocabulary for the pharmacology layer. A
+// prediction is acceptable ONLY when explicitly labelled; it is never presented as an
+// experimental fact. EXPERIMENTAL + the three PREDICTION labels animate; the rest do not.
+export const PREDICTION_LABELS = Object.freeze([
+  'EXPERIMENTAL',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'LITERATURE_PREDICTION',
+  'UNAVAILABLE',
+  'NOT_REPORTED',
+]);
+
+/** True if a prediction label is a real prediction/experimental result (animates). */
+export function labelAnimates(label) {
+  return label === 'EXPERIMENTAL'
+    || label === 'HIGH_CONFIDENCE_PREDICTION'
+    || label === 'MECHANISTIC_PREDICTION'
+    || label === 'LITERATURE_PREDICTION';
+}
+
+/** True if a prediction label denotes a prediction (not an experimental result). */
+export function isPrediction(label) {
+  return label === 'HIGH_CONFIDENCE_PREDICTION'
+    || label === 'MECHANISTIC_PREDICTION'
+    || label === 'LITERATURE_PREDICTION';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

@@ -15,10 +15,11 @@ import release from './release.test.mjs';
 import uptake from './uptake.test.mjs';
 import endocytosis from './endocytosis.test.mjs';
 import intracellular from './intracellular.test.mjs';
+import targetEngagement from './targetEngagement.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement,
 ];
 
 for (const suite of suites) {

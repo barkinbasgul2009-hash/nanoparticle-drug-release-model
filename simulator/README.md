@@ -1,4 +1,4 @@
-# Profile-B Simulator — Phases 1–4D
+# Profile-B Simulator — Phases 1–5A
 
 This directory is the Profile-B animation simulator. It is completely separate from the
 project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untouched.
@@ -87,6 +87,18 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   RNA, transcription, PD, PK, apoptosis, nuclear-pore transport, or any downstream biology. Docs:
   `docs/profile-b-simulator-phase4d-implementation.md`, `docs/intracellular-drug-release.md`,
   `docs/intracellular-drug-evidence-review.md`, `docs/profile-b-phase4d-validation-report.md`.
+- **Phase 5A — Target engagement (first pharmacology layer, separate):** molecular recognition
+  only — schematic molecular **targets** (enzyme/receptor/etc., in cytoplasm or nucleus), drug–
+  target **encounter** (proximity only, no attraction), **reversible** (kon/koff) + **irreversible**
+  binding, **occupancy / saturation / residence time**, and **competition** (first bound occupies,
+  others keep diffusing). Nuclear targets require Phase-4D nucleus targeting. Affinity (Kd/Ki/IC50)
+  only if evidence, else a labelled **prediction** or **Not Reported** — never fabricated (see the
+  prediction-label vocabulary). For the **B1 NLC** the target + binding are **NOT REPORTED**, so the
+  layer is honestly **idle**. The evidence panel now shows **seven** levels (… + Target Engagement).
+  **Stops at binding** — no signalling, PD downstream, apoptosis, or any response. Docs:
+  `docs/profile-b-simulator-phase5a-implementation.md`, `docs/target-engagement.md`,
+  `docs/target-binding-evidence-review.md`, `docs/prediction-framework.md`,
+  `docs/phase5a-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

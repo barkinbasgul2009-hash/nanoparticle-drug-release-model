@@ -38,6 +38,7 @@ import { EndocytosisFSM } from './biology/endocytosisStates.js';
 import { EndocytosisEngine } from './biology/endocytosisEngine.js';
 import { IntracellularReleaseModel } from './biology/intracellularReleaseModel.js';
 import { IntracellularReleaseEngine } from './biology/intracellularReleaseEngine.js';
+import { TargetEngagementEngine } from './biology/targetEngagementEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -128,6 +129,7 @@ export async function createApp(opts = {}) {
   let uptake = null; // Phase 4B: cellular microenvironment + passive uptake layer
   let endocytosis = null; // Phase 4C: endocytosis + intracellular trafficking layer
   let intracellular = null; // Phase 4D: intracellular drug release layer
+  let targetEngagement = null; // Phase 5A: target engagement (pharmacology) layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -241,11 +243,37 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 5A: target engagement - the first pharmacology layer. Reads the
+      // intracellular drug read-only; models molecular recognition (binding) only.
+      // For B1 target identity + binding are NOT REPORTED (idle).
+      if (intracellular) {
+        try {
+          const tgtReg = await anatomyLoader.load(config.targetEngagementSources.targetEngagement, 'generic');
+          const tgtEngine = new TargetEngagementEngine({
+            registry: tgtReg, intracellularEngine: intracellular.engine, uptakeEngine: uptake.engine,
+            evidenceEngine: evidence, species: engine.species,
+            formulationId: config.targetEngagement && config.targetEngagement.formulationId,
+            seed: config.targetEngagement && config.targetEngagement.seed, logger,
+          });
+          if (renderer.setTargetEngagementEngine) renderer.setTargetEngagementEngine(tgtEngine);
+          targetEngagement = {
+            engine: tgtEngine,
+            step: (dt) => tgtEngine.step(dt),
+            stats: () => tgtEngine.stats(),
+            reset: () => tgtEngine.reset(),
+            evidenceLevel: () => tgtEngine.evidenceLevelName(),
+          };
+        } catch (err) {
+          logger.warn('load', 'target-engagement registry not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
         endocytosisEngine: endocytosis ? endocytosis.engine : null,
-        intracellularEngine: intracellular ? intracellular.engine : null, renderer, logger,
+        intracellularEngine: intracellular ? intracellular.engine : null,
+        targetEngine: targetEngagement ? targetEngagement.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -294,6 +322,8 @@ export async function createApp(opts = {}) {
     endocytosis,
     // Phase 4D addition (may be null if the intracellular registry failed to load):
     intracellular,
+    // Phase 5A addition (may be null if the target-engagement registry failed to load):
+    targetEngagement,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -312,11 +342,12 @@ export async function createApp(opts = {}) {
     if (uptake) uptake.engine.setSpecies(speciesId);
     if (endocytosis) endocytosis.engine.setSpecies(speciesId);
     if (intracellular) intracellular.engine.setSpecies(speciesId);
+    if (targetEngagement) targetEngagement.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -336,7 +367,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

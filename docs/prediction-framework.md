@@ -1,0 +1,49 @@
+# Profile-B — Prediction Framework (Phase 5A)
+
+The pharmacology layers introduce parameters (affinities, rates) that are often not measured for a
+specific formulation. Prediction is **allowed** — but only when **explicitly labelled**, and never
+presented as an experimental fact. This document defines the label vocabulary and how it is applied.
+
+## Label vocabulary (`PREDICTION_LABELS`)
+| Label | Meaning | Animates? |
+|---|---|---|
+| **EXPERIMENTAL** | measured for this formulation | yes |
+| **HIGH_CONFIDENCE_PREDICTION** | strongly supported prediction (close analogue / robust model) | yes |
+| **MECHANISTIC_PREDICTION** | prediction from a general binding mechanism | yes |
+| **LITERATURE_PREDICTION** | prediction derived from separate literature (not this formulation) | yes |
+| **UNAVAILABLE** | no profile / cannot animate | no |
+| **NOT_REPORTED** | not reported for this formulation (idle) | no |
+
+Helpers in `simulator/src/evidence/evidenceEngine.js`:
+- `labelAnimates(label)` — true for EXPERIMENTAL + the three prediction labels.
+- `isPrediction(label)` — true only for the three prediction labels (used to flag "this is a
+  prediction, not a fact").
+
+## Relationship to the Evidence Level system
+The earlier phases use the coarser `EVIDENCE_LEVELS` (EXPERIMENTAL / PREDICTIVE / UNAVAILABLE /
+NOT_REPORTED). The prediction labels are a **finer** vocabulary for the pharmacology layer: the
+single `PREDICTIVE` level is split into three prediction *strengths* so the viewer can see *how*
+supported a prediction is. `UNAVAILABLE` and `NOT_REPORTED` keep their meaning (neither animates).
+
+## Rules
+1. **A prediction is always labelled.** Any behaviour driven by a predicted parameter carries one
+   of the three prediction labels; it is never shown as EXPERIMENTAL.
+2. **No fabricated numbers.** Kd / Ki / IC50 / kon / koff are shown only when evidence exists;
+   otherwise the behaviour is a labelled prediction or NOT REPORTED. A missing value is never
+   replaced by an invented number.
+3. **Experimental outranks prediction.** Where a formulation *does* have measured data, it is
+   labelled EXPERIMENTAL and predictions never override it.
+4. **Not reported stays not reported.** If neither data nor a defensible prediction exists, the
+   behaviour is NOT REPORTED and the engine stays idle (this is the B1 target-engagement case).
+
+## Application in Phase 5A
+- The B1 NLC has **no** reported molecular target or binding constants → target engagement is
+  **NOT_REPORTED** for all species (idle). Nothing is invented.
+- The engine and tests demonstrate the prediction labels using **test-only** patched profiles
+  (e.g. `MECHANISTIC_PREDICTION` binding) — clearly labelled predictions, never committed to the
+  real registry as experimental fact.
+
+## Auditing
+Every predicted value's label lives in the registry (`formulations.*.binding.evidence_level`,
+`species_target.*.evidence_level`) so a reviewer can confirm that (a) no prediction is presented as
+experimental, and (b) no numeric value was fabricated.
