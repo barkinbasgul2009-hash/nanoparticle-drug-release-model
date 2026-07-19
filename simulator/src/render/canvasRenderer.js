@@ -36,6 +36,7 @@ export class CanvasRenderer {
     this.lastTargetFrame = null;   // Phase 5A: [{id,x,y,type,occupancy,occupied,available}]
     this.lastSignalFrame = null;      // Phase 5B.2: signaling nodes (activity/state/predicted/visible)
     this.lastSignalEdgeFrame = null;  // Phase 5B.2: signaling edges (flowing/active/predicted/visible)
+    this.lastTranscriptionFrame = null; // Phase 5C: { tfs, promoters, genes } gene-regulation diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -66,6 +67,8 @@ export class CanvasRenderer {
   setTargetEngagementEngine(targetEngine) { this.targetEngine = targetEngine; return this; }
   /** Phase 5B.2: attach the signal-propagation engine so the pathway diagram is drawn. */
   setSignalPropagationEngine(signalEngine) { this.signalEngine = signalEngine; return this; }
+  /** Phase 5C: attach the transcription engine so the gene-regulation diagram is drawn. */
+  setTranscriptionEngine(transcriptionEngine) { this.transcriptionEngine = transcriptionEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -114,6 +117,8 @@ export class CanvasRenderer {
     const sig = this._signalFrames();
     this.lastSignalFrame = sig.nodes;
     this.lastSignalEdgeFrame = sig.edges;
+    // Phase 5C: gene-regulation / transcription diagram frame (headless-testable).
+    this.lastTranscriptionFrame = this._transcriptionFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -321,6 +326,37 @@ export class CanvasRenderer {
       this.ctx.fillText(`Signaling overlay: ${this.signalEngine ? this.signalEngine.overlay() : 'combined'} - t=${this.signalEngine ? this.signalEngine.timeH.toFixed(1) : 0}h`, 8, this.viewport.height - 50);
     }
 
+    // Phase 5C: gene-regulation diagram (TF -> promoter -> gene, with mRNA). Schematic.
+    const tf = this.lastTranscriptionFrame;
+    if (tf && (tf.genes.length || tf.tfs.length)) {
+      // transcription factors (violet = predicted; state label)
+      for (const f of tf.tfs) {
+        this.ctx.globalAlpha = 0.35 + 0.6 * Math.max(0, Math.min(1, f.activity));
+        this.ctx.fillStyle = f.location === 'nucleus' ? '#6a4bab' : '#9a8fc0';
+        this.ctx.beginPath(); this.ctx.arc(f.x, f.y, 6, 0, Math.PI * 2);
+        if (f.predicted) { this.ctx.globalAlpha = 1; this.ctx.strokeStyle = '#6a4bab'; this.ctx.lineWidth = 1.4; this.ctx.stroke(); } else this.ctx.fill();
+        this.ctx.globalAlpha = 1; this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+        this.ctx.fillText(`⌁ ${f.name} (${f.state})`, f.x - 6, f.y - 8);
+      }
+      // promoters (occupancy ring)
+      for (const pr of tf.promoters) {
+        this.ctx.strokeStyle = '#4b6b57'; this.ctx.lineWidth = 1.6;
+        this.ctx.beginPath(); this.ctx.arc(pr.x, pr.y, 4.5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr.occupancy); this.ctx.stroke();
+        this.ctx.fillStyle = '#4b6b57'; this.ctx.fillRect(pr.x - 2, pr.y - 2, 4, 4);
+      }
+      // genes (glow ~ expression) + emerging mRNA dot
+      for (const g of tf.genes) {
+        this.ctx.globalAlpha = 0.3 + 0.6 * Math.max(0, Math.min(1, g.glow));
+        this.ctx.fillStyle = '#b5843c';
+        this.ctx.beginPath(); this.ctx.arc(g.x, g.y, 7, 0, Math.PI * 2); this.ctx.fill();
+        this.ctx.globalAlpha = 1; this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+        this.ctx.fillText(`⌁ ${g.symbol} ${g.expressionState}%`, g.x - 7, g.y - 9);
+        if (g.mrna && g.mrna.level > 0.05) { this.ctx.fillStyle = '#a83c6b'; this.ctx.beginPath(); this.ctx.arc(g.x + 10, g.y, 1.6, 0, Math.PI * 2); this.ctx.fill(); }
+      }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '10px system-ui, sans-serif';
+      this.ctx.fillText('Gene regulation (predicted) - stops at mRNA', 8, this.viewport.height - 62);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -500,6 +536,27 @@ CanvasRenderer.prototype._signalFrames = function _signalFrames() {
     };
   });
   return { nodes, edges };
+};
+
+// Phase 5C gene-regulation / transcription diagram frame. Publication style, schematic:
+// TFs -> promoters -> genes on a col/row grid in a reserved band above the signaling band,
+// gene glow ~ expression, promoter occupancy ring, mRNA dots, prediction styling. Derived
+// entirely from the transcription engine (read-only). No artistic DNA.
+CanvasRenderer.prototype._transcriptionFrame = function _transcriptionFrame() {
+  const eng = this.transcriptionEngine;
+  if (!eng || eng.isIdle()) return { tfs: [], promoters: [], genes: [] };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const all = [...f.tfs, ...f.promoters, ...f.genes];
+  const cols = Math.max(1, ...all.map((n) => (n.layout && n.layout.col) || 0)) + 1;
+  const rows = Math.max(1, ...all.map((n) => (n.layout && n.layout.row) || 0)) + 1;
+  const panelTop = H * 0.48; const panelH = H * 0.22;   // reserved band above the signaling diagram
+  const xOf = (c) => (0.08 + 0.84 * (cols > 1 ? c / (cols - 1) : 0.5)) * W;
+  const yOf = (r) => panelTop + (rows > 1 ? r / (rows - 1) : 0.5) * panelH;
+  const tfs = f.tfs.map((tf) => ({ id: tf.id, name: tf.name, x: xOf(tf.layout.col), y: yOf(tf.layout.row), state: tf.state, location: tf.location, activity: tf.activity, predicted: tf.predicted, predictionLevel: tf.predictionLevel }));
+  const promoters = f.promoters.map((pr) => ({ id: pr.id, x: xOf(pr.layout.col), y: yOf(pr.layout.row), occupancy: pr.occupancy, responseElement: pr.responseElement, chromatin: pr.chromatin, predicted: true }));
+  const genes = f.genes.map((g) => ({ id: g.id, symbol: g.symbol, x: xOf(g.layout.col), y: yOf(g.layout.row), expressionState: g.expressionState, glow: g.expressionFrac, polymerase: g.polymerase, predicted: g.predicted, predictionLevel: g.predictionLevel, mrna: g.mrna ? { copyState: g.mrna.copyState, level: g.mrna.level } : null }));
+  return { tfs, promoters, genes };
 };
 
 export default CanvasRenderer;

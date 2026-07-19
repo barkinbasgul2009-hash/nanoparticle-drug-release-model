@@ -117,6 +117,30 @@ export function isRuntimeExperimental(level) { return level === 'EXPERIMENTAL'; 
 /** Valid runtime prediction level? */
 export function isRuntimePredictionLevel(level) { return SIGNAL_PREDICTION_LEVELS.includes(level); }
 
+// Phase 5C GENE-REGULATION / TRANSCRIPTION evidence vocabulary. ADDITIVE - does not
+// modify any earlier array. Applied to transcription factors, promoters, genes and mRNA.
+// EXPERIMENTAL always outranks every prediction; a prediction never overwrites evidence.
+// NOT_REPORTED is the honest empty state (e.g. Profile-B rat/mouse transcription).
+export const GENE_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL',
+  'HIGH_CONFIDENCE',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+]);
+
+const _GENE_PREDICTION = new Set([
+  'HIGH_CONFIDENCE', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid gene/transcription evidence level? */
+export function isGeneEvidenceLevel(level) { return GENE_EVIDENCE_LEVELS.includes(level); }
+/** True if a gene evidence level is experimental (outranks predictions). */
+export function isGeneExperimental(level) { return level === 'EXPERIMENTAL'; }
+/** True if a gene evidence level is a labelled prediction (never presented as experimental). */
+export function isGenePrediction(level) { return _GENE_PREDICTION.has(level); }
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

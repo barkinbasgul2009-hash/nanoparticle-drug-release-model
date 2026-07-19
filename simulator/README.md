@@ -135,6 +135,25 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   tumour/toxicity. Docs: `docs/profile-b-simulator-phase5b2-implementation.md`,
   `docs/signal-propagation.md`, `docs/signal-animation.md`, `docs/signal-timeline.md`,
   `docs/phase5b2-validation-report.md`.
+- **Phase 5C — Gene regulation & transcription runtime (first response after signaling):**
+  a new `TranscriptionEngine` reads the 5B.2 signal output + a transcription registry
+  **read-only** and drives **TF activation → nuclear translocation → DNA promoter binding →
+  gene transcription → mRNA** — and **stops at mRNA**. Objects: `TranscriptionFactor`,
+  `PromoterRegion`, `Gene`, `MessengerRNA`. Human HaCaT: Nrf2 → ARE → **HMOX1 + NQO1**
+  (one TF → multiple genes) induced 25%→50% after a transcription **delay**; NF-κB is
+  drug-**suppressed** so the inflammatory gene falls 50%→25% (multiple TFs on one promoter
+  = competition/cooperation, with Nrf2 cross-repression). Expression is a schematic level
+  `{0,25,50,75,100}`; mRNA is a **copy state** (none/low/moderate/high) with half-life
+  **NOT_REPORTED**. Mouse/rat are **NOT_REPORTED** (idle; no TF node / no evidence; no
+  transfer). Nothing is EXPERIMENTAL without a real reference; gene regulation is mostly a
+  **labelled prediction** (`GENE_EVIDENCE_LEVELS` adds `HIGH_CONFIDENCE` + `HYPOTHESIS`);
+  no DOI/fold-change/kinetic/RNA-copy-number/protein-abundance is fabricated. Deterministic;
+  renderer draws a schematic gene-regulation diagram; the evidence panel shows a **ninth**
+  section. **Stops at mRNA** — no translation/protein/enzyme/metabolism/cell-cycle/
+  apoptosis/immune/tissue/PK/PD/toxicity. Docs:
+  `docs/profile-b-simulator-phase5c-implementation.md`,
+  `docs/gene-regulation-transcription.md`, `docs/transcription-evidence-review.md`,
+  `docs/phase5c-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

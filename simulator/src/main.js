@@ -41,6 +41,7 @@ import { IntracellularReleaseEngine } from './biology/intracellularReleaseEngine
 import { TargetEngagementEngine } from './biology/targetEngagementEngine.js';
 import { loadSignalGraph } from './biology/signalGraph.js';
 import { SignalPropagationEngine } from './biology/signalPropagationEngine.js';
+import { TranscriptionEngine } from './biology/transcriptionEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -133,6 +134,7 @@ export async function createApp(opts = {}) {
   let intracellular = null; // Phase 4D: intracellular drug release layer
   let targetEngagement = null; // Phase 5A: target engagement (pharmacology) layer
   let signalPropagation = null; // Phase 5B.2: signal propagation (runtime signaling) layer
+  let transcription = null; // Phase 5C: gene regulation / transcription (runtime) layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -303,13 +305,39 @@ export async function createApp(opts = {}) {
         logger.warn('load', 'signal-propagation not loaded', { err: String(err) });
       }
 
+      // Phase 5C: transcription - the first biological RESPONSE downstream of signaling.
+      // Reads the signal-propagation output + transcription registry read-only and drives
+      // TF activation -> nuclear translocation -> DNA binding -> gene transcription -> mRNA.
+      if (signalPropagation) {
+        try {
+          const txReg = await anatomyLoader.load(config.transcriptionSources.transcription, 'generic');
+          const txEngine = new TranscriptionEngine({
+            registry: txReg, signalEngine: signalPropagation.engine, species: engine.species, logger,
+          });
+          if (renderer.setTranscriptionEngine) renderer.setTranscriptionEngine(txEngine);
+          transcription = {
+            engine: txEngine,
+            step: (dt) => txEngine.step(dt),
+            run: (steps, dt) => txEngine.run(steps, dt),
+            stats: () => txEngine.stats(),
+            frame: () => txEngine.frame(),
+            timeline: () => txEngine.getTimeline(),
+            restart: () => txEngine.restart(),
+            validate: () => txEngine.validate(),
+          };
+        } catch (err) {
+          logger.warn('load', 'transcription not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
         endocytosisEngine: endocytosis ? endocytosis.engine : null,
         intracellularEngine: intracellular ? intracellular.engine : null,
         targetEngine: targetEngagement ? targetEngagement.engine : null,
-        signalEngine: signalPropagation ? signalPropagation.engine : null, renderer, logger,
+        signalEngine: signalPropagation ? signalPropagation.engine : null,
+        transcriptionEngine: transcription ? transcription.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -362,6 +390,8 @@ export async function createApp(opts = {}) {
     targetEngagement,
     // Phase 5B.2 addition (may be null if the signal-propagation registry failed to load):
     signalPropagation,
+    // Phase 5C addition (may be null if the transcription registry failed to load):
+    transcription,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -382,11 +412,12 @@ export async function createApp(opts = {}) {
     if (intracellular) intracellular.engine.setSpecies(speciesId);
     if (targetEngagement) targetEngagement.engine.setSpecies(speciesId);
     if (signalPropagation) signalPropagation.engine.setSpecies(speciesId);
+    if (transcription) transcription.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -406,7 +437,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

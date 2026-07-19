@@ -23,6 +23,7 @@ export class TransportAnimator {
     this.intracellularEngine = deps.intracellularEngine || null; // Phase 4D: separate intracellular layer
     this.targetEngine = deps.targetEngine || null;   // Phase 5A: separate target-engagement layer
     this.signalEngine = deps.signalEngine || null;   // Phase 5B.2: separate signal-propagation layer
+    this.transcriptionEngine = deps.transcriptionEngine || null; // Phase 5C: separate transcription layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -45,6 +46,7 @@ export class TransportAnimator {
     if (this.intracellularEngine) this.intracellularEngine.reset();
     if (this.targetEngine) this.targetEngine.reset();
     if (this.signalEngine) this.signalEngine.restart();
+    if (this.transcriptionEngine) this.transcriptionEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -82,6 +84,10 @@ export class TransportAnimator {
     // (activation/suppression/feedback/predictions). It reads the frozen graph +
     // runtime registry read-only and modifies no upstream engine.
     if (this.signalEngine) events.push(...this.signalEngine.step(dtHours));
+    // Phase 5C: the SEPARATE transcription layer advances gene regulation (TF activation ->
+    // nuclear import -> DNA binding -> transcription -> mRNA). It reads the signal output
+    // read-only and modifies no upstream engine. STOPS at mRNA.
+    if (this.transcriptionEngine) events.push(...this.transcriptionEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -112,6 +118,7 @@ export class TransportAnimator {
       intracellular: this.intracellularEngine ? this.intracellularEngine.stats() : null,
       targetEngagement: this.targetEngine ? this.targetEngine.stats() : null,
       signalPropagation: this.signalEngine ? this.signalEngine.stats() : null,
+      transcription: this.transcriptionEngine ? this.transcriptionEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

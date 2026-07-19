@@ -1,0 +1,121 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5C GENE-REGULATION / TRANSCRIPTION registry. Maps signaling transcription-factor NODES (from the frozen 5B.1/5B.2 signal graph) to schematic promoter response-elements, genes, and mRNA - the first biological response downstream of signaling. Consumed READ-ONLY by transcriptionEngine.js. STOPS AT mRNA: no translation/ribosomes/proteins/enzymes/metabolism/apoptosis/PD/PK. The frozen Profile-B package contains NO direct transcription data, so gene regulation here is mostly PREDICTED and clearly labelled; nothing is EXPERIMENTAL unless a real experimental reference is attached (none is). No DOI / fold-change / transcription-rate / RNA-copy-number is fabricated.",
+  "integrity_note": "Chen 2012 -> target NOT_REPORTED (5A) -> signaling partly predicted (5B) -> gene regulation mostly predicted (5C). This hierarchy is intact: TFs inherit their activity from the signaling nodes (Nrf2, NF-kB) which are exposure-driven predictions; the TF->promoter->gene->mRNA relationships are canonical general biology applied to this context (MECHANISTIC_PREDICTION) or drug-class literature (LITERATURE_DERIVED_PREDICTION). Mouse and rat have NO transcription-factor node in the signal graph and NO transcription evidence -> NOT_REPORTED (empty), never transferred from human.",
+  "vocabularies": {
+    "tf_states": ["inactive", "activated", "cytoplasmic", "nuclear", "dna_bound", "released", "degraded"],
+    "polymerase_states": ["not_recruited", "recruiting", "bound", "transcribing", "released"],
+    "chromatin_states": ["closed", "partially_open", "open"],
+    "gene_expression_levels": [0, 25, 50, 75, 100],
+    "mrna_copy_states": ["none", "low", "moderate", "high"],
+    "evidence_levels": ["EXPERIMENTAL", "HIGH_CONFIDENCE", "LITERATURE_DERIVED_PREDICTION", "MECHANISTIC_PREDICTION", "HYPOTHESIS", "NOT_REPORTED"],
+    "relationship_types": ["activation", "suppression"]
+  },
+  "defaults": {
+    "activation_delay_h": 1.0,
+    "translocation_delay_h": 2.0,
+    "binding_delay_h": 2.0,
+    "transcription_delay_h": 3.0,
+    "tf_activation_threshold": 0.25,
+    "binding_threshold": 0.22,
+    "expression_relax_per_hour": 0.5,
+    "mrna_decay_rate_per_hour": 0.08,
+    "mrna_half_life_h": "NOT_REPORTED",
+    "dt_hours": 0.5
+  },
+  "profiles": {
+    "human_hacat": {
+      "status": "ACTIVE",
+      "species": "human",
+      "cell_model": "HaCaT",
+      "disease_context": "normal keratinocyte",
+      "summary_level": "PREDICTIVE",
+      "transcription_factors": {
+        "tf_nrf2": {
+          "name": "Nrf2", "family": "bZIP (CNC)", "source_signal_node": "h1_nrf2",
+          "activation_threshold": 0.25, "activation_delay_h": 1.0, "translocation_delay_h": 2.0, "binding_delay_h": 2.0,
+          "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "rationale": "Nrf2 nuclear translocation + ARE binding is canonical redox biology applied to this exposure-driven HaCaT context; not measured in the frozen package.",
+          "layout": { "col": 0, "row": 0 }
+        },
+        "tf_nfkb": {
+          "name": "NF-kB", "family": "Rel", "source_signal_node": "h2_nfkb",
+          "activation_threshold": 0.25, "activation_delay_h": 1.0, "translocation_delay_h": 2.0, "binding_delay_h": 2.0,
+          "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "rationale": "NF-kB nuclear translocation + response-element binding is canonical; here NF-kB is drug-SUPPRESSED (5B-H2), so its transcriptional drive falls. Not measured in the frozen package.",
+          "layout": { "col": 0, "row": 2 }
+        }
+      },
+      "promoters": {
+        "p_are_hmox1": {
+          "gene_id": "g_hmox1", "response_element": "ARE", "binding_sites": 1, "chromatin": "open",
+          "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "binding_tfs": [ { "tf_id": "tf_nrf2", "relationship": "activation", "weight": 1.0, "evidence_level": "MECHANISTIC_PREDICTION" } ],
+          "layout": { "col": 1, "row": 0 }
+        },
+        "p_are_nqo1": {
+          "gene_id": "g_nqo1", "response_element": "ARE", "binding_sites": 1, "chromatin": "open",
+          "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "binding_tfs": [ { "tf_id": "tf_nrf2", "relationship": "activation", "weight": 0.9, "evidence_level": "MECHANISTIC_PREDICTION" } ],
+          "layout": { "col": 1, "row": 1 }
+        },
+        "p_nfkb_infl": {
+          "gene_id": "g_infl", "response_element": "NF-kB response element", "binding_sites": 2, "chromatin": "partially_open",
+          "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW",
+          "binding_tfs": [
+            { "tf_id": "tf_nfkb", "relationship": "activation", "weight": 1.0, "evidence_level": "MECHANISTIC_PREDICTION" },
+            { "tf_id": "tf_nrf2", "relationship": "suppression", "weight": 0.5, "evidence_level": "HYPOTHESIS", "note": "Nrf2/NF-kB cross-talk repression is described generally; hypothesis in this context." }
+          ],
+          "layout": { "col": 1, "row": 2 }
+        }
+      },
+      "genes": {
+        "g_hmox1": {
+          "symbol": "HMOX1", "gene_name": "heme oxygenase 1", "promoter_id": "p_are_hmox1",
+          "basal_expression": 25, "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "MEDIUM",
+          "transcription_delay_h": 3.0,
+          "rationale": "HMOX1 is the canonical Nrf2/ARE target; celastrol-driven HO-1 induction is described in the literature but not in the frozen Profile-B package (unverified in repo).",
+          "mrna": { "id": "mrna_hmox1", "decay_rate_per_hour": 0.08, "half_life_h": "NOT_REPORTED", "prediction_level": "LITERATURE_DERIVED_PREDICTION" },
+          "layout": { "col": 2, "row": 0 }
+        },
+        "g_nqo1": {
+          "symbol": "NQO1", "gene_name": "NAD(P)H quinone dehydrogenase 1", "promoter_id": "p_are_nqo1",
+          "basal_expression": 25, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "transcription_delay_h": 3.0,
+          "rationale": "NQO1 is a canonical Nrf2/ARE target (one TF -> multiple genes / branching); mechanistic prediction in this context, not in the frozen package.",
+          "mrna": { "id": "mrna_nqo1", "decay_rate_per_hour": 0.08, "half_life_h": "NOT_REPORTED", "prediction_level": "MECHANISTIC_PREDICTION" },
+          "layout": { "col": 2, "row": 1 }
+        },
+        "g_infl": {
+          "symbol": "INFL_GENE", "gene_name": "schematic NF-kB inflammatory target", "promoter_id": "p_nfkb_infl",
+          "basal_expression": 50, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW",
+          "transcription_delay_h": 3.0,
+          "rationale": "Schematic NF-kB-driven inflammatory gene: activated by NF-kB, repressed by Nrf2 cross-talk (multiple TFs / competition). Drug suppresses NF-kB (5B-H2) so net expression falls. No specific gene identity or value claimed.",
+          "mrna": { "id": "mrna_infl", "decay_rate_per_hour": 0.1, "half_life_h": "NOT_REPORTED", "prediction_level": "MECHANISTIC_PREDICTION" },
+          "layout": { "col": 2, "row": 2 }
+        }
+      }
+    },
+    "mouse_b16bl6": {
+      "status": "NOT_REPORTED",
+      "species": "mouse",
+      "cell_model": "B16BL6",
+      "summary_level": "NOT_REPORTED",
+      "reason": "The mouse melanoma signal graph (5B-M1: PI3K/AKT/mTOR -> survival output) contains NO transcription-factor node, and no transcription evidence exists in the frozen package. Gene regulation is NOT REPORTED; no human transcription profile is transferred to mouse.",
+      "transcription_factors": {}, "promoters": {}, "genes": {}
+    },
+    "rat_skin": {
+      "status": "NOT_REPORTED",
+      "species": "rat",
+      "cell_model": "ex_vivo_skin",
+      "summary_level": "NOT_REPORTED",
+      "reason": "Rat has no cellular signaling profile (5B-R1 NOT REPORTED) and no transcription evidence. Gene regulation is NOT REPORTED; nothing is transferred from human or mouse.",
+      "transcription_factors": {}, "promoters": {}, "genes": {}
+    }
+  },
+  "provenance_sources": [
+    "simulator/data/signal-*.registry.json + signal-propagation.registry.json (5B, read-only) - TF activity source",
+    "data/profile-b-evidence-package.json (FROZEN) - contains NO transcription data",
+    "TF->promoter->gene->mRNA relationships are canonical general biology / drug-class literature applied to this context; labelled predictions, no fabricated citation or value."
+  ]
+}

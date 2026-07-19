@@ -341,3 +341,36 @@ experimental always takes priority. The evidence panel gains an **eighth** secti
 immune/tumour/toxicity/phenotype. Docs: `docs/profile-b-simulator-phase5b2-implementation.md`,
 `signal-propagation.md`, `signal-animation.md`, `signal-timeline.md`,
 `phase5b2-validation-report.md`.
+
+## Phase 5C — Gene Regulation & Transcription Runtime (first response downstream of signaling)
+
+Phase 5C adds the first biological RESPONSE after signaling, stopping at mRNA.
+
+```
+biology/transcriptionEngine.js  reads SignalPropagationEngine (5B.2) + transcription.registry.json READ-ONLY
+    │  TF activation -> nuclear translocation -> DNA promoter binding -> gene transcription -> mRNA
+    │  (delays, occupancy/competition, multiple TFs, multiple genes, chromatin, decay)   ⟂ STOP at mRNA
+    ▼
+render/canvasRenderer.js  lastTranscriptionFrame (TF nuclear entry / promoter occupancy / gene glow / emerging mRNA)
+biology/transportAnimator.js  steps the transcription layer AFTER signal propagation each tick
+```
+
+**Objects** (`transcriptionObjects.js`): TranscriptionFactor, PromoterRegion, Gene,
+MessengerRNA. **Registry** (`transcription.registry.json`): human HaCaT ACTIVE
+(Nrf2→ARE→HMOX1/NQO1; NF-κB→RE→inflammatory gene with Nrf2 cross-repression); mouse +
+rat **NOT_REPORTED** (no TF node / no evidence; no transfer).
+
+**Behaviour:** Nrf2 activates → imports to nucleus → binds ARE → (after transcription
+delay) induces HMOX1/NQO1 25%→50% + mRNA; NF-κB is drug-suppressed → inflammatory gene
+50%→25%; then relaxes to basal as signaling winds down. Deterministic (no RNG).
+
+**Evidence discipline:** the frozen package has NO transcription data → gene regulation is
+mostly labelled PREDICTION (`GENE_EVIDENCE_LEVELS` adds HIGH_CONFIDENCE + HYPOTHESIS);
+nothing is EXPERIMENTAL without a real reference (validator warns otherwise); no DOI /
+fold-change / kinetic / RNA copy number / protein abundance fabricated; experimental takes
+priority; predictions are distinct + toggle-independent. Expression is a schematic level
+`{0,25,50,75,100}`; mRNA is a copy state; half-life NOT_REPORTED. The evidence panel gains
+a **ninth** section (Gene Regulation). STOPS at mRNA — no translation/protein/enzyme/
+metabolism/cell-cycle/apoptosis/immune/tissue/PK/PD/toxicity/phenotype. Docs:
+`docs/profile-b-simulator-phase5c-implementation.md`, `gene-regulation-transcription.md`,
+`transcription-evidence-review.md`, `phase5c-validation-report.md`.

@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -45,6 +45,8 @@ export function buildAnatomyPanelModels(deps) {
   const targetLevel = targetEngagement && targetEngagement.engine ? targetEngagement.engine.evidenceLevelName() : null;
   // Phase 5B.2: signal transduction summary level (idle => NOT_REPORTED; else PREDICTIVE).
   const signalLevel = signalPropagation && signalPropagation.engine ? signalPropagation.engine.summaryLevel() : null;
+  // Phase 5C: gene regulation / transcription summary level (idle => NOT_REPORTED).
+  const geneLevel = transcription && transcription.engine ? transcription.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -54,6 +56,7 @@ export function buildAnatomyPanelModels(deps) {
     intracellularRelease: intracellularLevel,
     targetEngagement: targetLevel,
     signalTransduction: signalLevel,
+    geneRegulation: geneLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -62,8 +65,18 @@ export function buildAnatomyPanelModels(deps) {
       intracellularRelease: intracellular && intracellular.engine ? intracellular.engine.message() : null,
       targetEngagement: targetEngagement && targetEngagement.engine ? targetEngagement.engine.message() : null,
       signalTransduction: signalPropagation && signalPropagation.engine ? signalPropagation.engine.summaryMessage() : null,
+      geneRegulation: transcription && transcription.engine ? transcription.engine.summaryMessage() : null,
     },
   };
+  // Phase 5C: gene-regulation detail (data only) for the new panel section.
+  const geneRegulationInfo = transcription && transcription.engine && !transcription.engine.isIdle() ? {
+    level: transcription.engine.summaryLevel(),
+    genes: transcription.engine.frame().genes.map((g) => ({
+      symbol: g.symbol, expression: g.expressionState, polymerase: g.polymerase,
+      mrna: g.mrna ? g.mrna.copyState : null, evidence: g.evidenceLevel, prediction: g.predictionLevel, confidence: g.confidence,
+    })),
+    tfs: transcription.engine.frame().tfs.map((t) => ({ name: t.name, state: t.state, prediction: t.predictionLevel })),
+  } : (transcription && transcription.engine ? { level: 'NOT_REPORTED', genes: [], tfs: [] } : null);
   // Phase 5A: target engagement status (data only).
   const targetInfo = targetEngagement && targetEngagement.engine ? {
     level: targetEngagement.engine.evidenceLevelName(),
@@ -114,6 +127,7 @@ export function buildAnatomyPanelModels(deps) {
       endocytosis: endocytosisInfo,
       intracellular: intracellularInfo,
       targetEngagement: targetInfo,
+      geneRegulation: geneRegulationInfo,
     },
     navigation: {
       title: 'Navigation',

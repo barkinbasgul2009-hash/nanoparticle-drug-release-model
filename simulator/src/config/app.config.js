@@ -128,6 +128,13 @@ export const APP_CONFIG = Object.freeze({
   signalPropagationSources: Object.freeze({ propagation: 'signal-propagation.registry.json' }),
   signalPropagation: Object.freeze({ includePredictions: true, overlayMode: 'combined', dtHours: 0.5 }),
 
+  // Phase 5C: gene regulation / transcription runtime. The transcription engine reads the
+  // signal-propagation output + this registry read-only and drives TF activation ->
+  // nuclear translocation -> DNA binding -> gene transcription -> mRNA (STOP at mRNA).
+  // Human HaCaT is a labelled prediction; mouse/rat are NOT_REPORTED (idle).
+  transcriptionSources: Object.freeze({ transcription: 'transcription.registry.json' }),
+  transcription: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
