@@ -62,6 +62,37 @@ export function isPrediction(label) {
     || label === 'LITERATURE_PREDICTION';
 }
 
+// Phase 5B.1 signal-transduction evidence classification - a refined vocabulary for
+// per-node / per-edge evidence in the signaling graph. Stored INDEPENDENTLY per node,
+// edge, timing, direction, phosphorylation and feedback. A prediction is never
+// relabelled as experimental.
+export const SIGNAL_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC',   // exact formulation, same species/cell/context
+  'EXPERIMENTAL_DRUG_CELL_SPECIFIC',     // same drug, same species/cell, maybe other formulation
+  'EXPERIMENTAL_PATHWAY_SPECIFIC',       // relationship established generally, not this context
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _SIGNAL_EXPERIMENTAL = new Set([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC', 'EXPERIMENTAL_DRUG_CELL_SPECIFIC', 'EXPERIMENTAL_PATHWAY_SPECIFIC',
+]);
+const _SIGNAL_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION',
+]);
+
+export function isSignalEvidenceLevel(level) { return SIGNAL_EVIDENCE_LEVELS.includes(level); }
+export function isSignalExperimental(level) { return _SIGNAL_EXPERIMENTAL.has(level); }
+export function isSignalPrediction(level) { return _SIGNAL_PREDICTION.has(level); }
+/** Whether a signal evidence level would be eligible to animate in a future engine. */
+export function signalLevelAnimates(level) {
+  return _SIGNAL_EXPERIMENTAL.has(level) || _SIGNAL_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

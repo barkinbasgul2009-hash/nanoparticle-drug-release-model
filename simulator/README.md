@@ -99,6 +99,23 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/profile-b-simulator-phase5a-implementation.md`, `docs/target-engagement.md`,
   `docs/target-binding-evidence-review.md`, `docs/prediction-framework.md`,
   `docs/phase5a-validation-report.md`.
+- **Phase 5B.1 — Signal-transduction evidence & graph architecture (data + validator ONLY):** a
+  registry-driven **directed signaling graph** — `SignalingNode`/`SignalingEdge` schemas, a
+  9-level signal evidence vocabulary, six separable registries
+  (`signal-context/nodes/edges/pathways/evidence/prediction.registry.json`), a
+  **loader + validator** (`src/biology/signalGraph.js`, no runtime propagation/animation/UI), and
+  types (`src/types/signaling.ts`). Profiles are **context-keyed** (never mixing species/cell models)
+  and **exposure-driven** (molecular target NOT REPORTED). Accepted DAGs: **5B-H1** human HaCaT
+  ROS→ERK/p38→Nrf2→ARE→HO-1; **5B-H2** human HaCaT NF-κB suppression; **5B-M1** mouse B16BL6
+  PI3K→AKT→mTOR; **5B-H3** deferred; **5B-R1** rat NOT REPORTED. Canonical edges =
+  `EXPERIMENTAL_PATHWAY_SPECIFIC` (no fabricated DOI); celastrol claims =
+  `LITERATURE_DERIVED_PREDICTION` (UNVERIFIED_IN_REPO). Activity is **schematic** (0.0–1.0), time is
+  a **schematic ordinal**, and the graph **stops before gene regulation**. No runtime engine is
+  wired. Docs: `docs/profile-b-simulator-phase5b1-implementation.md`,
+  `docs/signal-transduction-evidence-review.md`, `docs/signal-graph-architecture.md`,
+  `docs/signal-context-profiles.md`, `docs/signal-node-edge-evidence-matrix.md`,
+  `docs/signal-prediction-framework.md`, `docs/phase5b1-validation-report.md`,
+  `docs/phase5b2-ui-renderer-specification.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

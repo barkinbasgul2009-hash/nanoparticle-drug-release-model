@@ -1,0 +1,89 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5B.1 SIGNALING PATHWAY-PROFILE registry. A pathway profile binds exactly one context (from signal-context.registry.json) to a set of node ids (signal-nodes) and edge ids (signal-edges), plus start/stop conditions and an evidence/uncertainty summary. ARCHITECTURE + EVIDENCE ONLY. No runtime propagation. Profiles never mix species or cell models. Accept/reject/defer decisions are recorded here.",
+  "profile_status_vocabulary": ["ACCEPTED", "DEFERRED", "REJECTED", "NOT_REPORTED"],
+  "excluded_downstream_global": ["gene_transcription", "mRNA", "translation", "protein_synthesis", "gene_regulation", "apoptosis", "necrosis", "proliferation", "cell_cycle", "tumour_killing", "immune_response", "toxicity", "pharmacokinetics", "clinical_efficacy"],
+  "profiles": {
+    "5B-H1": {
+      "status": "ACCEPTED",
+      "title": "Human HaCaT - oxidative-stress / Nrf2-ARE cytoprotective signaling (exposure-driven prediction)",
+      "context_id": "human_hacat",
+      "species": "human",
+      "cell_model": "HaCaT",
+      "start_condition": "drug_exposure",
+      "stop_condition": "HO-1 signaling-output state reached (no protein synthesis / expression modelled)",
+      "node_ids": ["h1_exposure", "h1_ros", "h1_erk", "h1_p38", "h1_nrf2", "h1_are", "h1_ho1"],
+      "edge_ids": ["h1_e_exposure_ros", "h1_e_ros_erk", "h1_e_ros_p38", "h1_e_erk_nrf2", "h1_e_p38_nrf2", "h1_e_nrf2_are", "h1_e_are_ho1"],
+      "graph_shape": "DAG (diamond: ROS->{ERK,p38}->Nrf2)",
+      "evidence_summary": "Canonical intracellular relationships (ROS->MAPK, MAPK->Nrf2, Nrf2->ARE) are EXPERIMENTAL_PATHWAY_SPECIFIC (established general biology). The exposure->ROS entry and ARE->HO-1 output are LITERATURE_DERIVED_PREDICTION for celastrol in HaCaT. Nothing is EXPERIMENTAL_FORMULATION_SPECIFIC; the frozen Profile-B package reports NO signaling.",
+      "uncertainty_summary": "Entire cascade is a prediction: the frozen package measured only cellular uptake in HaCaT. Directionality follows canonical biology; magnitudes/timings are NOT_REPORTED. Requires primary-source verification before any Phase-5B.2 upgrade.",
+      "excluded_downstream": ["gene_transcription", "HO-1 protein expression", "antioxidant enzyme production", "cell survival outcome"],
+      "accept_rationale": "Coherent, well-established oxidative-stress cytoprotective axis with a clear exposure-driven start and a schematic signaling-output stop; every claim is labelled at or below its true evidence tier."
+    },
+    "5B-H2": {
+      "status": "ACCEPTED",
+      "title": "Human HaCaT - NF-κB suppression / anti-inflammatory signaling (exposure-driven prediction)",
+      "context_id": "human_hacat",
+      "species": "human",
+      "cell_model": "HaCaT",
+      "start_condition": "drug_exposure",
+      "stop_condition": "inflammatory signaling-output state reduced (no cytokine/protein production modelled)",
+      "node_ids": ["h2_exposure", "h2_nfkb", "h2_inflammatory_output"],
+      "edge_ids": ["h2_e_exposure_nfkb", "h2_e_nfkb_inflammatory"],
+      "graph_shape": "DAG (linear)",
+      "evidence_summary": "Exposure->NF-κB inhibition is LITERATURE_DERIVED_PREDICTION (celastrol NF-κB suppression widely described, not in frozen package). NF-κB->inflammatory-output is EXPERIMENTAL_PATHWAY_SPECIFIC (canonical). Baseline NF-κB is active; the drug edge is inhibitory.",
+      "uncertainty_summary": "Suppression represented as a signaling-state change only. No cytokine, ICAM, or protein-expression endpoint is modelled. Requires primary-source verification.",
+      "excluded_downstream": ["cytokine transcription", "cytokine secretion", "leukocyte recruitment", "inflammation outcome"],
+      "accept_rationale": "Distinct, non-overlapping axis from 5B-H1 (inhibitory, baseline-active), same context, cleanly labelled; supports representing both activation and inhibition semantics in one context without mixing cell models."
+    },
+    "5B-M1": {
+      "status": "ACCEPTED",
+      "title": "Mouse B16BL6 melanoma - PI3K/AKT/mTOR survival-signaling suppression (exposure-driven prediction)",
+      "context_id": "mouse_b16bl6",
+      "species": "mouse",
+      "cell_model": "B16BL6",
+      "start_condition": "drug_exposure",
+      "stop_condition": "survival signaling-output state reduced (no apoptosis / tumour endpoint modelled)",
+      "node_ids": ["m1_exposure", "m1_pi3k", "m1_akt", "m1_mtor", "m1_survival_output"],
+      "edge_ids": ["m1_e_exposure_pi3k", "m1_e_pi3k_akt", "m1_e_akt_mtor", "m1_e_mtor_survival"],
+      "graph_shape": "DAG (linear)",
+      "evidence_summary": "Exposure->PI3K inhibition is LITERATURE_DERIVED_PREDICTION (celastrol in B16BL6 not in frozen package). PI3K->AKT->mTOR->survival-output are EXPERIMENTAL_PATHWAY_SPECIFIC (canonical). Baseline pathway active; drug edge is inhibitory upstream, attenuating the canonical activating chain.",
+      "uncertainty_summary": "Mouse melanoma cascade is predicted; frozen package measured only uptake/cytotoxicity in B16BL6, not the signaling steps. No human pathway is reused for mouse. Requires primary-source verification.",
+      "excluded_downstream": ["apoptosis", "caspase activation", "Bax/Bcl-2", "cytochrome-c release", "tumour shrinkage", "in-vivo efficacy"],
+      "accept_rationale": "Establishes a second SPECIES (mouse) and disease context (melanoma) with an independent survival-signaling axis, exercising the no-silent-transfer rule; cleanly labelled and DAG-shaped."
+    },
+    "5B-R1": {
+      "status": "NOT_REPORTED",
+      "title": "Rat skin - signal transduction NOT REPORTED",
+      "context_id": "rat_skin",
+      "species": "rat",
+      "cell_model": "ex_vivo_skin",
+      "start_condition": "none",
+      "stop_condition": "n/a",
+      "node_ids": [],
+      "edge_ids": [],
+      "graph_shape": "empty",
+      "evidence_summary": "No rat cellular signaling evidence exists. Chen 2012 used rat only for ex-vivo skin permeation. Signal transduction is NOT REPORTED for rat.",
+      "uncertainty_summary": "An empty profile is the correct honest state; no human/mouse pathway is silently transferred to rat.",
+      "excluded_downstream": [],
+      "reject_or_defer_rationale": "NOT_REPORTED (not rejected on merit, simply no evidence and no valid predictive basis without a cellular model)."
+    }
+  },
+  "deferred_profiles": {
+    "5B-H3": {
+      "status": "DEFERRED",
+      "title": "Human HaCaT - additional celastrol axis (e.g. HSF1/HSP or JNK stress branch)",
+      "context_id": "human_hacat",
+      "defer_rationale": "A third human axis was considered but DEFERRED for Phase 5B.1: it would overlap/crosstalk with 5B-H1 (shared ROS/stress input) and asserting the crosstalk edges now would exceed the evidence available in the repo. Feedback/crosstalk is NOT_REPORTED in 5B.1; this profile is revisited only if primary-source evidence is attached and a typed crosstalk representation is designed.",
+      "node_ids": [],
+      "edge_ids": []
+    }
+  },
+  "accept_reject_defer_log": [
+    { "profile": "5B-H1", "decision": "ACCEPT", "basis": "Coherent Nrf2-ARE cytoprotective axis, cleanly tiered evidence." },
+    { "profile": "5B-H2", "decision": "ACCEPT", "basis": "Distinct inhibitory NF-κB axis, same context, exercises inhibition semantics." },
+    { "profile": "5B-M1", "decision": "ACCEPT", "basis": "Second species/disease survival axis, exercises no-silent-transfer." },
+    { "profile": "5B-H3", "decision": "DEFER", "basis": "Would require crosstalk edges beyond available evidence; feedback/crosstalk NOT_REPORTED in 5B.1." },
+    { "profile": "5B-R1", "decision": "NOT_REPORTED", "basis": "No rat cellular signaling evidence; empty profile is the honest state." }
+  ]
+}

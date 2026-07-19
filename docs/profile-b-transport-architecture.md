@@ -271,3 +271,41 @@ biology/transportAnimator.js  steps the target-engagement layer AFTER intracellu
   panel now exposes **seven** levels (… + Target Engagement).
 - `integrity.forbidden` lists 24 downstream structures (signalling, kinase cascades, transcription,
   apoptosis, PD downstream, tumour response, …) that remain unimplemented.
+
+## Phase 5B.1 — Signal-Transduction Evidence & Graph Architecture (data + validator only)
+
+Phase 5B.1 adds a **directed signaling-graph architecture** — schemas, evidence records,
+registries, a validator, and types — but **no runtime engine, renderer, animation, or UI**.
+It is frozen as the contract for a future Phase 5B.2.
+
+```
+simulator/data/
+  signal-context.registry.json     contexts (species+cell+disease+drug+formulation+target); never mixed
+  signal-nodes.registry.json       SignalingNode records (schematic activity 0.0-1.0 only)
+  signal-edges.registry.json       SignalingEdge records (directed; activation/inhibition/translocation/...)
+  signal-pathways.registry.json    pathway PROFILES binding one context to node/edge sets; accept/defer/reject log
+  signal-evidence.registry.json    reference records (verification_status) + evidence audit trail
+  signal-prediction.registry.json  explicit predictions + cross-context transfer ledger (no silent transfer)
+simulator/src/biology/signalGraph.js   LOADER + VALIDATOR only (no propagation/animation)
+simulator/src/types/signaling.ts       TypeScript contract for the six registries
+simulator/src/evidence/evidenceEngine.js  SIGNAL_EVIDENCE_LEVELS (9) + isSignal* helpers
+```
+
+**Accepted profiles (all DAGs, exposure-driven):** 5B-H1 human HaCaT ROS→ERK/p38→Nrf2→ARE→HO-1;
+5B-H2 human HaCaT NF-κB suppression→↓inflammatory output; 5B-M1 mouse B16BL6 PI3K→AKT→mTOR→↓survival
+output. **5B-H3** deferred (crosstalk beyond evidence); **5B-R1** rat NOT REPORTED (empty; no transfer).
+
+**Evidence discipline**
+- Canonical intracellular edges = `EXPERIMENTAL_PATHWAY_SPECIFIC` (general biology, **no fabricated
+  DOI**); celastrol-in-cell claims = `LITERATURE_DERIVED_PREDICTION` (`UNVERIFIED_IN_REPO`); nothing is
+  `EXPERIMENTAL_FORMULATION_SPECIFIC`. The frozen package reports **no signaling**; molecular target is
+  NOT REPORTED (Phase 5A) → signaling is exposure-driven prediction.
+- Node activity is **schematic** (0.0–1.0 or ordinal), never concentration / phosphorylation % /
+  abundance / occupancy. `temporal_order` is a schematic ordinal, not biological time.
+- The graph **stops before gene regulation**: transcription factors may reach a `nuclear_localized`
+  state, but transcription/translation/PD/apoptosis are forbidden node types and absent.
+
+**Validator rules:** unique ids; no orphan edges; no species/cell-model mixing; DAG unless a cycle is
+closed by a declared typed-feedback edge; forbidden node types absent; start/stop present;
+evidence levels valid and experimental-vs-prediction unambiguous; evidence references resolve;
+NOT_REPORTED profiles empty. Negative tests cover each violation.

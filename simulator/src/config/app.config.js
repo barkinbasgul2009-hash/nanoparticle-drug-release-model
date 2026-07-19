@@ -110,6 +110,18 @@ export const APP_CONFIG = Object.freeze({
   targetEngagementSources: Object.freeze({ targetEngagement: 'target-engagement.registry.json' }),
   targetEngagement: Object.freeze({ formulationId: 'B1_nlc', seed: 8642 }),
 
+  // Phase 5B.1: signal-transduction EVIDENCE + GRAPH ARCHITECTURE ONLY (no runtime
+  // engine, no renderer, no animation). Six separable registries describe the
+  // directed signaling graph; signalGraph.js only LOADS + VALIDATES them.
+  signalSources: Object.freeze({
+    context: 'signal-context.registry.json',
+    nodes: 'signal-nodes.registry.json',
+    edges: 'signal-edges.registry.json',
+    pathways: 'signal-pathways.registry.json',
+    evidence: 'signal-evidence.registry.json',
+    prediction: 'signal-prediction.registry.json',
+  }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

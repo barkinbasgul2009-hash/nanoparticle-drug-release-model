@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5B.1 SIGNALING PREDICTION registry. Records every predictive claim explicitly, with its basis and any cross-context transfer made EXPLICIT (never silent). ARCHITECTURE + EVIDENCE ONLY. A prediction is acceptable only when labelled; it is never presented as experimental. No human->mouse or mouse->rat pathway is transferred silently; where a transfer would be needed and cannot be justified, the entry is NOT_REPORTED.",
+  "prediction_vocabulary": {
+    "levels": ["HIGH_CONFIDENCE_PREDICTION", "LITERATURE_DERIVED_PREDICTION", "MECHANISTIC_PREDICTION"],
+    "basis_kinds": ["canonical_general_biology", "drug_class_literature", "same_drug_other_context", "mechanistic_inference"],
+    "definitions": {
+      "HIGH_CONFIDENCE_PREDICTION": "Strong, convergent support (e.g. same drug + closely related cell context) but not measured in THIS context.",
+      "LITERATURE_DERIVED_PREDICTION": "Reported for the drug/drug-class in the literature but not in the frozen package and not verified in repo.",
+      "MECHANISTIC_PREDICTION": "Inferred from mechanism/canonical biology without a direct drug-in-context report."
+    }
+  },
+  "prediction_records": {
+    "pred_h1_exposure_ros": { "profile_id": "5B-H1", "claim": "Celastrol exposure elevates ROS in HaCaT (entry to oxidative-stress axis)", "level": "LITERATURE_DERIVED_PREDICTION", "basis_kind": "drug_class_literature", "reference_ids": ["celastrol_ros_literature"], "cross_context_transfer": "none", "verification_status": "UNVERIFIED_IN_REPO", "note": "Exposure-driven; molecular target NOT REPORTED." },
+    "pred_h1_ros_mapk_nrf2_are": { "profile_id": "5B-H1", "claim": "ROS->MAPK->Nrf2->ARE cascade operates in HaCaT under celastrol exposure", "level": "MECHANISTIC_PREDICTION", "basis_kind": "canonical_general_biology", "reference_ids": ["canonical_ros_mapk", "canonical_mapk_nrf2", "canonical_nrf2_are"], "cross_context_transfer": "canonical relationship applied TO human HaCaT context (explicit, not silent)", "verification_status": "CANONICAL_GENERAL_BIOLOGY", "note": "Relationship established generally; its OPERATION in this context is the predicted part. STOP before transcription." },
+    "pred_h1_are_ho1": { "profile_id": "5B-H1", "claim": "ARE regulatory state raises HO-1 signaling output in HaCaT", "level": "LITERATURE_DERIVED_PREDICTION", "basis_kind": "drug_class_literature", "reference_ids": ["celastrol_ho1_literature"], "cross_context_transfer": "none", "verification_status": "UNVERIFIED_IN_REPO", "note": "Output STATE only; no protein expression." },
+    "pred_h2_nfkb_suppression": { "profile_id": "5B-H2", "claim": "Celastrol suppresses NF-κB signaling in HaCaT", "level": "LITERATURE_DERIVED_PREDICTION", "basis_kind": "drug_class_literature", "reference_ids": ["celastrol_nfkb_literature"], "cross_context_transfer": "none", "verification_status": "UNVERIFIED_IN_REPO", "note": "Well described for celastrol generally; not in frozen package for HaCaT." },
+    "pred_h2_nfkb_inflammatory": { "profile_id": "5B-H2", "claim": "Reduced NF-κB reduces inflammatory signaling output", "level": "MECHANISTIC_PREDICTION", "basis_kind": "canonical_general_biology", "reference_ids": ["canonical_nfkb_inflammatory"], "cross_context_transfer": "canonical relationship applied TO human HaCaT context (explicit)", "verification_status": "CANONICAL_GENERAL_BIOLOGY", "note": "No cytokine production simulated." },
+    "pred_m1_pi3k_suppression": { "profile_id": "5B-M1", "claim": "Celastrol suppresses PI3K in B16BL6 melanoma", "level": "LITERATURE_DERIVED_PREDICTION", "basis_kind": "drug_class_literature", "reference_ids": ["celastrol_pi3k_literature"], "cross_context_transfer": "none", "verification_status": "UNVERIFIED_IN_REPO", "note": "Mouse melanoma; not in frozen package." },
+    "pred_m1_akt_mtor_survival": { "profile_id": "5B-M1", "claim": "PI3K->AKT->mTOR->survival-output cascade operates in B16BL6", "level": "MECHANISTIC_PREDICTION", "basis_kind": "canonical_general_biology", "reference_ids": ["canonical_pi3k_akt_mtor"], "cross_context_transfer": "canonical relationship applied TO mouse melanoma context (explicit)", "verification_status": "CANONICAL_GENERAL_BIOLOGY", "note": "STOP before apoptosis/tumour endpoints." }
+  },
+  "cross_context_transfer_ledger": {
+    "human_to_mouse": { "status": "NONE", "note": "The human HaCaT oxidative-stress / NF-κB axes are NOT transferred to mouse melanoma. The mouse profile (5B-M1) is built independently on canonical PI3K/AKT/mTOR biology applied to the mouse context." },
+    "mouse_to_rat": { "status": "NOT_REPORTED", "note": "No rat cellular signaling profile exists; nothing is transferred to rat." },
+    "human_to_rat": { "status": "NOT_REPORTED", "note": "No rat cellular signaling profile exists; nothing is transferred to rat." },
+    "rule": "Only canonical GENERAL relationships are 'applied to' a context (recorded explicitly above). CONTEXT-SPECIFIC pathways (a whole profile) are never copied across species or cell models."
+  },
+  "not_reported_predictions": {
+    "rat_any": { "profile_id": "5B-R1", "status": "NOT_REPORTED", "note": "No valid predictive basis for rat cellular signaling without a cellular model; deliberately left empty." },
+    "target_mediated_start": { "status": "NOT_REPORTED", "note": "Because the Phase-5A molecular target is NOT REPORTED, no target-mediated (as opposed to exposure-driven) prediction is made." }
+  }
+}

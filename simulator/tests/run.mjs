@@ -16,10 +16,11 @@ import uptake from './uptake.test.mjs';
 import endocytosis from './endocytosis.test.mjs';
 import intracellular from './intracellular.test.mjs';
 import targetEngagement from './targetEngagement.test.mjs';
+import signalGraph from './signalGraph.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph,
 ];
 
 for (const suite of suites) {
