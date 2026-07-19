@@ -122,6 +122,12 @@ export const APP_CONFIG = Object.freeze({
     prediction: 'signal-prediction.registry.json',
   }),
 
+  // Phase 5B.2: signal PROPAGATION runtime. The engine consumes the 5B.1 graph +
+  // this registry read-only and propagates activity over simulated time. Predictions
+  // are labelled + toggleable; the overlay mode controls which evidence tier is shown.
+  signalPropagationSources: Object.freeze({ propagation: 'signal-propagation.registry.json' }),
+  signalPropagation: Object.freeze({ includePredictions: true, overlayMode: 'combined', dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

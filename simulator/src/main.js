@@ -39,6 +39,8 @@ import { EndocytosisEngine } from './biology/endocytosisEngine.js';
 import { IntracellularReleaseModel } from './biology/intracellularReleaseModel.js';
 import { IntracellularReleaseEngine } from './biology/intracellularReleaseEngine.js';
 import { TargetEngagementEngine } from './biology/targetEngagementEngine.js';
+import { loadSignalGraph } from './biology/signalGraph.js';
+import { SignalPropagationEngine } from './biology/signalPropagationEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -130,6 +132,7 @@ export async function createApp(opts = {}) {
   let endocytosis = null; // Phase 4C: endocytosis + intracellular trafficking layer
   let intracellular = null; // Phase 4D: intracellular drug release layer
   let targetEngagement = null; // Phase 5A: target engagement (pharmacology) layer
+  let signalPropagation = null; // Phase 5B.2: signal propagation (runtime signaling) layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -268,12 +271,45 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 5B.2: signal propagation - the first RUNTIME signaling layer. It loads the
+      // frozen 5B.1 graph + the runtime-dynamics registry read-only and propagates
+      // activity through the graph (activation, suppression, delay, decay, feedback,
+      // competition, labelled predictions). SEPARATE from every prior engine.
+      try {
+        const sg = await loadSignalGraph(anatomyLoader, config.signalSources);
+        const propReg = await anatomyLoader.load(config.signalPropagationSources.propagation, 'generic');
+        const spCfg = config.signalPropagation || {};
+        const spEngine = new SignalPropagationEngine({
+          signalGraph: sg, propagationRegistry: propReg, species: engine.species,
+          includePredictions: spCfg.includePredictions !== false,
+          overlayMode: spCfg.overlayMode || 'combined', logger,
+        });
+        if (renderer.setSignalPropagationEngine) renderer.setSignalPropagationEngine(spEngine);
+        signalPropagation = {
+          engine: spEngine,
+          step: (dt) => spEngine.step(dt),
+          run: (steps, dt) => spEngine.run(steps, dt),
+          stats: () => spEngine.stats(),
+          frame: () => spEngine.frame(),
+          timeline: () => spEngine.getTimeline(),
+          restart: () => spEngine.restart(),
+          play: (dt) => spEngine.play(dt),
+          pause: () => spEngine.pause(),
+          setSpeed: (m) => spEngine.setSpeed(m),
+          setOverlayMode: (m) => spEngine.setOverlayMode(m),
+          setPredictionsEnabled: (on) => spEngine.setPredictionsEnabled(on),
+        };
+      } catch (err) {
+        logger.warn('load', 'signal-propagation not loaded', { err: String(err) });
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
         endocytosisEngine: endocytosis ? endocytosis.engine : null,
         intracellularEngine: intracellular ? intracellular.engine : null,
-        targetEngine: targetEngagement ? targetEngagement.engine : null, renderer, logger,
+        targetEngine: targetEngagement ? targetEngagement.engine : null,
+        signalEngine: signalPropagation ? signalPropagation.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -324,6 +360,8 @@ export async function createApp(opts = {}) {
     intracellular,
     // Phase 5A addition (may be null if the target-engagement registry failed to load):
     targetEngagement,
+    // Phase 5B.2 addition (may be null if the signal-propagation registry failed to load):
+    signalPropagation,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -343,11 +381,12 @@ export async function createApp(opts = {}) {
     if (endocytosis) endocytosis.engine.setSpecies(speciesId);
     if (intracellular) intracellular.engine.setSpecies(speciesId);
     if (targetEngagement) targetEngagement.engine.setSpecies(speciesId);
+    if (signalPropagation) signalPropagation.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -367,7 +406,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

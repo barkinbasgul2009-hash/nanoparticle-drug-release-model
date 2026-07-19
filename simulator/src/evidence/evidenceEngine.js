@@ -93,6 +93,30 @@ export function signalLevelAnimates(level) {
   return _SIGNAL_EXPERIMENTAL.has(level) || _SIGNAL_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// Phase 5B.2 RUNTIME prediction vocabulary for the signal PROPAGATION engine. This is a
+// display/reasoning ladder for a node/edge at runtime; it is ADDITIVE and does NOT modify
+// the frozen 5B.1 SIGNAL_EVIDENCE_LEVELS (experimental evidence labels stay unchanged).
+// Prediction never overwrites experimental: EXPERIMENTAL always outranks any prediction,
+// and HYPOTHESIS is the weakest (a labelled, biologically-reasonable guess).
+export const SIGNAL_PREDICTION_LEVELS = Object.freeze([
+  'EXPERIMENTAL',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'HYPOTHESIS',
+]);
+
+const _RUNTIME_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** True if a runtime prediction level is a real prediction (not experimental). */
+export function isRuntimePrediction(level) { return _RUNTIME_PREDICTION.has(level); }
+/** True if a runtime level is experimental (outranks every prediction). */
+export function isRuntimeExperimental(level) { return level === 'EXPERIMENTAL'; }
+/** Valid runtime prediction level? */
+export function isRuntimePredictionLevel(level) { return SIGNAL_PREDICTION_LEVELS.includes(level); }
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

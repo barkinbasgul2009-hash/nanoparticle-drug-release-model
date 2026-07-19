@@ -72,3 +72,30 @@ A `LITERATURE_DERIVED_PREDICTION` (UNVERIFIED_IN_REPO) may be upgraded only when
 primary source is attached and verified — at which point its `verification_status` and
 `evidence_level` change together, with a new audit-trail entry. No upgrade happens
 implicitly.
+
+## 8. Phase 5B.2 runtime prediction levels (additive)
+
+The runtime propagation engine adds a display/reasoning ladder,
+`SIGNAL_PREDICTION_LEVELS` (in `simulator/src/evidence/evidenceEngine.js`), that is
+**additive** and does not modify the frozen 5B.1 `SIGNAL_EVIDENCE_LEVELS`:
+
+`EXPERIMENTAL` › `HIGH_CONFIDENCE_PREDICTION` › `LITERATURE_DERIVED_PREDICTION` ›
+`MECHANISTIC_PREDICTION` › `HYPOTHESIS`
+
+- `EXPERIMENTAL` always outranks every prediction; a prediction never overwrites or
+  relabels an experimental node.
+- `HYPOTHESIS` is the weakest tier — a labelled, biologically-reasonable guess (used for
+  the exposure→STIM1 entry edge of the predicted SOCE branch).
+- Every predicted node/edge carries `predictionLevel`, `confidence`, and a `rationale`,
+  and is rendered visually distinct (hollow glyph + badge, dashed edge). Predictions are
+  toggleable (`setPredictionsEnabled`) and hidden by the `experimental` overlay.
+
+### STIM1 → Orai1 → SOCE → Ca²⁺ (mechanistic prediction)
+
+Deferred in Phase 5B.1 for insufficient graph evidence, this store-operated calcium-entry
+branch is implemented in 5B.2 as a **mechanistic prediction** in
+`signal-propagation.registry.json` (`predicted_extensions.prediction_pathways`). It
+carries `no_profile_b_evidence: true` and a basis of "general calcium-signaling
+literature; prediction only". It never displays as experimental and is removed when
+predictions are toggled off. `Ca²⁺ entry` is a signaling-output state only — no
+downstream calcium-dependent biology is modelled.

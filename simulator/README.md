@@ -116,6 +116,25 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/signal-context-profiles.md`, `docs/signal-node-edge-evidence-matrix.md`,
   `docs/signal-prediction-framework.md`, `docs/phase5b1-validation-report.md`,
   `docs/phase5b2-ui-renderer-specification.md`.
+- **Phase 5B.2 — Signal propagation engine (first RUNTIME signaling layer):** the frozen
+  5B.1 graph comes alive. A new `SignalPropagationEngine` reads the 5B.1 registries + a
+  runtime-dynamics registry (`signal-propagation.registry.json`) **read-only** and
+  propagates activity over simulated time — node **activation**, edge **propagation** with
+  **delay** + **attenuation**, **thresholds**, activity **decay** + auto-deactivation,
+  baseline-pathway **suppression** (H2/M1), **competition** (Nrf2 ← ERK+p38), and
+  **feedback** (a labelled predicted HO-1 ⊣ ROS edge; bounded, no oscillation explosion).
+  **5B-H1** activates as a transient cytoprotective pulse; **5B-H2/5B-M1** suppress;
+  **rat** is idle (Not Reported). Labelled **predictions** propagate too — the
+  `STIM1 → Orai1 → SOCE → Ca²⁺` mechanistic-prediction pathway (deferred in 5B.1) — always
+  visually distinct, toggleable, and never overwriting experimental nodes. An additive
+  runtime vocabulary adds `HYPOTHESIS`; the frozen 5B.1 evidence labels are unchanged.
+  A **timeline** + deterministic **playback** (play/pause/restart/step/speed) and evidence
+  **overlays** (experimental/prediction/combined/unavailable/not-reported) are provided.
+  The renderer gains publication-style signal frames; the evidence panel shows an **eighth**
+  section. **Stops at signaling** — no transcription/translation/PD/PK/apoptosis/immune/
+  tumour/toxicity. Docs: `docs/profile-b-simulator-phase5b2-implementation.md`,
+  `docs/signal-propagation.md`, `docs/signal-animation.md`, `docs/signal-timeline.md`,
+  `docs/phase5b2-validation-report.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

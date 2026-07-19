@@ -309,3 +309,35 @@ output. **5B-H3** deferred (crosstalk beyond evidence); **5B-R1** rat NOT REPORT
 closed by a declared typed-feedback edge; forbidden node types absent; start/stop present;
 evidence levels valid and experimental-vs-prediction unambiguous; evidence references resolve;
 NOT_REPORTED profiles empty. Negative tests cover each violation.
+
+## Phase 5B.2 — Signal Propagation Engine (first runtime signaling layer)
+
+Phase 5B.2 turns the frozen 5B.1 graph into a live, deterministic signaling simulation.
+
+```
+biology/signalPropagationEngine.js  reads SignalGraph (5B.1) + signal-propagation.registry.json READ-ONLY
+    │  propagates activity: activation / suppression / delay / attenuation / threshold /
+    │  lifetime+decay / competition / declared-feedback / labelled predictions
+    ▼
+render/canvasRenderer.js  lastSignalFrame + lastSignalEdgeFrame (glow / fade / edge illumination /
+                          prediction badge + dashed edges) - publication style, no gaming FX
+biology/transportAnimator.js  steps the signal layer AFTER target engagement each tick
+```
+
+**Runtime dynamics** live in `signal-propagation.registry.json` (thresholds, delay
+classes fast/medium/slow, attenuation, decay, activation lifetimes, layout) keyed to the
+frozen 5B.1 ids. **Predicted extensions** (labelled, toggleable): a mechanistic
+negative-feedback edge (HO-1 ⊣ ROS) and the STIM1 → Orai1 → SOCE → Ca²⁺ pathway.
+
+**Behaviour:** 5B-H1 activates (ROS→ERK/p38→Nrf2→ARE→HO-1, transient pulse), 5B-H2 and
+5B-M1 suppress baseline-active pathways, rat is idle (NOT REPORTED). Feedback executes
+and is bounded (activity ∈ [0,1], no oscillation explosion). Deterministic (no RNG).
+
+**Evidence discipline:** no experimental signaling data is fabricated; the frozen 5B.1
+labels are unchanged; predictions are always labelled (`SIGNAL_PREDICTION_LEVELS` adds
+`HYPOTHESIS`), visually distinct, toggleable, and never overwrite experimental nodes;
+experimental always takes priority. The evidence panel gains an **eighth** section
+(Signal Transduction). Stops at signaling — no transcription/translation/PD/PK/apoptosis/
+immune/tumour/toxicity/phenotype. Docs: `docs/profile-b-simulator-phase5b2-implementation.md`,
+`signal-propagation.md`, `signal-animation.md`, `signal-timeline.md`,
+`phase5b2-validation-report.md`.

@@ -34,6 +34,8 @@ export class CanvasRenderer {
     this.lastNucleusFrame = null;  // Phase 4D: [{cellId,x,y,r}]
     this.lastIntracellularFrame = null; // Phase 4D: [{id,x,y,compartment,alive,target}]
     this.lastTargetFrame = null;   // Phase 5A: [{id,x,y,type,occupancy,occupied,available}]
+    this.lastSignalFrame = null;      // Phase 5B.2: signaling nodes (activity/state/predicted/visible)
+    this.lastSignalEdgeFrame = null;  // Phase 5B.2: signaling edges (flowing/active/predicted/visible)
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -62,6 +64,8 @@ export class CanvasRenderer {
   setIntracellularEngine(intracellularEngine) { this.intracellularEngine = intracellularEngine; return this; }
   /** Phase 5A: attach the target-engagement engine so targets + bound drug are drawn. */
   setTargetEngagementEngine(targetEngine) { this.targetEngine = targetEngine; return this; }
+  /** Phase 5B.2: attach the signal-propagation engine so the pathway diagram is drawn. */
+  setSignalPropagationEngine(signalEngine) { this.signalEngine = signalEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -106,6 +110,10 @@ export class CanvasRenderer {
     this.lastIntracellularFrame = this._intracellularFrame(layout);
     // Phase 5A: molecular targets + binding frame.
     this.lastTargetFrame = this._targetFrame(layout);
+    // Phase 5B.2: signaling pathway diagram frame (headless-testable).
+    const sig = this._signalFrames();
+    this.lastSignalFrame = sig.nodes;
+    this.lastSignalEdgeFrame = sig.edges;
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -280,6 +288,39 @@ export class CanvasRenderer {
       }
     }
 
+    // Phase 5B.2: signaling pathway diagram (publication-style; edges then nodes).
+    if (this.lastSignalEdgeFrame && this.lastSignalEdgeFrame.length) {
+      for (const e of this.lastSignalEdgeFrame) {
+        if (!e.visible) continue;
+        this.ctx.strokeStyle = e.sign < 0 ? '#a83c3c' : '#4b6b57';   // inhibition vs activation
+        this.ctx.globalAlpha = e.flowing ? 0.95 : 0.28;              // illuminate while propagating
+        this.ctx.lineWidth = e.flowing ? 2 : 1;
+        if (e.predicted && this.ctx.setLineDash) this.ctx.setLineDash([4, 3]); // predicted = dashed
+        this.ctx.beginPath(); this.ctx.moveTo(e.x1, e.y1); this.ctx.lineTo(e.x2, e.y2); this.ctx.stroke();
+        if (this.ctx.setLineDash) this.ctx.setLineDash([]);
+      }
+      this.ctx.globalAlpha = 1;
+    }
+    if (this.lastSignalFrame && this.lastSignalFrame.length) {
+      for (const n of this.lastSignalFrame) {
+        if (!n.visible) continue;
+        const col = n.state === 'suppressed' ? '#9aa0a6' : n.state === 'degraded' ? '#c8b18a' : '#4b6b57';
+        // activity glow
+        this.ctx.globalAlpha = 0.25 + 0.65 * Math.max(0, Math.min(1, n.glow));
+        this.ctx.fillStyle = col;
+        this.ctx.beginPath(); this.ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        if (n.predicted) { this.ctx.globalAlpha = 1; this.ctx.lineWidth = 1.4; this.ctx.strokeStyle = '#6a4bab'; this.ctx.stroke(); }
+        else this.ctx.fill();
+        this.ctx.globalAlpha = 1;
+        // prediction badge + label
+        this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+        this.ctx.font = '9px system-ui, sans-serif';
+        this.ctx.fillText((n.predicted ? '⌁ ' : '') + n.label, n.x - n.r, n.y - n.r - 2);
+      }
+      this.ctx.font = '10px system-ui, sans-serif';
+      this.ctx.fillText(`Signaling overlay: ${this.signalEngine ? this.signalEngine.overlay() : 'combined'} - t=${this.signalEngine ? this.signalEngine.timeH.toFixed(1) : 0}h`, 8, this.viewport.height - 50);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -420,6 +461,45 @@ CanvasRenderer.prototype._microFrames = function _microFrames(layout) {
     id: m.id, x: m.x * W, y: yOf(m.u), r: 1.3, compartment: m.compartment, alive: m.alive,
   }));
   return { cells, molecules };
+};
+
+// Phase 5B.2 signaling pathway diagram frame. Publication-style, schematic layout:
+// nodes on a col/row grid, glow ~ activity, predicted nodes flagged distinct, edges
+// illuminate while flowing. Positioned in a reserved band at the bottom of the canvas
+// so it never overlaps the anatomy scene. Purely derived from the engine (read-only).
+CanvasRenderer.prototype._signalFrames = function _signalFrames() {
+  const eng = this.signalEngine;
+  if (!eng || eng.isIdle()) return { nodes: [], edges: [] };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const cols = Math.max(1, ...f.nodes.map((n) => (n.layout && n.layout.col) || 0)) + 1;
+  const rows = Math.max(1, ...f.nodes.map((n) => (n.layout && n.layout.row) || 0)) + 1;
+  const panelTop = H * 0.72; const panelH = H * 0.26;               // reserved diagram band
+  const xOf = (c) => (0.06 + 0.88 * (cols > 1 ? c / (cols - 1) : 0.5)) * W;
+  const yOf = (r) => panelTop + (rows > 1 ? r / (rows - 1) : 0.5) * panelH;
+  const pos = new Map();
+  const nodes = f.nodes.map((n) => {
+    const x = xOf((n.layout && n.layout.col) || 0);
+    const y = yOf((n.layout && n.layout.row) || 0);
+    pos.set(n.id, { x, y });
+    return {
+      id: n.id, x, y, label: n.displayName, nodeType: n.nodeType,
+      activity: n.activity, state: n.state, glow: n.activity,
+      predicted: n.predicted, predictionLevel: n.predictionLevel, evidenceLevel: n.evidenceLevel,
+      confidence: n.confidence, visible: n.visible, isOutput: n.isOutput,
+      // publication-style radius: outputs slightly larger; predicted rendered hollow
+      r: (n.isOutput ? 9 : 7) + n.activity * 3,
+    };
+  });
+  const edges = f.edges.map((e) => {
+    const a = pos.get(e.source); const b = pos.get(e.target);
+    return {
+      id: e.id, x1: a ? a.x : 0, y1: a ? a.y : 0, x2: b ? b.x : 0, y2: b ? b.y : 0,
+      relationship: e.relationship, sign: e.sign, flowing: e.flowing, active: e.active,
+      predicted: e.predicted, visible: e.visible,
+    };
+  });
+  return { nodes, edges };
 };
 
 export default CanvasRenderer;

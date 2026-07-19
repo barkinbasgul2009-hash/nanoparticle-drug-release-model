@@ -112,3 +112,20 @@ No propagation, activation/inhibition at runtime, phosphorylation dynamics, anim
 rendering, or UI. No transcription, translation, protein synthesis, gene regulation,
 apoptosis, proliferation, cell cycle, tumour killing, immune response, toxicity, PK, or
 clinical efficacy. This architecture is **frozen** as the contract for Phase 5B.2.
+
+## 7. Phase 5B.2 — runtime consumption (implemented separately)
+
+The static architecture above is consumed **read-only** by the Phase-5B.2
+`SignalPropagationEngine`, which adds runtime dynamics (in
+`signal-propagation.registry.json`) without modifying any frozen registry:
+
+- Node runtime states (`inactive`/`transitioning`/`partial`/`active`/`suppressed`/
+  `degraded`), thresholds, activation lifetimes, and decay rates.
+- Edge delay classes (fast/medium/slow/custom), attenuation, and weights.
+- Labelled, toggleable **predicted extensions**: a mechanistic negative-feedback edge
+  (HO-1 ⊣ ROS) and the STIM1 → Orai1 → SOCE → Ca²⁺ pathway.
+
+The engine respects this document's rules: DAG-unless-declared-feedback (the runtime
+feedback edge is a declared typed-feedback edge), no species/cell-model mixing, schematic
+activity only, experimental-vs-prediction always distinguishable, and the graph stops
+before gene regulation. See `docs/signal-propagation.md`.

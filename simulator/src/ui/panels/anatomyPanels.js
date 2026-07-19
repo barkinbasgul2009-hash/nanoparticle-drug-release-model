@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -43,6 +43,8 @@ export function buildAnatomyPanelModels(deps) {
   const intracellularLevel = intracellular && intracellular.engine ? intracellular.engine.evidenceLevelName() : null;
   // Phase 5A: target engagement evidence level / prediction label (B1 = NOT_REPORTED).
   const targetLevel = targetEngagement && targetEngagement.engine ? targetEngagement.engine.evidenceLevelName() : null;
+  // Phase 5B.2: signal transduction summary level (idle => NOT_REPORTED; else PREDICTIVE).
+  const signalLevel = signalPropagation && signalPropagation.engine ? signalPropagation.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -51,6 +53,7 @@ export function buildAnatomyPanelModels(deps) {
     intracellularTrafficking: traffickingLevel,
     intracellularRelease: intracellularLevel,
     targetEngagement: targetLevel,
+    signalTransduction: signalLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -58,6 +61,7 @@ export function buildAnatomyPanelModels(deps) {
       intracellularTrafficking: endocytosis && endocytosis.engine ? endocytosis.engine.traffickingMessage() : null,
       intracellularRelease: intracellular && intracellular.engine ? intracellular.engine.message() : null,
       targetEngagement: targetEngagement && targetEngagement.engine ? targetEngagement.engine.message() : null,
+      signalTransduction: signalPropagation && signalPropagation.engine ? signalPropagation.engine.summaryMessage() : null,
     },
   };
   // Phase 5A: target engagement status (data only).

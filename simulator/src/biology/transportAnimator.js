@@ -22,6 +22,7 @@ export class TransportAnimator {
     this.endocytosisEngine = deps.endocytosisEngine || null; // Phase 4C: separate endocytosis layer
     this.intracellularEngine = deps.intracellularEngine || null; // Phase 4D: separate intracellular layer
     this.targetEngine = deps.targetEngine || null;   // Phase 5A: separate target-engagement layer
+    this.signalEngine = deps.signalEngine || null;   // Phase 5B.2: separate signal-propagation layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -43,6 +44,7 @@ export class TransportAnimator {
     if (this.endocytosisEngine) this.endocytosisEngine.reset();
     if (this.intracellularEngine) this.intracellularEngine.reset();
     if (this.targetEngine) this.targetEngine.reset();
+    if (this.signalEngine) this.signalEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -76,6 +78,10 @@ export class TransportAnimator {
     // Phase 5A: the SEPARATE target-engagement layer models drug-target binding. It
     // reads intracellular drug read-only and never modifies it.
     if (this.targetEngine) events.push(...this.targetEngine.step(dtHours));
+    // Phase 5B.2: the SEPARATE signal-propagation layer advances runtime signaling
+    // (activation/suppression/feedback/predictions). It reads the frozen graph +
+    // runtime registry read-only and modifies no upstream engine.
+    if (this.signalEngine) events.push(...this.signalEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -105,6 +111,7 @@ export class TransportAnimator {
       endocytosis: this.endocytosisEngine ? this.endocytosisEngine.stats() : null,
       intracellular: this.intracellularEngine ? this.intracellularEngine.stats() : null,
       targetEngagement: this.targetEngine ? this.targetEngine.stats() : null,
+      signalPropagation: this.signalEngine ? this.signalEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

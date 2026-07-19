@@ -1,0 +1,98 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5B.2 SIGNAL-PROPAGATION RUNTIME registry. Supplies the runtime DYNAMICS (thresholds, delays, attenuation, decay, lifetimes, layout) for the frozen Phase-5B.1 signaling graph, plus clearly-labelled PREDICTED EXTENSIONS (a mechanistic negative-feedback edge and the STIM1->Orai1->SOCE->Ca2+ prediction pathway). It CONSUMES the six signal-*.registry.json files READ-ONLY and adds NO experimental data. Everything here is either a schematic simulation parameter or an explicitly-labelled prediction; no Profile-B signaling measurement exists.",
+  "integrity_note": "Runtime parameters (threshold/delay/decay/attenuation/lifetime) are SCHEMATIC simulation controls, NOT biological measurements. Predicted extensions are MECHANISTIC_PREDICTION / HYPOTHESIS only and are toggleable; they never overwrite or relabel a frozen experimental node/edge. Experimental evidence always takes priority. Stops before transcription/translation/apoptosis/immune/PD/PK/toxicity/phenotype.",
+  "runtime_states": ["inactive", "transitioning", "partial", "active", "suppressed", "degraded"],
+  "runtime_prediction_levels": ["EXPERIMENTAL", "HIGH_CONFIDENCE_PREDICTION", "LITERATURE_DERIVED_PREDICTION", "MECHANISTIC_PREDICTION", "HYPOTHESIS"],
+  "evidence_overlay_modes": ["experimental", "prediction", "combined", "unavailable", "not_reported"],
+  "defaults": {
+    "activity_max": 1.0,
+    "activation_threshold": 0.2,
+    "attenuation_per_edge": 0.9,
+    "edge_weight": 1.0,
+    "decay_rate_per_hour": 0.15,
+    "activation_duration_h": 24,
+    "delay_classes_h": { "fast": 0.5, "medium": 3.0, "slow": 8.0 },
+    "drive": { "start_activity": 1.0, "ramp_per_hour": 0.6 },
+    "dt_hours": 0.5
+  },
+  "node_dynamics": {
+    "h1_exposure": { "threshold": 0.05, "decay_rate_per_hour": 0.02, "activation_duration_h": 48, "is_start": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 0, "row": 1 } },
+    "h1_ros":      { "threshold": 0.15, "decay_rate_per_hour": 0.25, "activation_duration_h": 32, "prediction_level": "LITERATURE_DERIVED_PREDICTION", "layout": { "col": 1, "row": 1 } },
+    "h1_erk":      { "threshold": 0.20, "decay_rate_per_hour": 0.20, "activation_duration_h": 32, "prediction_level": "EXPERIMENTAL", "layout": { "col": 2, "row": 0 } },
+    "h1_p38":      { "threshold": 0.20, "decay_rate_per_hour": 0.20, "activation_duration_h": 32, "prediction_level": "EXPERIMENTAL", "layout": { "col": 2, "row": 2 } },
+    "h1_nrf2":     { "threshold": 0.25, "decay_rate_per_hour": 0.12, "activation_duration_h": 40, "prediction_level": "EXPERIMENTAL", "layout": { "col": 3, "row": 1 } },
+    "h1_are":      { "threshold": 0.22, "decay_rate_per_hour": 0.12, "activation_duration_h": 40, "prediction_level": "EXPERIMENTAL", "layout": { "col": 4, "row": 1 } },
+    "h1_ho1":      { "threshold": 0.18, "decay_rate_per_hour": 0.10, "activation_duration_h": 48, "is_output": true, "prediction_level": "LITERATURE_DERIVED_PREDICTION", "layout": { "col": 5, "row": 1 } },
+
+    "h2_exposure":            { "threshold": 0.05, "decay_rate_per_hour": 0.02, "activation_duration_h": 48, "is_start": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 0, "row": 1 } },
+    "h2_nfkb":                { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "prediction_level": "LITERATURE_DERIVED_PREDICTION", "layout": { "col": 1, "row": 1 } },
+    "h2_inflammatory_output": { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "is_output": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 2, "row": 1 } },
+
+    "m1_exposure":         { "threshold": 0.05, "decay_rate_per_hour": 0.02, "activation_duration_h": 48, "is_start": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 0, "row": 1 } },
+    "m1_pi3k":             { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "prediction_level": "LITERATURE_DERIVED_PREDICTION", "layout": { "col": 1, "row": 1 } },
+    "m1_akt":              { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 2, "row": 1 } },
+    "m1_mtor":             { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 3, "row": 1 } },
+    "m1_survival_output":  { "threshold": 0.20, "decay_rate_per_hour": 0.12, "activation_duration_h": 24, "baseline_active": true, "is_output": true, "prediction_level": "EXPERIMENTAL", "layout": { "col": 4, "row": 1 } }
+  },
+  "edge_dynamics": {
+    "h1_e_exposure_ros":     { "delay_class": "fast",   "attenuation": 0.95, "weight": 1.0 },
+    "h1_e_ros_erk":          { "delay_class": "medium", "attenuation": 0.90, "weight": 0.9 },
+    "h1_e_ros_p38":          { "delay_class": "medium", "attenuation": 0.90, "weight": 0.9 },
+    "h1_e_erk_nrf2":         { "delay_class": "medium", "attenuation": 0.90, "weight": 0.55 },
+    "h1_e_p38_nrf2":         { "delay_class": "medium", "attenuation": 0.90, "weight": 0.55 },
+    "h1_e_nrf2_are":         { "delay_class": "slow",   "attenuation": 0.95, "weight": 1.0 },
+    "h1_e_are_ho1":          { "delay_class": "slow",   "attenuation": 0.90, "weight": 1.0 },
+
+    "h2_e_exposure_nfkb":    { "delay_class": "fast",   "attenuation": 0.90, "weight": 1.0 },
+    "h2_e_nfkb_inflammatory":{ "delay_class": "medium", "attenuation": 0.95, "weight": 1.0 },
+
+    "m1_e_exposure_pi3k":    { "delay_class": "fast",   "attenuation": 0.90, "weight": 1.0 },
+    "m1_e_pi3k_akt":         { "delay_class": "medium", "attenuation": 0.90, "weight": 1.0 },
+    "m1_e_akt_mtor":         { "delay_class": "medium", "attenuation": 0.90, "weight": 1.0 },
+    "m1_e_mtor_survival":    { "delay_class": "medium", "attenuation": 0.95, "weight": 1.0 }
+  },
+  "predicted_extensions": {
+    "note": "TOGGLEABLE, labelled predictions layered on top of the frozen graph. Disabled by default in overlay mode 'experimental'. Never modify frozen nodes/edges.",
+    "feedback_edges": {
+      "h1_fb_ho1_ros": {
+        "profile_id": "5B-H1", "source": "h1_ho1", "target": "h1_ros",
+        "relationship_type": "negative_feedback", "direction": "forward",
+        "delay_class": "medium", "attenuation": 0.7, "weight": 0.6,
+        "prediction_level": "MECHANISTIC_PREDICTION", "evidence_level": "MECHANISTIC_PREDICTION",
+        "confidence": "LOW",
+        "rationale": "HO-1 cytoprotection lowers oxidative stress, a canonical negative feedback onto ROS. NOT in the Profile-B package; mechanistic prediction only; damps the H1 cascade (no oscillation explosion).",
+        "reference_ids": ["celastrol_ho1_literature"]
+      }
+    },
+    "prediction_pathways": {
+      "5B-P1_soce": {
+        "title": "STIM1 -> Orai1 -> SOCE -> Ca2+ entry (store-operated calcium entry)",
+        "context_id": "human_hacat", "species": "human", "cell_model": "HaCaT",
+        "disease_context": "normal keratinocyte",
+        "prediction_level": "MECHANISTIC_PREDICTION",
+        "start_condition": "drug_exposure",
+        "stop_condition": "Ca2+ entry signaling-output state (no downstream biology)",
+        "no_profile_b_evidence": true,
+        "basis": "General calcium-signaling literature (STIM1 senses ER Ca2+ store depletion, gates Orai1 to drive store-operated Ca2+ entry). PREDICTION ONLY; deferred in Phase 5B.1 for insufficient graph evidence; never displayed as experimental.",
+        "nodes": {
+          "p1_stim1": { "canonical_name": "STIM1", "display_name": "STIM1", "aliases": ["stromal interaction molecule 1"], "node_type": "ion_channel_complex", "compartment": "membrane", "baseline_state": "inactive", "threshold": 0.15, "decay_rate_per_hour": 0.12, "activation_duration_h": 30, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "ER Ca2+ store-depletion sensor; mechanistic prediction, no Profile-B evidence.", "layout": { "col": 1, "row": 3 } },
+          "p1_orai1": { "canonical_name": "Orai1", "display_name": "Orai1", "aliases": ["CRAC channel subunit"], "node_type": "ion_channel_complex", "compartment": "membrane", "baseline_state": "inactive", "threshold": 0.15, "decay_rate_per_hour": 0.12, "activation_duration_h": 30, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "CRAC channel gated by STIM1; mechanistic prediction.", "layout": { "col": 2, "row": 3 } },
+          "p1_soce": { "canonical_name": "SOCE", "display_name": "SOCE", "aliases": ["store-operated calcium entry"], "node_type": "calcium_signal", "compartment": "membrane", "baseline_state": "inactive", "threshold": 0.15, "decay_rate_per_hour": 0.15, "activation_duration_h": 26, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "Store-operated calcium entry through Orai1; mechanistic prediction.", "layout": { "col": 3, "row": 3 } },
+          "p1_ca": { "canonical_name": "Ca2+_entry", "display_name": "Ca2+ entry", "aliases": ["cytosolic calcium rise"], "node_type": "calcium_signal", "compartment": "cytoplasm", "baseline_state": "inactive", "is_output": true, "threshold": 0.15, "decay_rate_per_hour": 0.15, "activation_duration_h": 26, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "Cytosolic Ca2+ rise (signaling-output state ONLY; no downstream calcium-dependent biology).", "layout": { "col": 4, "row": 3 } }
+        },
+        "edges": {
+          "p1_e_exposure_stim1": { "source": "h1_exposure", "target": "p1_stim1", "relationship_type": "activation", "direction": "forward", "delay_class": "medium", "attenuation": 0.95, "weight": 0.9, "prediction_level": "HYPOTHESIS", "confidence": "LOW", "rationale": "Exposure-driven entry to the predicted SOCE branch; hypothesis (weakest tier).", "reference_ids": [] },
+          "p1_e_stim1_orai1": { "source": "p1_stim1", "target": "p1_orai1", "relationship_type": "activation", "direction": "forward", "delay_class": "fast", "attenuation": 0.95, "weight": 1.0, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "STIM1 gates Orai1 (canonical calcium signaling); mechanistic prediction, no Profile-B evidence.", "reference_ids": [] },
+          "p1_e_orai1_soce": { "source": "p1_orai1", "target": "p1_soce", "relationship_type": "activation", "direction": "forward", "delay_class": "fast", "attenuation": 0.95, "weight": 1.0, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "Orai1 opening drives SOCE; mechanistic prediction.", "reference_ids": [] },
+          "p1_e_soce_ca": { "source": "p1_soce", "target": "p1_ca", "relationship_type": "activation", "direction": "forward", "delay_class": "fast", "attenuation": 0.95, "weight": 1.0, "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "rationale": "SOCE raises cytosolic Ca2+; mechanistic prediction. STOP (no downstream).", "reference_ids": [] }
+        }
+      }
+    }
+  },
+  "provenance_sources": [
+    "simulator/data/signal-*.registry.json (Phase 5B.1, FROZEN, read-only)",
+    "data/profile-b-evidence-package.json (FROZEN) - contains NO signaling data",
+    "Runtime parameters + predicted extensions are schematic / labelled predictions; no measurement is claimed."
+  ]
+}
