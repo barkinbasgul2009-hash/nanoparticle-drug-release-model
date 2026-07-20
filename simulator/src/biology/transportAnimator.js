@@ -25,6 +25,7 @@ export class TransportAnimator {
     this.signalEngine = deps.signalEngine || null;   // Phase 5B.2: separate signal-propagation layer
     this.transcriptionEngine = deps.transcriptionEngine || null; // Phase 5C: separate transcription layer
     this.translationEngine = deps.translationEngine || null; // Phase 5D: separate translation layer
+    this.proteinFunctionEngine = deps.proteinFunctionEngine || null; // Phase 6A: separate protein-function layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -49,6 +50,7 @@ export class TransportAnimator {
     if (this.signalEngine) this.signalEngine.restart();
     if (this.transcriptionEngine) this.transcriptionEngine.restart();
     if (this.translationEngine) this.translationEngine.restart();
+    if (this.proteinFunctionEngine) this.proteinFunctionEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -94,6 +96,10 @@ export class TransportAnimator {
     // recruitment -> initiation -> elongation -> termination -> nascent -> folding ->
     // mature protein -> turnover). It reads the 5C mRNA read-only and never mutates it.
     if (this.translationEngine) events.push(...this.translationEngine.step(dtHours));
+    // Phase 6A: the SEPARATE protein-function layer advances early cellular response
+    // (functional eligibility -> activation -> reversible cellular-state change). It reads
+    // the 5D mature proteins + 5B signaling read-only and modifies no upstream engine.
+    if (this.proteinFunctionEngine) events.push(...this.proteinFunctionEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -126,6 +132,7 @@ export class TransportAnimator {
       signalPropagation: this.signalEngine ? this.signalEngine.stats() : null,
       transcription: this.transcriptionEngine ? this.transcriptionEngine.stats() : null,
       translation: this.translationEngine ? this.translationEngine.stats() : null,
+      proteinFunction: this.proteinFunctionEngine ? this.proteinFunctionEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

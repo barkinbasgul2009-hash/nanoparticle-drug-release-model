@@ -176,6 +176,42 @@ export function translationLevelActive(level) {
   return _TRANSLATION_EXPERIMENTAL.has(level) || _TRANSLATION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// Phase 6A PROTEIN-FUNCTION / EARLY-CELLULAR-RESPONSE evidence vocabulary. ADDITIVE - does
+// not modify any earlier array. Reuses the refined tiers + HYPOTHESIS. Applied to protein
+// functional states, cellular-state variables, and functional edges. Experimental always
+// outranks prediction; a prediction never overwrites experimental data. Cell-fate remains
+// NOT_EVALUATED (Phase 6A stops before cell fate).
+export const FUNCTION_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC',
+  'EXPERIMENTAL_DRUG_CELL_SPECIFIC',
+  'EXPERIMENTAL_PATHWAY_SPECIFIC',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _FUNCTION_EXPERIMENTAL = new Set([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC', 'EXPERIMENTAL_DRUG_CELL_SPECIFIC', 'EXPERIMENTAL_PATHWAY_SPECIFIC',
+]);
+const _FUNCTION_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid protein-function evidence level? */
+export function isFunctionEvidenceLevel(level) { return FUNCTION_EVIDENCE_LEVELS.includes(level); }
+/** True if a function evidence level is experimental (outranks predictions). */
+export function isFunctionExperimental(level) { return _FUNCTION_EXPERIMENTAL.has(level); }
+/** True if a function evidence level is a labelled prediction (never presented as experimental). */
+export function isFunctionPrediction(level) { return _FUNCTION_PREDICTION.has(level); }
+/** Would this function level be eligible to run/animate? (not UNAVAILABLE / NOT_REPORTED) */
+export function functionLevelActive(level) {
+  return _FUNCTION_EXPERIMENTAL.has(level) || _FUNCTION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

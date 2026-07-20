@@ -1,0 +1,67 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6A PROTEIN-FUNCTION CONTEXT registry. Function profiles binding a Phase-5D mature protein to a functional cellular effect. Consumed READ-ONLY. A protein affects cellular state only when mature (from Phase 5D), not degraded, in the active species/cell, with a compatible profile and evidence not UNAVAILABLE. Human HaCaT is the most developed profile; mouse melanoma early responses are SIGNAL-driven (no protein output from 5D) and live in the cellular-state + functional-edges registries; rat is NOT_REPORTED. STOPS before cell fate (cell_fate_evidence = NOT_EVALUATED).",
+  "function_types_allowed": ["antioxidant_regulatory", "anti_inflammatory_regulatory", "adhesion_regulatory", "survival_regulatory", "stress_modulatory"],
+  "profiles": {
+    "human_hacat": {
+      "status": "ACTIVE",
+      "species": "human", "cell_model": "HaCaT", "tissue_context": "skin / keratinocyte", "disease_context": "normal keratinocyte",
+      "drug": "tripterine (celastrol)", "formulation": "surface-charged NLC (Profile B / B1)",
+      "summary_level": "PREDICTIVE",
+      "cell_fate_evidence": "NOT_EVALUATED",
+      "functions": {
+        "fn_ho1": {
+          "source_protein": "prot_ho1", "gene_id": "g_hmox1", "required_maturity_state": "mature", "function_available": true,
+          "function_type": "antioxidant_regulatory", "functional_direction": "raise_antioxidant_lower_inflammation",
+          "target_cellular_states": ["cs_antioxidant_capacity", "cs_inflammatory_state"],
+          "activation_basis": "mature HO-1 protein present", "inhibition_basis": "none",
+          "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "MEDIUM",
+          "uncertainty": "Celastrol-induced HO-1 anti-inflammatory / antioxidant regulatory effect is described in the literature but NOT verified in this repo; would be EXPERIMENTAL_DRUG_CELL_SPECIFIC only with a verified in-repo primary source. Magnitude/timing NOT_REPORTED.",
+          "stop_boundary": "early antioxidant / anti-inflammatory cellular-state adjustment",
+          "excluded_downstream_processes": ["heme degradation", "bilirubin/biliverdin production", "CO/iron release", "ferritin induction", "enzyme kinetics", "systemic antioxidant effects"]
+        },
+        "fn_nqo1": {
+          "source_protein": "prot_nqo1", "gene_id": "g_nqo1", "required_maturity_state": "mature", "function_available": true,
+          "function_type": "antioxidant_regulatory", "functional_direction": "raise_antioxidant",
+          "target_cellular_states": ["cs_antioxidant_capacity"],
+          "activation_basis": "mature NQO1 protein present (predicted)", "inhibition_basis": "none",
+          "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+          "uncertainty": "NQO1 antioxidant-support capacity is a canonical prediction; no same-context primary evidence. No catalytic chemistry / substrate turnover.",
+          "stop_boundary": "predicted antioxidant-support capacity",
+          "excluded_downstream_processes": ["NQO1 catalytic chemistry", "substrate turnover", "quinone reduction rates"]
+        },
+        "fn_infl_adhesion": {
+          "source_protein": "prot_infl", "gene_id": "g_infl", "required_maturity_state": "mature", "function_available": true,
+          "function_type": "adhesion_regulatory", "functional_direction": "abundance_drives_adhesion_readiness",
+          "target_cellular_states": ["cs_adhesion_readiness"],
+          "activation_basis": "inflammatory (ICAM1-like) protein abundance", "inhibition_basis": "reduced protein abundance lowers readiness",
+          "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW",
+          "uncertainty": "Schematic ICAM1-like adhesion readiness tracks the suppressed inflammatory protein abundance. Not named ICAM1 (no verified evidence). No monocytes/leukocytes/recruitment/vascular adhesion.",
+          "stop_boundary": "adhesion readiness increased / reduced",
+          "excluded_downstream_processes": ["monocyte adhesion", "leukocyte adhesion", "immune recruitment", "vascular adhesion", "tissue infiltration"]
+        }
+      }
+    },
+    "mouse_b16bl6": {
+      "status": "ACTIVE_SIGNAL_DRIVEN",
+      "species": "mouse", "cell_model": "B16BL6", "tissue_context": "melanoma", "disease_context": "malignant melanoma",
+      "drug": "tripterine (celastrol)", "formulation": "surface-charged NLC (Profile B / B1)",
+      "summary_level": "PREDICTIVE",
+      "cell_fate_evidence": "NOT_EVALUATED",
+      "reason": "Phase-5D produced no mouse protein output (mouse transcription/translation NOT_REPORTED). The mouse melanoma early-response is SIGNAL-driven (PI3K/AKT/mTOR suppression -> survival-signaling down; exposure -> oxidative stress). It uses no functional proteins; its states + edges live in cellular-state.registry.json + functional-edges.registry.json. Independent from human HaCaT; no transfer. Stops at reversible / preparatory states (NO apoptosis/cell death).",
+      "functions": {}
+    },
+    "rat_skin": {
+      "status": "NOT_REPORTED",
+      "species": "rat", "cell_model": "ex_vivo_skin", "summary_level": "NOT_REPORTED",
+      "cell_fate_evidence": "NOT_EVALUATED",
+      "reason": "No Phase-5D protein output and no validated intracellular functional response for rat. Protein function is NOT REPORTED (idle). No human/mouse fallback.",
+      "functions": {}
+    }
+  },
+  "context_rules": {
+    "one_species_one_cell_model": "A function profile binds exactly one species + cell model; never mixed.",
+    "no_silent_transfer": "No human keratinocyte function is transferred to mouse melanoma; no melanoma relationship is transferred to keratinocytes; nothing is copied to rat.",
+    "maturity_gating": "Function activates only for a mature, non-degraded protein of the active species/cell with a compatible profile and evidence not UNAVAILABLE."
+  }
+}

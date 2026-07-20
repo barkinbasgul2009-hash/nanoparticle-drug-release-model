@@ -38,6 +38,7 @@ export class CanvasRenderer {
     this.lastSignalEdgeFrame = null;  // Phase 5B.2: signaling edges (flowing/active/predicted/visible)
     this.lastTranscriptionFrame = null; // Phase 5C: { tfs, promoters, genes } gene-regulation diagram
     this.lastTranslationFrame = null;   // Phase 5D: { outputs } translation / protein-synthesis diagram
+    this.lastFunctionFrame = null;      // Phase 6A: { functions, states } protein-function / cellular-response diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -72,6 +73,8 @@ export class CanvasRenderer {
   setTranscriptionEngine(transcriptionEngine) { this.transcriptionEngine = transcriptionEngine; return this; }
   /** Phase 5D: attach the translation engine so the protein-synthesis diagram is drawn. */
   setTranslationEngine(translationEngine) { this.translationEngine = translationEngine; return this; }
+  /** Phase 6A: attach the protein-function engine so the cellular-response diagram is drawn. */
+  setProteinFunctionEngine(proteinFunctionEngine) { this.proteinFunctionEngine = proteinFunctionEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -124,6 +127,8 @@ export class CanvasRenderer {
     this.lastTranscriptionFrame = this._transcriptionFrame();
     // Phase 5D: translation / protein-synthesis diagram frame (headless-testable).
     this.lastTranslationFrame = this._translationFrame();
+    // Phase 6A: protein-function / early-cellular-response diagram frame (headless-testable).
+    this.lastFunctionFrame = this._functionFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -398,6 +403,35 @@ export class CanvasRenderer {
       this.ctx.fillText(`Translation (predicted) capacity ${tr.capacityOrdinal} - schematic timing; stops at protein`, 8, this.viewport.height - 74);
     }
 
+    // Phase 6A: protein-function / early-cellular-response diagram (restrained, publication).
+    const fn = this.lastFunctionFrame;
+    if (fn && (fn.functions.length || fn.states.length)) {
+      // functional proteins
+      for (const p of fn.functions) {
+        this.ctx.strokeStyle = '#4b6b57'; this.ctx.fillStyle = '#4b6b57';
+        this.ctx.globalAlpha = p.active ? 0.85 : 0.4;
+        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        if (p.inhibited) { this.ctx.globalAlpha = 0.5; this.ctx.stroke(); } // muted for inhibited
+        else if (p.active) this.ctx.fill(); else this.ctx.stroke();          // outlined = inactive
+        this.ctx.globalAlpha = 1;
+      }
+      // cellular-state indicators: a small bar with a baseline tick; restrained up/down colour
+      for (const s of fn.states) {
+        const barW = 46; const bx = s.x; const by = s.y;
+        this.ctx.strokeStyle = '#9a938a'; this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(bx, by - 4, barW, 8);
+        // baseline tick
+        this.ctx.beginPath(); this.ctx.moveTo(bx + barW * s.baseline, by - 5); this.ctx.lineTo(bx + barW * s.baseline, by + 5); this.ctx.stroke();
+        // fill to current value; restrained muted colours (no red-flash)
+        this.ctx.fillStyle = s.changed === 'up' ? '#7a8a6a' : s.changed === 'down' ? '#8a7a9a' : '#a0988c';
+        this.ctx.globalAlpha = 0.7; this.ctx.fillRect(bx, by - 3, barW * Math.max(0, Math.min(1, s.value)), 6); this.ctx.globalAlpha = 1;
+        this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '8px system-ui, sans-serif';
+        this.ctx.fillText(`${s.name}: ${s.ordinal}`, bx + barW + 4, by + 2);
+      }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '10px system-ui, sans-serif';
+      this.ctx.fillText('Protein function -> early cellular response (schematic, reversible; cell fate NOT evaluated)', 8, this.viewport.height - 86);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -624,6 +658,30 @@ CanvasRenderer.prototype._translationFrame = function _translationFrame() {
     };
   });
   return { outputs, capacityOrdinal: f.capacityOrdinal };
+};
+
+// Phase 6A protein-function / early-cellular-response diagram frame. Publication style,
+// restrained: functional proteins (filled=active, outlined=inactive, hatched=inhibited) ->
+// cellular-state indicators (bars with a baseline tick, upward/downward restrained change).
+// Derived from the engine (read-only). No flames/explosions/danger/red-flash/dying-cell.
+CanvasRenderer.prototype._functionFrame = function _functionFrame() {
+  const eng = this.proteinFunctionEngine;
+  if (!eng || eng.isIdle()) return { functions: [], states: [] };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const fnTop = H * 0.14; const stTop = H * 0.14; const rowH = 16;
+  const functions = f.functions.map((fn, i) => ({
+    id: fn.id, x: 0.08 * W, y: fnTop + i * rowH, proteinId: fn.proteinId, state: fn.functionalState,
+    capacity: fn.capacity, active: fn.functionalState === 'active', inhibited: fn.functionalState === 'inhibited',
+    predicted: fn.predicted, evidenceLevel: fn.evidenceLevel,
+  }));
+  const states = f.states.map((s, i) => ({
+    id: s.id, x: 0.42 * W, y: stTop + i * rowH, name: s.name, value: s.value, baseline: s.baseline, ordinal: s.ordinal,
+    changed: s.value > s.baseline + 0.02 ? 'up' : s.value < s.baseline - 0.02 ? 'down' : 'baseline',
+    predicted: eng.state(s.id) ? true : true, evidenceLevel: s.evidenceLevel,
+  }));
+  const edges = f.edges.filter((e) => e.active).map((e) => ({ id: e.id, sign: e.sign, predicted: e.predicted, feedback: e.feedback }));
+  return { functions, states, edges };
 };
 
 export default CanvasRenderer;

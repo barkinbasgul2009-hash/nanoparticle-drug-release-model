@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -49,6 +49,8 @@ export function buildAnatomyPanelModels(deps) {
   const geneLevel = transcription && transcription.engine ? transcription.engine.summaryLevel() : null;
   // Phase 5D: translation / protein synthesis summary level (idle => NOT_REPORTED).
   const translationLevel = translation && translation.engine ? translation.engine.summaryLevel() : null;
+  // Phase 6A: protein function & early cellular response summary level (idle => NOT_REPORTED).
+  const functionLevel = proteinFunction && proteinFunction.engine ? proteinFunction.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -60,6 +62,7 @@ export function buildAnatomyPanelModels(deps) {
     signalTransduction: signalLevel,
     geneRegulation: geneLevel,
     translation: translationLevel,
+    proteinFunction: functionLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -70,8 +73,25 @@ export function buildAnatomyPanelModels(deps) {
       signalTransduction: signalPropagation && signalPropagation.engine ? signalPropagation.engine.summaryMessage() : null,
       geneRegulation: transcription && transcription.engine ? transcription.engine.summaryMessage() : null,
       translation: translation && translation.engine ? translation.engine.summaryMessage() : null,
+      proteinFunction: proteinFunction && proteinFunction.engine ? proteinFunction.engine.summaryMessage() : null,
     },
   };
+  // Phase 6A: protein-function & early-cellular-response detail (data only). Clearly
+  // separates protein-abundance / protein-function / cellular-response / cell-fate evidence.
+  const proteinFunctionInfo = proteinFunction && proteinFunction.engine && !proteinFunction.engine.isIdle() ? {
+    level: proteinFunction.engine.summaryLevel(),
+    timingWarning: 'Functional-response timing is schematic and is not a validated biological timescale.',
+    stateWarning: 'Cellular-state values are schematic cellular-state abstractions (not concentrations or biomarkers).',
+    cellFateEvidence: 'NOT_EVALUATED',
+    functions: proteinFunction.engine.frame().functions.map((f) => ({
+      protein: f.proteinId, functionType: f.functionType, functionalState: f.functionalState,
+      proteinFunctionEvidence: f.evidenceLevel, prediction: f.predictionLevel, confidence: f.confidence,
+    })),
+    cellularStates: proteinFunction.engine.frame().states.map((s) => ({
+      name: s.name, stateType: s.stateType, value: s.ordinal, reversible: s.reversible,
+      cellularResponseEvidence: s.evidenceLevel, prediction: s.predictionLevel, confidence: s.confidence,
+    })),
+  } : (proteinFunction && proteinFunction.engine ? { level: 'NOT_REPORTED', functions: [], cellularStates: [], cellFateEvidence: 'NOT_EVALUATED' } : null);
   // Phase 5D: translation & protein-synthesis detail (data only) for the new panel section.
   // Clearly separates mRNA / translation / protein-abundance / protein-function evidence.
   const translationInfo = translation && translation.engine && !translation.engine.isIdle() ? {
@@ -148,6 +168,7 @@ export function buildAnatomyPanelModels(deps) {
       targetEngagement: targetInfo,
       geneRegulation: geneRegulationInfo,
       translation: translationInfo,
+      proteinFunction: proteinFunctionInfo,
     },
     navigation: {
       title: 'Navigation',

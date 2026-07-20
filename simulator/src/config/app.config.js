@@ -147,6 +147,18 @@ export const APP_CONFIG = Object.freeze({
   }),
   translation: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 6A: protein function & early cellular response. The engine reads the Phase-5D
+  // mature proteins + Phase-5B signaling + these registries read-only and drives functional
+  // eligibility -> functional activation -> reversible early cellular-state change (STOP
+  // before cell fate). Human HaCaT + mouse melanoma early-response profiles; rat NOT_REPORTED.
+  proteinFunctionSources: Object.freeze({
+    context: 'protein-function-context.registry.json',
+    cellularState: 'cellular-state.registry.json',
+    edges: 'functional-edges.registry.json',
+    evidence: 'functional-evidence.registry.json',
+  }),
+  proteinFunction: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

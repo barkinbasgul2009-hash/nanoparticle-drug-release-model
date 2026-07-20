@@ -179,6 +179,30 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/protein-output-profiles.md`, `docs/translation-prediction-framework.md`,
   `docs/phase5d-validation-report.md`, `docs/translation-animation-specification.md`,
   `docs/translation-developer-notes.md`.
+- **Phase 6A — Protein function & early cellular response (mature protein → reversible
+  cellular state):** a new `ProteinFunctionEngine` reads the Phase-5D mature proteins +
+  Phase-5B signaling + Phase-6A registries **read-only** and drives **functional eligibility
+  → activation/inhibition → reversible early cellular-state change → homeostatic/stress
+  response → recovery** — and **stops before cell fate**. Objects: `FunctionalProteinState`,
+  `CellularStateVariable`, `FunctionalEdge`. Human HaCaT: HO-1/NQO1 function → antioxidant
+  capacity ↑, oxidative stress ↓ (declared antioxidant↔oxidative feedback), inflammatory
+  state ↓ (NF-κB suppression + HO-1), adhesion readiness ↓ (suppressed ICAM1-like protein) —
+  all reversible. Mouse B16BL6 (signal-driven, no protein output): survival signaling ↓,
+  oxidative/mitochondrial stress ↑, **preparatory reversible stress readiness** ↑ —
+  explicitly **NOT apoptosis** (no cell dies). Rat: **NOT_REPORTED** (idle; no fallback).
+  Cellular states are schematic `[0,1]`, reversible, bounded; feedback is declared/typed/
+  bounded/stable. Nothing is EXPERIMENTAL without a verified in-repo reference
+  (`FUNCTION_EVIDENCE_LEVELS`, additive, 10 tiers); no kinetics/concentration/%/
+  membrane-potential/half-life/dose-response is fabricated; **cell-fate evidence stays
+  NOT_EVALUATED**. Deterministic; renderer draws a restrained protein-function/cellular-state
+  diagram (no flames/danger/dying-cell); the evidence panel shows an **eleventh** section
+  separating protein-abundance / protein-function / cellular-response / cell-fate evidence.
+  **Stops before cell fate** — no apoptosis/caspase/cytochrome-c/AIF/necrosis/cell-cycle
+  execution/proliferation/migration/tumour/immune/tissue/PK/PD/toxicity. Docs:
+  `docs/profile-b-simulator-phase6a-implementation.md`, `docs/protein-function-runtime.md`,
+  `docs/protein-function-evidence-review.md`, `docs/early-cellular-response-profiles.md`,
+  `docs/functional-prediction-framework.md`, `docs/phase6a-validation-report.md`,
+  `docs/phase6a-animation-specification.md`, `docs/phase6a-developer-notes.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

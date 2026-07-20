@@ -20,10 +20,11 @@ import signalGraph from './signalGraph.test.mjs';
 import signalPropagation from './signalPropagation.test.mjs';
 import transcription from './transcription.test.mjs';
 import translation from './translation.test.mjs';
+import proteinFunction from './proteinFunction.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction,
 ];
 
 for (const suite of suites) {

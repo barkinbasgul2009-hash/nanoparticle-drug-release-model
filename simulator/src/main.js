@@ -43,6 +43,7 @@ import { loadSignalGraph } from './biology/signalGraph.js';
 import { SignalPropagationEngine } from './biology/signalPropagationEngine.js';
 import { TranscriptionEngine } from './biology/transcriptionEngine.js';
 import { TranslationEngine } from './biology/translationEngine.js';
+import { ProteinFunctionEngine } from './biology/proteinFunctionEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -137,6 +138,7 @@ export async function createApp(opts = {}) {
   let signalPropagation = null; // Phase 5B.2: signal propagation (runtime signaling) layer
   let transcription = null; // Phase 5C: gene regulation / transcription (runtime) layer
   let translation = null; // Phase 5D: translation / protein-synthesis (runtime) layer
+  let proteinFunction = null; // Phase 6A: protein function / early cellular response layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -362,6 +364,36 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 6A: protein function & early cellular response. Reads the Phase-5D mature
+      // proteins + Phase-5B signaling + Phase-6A registries read-only and drives functional
+      // eligibility -> activation -> reversible early cellular-state change. STOP before cell fate.
+      if (translation) {
+        try {
+          const pfCtx = await anatomyLoader.load(config.proteinFunctionSources.context, 'generic');
+          const pfState = await anatomyLoader.load(config.proteinFunctionSources.cellularState, 'generic');
+          const pfEdges = await anatomyLoader.load(config.proteinFunctionSources.edges, 'generic');
+          const pfEv = await anatomyLoader.load(config.proteinFunctionSources.evidence, 'generic');
+          const pfEngine = new ProteinFunctionEngine({
+            functionContextRegistry: pfCtx, cellularStateRegistry: pfState, functionalEdgeRegistry: pfEdges, functionalEvidenceRegistry: pfEv,
+            translationEngine: translation.engine, signalEngine: signalPropagation ? signalPropagation.engine : null,
+            species: engine.species, logger,
+          });
+          if (renderer.setProteinFunctionEngine) renderer.setProteinFunctionEngine(pfEngine);
+          proteinFunction = {
+            engine: pfEngine,
+            step: (dt) => pfEngine.step(dt),
+            run: (steps, dt) => pfEngine.run(steps, dt),
+            stats: () => pfEngine.stats(),
+            frame: () => pfEngine.frame(),
+            timeline: () => pfEngine.getTimeline(),
+            restart: () => pfEngine.restart(),
+            validate: () => pfEngine.validate(),
+          };
+        } catch (err) {
+          logger.warn('load', 'protein-function not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
@@ -370,7 +402,8 @@ export async function createApp(opts = {}) {
         targetEngine: targetEngagement ? targetEngagement.engine : null,
         signalEngine: signalPropagation ? signalPropagation.engine : null,
         transcriptionEngine: transcription ? transcription.engine : null,
-        translationEngine: translation ? translation.engine : null, renderer, logger,
+        translationEngine: translation ? translation.engine : null,
+        proteinFunctionEngine: proteinFunction ? proteinFunction.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -427,6 +460,8 @@ export async function createApp(opts = {}) {
     transcription,
     // Phase 5D addition (may be null if the translation registries failed to load):
     translation,
+    // Phase 6A addition (may be null if the protein-function registries failed to load):
+    proteinFunction,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -449,11 +484,12 @@ export async function createApp(opts = {}) {
     if (signalPropagation) signalPropagation.engine.setSpecies(speciesId);
     if (transcription) transcription.engine.setSpecies(speciesId);
     if (translation) translation.engine.setSpecies(speciesId);
+    if (proteinFunction) proteinFunction.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -473,7 +509,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

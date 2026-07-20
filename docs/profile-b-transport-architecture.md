@@ -416,3 +416,45 @@ function / metabolism / phenotype / apoptosis / immune / tissue / PK / PD / toxi
 `translation-evidence-review.md`, `protein-output-profiles.md`,
 `translation-prediction-framework.md`, `phase5d-validation-report.md`,
 `translation-animation-specification.md`, `translation-developer-notes.md`.
+
+## Phase 6A — Protein Function & Early Cellular Response Runtime (mature protein → reversible cellular state)
+
+Phase 6A adds the first functional cellular consequence, stopping before cell fate.
+
+```
+biology/proteinFunctionEngine.js  reads TranslationEngine (5D, mature proteins) + SignalPropagationEngine (5B) + Phase-6A registries READ-ONLY
+    │  functional eligibility -> functional activation/inhibition -> reversible early
+    │  cellular-state change -> homeostatic/stress response -> recovery   ⟂ STOP (before cell fate)
+    ▼
+render/canvasRenderer.js  lastFunctionFrame (functional proteins + cellular-state bars w/ baseline tick; restrained)
+biology/transportAnimator.js  steps the protein-function layer AFTER translation each tick
+```
+
+**Objects** (`proteinFunctionObjects.js`): FunctionalProteinState, CellularStateVariable,
+FunctionalEdge. **Registries** (four separable): `protein-function-context` (function
+profiles), `cellular-state` (reversible 0-1 states), `functional-edges` (edges + declared
+feedback + dynamics), `functional-evidence` (evidence + predictions).
+
+**Human HaCaT:** HO-1/NQO1 function → antioxidant capacity ↑, oxidative stress ↓ (declared
+antioxidant↔oxidative feedback), inflammatory state ↓ (NF-κB suppression + HO-1), adhesion
+readiness ↓ (suppressed ICAM1-like protein) — all reversible, recovering to baseline.
+**Mouse B16BL6 (signal-driven, no protein output):** survival signaling ↓, oxidative stress
+↑, mitochondrial-stress readiness ↑, preparatory reversible stress readiness ↑ — explicitly
+NOT apoptosis. **Rat:** NOT_REPORTED (idle). Deterministic (no RNG).
+
+**Evidence discipline:** frozen package has NO functional dataset → early responses are
+mostly labelled PREDICTION (`FUNCTION_EVIDENCE_LEVELS`, additive, 10 tiers). Nothing is
+EXPERIMENTAL without a verified in-repo reference (HO-1 anti-inflammatory =
+LITERATURE_DERIVED_PREDICTION); no enzyme kinetics/concentration/%/membrane-potential/
+half-life/dose-response fabricated (unavailable = NOT_REPORTED); cellular states are
+schematic 0-1, reversible, bounded; feedback is declared/typed/bounded/stable (no
+undeclared cycles, no oscillation explosion); protein catalytic function is NOT evaluated
+and **cell-fate evidence stays NOT_EVALUATED**. The evidence panel gains an **eleventh**
+section (Protein Function & Early Cellular Response) separating protein-abundance /
+protein-function / cellular-response / cell-fate evidence. STOP before cell fate - no
+apoptosis/caspase/cytochrome-c/AIF/necrosis/cell-cycle execution/proliferation/migration/
+tumour/immune/tissue/PK/PD/toxicity. Docs:
+`docs/profile-b-simulator-phase6a-implementation.md`, `protein-function-runtime.md`,
+`protein-function-evidence-review.md`, `early-cellular-response-profiles.md`,
+`functional-prediction-framework.md`, `phase6a-validation-report.md`,
+`phase6a-animation-specification.md`, `phase6a-developer-notes.md`.
