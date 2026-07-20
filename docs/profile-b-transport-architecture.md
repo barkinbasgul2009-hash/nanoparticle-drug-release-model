@@ -374,3 +374,45 @@ a **ninth** section (Gene Regulation). STOPS at mRNA — no translation/protein/
 metabolism/cell-cycle/apoptosis/immune/tissue/PK/PD/toxicity/phenotype. Docs:
 `docs/profile-b-simulator-phase5c-implementation.md`, `gene-regulation-transcription.md`,
 `transcription-evidence-review.md`, `phase5c-validation-report.md`.
+
+## Phase 5D — Translation & Protein Synthesis Runtime (mRNA → mature protein)
+
+Phase 5D extends the chain from the 5C mRNA output to protein production, stopping at
+mature protein + turnover.
+
+```
+biology/translationEngine.js  reads TranscriptionEngine (5C, mRNA) + translation/protein registries READ-ONLY
+    │  mRNA gating -> ribosome recruitment -> initiation -> elongation -> termination ->
+    │  nascent polypeptide -> schematic folding/maturation -> mature protein abundance -> turnover  ⟂ STOP
+    ▼
+render/canvasRenderer.js  lastTranslationFrame (mRNA strand / ribosome position / nascent chain / mature protein + abundance)
+biology/transportAnimator.js  steps the translation layer AFTER transcription each tick
+```
+
+**Objects** (`translationObjects.js`): Ribosome, TranslationInitiationComplex,
+NascentPolypeptide, Protein. **Registries** (three separable): `translation-context`
+(profiles), `translation-machinery` (vocab + dynamics), `protein` (identities + turnover +
+evidence + predictions). Human HaCaT ACTIVE (HMOX1→HO-1, NQO1→NQO1, suppressed
+inflammatory mRNA→low protein); mouse + rat **NOT_REPORTED** (no 5C mRNA; no transfer).
+
+**Behaviour:** HO-1 protein rises to ~50% (induced, transient, lagged) and exceeds the
+suppressed inflammatory protein (~25%); turnover recycles units (conserved:
+produced = folding+mature+degrading+degraded). Deterministic (no RNG).
+
+**Evidence discipline:** frozen package has NO translation dataset → protein output is
+mostly labelled PREDICTION (`TRANSLATION_EVIDENCE_LEVELS`, additive, 10 tiers). Nothing is
+EXPERIMENTAL without a verified in-repo reference (HO-1 = LITERATURE_DERIVED_PREDICTION);
+no rate/count/length/copy-number/half-life/folding-time/polysome/constant/fold-change
+fabricated (unavailable = NOT_REPORTED); biological half-life kept distinct from the
+schematic simulation decay class; protein catalytic FUNCTION never evaluated
+(functional_state = not_evaluated). Global translation capacity (constitutive high for
+human; signal-node-linked only where a profile permits, as a labelled prediction) is
+separate from per-gene efficiency. Abundance is a schematic ladder {0,25,50,75,100}; timing
+is schematic (not a biological timescale). The evidence panel gains a **tenth** section
+(Translation & Protein Synthesis) that separates mRNA / translation / protein-abundance /
+protein-function evidence. STOP at protein + turnover - no enzyme activity / receptor
+function / metabolism / phenotype / apoptosis / immune / tissue / PK / PD / toxicity. Docs:
+`docs/profile-b-simulator-phase5d-implementation.md`, `translation-protein-synthesis.md`,
+`translation-evidence-review.md`, `protein-output-profiles.md`,
+`translation-prediction-framework.md`, `phase5d-validation-report.md`,
+`translation-animation-specification.md`, `translation-developer-notes.md`.

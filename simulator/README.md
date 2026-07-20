@@ -154,6 +154,31 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/profile-b-simulator-phase5c-implementation.md`,
   `docs/gene-regulation-transcription.md`, `docs/transcription-evidence-review.md`,
   `docs/phase5c-validation-report.md`.
+- **Phase 5D — Translation & protein synthesis runtime (mRNA → mature protein):** a new
+  `TranslationEngine` reads the Phase-5C mRNA output + translation/protein registries
+  **read-only** and drives **mRNA gating → ribosome recruitment → initiation → elongation →
+  termination → nascent polypeptide → schematic folding/maturation → mature protein
+  abundance → turnover** — and **stops at protein**. Objects: `Ribosome`,
+  `TranslationInitiationComplex`, `NascentPolypeptide`, `Protein`. Human HaCaT: **HO-1**
+  rises to ~50% (induced, transient), **NQO1** rises, and the **suppressed inflammatory
+  protein** stays low (~25%) — reduced mRNA → reduced protein. Abundance is a schematic
+  ladder `{0,25,50,75,100}`; turnover is conserved (`produced = folding+mature+degrading+
+  degraded`); biological half-life is **NOT_REPORTED** (kept distinct from the schematic
+  decay class). Global translation capacity (constitutive high for human; signal-node-linked
+  only where a profile permits, as a labelled prediction) is separate from per-gene
+  efficiency. Mouse/rat are **NOT_REPORTED** (no 5C mRNA; no transfer). Nothing is
+  EXPERIMENTAL without a verified in-repo reference (HO-1 = LITERATURE_DERIVED_PREDICTION);
+  `TRANSLATION_EVIDENCE_LEVELS` adds the 10-tier vocabulary; protein catalytic **function is
+  never evaluated** (`functional_state = not_evaluated`); no rate/count/length/copy-number/
+  half-life/folding-time is fabricated. Deterministic; renderer draws a schematic
+  translation diagram; the evidence panel shows a **tenth** section separating mRNA /
+  translation / protein-abundance / protein-function evidence. **Stops at protein +
+  turnover** — no enzyme activity/receptor function/metabolism/phenotype/apoptosis/immune/
+  tissue/PK/PD/toxicity. Docs: `docs/profile-b-simulator-phase5d-implementation.md`,
+  `docs/translation-protein-synthesis.md`, `docs/translation-evidence-review.md`,
+  `docs/protein-output-profiles.md`, `docs/translation-prediction-framework.md`,
+  `docs/phase5d-validation-report.md`, `docs/translation-animation-specification.md`,
+  `docs/translation-developer-notes.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

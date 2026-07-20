@@ -1,0 +1,76 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5D TRANSLATION CONTEXT registry. Species-keyed translation profiles binding a Phase-5C mRNA source to a protein output, with initiation/elongation/termination/folding/maturation/turnover models, evidence + uncertainty summaries, and excluded downstream functions. Consumed READ-ONLY. Human HaCaT is a set of labelled predictions; mouse + rat are NOT_REPORTED / idle (no Phase-5C mRNA, no evidence; no human fallback, no silent cross-species transfer).",
+  "excluded_downstream_global": ["enzyme_catalytic_activity", "receptor_activation", "metabolic_reactions", "protein_protein_signaling", "apoptosis", "necrosis", "autophagy", "cell_cycle", "proliferation", "migration", "differentiation", "inflammatory_cytokine_secretion", "immune_recruitment", "oxidative_stress_phenotype", "mitochondrial_dysfunction", "tumour_killing", "tissue_response", "pharmacokinetics", "pharmacodynamics_efficacy", "toxicity", "clinical_outcomes"],
+  "profiles": {
+    "human_hacat": {
+      "status": "ACTIVE",
+      "species": "human",
+      "cell_model": "HaCaT",
+      "tissue_context": "skin / keratinocyte",
+      "drug": "tripterine (celastrol)",
+      "formulation": "surface-charged NLC (Profile B / B1)",
+      "summary_level": "PREDICTIVE",
+      "global_capacity": { "source": "constitutive", "level": 0.8, "ordinal": "high", "evidence_level": "MECHANISTIC_PREDICTION", "rationale": "No mTOR/PI3K suppression is present in the human HaCaT signal profile (that axis is mouse-only, 5B-M1), so global translation capacity is treated as constitutively high. A signal-node-linked capacity (e.g. mTOR suppression -> reduced capacity) is architecturally supported but NOT applied here." },
+      "outputs": {
+        "out_ho1": {
+          "protein_id": "prot_ho1", "mrna_source": "mrna_hmox1", "gene_id": "g_hmox1",
+          "translation_available": true, "gene_efficiency": 0.85,
+          "initiation_model": "cap_dependent_schematic", "elongation_model": "schematic_progress", "termination_model": "schematic",
+          "folding_model": "co_translational_schematic", "maturation_model": "generic", "turnover_model": "schematic_moderate",
+          "evidence_level": "LITERATURE_DERIVED_PREDICTION",
+          "evidence_summary": "HMOX1 mRNA (5C) -> HO-1 protein: celastrol->HO-1 protein described in literature, not in the frozen package; labelled prediction.",
+          "uncertainty_summary": "magnitude / rate / half-life NOT_REPORTED; schematic timing only.",
+          "excluded_downstream": ["HO-1 enzymatic activity", "antioxidant phenotype", "ROS reduction"]
+        },
+        "out_nqo1": {
+          "protein_id": "prot_nqo1", "mrna_source": "mrna_nqo1", "gene_id": "g_nqo1",
+          "translation_available": true, "gene_efficiency": 0.75,
+          "initiation_model": "cap_dependent_schematic", "elongation_model": "schematic_progress", "termination_model": "schematic",
+          "folding_model": "co_translational_schematic", "maturation_model": "generic", "turnover_model": "schematic_slow",
+          "evidence_level": "MECHANISTIC_PREDICTION",
+          "evidence_summary": "NQO1 mRNA (5C) -> NQO1 protein: canonical Nrf2/ARE target translation; mechanistic prediction.",
+          "uncertainty_summary": "no same-context primary protein evidence; schematic timing.",
+          "excluded_downstream": ["NQO1 enzymatic activity"]
+        },
+        "out_infl": {
+          "protein_id": "prot_infl", "mrna_source": "mrna_infl", "gene_id": "g_infl",
+          "translation_available": true, "gene_efficiency": 0.7,
+          "initiation_model": "cap_dependent_schematic", "elongation_model": "schematic_progress", "termination_model": "schematic",
+          "folding_model": "co_translational_schematic", "maturation_model": "generic", "turnover_model": "schematic_moderate",
+          "evidence_level": "MECHANISTIC_PREDICTION",
+          "evidence_summary": "Suppressed NF-kB-target mRNA (5C) -> reduced translation input -> lower schematic protein abundance.",
+          "uncertainty_summary": "schematic identity (not named ICAM1); no phenotype; schematic timing.",
+          "excluded_downstream": ["adhesion", "inflammation", "immune recruitment"]
+        }
+      }
+    },
+    "mouse_b16bl6": {
+      "status": "NOT_REPORTED",
+      "species": "mouse",
+      "cell_model": "B16BL6",
+      "summary_level": "NOT_REPORTED",
+      "reason": "Phase 5C leaves mouse transcription NOT_REPORTED (no transcription-factor node), so no mRNA exists to translate. Translation is idle; no human mRNA/protein is reused; no silent cross-species transfer.",
+      "outputs": {}
+    },
+    "rat_skin": {
+      "status": "NOT_REPORTED",
+      "species": "rat",
+      "cell_model": "ex_vivo_skin",
+      "summary_level": "NOT_REPORTED",
+      "reason": "Phase 5C leaves rat transcription NOT_REPORTED (no cellular signaling / no mRNA). Translation is idle. Rat skin permeation evidence does NOT imply rat protein expression; nothing is copied from human HaCaT.",
+      "outputs": {}
+    }
+  },
+  "context_rules": {
+    "one_species_one_cell_model": "A translation profile binds exactly one species + cell model; never mixed.",
+    "no_silent_transfer": "Human HaCaT protein outputs are never transferred to mouse or rat. Mouse/rat stay NOT_REPORTED until Phase 5C provides a compatible mRNA profile.",
+    "mrna_gating": "Translation begins only when a valid, alive, cytoplasmic Phase-5C mRNA exists for the active context, the profile allows it, evidence is not UNAVAILABLE, and global capacity exceeds threshold."
+  },
+  "provenance_sources": [
+    "simulator/data/transcription.registry.json (Phase 5C, read-only) - mRNA source",
+    "simulator/data/protein.registry.json + translation-machinery.registry.json (Phase 5D)",
+    "data/profile-b-evidence-package.json (FROZEN) - contains NO translation/protein data",
+    "Protein outputs are labelled predictions; no rate/count/half-life/fold-change fabricated."
+  ]
+}

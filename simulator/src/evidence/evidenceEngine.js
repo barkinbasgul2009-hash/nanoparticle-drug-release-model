@@ -141,6 +141,41 @@ export function isGeneExperimental(level) { return level === 'EXPERIMENTAL'; }
 /** True if a gene evidence level is a labelled prediction (never presented as experimental). */
 export function isGenePrediction(level) { return _GENE_PREDICTION.has(level); }
 
+// Phase 5D TRANSLATION / PROTEIN-SYNTHESIS evidence vocabulary. ADDITIVE - does not modify
+// any earlier array. Reuses the refined signal-evidence tiers plus HYPOTHESIS. Applied to
+// translation contexts, machinery, proteins and turnover. Experimental always outranks a
+// prediction; a prediction never overwrites experimental data.
+export const TRANSLATION_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC',
+  'EXPERIMENTAL_DRUG_CELL_SPECIFIC',
+  'EXPERIMENTAL_PATHWAY_SPECIFIC',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _TRANSLATION_EXPERIMENTAL = new Set([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC', 'EXPERIMENTAL_DRUG_CELL_SPECIFIC', 'EXPERIMENTAL_PATHWAY_SPECIFIC',
+]);
+const _TRANSLATION_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid translation evidence level? */
+export function isTranslationEvidenceLevel(level) { return TRANSLATION_EVIDENCE_LEVELS.includes(level); }
+/** True if a translation evidence level is experimental (outranks predictions). */
+export function isTranslationExperimental(level) { return _TRANSLATION_EXPERIMENTAL.has(level); }
+/** True if a translation evidence level is a labelled prediction (never presented as experimental). */
+export function isTranslationPrediction(level) { return _TRANSLATION_PREDICTION.has(level); }
+/** Would this translation level be eligible to run/animate? (not UNAVAILABLE / NOT_REPORTED) */
+export function translationLevelActive(level) {
+  return _TRANSLATION_EXPERIMENTAL.has(level) || _TRANSLATION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

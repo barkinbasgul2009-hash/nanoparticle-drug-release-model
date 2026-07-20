@@ -37,6 +37,7 @@ export class CanvasRenderer {
     this.lastSignalFrame = null;      // Phase 5B.2: signaling nodes (activity/state/predicted/visible)
     this.lastSignalEdgeFrame = null;  // Phase 5B.2: signaling edges (flowing/active/predicted/visible)
     this.lastTranscriptionFrame = null; // Phase 5C: { tfs, promoters, genes } gene-regulation diagram
+    this.lastTranslationFrame = null;   // Phase 5D: { outputs } translation / protein-synthesis diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -69,6 +70,8 @@ export class CanvasRenderer {
   setSignalPropagationEngine(signalEngine) { this.signalEngine = signalEngine; return this; }
   /** Phase 5C: attach the transcription engine so the gene-regulation diagram is drawn. */
   setTranscriptionEngine(transcriptionEngine) { this.transcriptionEngine = transcriptionEngine; return this; }
+  /** Phase 5D: attach the translation engine so the protein-synthesis diagram is drawn. */
+  setTranslationEngine(translationEngine) { this.translationEngine = translationEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -119,6 +122,8 @@ export class CanvasRenderer {
     this.lastSignalEdgeFrame = sig.edges;
     // Phase 5C: gene-regulation / transcription diagram frame (headless-testable).
     this.lastTranscriptionFrame = this._transcriptionFrame();
+    // Phase 5D: translation / protein-synthesis diagram frame (headless-testable).
+    this.lastTranslationFrame = this._translationFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -357,6 +362,42 @@ export class CanvasRenderer {
       this.ctx.fillText('Gene regulation (predicted) - stops at mRNA', 8, this.viewport.height - 62);
     }
 
+    // Phase 5D: translation / protein-synthesis diagram (mRNA strand, ribosome, nascent
+    // chain, mature protein + abundance). Schematic; no cartoon helices, no atomic detail.
+    const tr = this.lastTranslationFrame;
+    if (tr && tr.outputs.length) {
+      for (const o of tr.outputs) {
+        const s = o.strand;
+        // mRNA strand (dashed if predicted)
+        this.ctx.strokeStyle = '#7a5a3c'; this.ctx.lineWidth = 1.4; this.ctx.globalAlpha = 0.6 + 0.4 * Math.max(0, Math.min(1, o.mrnaLevel));
+        if (o.predicted && this.ctx.setLineDash) this.ctx.setLineDash([4, 3]);
+        this.ctx.beginPath(); this.ctx.moveTo(s.x0, s.y); this.ctx.lineTo(s.x1, s.y); this.ctx.stroke();
+        if (this.ctx.setLineDash) this.ctx.setLineDash([]);
+        this.ctx.globalAlpha = 1;
+        // ribosome (restrained abstract complex) at its position
+        const rib = o.ribosome;
+        const active = rib.state === 'elongating' || rib.state === 'initiating' || rib.state === 'terminating';
+        this.ctx.globalAlpha = rib.state === 'suppressed' || rib.state === 'unavailable' ? 0.3 : active ? 0.9 : 0.5;
+        this.ctx.fillStyle = '#4b6b57';
+        this.ctx.beginPath(); this.ctx.arc(rib.x, rib.y, 4.5, 0, Math.PI * 2); this.ctx.fill();
+        // nascent chain emerging (short tick below the ribosome as it progresses)
+        if (active && rib.progress > 0) { this.ctx.strokeStyle = '#8a4b6b'; this.ctx.lineWidth = 1; this.ctx.beginPath(); this.ctx.moveTo(rib.x, rib.y + 4); this.ctx.lineTo(rib.x, rib.y + 4 + 6 * rib.progress); this.ctx.stroke(); }
+        this.ctx.globalAlpha = 1;
+        // mature protein (compact symbol; segmented/faded when degrading)
+        const pr = o.protein;
+        const size = 3 + (pr.abundanceState / 100) * 5;
+        this.ctx.fillStyle = pr.state === 'degrading' || pr.state === 'degraded' ? '#b0a08a' : '#a83c6b';
+        this.ctx.globalAlpha = pr.abundanceState > 0 ? 0.85 : 0.25;
+        this.ctx.beginPath(); this.ctx.arc(pr.x, pr.y, size, 0, Math.PI * 2);
+        if (o.predicted) { this.ctx.globalAlpha = 1; this.ctx.strokeStyle = '#6a4bab'; this.ctx.lineWidth = 1.2; this.ctx.stroke(); } else this.ctx.fill();
+        this.ctx.globalAlpha = 1;
+        this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+        this.ctx.fillText(`${o.predicted ? '⌁ ' : ''}${o.proteinName} ${pr.abundanceState}% (${pr.turnoverState})`, pr.x + size + 3, pr.y + 3);
+      }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '10px system-ui, sans-serif';
+      this.ctx.fillText(`Translation (predicted) capacity ${tr.capacityOrdinal} - schematic timing; stops at protein`, 8, this.viewport.height - 74);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -557,6 +598,32 @@ CanvasRenderer.prototype._transcriptionFrame = function _transcriptionFrame() {
   const promoters = f.promoters.map((pr) => ({ id: pr.id, x: xOf(pr.layout.col), y: yOf(pr.layout.row), occupancy: pr.occupancy, responseElement: pr.responseElement, chromatin: pr.chromatin, predicted: true }));
   const genes = f.genes.map((g) => ({ id: g.id, symbol: g.symbol, x: xOf(g.layout.col), y: yOf(g.layout.row), expressionState: g.expressionState, glow: g.expressionFrac, polymerase: g.polymerase, predicted: g.predicted, predictionLevel: g.predictionLevel, mrna: g.mrna ? { copyState: g.mrna.copyState, level: g.mrna.level } : null }));
   return { tfs, promoters, genes };
+};
+
+// Phase 5D translation / protein-synthesis diagram frame. Publication style, schematic:
+// per output a row with an mRNA strand, a ribosome (restrained abstract complex) advancing
+// along it (position = translationProgress), a nascent chain emerging, and a compact mature
+// protein symbol with an abundance indicator + turnover state. Derived from the engine
+// (read-only). No cartoon helices, no atomic ribosome structure.
+CanvasRenderer.prototype._translationFrame = function _translationFrame() {
+  const eng = this.translationEngine;
+  if (!eng || eng.isIdle()) return { outputs: [], capacityOrdinal: 'suppressed' };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const panelTop = H * 0.24; const rowH = Math.min(26, (H * 0.2) / Math.max(1, f.outputs.length));
+  const x0 = 0.1 * W; const x1 = 0.6 * W;                 // mRNA strand span
+  const outputs = f.outputs.map((o, i) => {
+    const y = panelTop + i * rowH;
+    return {
+      outId: o.outId, proteinName: o.proteinName, mrnaId: o.mrnaId, mrnaLevel: o.mrnaLevel,
+      strand: { x0, x1, y },
+      ribosome: { x: x0 + (x1 - x0) * o.translationProgress, y, state: o.ribosomeState, progress: o.translationProgress },
+      protein: { x: x1 + 30, y, state: o.proteinState, abundanceState: o.abundanceState, abundanceOrdinal: o.abundanceOrdinal, turnoverState: o.turnoverState },
+      predicted: o.predicted, evidenceLevel: o.evidenceLevel, predictionLevel: o.predictionLevel,
+      halfLifeH: o.halfLifeH, functionalState: o.functionalState,
+    };
+  });
+  return { outputs, capacityOrdinal: f.capacityOrdinal };
 };
 
 export default CanvasRenderer;

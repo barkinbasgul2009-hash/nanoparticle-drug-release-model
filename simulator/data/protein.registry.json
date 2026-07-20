@@ -1,0 +1,68 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5D PROTEIN registry. Protein identities, turnover, per-protein evidence records (with verification_status), and prediction records for the translation outputs. Consumed READ-ONLY. Protein CATALYTIC / downstream FUNCTION is NOT implemented in this phase (functional_state stays not_evaluated). No protein copy number, half-life, fold change, or degradation constant is fabricated; unavailable values are NOT_REPORTED.",
+  "evidence_decision_note": "Although the general literature reports celastrol-induced HO-1/HMOX1 protein in HaCaT keratinocytes, the FROZEN Profile-B evidence package (Chen 2012) contains NO HaCaT HO-1 protein measurement, and no primary HO-1/NQO1/inflammatory-protein source is verified IN THIS REPOSITORY. Per the project rule 'do not mark protein production experimental without a verified primary source in the same context present in the evidence registry', HO-1 protein is classified LITERATURE_DERIVED_PREDICTION (not EXPERIMENTAL_DRUG_CELL_SPECIFIC). It may be upgraded to EXPERIMENTAL_DRUG_CELL_SPECIFIC ONLY when such a primary source is attached + verified here.",
+  "proteins": {
+    "prot_ho1": {
+      "canonical_name": "HO-1", "protein_name": "heme oxygenase 1", "gene_id": "g_hmox1", "source_mrna_id": "mrna_hmox1",
+      "species": "human", "cell_model": "HaCaT", "compartment": "cytoplasm",
+      "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "MEDIUM",
+      "maturation_model": "generic", "chaperone": "none",
+      "turnover": { "state": "stable", "half_life_h": "NOT_REPORTED", "degradation_class": "moderate", "degradation_class_basis": "SCHEMATIC (generic simulation behaviour); biological half-life NOT_REPORTED" },
+      "reference_ids": ["celastrol_ho1_protein_literature"],
+      "rationale": "Celastrol-induced HO-1 protein is described in the literature for keratinocytes, but is NOT in the frozen Profile-B package and no primary source is verified in this repo -> labelled prediction, not experimental.",
+      "functional_state": "not_evaluated"
+    },
+    "prot_nqo1": {
+      "canonical_name": "NQO1", "protein_name": "NAD(P)H quinone dehydrogenase 1", "gene_id": "g_nqo1", "source_mrna_id": "mrna_nqo1",
+      "species": "human", "cell_model": "HaCaT", "compartment": "cytoplasm",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM",
+      "maturation_model": "generic", "chaperone": "none",
+      "turnover": { "state": "stable", "half_life_h": "NOT_REPORTED", "degradation_class": "slow", "degradation_class_basis": "SCHEMATIC; biological half-life NOT_REPORTED" },
+      "reference_ids": ["canonical_nrf2_nqo1_translation"],
+      "rationale": "NQO1 is a canonical Nrf2/ARE target; its translation into protein is a mechanistic prediction from the 5C transcription chain. No same-context primary protein evidence is verified here.",
+      "functional_state": "not_evaluated"
+    },
+    "prot_infl": {
+      "canonical_name": "INFL_PROTEIN", "protein_name": "schematic NF-kB inflammatory target protein", "gene_id": "g_infl", "source_mrna_id": "mrna_infl",
+      "species": "human", "cell_model": "HaCaT", "compartment": "cytoplasm",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW",
+      "maturation_model": "generic", "chaperone": "none",
+      "turnover": { "state": "stable", "half_life_h": "NOT_REPORTED", "degradation_class": "moderate", "degradation_class_basis": "SCHEMATIC; biological half-life NOT_REPORTED" },
+      "reference_ids": ["celastrol_nfkb_target_suppression"],
+      "rationale": "Schematic NF-kB target protein. Its mRNA is suppressed (5C) -> reduced translation input -> lower schematic mature protein abundance. NOT named ICAM1: no verified ICAM1 primary evidence is present in this repo, so a schematic identity is used. Adhesion / inflammation phenotype is NOT modelled.",
+      "functional_state": "not_evaluated"
+    }
+  },
+  "protein_evidence": {
+    "celastrol_ho1_protein_literature": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol->HO-1 protein literature to be attached + verified in a later phase)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that HMOX1 translation raises HO-1 protein abundance in HaCaT"],
+      "does_not_support": ["any HaCaT HO-1 protein value in the frozen package", "HO-1 enzymatic activity", "antioxidant phenotype"],
+      "note": "LITERATURE_DERIVED_PREDICTION; unverified in repo; no DOI fabricated."
+    },
+    "canonical_nrf2_nqo1_translation": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (canonical Nrf2/ARE -> NQO1 general biology)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["NQO1 as a canonical Nrf2/ARE target translated into protein (general relationship)"],
+      "does_not_support": ["context-specific magnitude/timing", "NQO1 enzymatic activity"],
+      "note": "MECHANISTIC_PREDICTION; no DOI fabricated."
+    },
+    "celastrol_nfkb_target_suppression": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol NF-kB-target suppression general literature)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that suppressed NF-kB-target mRNA lowers its schematic protein abundance"],
+      "does_not_support": ["any specific inflammatory protein value in the frozen package", "adhesion / inflammation phenotype"],
+      "note": "MECHANISTIC_PREDICTION; unverified in repo; no DOI fabricated."
+    }
+  },
+  "prediction_records": {
+    "pred_ho1_translation": { "protein_id": "prot_ho1", "claim": "HMOX1 mRNA is translated into HO-1 protein in celastrol-exposed HaCaT", "level": "LITERATURE_DERIVED_PREDICTION", "confidence": "MEDIUM", "source_principle": "Nrf2/ARE cytoprotective induction of HO-1 (drug-class literature)", "context_limitations": "not in the frozen Profile-B package; not verified in repo; magnitude/timing NOT_REPORTED", "species": "human", "cell_model": "HaCaT", "formulation_specific": false },
+    "pred_nqo1_translation": { "protein_id": "prot_nqo1", "claim": "NQO1 mRNA is translated into NQO1 protein", "level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM", "source_principle": "canonical Nrf2/ARE target translation", "context_limitations": "mechanistic only; no same-context primary protein evidence", "species": "human", "cell_model": "HaCaT", "formulation_specific": false },
+    "pred_infl_translation": { "protein_id": "prot_infl", "claim": "suppressed NF-kB-target mRNA yields reduced schematic protein abundance", "level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "source_principle": "reduced mRNA -> reduced translation input", "context_limitations": "schematic identity; no verified ICAM1 evidence; no phenotype", "species": "human", "cell_model": "HaCaT", "formulation_specific": false }
+  }
+}

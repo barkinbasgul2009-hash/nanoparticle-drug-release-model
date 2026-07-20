@@ -1,0 +1,46 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5D TRANSLATION MACHINERY registry. Schematic vocabularies + runtime dynamics for the translation engine (ribosome recruitment, initiation, elongation, termination, folding, maturation, turnover). Consumed READ-ONLY by translationEngine.js. All timing is SCHEMATIC simulation time, NOT a validated biological timescale; no translation rate, ribosome count, amino-acid length, initiation probability, folding time, or degradation constant is a measured value. No parameter is hard-coded in the engine.",
+  "timing_disclaimer": "Translation timing is schematic and is not a validated biological timescale. Simulation units, not biological seconds.",
+  "vocabularies": {
+    "ribosome_states": ["free", "recruiting", "initiating", "elongating", "terminating", "released", "paused", "suppressed", "unavailable"],
+    "initiation_states": ["not_assembled", "assembling", "assembled", "initiated", "failed", "suppressed", "released"],
+    "nascent_length_states": ["short", "extending", "full"],
+    "folding_states": ["nascent", "partially_folded", "newly_synthesized", "folding", "mature", "misfolded"],
+    "maturation_states": ["not_required", "newly_synthesized", "folding", "maturing", "mature", "unavailable", "not_reported"],
+    "protein_states": ["nascent", "newly_synthesized", "folding", "maturing", "mature", "misfolded", "inactive", "degrading", "degraded"],
+    "turnover_states": ["stable", "degrading", "degraded", "not_reported"],
+    "abundance_states": [0, 25, 50, 75, 100],
+    "abundance_ordinal": ["none", "low", "moderate", "high"],
+    "capacity_ordinal": ["suppressed", "low", "moderate", "high"],
+    "chaperone_flags": ["none", "general_assistance", "required", "not_reported"],
+    "degradation_classes": ["slow", "moderate", "fast"],
+    "functional_states": ["not_evaluated"]
+  },
+  "defaults": {
+    "dt_hours": 0.5,
+    "mrna_eligibility_threshold": 0.1,
+    "capacity_threshold": 0.1,
+    "recruitment_delay_h": 1.0,
+    "initiation_delay_h": 1.0,
+    "elongation_rate_per_hour": 0.35,
+    "maturation_delay_h": 2.0,
+    "translation_delay_h": 1.0,
+    "max_protein_units": 4,
+    "polysome_size": 1,
+    "turnover_rate_per_hour": 0.05,
+    "degradation_class_hours": { "slow": 80, "moderate": 50, "fast": 20 },
+    "degrade_delay_h": 2.0,
+    "global_capacity_default": 0.8,
+    "gene_efficiency_default": 0.8
+  },
+  "polysome_note": "The engine supports N ribosomes per mRNA (independent progress), but the DEFAULT profile uses one schematic ribosome per active mRNA. Polysome counts / ribosome density / inter-ribosome spacing are NOT invented; enabling >1 is a schematic architectural option only.",
+  "capacity_model": {
+    "kind": "normalized_schematic_capacity",
+    "range": [0.0, 1.0],
+    "ordinal": ["suppressed", "low", "moderate", "high"],
+    "not": ["measured_translation_rate", "ribosomes_per_mRNA", "proteins_per_minute", "initiation_events_per_second"],
+    "sources_allowed": ["constitutive", "signal_node_linked"],
+    "signal_node_linked_note": "A profile MAY tie global capacity to an upstream signal node (e.g. mTOR suppression -> reduced capacity) ONLY when its evidence record permits it, labelled LITERATURE_DERIVED_PREDICTION or MECHANISTIC_PREDICTION. This is NOT applied automatically to every profile."
+  }
+}

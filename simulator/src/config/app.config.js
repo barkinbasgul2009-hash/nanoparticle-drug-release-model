@@ -135,6 +135,18 @@ export const APP_CONFIG = Object.freeze({
   transcriptionSources: Object.freeze({ transcription: 'transcription.registry.json' }),
   transcription: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 5D: translation / protein-synthesis runtime. The translation engine reads the
+  // Phase-5C mRNA output + these registries read-only and drives ribosome recruitment ->
+  // initiation -> elongation -> termination -> nascent protein -> schematic folding /
+  // maturation -> mature protein abundance -> turnover (STOP at protein; no function).
+  // Human HaCaT is a labelled prediction; mouse/rat are NOT_REPORTED (idle).
+  translationSources: Object.freeze({
+    context: 'translation-context.registry.json',
+    machinery: 'translation-machinery.registry.json',
+    protein: 'protein.registry.json',
+  }),
+  translation: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

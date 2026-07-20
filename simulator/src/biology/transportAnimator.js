@@ -24,6 +24,7 @@ export class TransportAnimator {
     this.targetEngine = deps.targetEngine || null;   // Phase 5A: separate target-engagement layer
     this.signalEngine = deps.signalEngine || null;   // Phase 5B.2: separate signal-propagation layer
     this.transcriptionEngine = deps.transcriptionEngine || null; // Phase 5C: separate transcription layer
+    this.translationEngine = deps.translationEngine || null; // Phase 5D: separate translation layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -47,6 +48,7 @@ export class TransportAnimator {
     if (this.targetEngine) this.targetEngine.reset();
     if (this.signalEngine) this.signalEngine.restart();
     if (this.transcriptionEngine) this.transcriptionEngine.restart();
+    if (this.translationEngine) this.translationEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -88,6 +90,10 @@ export class TransportAnimator {
     // nuclear import -> DNA binding -> transcription -> mRNA). It reads the signal output
     // read-only and modifies no upstream engine. STOPS at mRNA.
     if (this.transcriptionEngine) events.push(...this.transcriptionEngine.step(dtHours));
+    // Phase 5D: the SEPARATE translation layer advances protein synthesis (ribosome
+    // recruitment -> initiation -> elongation -> termination -> nascent -> folding ->
+    // mature protein -> turnover). It reads the 5C mRNA read-only and never mutates it.
+    if (this.translationEngine) events.push(...this.translationEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -119,6 +125,7 @@ export class TransportAnimator {
       targetEngagement: this.targetEngine ? this.targetEngine.stats() : null,
       signalPropagation: this.signalEngine ? this.signalEngine.stats() : null,
       transcription: this.transcriptionEngine ? this.transcriptionEngine.stats() : null,
+      translation: this.translationEngine ? this.translationEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }
