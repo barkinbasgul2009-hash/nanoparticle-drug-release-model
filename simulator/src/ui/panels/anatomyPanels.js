@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -57,6 +57,8 @@ export function buildAnatomyPanelModels(deps) {
   const populationLevel = population && population.engine ? population.engine.summaryLevel() : null;
   // Phase 6D: tumour-response summary level (idle => NOT_REPORTED/UNAVAILABLE).
   const tumorLevel = tumor && tumor.engine ? tumor.engine.summaryLevel() : null;
+  // Phase 7A: passive microenvironment summary level (idle => NOT_REPORTED/UNAVAILABLE).
+  const microenvironmentLevel = microenvironment && microenvironment.engine ? microenvironment.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -72,6 +74,7 @@ export function buildAnatomyPanelModels(deps) {
     apoptosis: apoptosisLevel,
     populationResponse: populationLevel,
     tumorResponse: tumorLevel,
+    microenvironment: microenvironmentLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -86,6 +89,7 @@ export function buildAnatomyPanelModels(deps) {
       apoptosis: apoptosis && apoptosis.engine ? apoptosis.engine.summaryMessage() : null,
       populationResponse: population && population.engine ? population.engine.summaryMessage() : null,
       tumorResponse: tumor && tumor.engine ? tumor.engine.summaryMessage() : null,
+      microenvironment: microenvironment && microenvironment.engine ? microenvironment.engine.summaryMessage() : null,
     },
   };
   // Phase 6B: apoptosis commitment & execution detail (data only). Separates apoptosis /
@@ -164,6 +168,35 @@ export function buildAnatomyPanelModels(deps) {
     reason: (tumor.engine.profile && tumor.engine.profile.reason) || null,
     stopBoundary: 'schematic treatment-response trajectory + normalized burden',
     clinicalResponseEvidence: 'NOT_EVALUATED', survivalEvidence: 'NOT_EVALUATED', recistEvidence: 'NOT_EVALUATED',
+  } : null);
+  // Phase 7A: passive tumour-microenvironment detail (data only). A passive modulator that
+  // modifies penetration; each modifier exposes its evidence / prediction status, confidence,
+  // species, tumour model, uncertainty, limitations, and excluded biology. Immune / vascular /
+  // remodeling / metastasis stay NOT_EVALUATED.
+  const microenvironmentInfo = microenvironment && microenvironment.engine && !microenvironment.engine.isIdle() ? (() => {
+    const fr = microenvironment.engine.frame();
+    const p = microenvironment.engine.profile || {};
+    return {
+      title: 'Passive Tumor Microenvironment',
+      species: fr.species, tumourModel: fr.tumourModel, drug: p.drug || null, formulation: fr.formulation,
+      microenvironmentState: fr.microenvironmentState,
+      microenvironmentEvidence: fr.evidenceLevel, predictionLevel: fr.predictionLevel, predictionStatus: fr.predicted ? 'PREDICTION' : (fr.contextTransfer ? 'CONTEXT_TRANSFER' : 'NOT_REPORTED'),
+      predicted: fr.predicted, contextTransfer: fr.contextTransfer, confidence: fr.confidence, uncertainty: fr.uncertainty,
+      ecm: fr.ecm, diffusion: fr.diffusion, mechanical: fr.mechanical, oxygen: fr.oxygen, hypoxia: fr.hypoxia,
+      penetrationModifier: fr.penetration.penetrationModifier, effectiveAvailability: fr.penetration.effectiveAvailability, combinedRestriction: fr.penetration.combinedRestriction,
+      supportingLiterature: (p.evidence_refs || []),
+      limitations: p.limitations || null,
+      humanTranslationWarning: fr.humanTranslationWarning,
+      modifiesTransport: fr.modifiesTransport, replacesTransport: fr.replacesTransport, modifiesSignalling: fr.modifiesSignalling,
+      excludedBiology: (p.excluded_processes || []),
+      stopBoundary: 'microenvironment modifies penetration',
+      immuneEvidence: 'NOT_EVALUATED', vascularEvidence: 'NOT_EVALUATED', remodelingEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
+    };
+  })() : (microenvironment && microenvironment.engine ? {
+    title: 'Passive Tumor Microenvironment', species: microenvironment.engine.species, tumourModel: microenvironment.engine.tumourModel,
+    microenvironmentEvidence: microenvironment.engine.summaryLevel(), reason: (microenvironment.engine.profile && microenvironment.engine.profile.reason) || null,
+    stopBoundary: 'microenvironment modifies penetration',
+    immuneEvidence: 'NOT_EVALUATED', vascularEvidence: 'NOT_EVALUATED', remodelingEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
   } : null);
   // Phase 6A: protein-function & early-cellular-response detail (data only). Clearly
   // separates protein-abundance / protein-function / cellular-response / cell-fate evidence.
@@ -261,6 +294,7 @@ export function buildAnatomyPanelModels(deps) {
       apoptosis: apoptosisInfo,
       populationResponse: populationInfo,
       tumorResponse: tumorInfo,
+      microenvironment: microenvironmentInfo,
     },
     navigation: {
       title: 'Navigation',

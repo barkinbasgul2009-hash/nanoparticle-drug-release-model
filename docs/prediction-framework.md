@@ -88,3 +88,18 @@ directly in B16BL6. B16 / B16-F10 stay separate; **human is UNAVAILABLE** at run
 exploratory only, mandated non-clinical warning, no mouse parameter copied); **rat is
 NOT_REPORTED** (no fallback). No tumour volume / rate / doubling time / % / dose / survival is
 fabricated. See `tumor-prediction-framework.md` and `tumor-context-transfer-policy.md`.
+
+## Extension in Phase 7A — a prediction-only passive-microenvironment layer
+Phase 7A (passive TME) is **prediction-only**: `MICROENVIRONMENT_EVIDENCE_LEVELS` (additive, 8
+tiers) has **no experimental tier**, because the frozen package holds no direct TME dataset. Every
+active microenvironment relationship is therefore a labelled prediction (general tumour-ECM /
+hypoxia biology applied to this context) or `NOT_REPORTED`. Prediction may estimate *relative* ECM
+restriction / hypoxia influence / penetration reduction / oxygen limitation, but never fabricates
+an oxygen concentration, ECM fibre density, collagen mass, interstitial pressure, diffusion
+coefficient, or penetration rate (all `NOT_REPORTED`). Mouse B16BL6 = `MECHANISTIC_PREDICTION`
+(default, shown); human = a predictive-exploratory `MECHANISTIC_PREDICTION` with its **own distinct**
+values (not copied from mouse), a mandated non-clinical warning, and not shown by default; rat =
+`NOT_REPORTED`. Species are strictly isolated (a cross-species reuse would require a
+`CONTEXT_TRANSFER_PREDICTION`); the microenvironment only **modifies** penetration and never
+signals or replaces upstream logic. See `microenvironment-prediction-policy.md` and
+`microenvironment-evidence-review.md`.

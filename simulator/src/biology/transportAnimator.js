@@ -29,6 +29,7 @@ export class TransportAnimator {
     this.apoptosisEngine = deps.apoptosisEngine || null; // Phase 6B: separate apoptosis layer
     this.populationEngine = deps.populationEngine || null; // Phase 6C: separate population layer
     this.tumorEngine = deps.tumorEngine || null; // Phase 6D: separate tumour-response layer
+    this.microenvironmentEngine = deps.microenvironmentEngine || null; // Phase 7A: passive TME layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -57,6 +58,7 @@ export class TransportAnimator {
     if (this.apoptosisEngine) this.apoptosisEngine.restart();
     if (this.populationEngine) this.populationEngine.restart();
     if (this.tumorEngine) this.tumorEngine.restart();
+    if (this.microenvironmentEngine) this.microenvironmentEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -118,6 +120,10 @@ export class TransportAnimator {
     // burden + treatment-response trajectory from the Phase-6C population composition. It reads
     // the population read-only and never mutates any upstream engine.
     if (this.tumorEngine) events.push(...this.tumorEngine.step(dtHours));
+    // Phase 7A: the SEPARATE passive-microenvironment layer holds a static passive field per
+    // context; stepping advances its clock (replay/animator compatible). It reads registries +
+    // context only and modifies no upstream engine (its penetration modifier is advisory).
+    if (this.microenvironmentEngine) events.push(...this.microenvironmentEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -154,6 +160,7 @@ export class TransportAnimator {
       apoptosis: this.apoptosisEngine ? this.apoptosisEngine.stats() : null,
       population: this.populationEngine ? this.populationEngine.stats() : null,
       tumor: this.tumorEngine ? this.tumorEngine.stats() : null,
+      microenvironment: this.microenvironmentEngine ? this.microenvironmentEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

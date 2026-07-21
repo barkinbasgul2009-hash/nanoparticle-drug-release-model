@@ -24,10 +24,11 @@ import proteinFunction from './proteinFunction.test.mjs';
 import apoptosis from './apoptosis.test.mjs';
 import population from './population.test.mjs';
 import tumor from './tumor.test.mjs';
+import microenvironment from './microenvironment.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment,
 ];
 
 for (const suite of suites) {

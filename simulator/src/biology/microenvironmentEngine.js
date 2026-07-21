@@ -50,13 +50,13 @@ export class MicroenvironmentEngine {
   _canonicalTumourModel(species) { return species === 'mouse' ? 'B16BL6' : species === 'human' ? 'human_skin_melanoma_predictive' : species === 'rat' ? 'none' : null; }
 
   _profile() {
-    return Object.values(this.ctxReg.profiles || {}).find((p) => p.species === this.species && (p.tumour_model === this.tumourModel || (this.species === 'mouse' && p.tumour_model === 'B16BL6'))) || null;
+    return Object.values(this.ctxReg.profiles || {}).find((p) => p.species === this.species && p.tumour_model === this.tumourModel) || null;
   }
 
   _build() {
     const p = this._profile();
     this.profile = p;
-    this.timeH = 0; this._stepCount = 0;
+    this.timeH = 0; this._stepCount = 0; this.timeline = [];
     this.available = !!(p && p.microenvironment_available);
     this.formulation = this._formulationOverride && p && (p.supported_formulations || []).includes(this._formulationOverride)
       ? this._formulationOverride : (p ? p.formulation : null);
@@ -135,6 +135,19 @@ export class MicroenvironmentEngine {
     const meState = this._microenvironmentState(combined);
     Object.assign(s.penetration, { combinedRestriction: r3(combined), penetrationModifier: r3(penetrationModifier), effectiveAvailability: r3(effectiveAvailability), microenvironmentState: meState });
     s.microenvironmentState = meState;
+
+    // deterministic evaluation timeline (passive field is computed once per context; the
+    // events describe the passive evaluation order - no downstream biology).
+    this.timeline = [
+      { kind: 'milestone', event: 'microenvironment_loaded', detail: { tumourModel: this.tumourModel, evidenceLevel: this.profile.evidence_level } },
+      { kind: 'milestone', event: 'ecm_evaluated', detail: { penetrationResistance: s.ecm.penetrationResistance, collagen: s.ecm.collagen.variant } },
+      { kind: 'milestone', event: 'interstitial_resistance_calculated', detail: { resistance: s.diffusion.resistance } },
+      { kind: 'milestone', event: 'hypoxia_evaluated', detail: { state: s.hypoxia.state, severity: s.hypoxia.severity } },
+      { kind: 'milestone', event: 'oxygen_environment_updated', detail: { state: s.oxygen.state, availability: s.oxygen.availability } },
+      { kind: 'milestone', event: 'penetration_modifier_applied', detail: { penetrationModifier: s.penetration.penetrationModifier, state: meState } },
+      { kind: 'milestone', event: 'drug_transport_updated', detail: { effectiveAvailability: s.penetration.effectiveAvailability } },
+      { kind: 'milestone', event: 'transport_continues', detail: {} },
+    ];
   }
 
   _microenvironmentState(combined) {
@@ -161,6 +174,8 @@ export class MicroenvironmentEngine {
   hypoxiaModifier() { return this.available ? this.state.hypoxia.severity : 0; }
 
   // ---- accessors ---------------------------------------------------------
+
+  getTimeline() { return this.timeline.slice(); }
 
   summaryLevel() { return this.isIdle() ? (this.profile && this.profile.evidence_level === 'NOT_REPORTED' ? 'NOT_REPORTED' : 'UNAVAILABLE') : (this.profile.evidence_level || 'MECHANISTIC_PREDICTION'); }
   summaryMessage() {
@@ -204,6 +219,63 @@ export class MicroenvironmentEngine {
       metastasisEvidence: 'NOT_EVALUATED',
       timeH: r2(this.timeH), summaryLevel: this.summaryLevel(),
     };
+  }
+
+  // ---- validation --------------------------------------------------------
+
+  /** Registry + consistency integrity. STOP at penetration; no downstream biology fields. */
+  validate() {
+    const errors = []; const warnings = [];
+    const FORBIDDEN = ['immune', 'macrophage', 'dendritic', 'nk_cell', 't_cell', 'b_cell', 'cytokine', 'chemokine', 'vegf', 'angiogen', 'fibrosis', 'remodel', 'collagen_synthesis', 'collagen_degradation', 'fibroblast', 'caf', 'mmp', 'metasta', 'invasion', 'lymphatic', 'vascular', 'systemic', 'checkpoint', 'clearance'];
+    const oxyIdx = { normoxic: 0, mild_hypoxia: 1, moderate_hypoxia: 2, severe_hypoxia: 3 };
+    const hypIdx = { normoxic: 0, mild: 1, moderate: 2, severe: 3 };
+    const profs = this.ctxReg.profiles || {};
+    const evRecs = this.evReg.evidence_records || {};
+    const seen = new Set();
+    for (const [pid, p] of Object.entries(profs)) {
+      if (seen.has(pid)) errors.push(`duplicate microenvironment profile id: ${pid}`); seen.add(pid);
+      if (p.profile_id && p.profile_id !== pid) errors.push(`profile ${pid} profile_id mismatch`);
+      // required fields + species / tumour validity
+      if (!KNOWN_SPECIES.has(p.species)) errors.push(`profile ${pid} invalid/unsupported species: ${p.species}`);
+      if (!p.tumour_model) errors.push(`profile ${pid} missing tumour_model`);
+      if (!isMicroenvironmentEvidenceLevel(p.evidence_level)) errors.push(`profile ${pid} invalid evidence_level`);
+      if (!p.microenvironment_available) {
+        if (p.evidence_level !== 'NOT_REPORTED' && p.evidence_level !== 'UNAVAILABLE') errors.push(`profile ${pid} unavailable but evidence_level ${p.evidence_level}`);
+        continue;
+      }
+      // prediction labelling: an active microenvironment is NEVER experimental (only predictions exist here)
+      if (!isMicroenvironmentPrediction(p.evidence_level)) errors.push(`profile ${pid} active microenvironment must be a labelled prediction (got ${p.evidence_level})`);
+      // evidence completeness: available profile must reference existing evidence records
+      const refs = (p.evidence_refs || []);
+      if (!refs.length) errors.push(`profile ${pid} available but has no evidence_refs`);
+      for (const rid of refs) if (!evRecs[rid]) errors.push(`profile ${pid} references missing evidence record ${rid}`);
+      // component variants must exist in their registries (renderer compatibility)
+      const c = p.components || {};
+      if (c.collagen && !this._variant(this.ecmReg, 'collagen', c.collagen).density && !(this.ecmReg.collagen && this.ecmReg.collagen.variants && this.ecmReg.collagen.variants[c.collagen])) errors.push(`profile ${pid} unsupported collagen variant ${c.collagen}`);
+      if (c.interstitial && !(this.diffReg.interstitial_space && this.diffReg.interstitial_space.variants && this.diffReg.interstitial_space.variants[c.interstitial])) errors.push(`profile ${pid} unsupported interstitial variant ${c.interstitial}`);
+      if (c.mechanical && !(this.mechReg.barrier_states && this.mechReg.barrier_states[c.mechanical])) errors.push(`profile ${pid} unsupported mechanical variant ${c.mechanical}`);
+      if (c.oxygen && !(this.oxyReg.oxygen_states && this.oxyReg.oxygen_states[c.oxygen])) errors.push(`profile ${pid} unsupported oxygen variant ${c.oxygen}`);
+      if (c.hypoxia && !(this.hypReg.hypoxia_states && this.hypReg.hypoxia_states[c.hypoxia])) errors.push(`profile ${pid} unsupported hypoxia variant ${c.hypoxia}`);
+      // consistency: oxygen state and hypoxia state must be coherent (reject e.g. normoxic + severe)
+      if (c.oxygen != null && c.hypoxia != null && oxyIdx[c.oxygen] != null && hypIdx[c.hypoxia] != null) {
+        if (Math.abs(oxyIdx[c.oxygen] - hypIdx[c.hypoxia]) >= 2) errors.push(`profile ${pid} inconsistent oxygen/hypoxia combination: ${c.oxygen} + ${c.hypoxia}`);
+      }
+      // consistency: a very dense ECM must not yield an unrestricted (permissive) microenvironment
+      if (['dense', 'highly_dense'].includes(c.collagen) && (c.mechanical === 'highly_dense')) {
+        const col = this._variant(this.ecmReg, 'collagen', c.collagen);
+        if ((col.penetration_effect ?? 0) >= 0.7) { /* structurally dense - fine as long as not permissive; runtime state checked below when active */ }
+      }
+      // forbidden downstream biology must not be declared as a microenvironment field
+      for (const bad of FORBIDDEN) if ((p.tumour_model || '').toLowerCase().includes(bad)) errors.push(`profile ${pid} references a forbidden downstream concept: ${bad}`);
+    }
+    // runtime consistency for the ACTIVE profile: dense ECM must not be permissive
+    if (this.available) {
+      const c = (this.profile.components || {});
+      if (['dense', 'highly_dense'].includes(c.collagen) && this.state.microenvironmentState === 'permissive') errors.push('inconsistent runtime: dense ECM resolved to a permissive microenvironment');
+      const pm = this.state.penetration.penetrationModifier;
+      if (pm < 0 || pm > 1) errors.push('penetration modifier out of [0,1]');
+    }
+    return { ok: errors.length === 0, errors, warnings };
   }
 
   _log(level, cat, msg, data) { if (this.logger && this.logger[level]) this.logger[level](cat, msg, data); }

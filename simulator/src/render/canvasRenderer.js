@@ -42,6 +42,7 @@ export class CanvasRenderer {
     this.lastApoptosisFrame = null;     // Phase 6B: apoptosis commitment/execution diagram
     this.lastPopulationFrame = null;    // Phase 6C: population composition/viability diagram
     this.lastTumorFrame = null;         // Phase 6D: tumour burden / treatment-response diagram
+    this.lastMicroenvironmentFrame = null; // Phase 7A: passive TME diagram (ECM/oxygen/penetration)
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -84,6 +85,8 @@ export class CanvasRenderer {
   setPopulationEngine(populationEngine) { this.populationEngine = populationEngine; return this; }
   /** Phase 6D: attach the tumour engine so the tumour burden / response diagram is drawn. */
   setTumorEngine(tumorEngine) { this.tumorEngine = tumorEngine; return this; }
+  /** Phase 7A: attach the microenvironment engine so the passive TME diagram is drawn. */
+  setMicroenvironmentEngine(microenvironmentEngine) { this.microenvironmentEngine = microenvironmentEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -144,6 +147,8 @@ export class CanvasRenderer {
     this.lastPopulationFrame = this._populationFrame();
     // Phase 6D: tumour burden / treatment-response diagram frame (headless-testable).
     this.lastTumorFrame = this._tumorFrame();
+    // Phase 7A: passive tumour-microenvironment diagram frame (headless-testable).
+    this.lastMicroenvironmentFrame = this._microenvironmentFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -536,6 +541,36 @@ export class CanvasRenderer {
       this.ctx.fillText('clinical / RECIST / survival / metastasis / PK NOT evaluated', tb.x, tb.y + 30);
     }
 
+    // Phase 7A: passive tumour-microenvironment diagram (schematic; scientific, not artistic).
+    // A small ECM field (density -> mesh spacing + opacity) with an oxygen/hypoxia overlay
+    // (hypoxic = darker) and a drug-penetration path that is DIRECT when permissive and
+    // TORTUOUS when restrictive. No photorealism / vasculature / immune cells.
+    const me = this.lastMicroenvironmentFrame;
+    if (me && me.available) {
+      const mb = me.field;
+      // ECM mesh: spacing shrinks + opacity rises with density (denser = harder to penetrate).
+      const spacing = Math.max(4, 16 - 12 * me.ecm.density);
+      this.ctx.strokeStyle = '#7a7367'; this.ctx.globalAlpha = 0.2 + 0.5 * me.ecm.penetrationResistance; this.ctx.lineWidth = 1;
+      for (let gx = mb.x; gx <= mb.x + mb.w; gx += spacing) { this.ctx.beginPath(); this.ctx.moveTo(gx, mb.y); this.ctx.lineTo(gx, mb.y + mb.h); this.ctx.stroke(); }
+      for (let gy = mb.y; gy <= mb.y + mb.h; gy += spacing) { this.ctx.beginPath(); this.ctx.moveTo(mb.x, gy); this.ctx.lineTo(mb.x + mb.w, gy); this.ctx.stroke(); }
+      // oxygen / hypoxia overlay: hypoxic regions are darker (severity-scaled).
+      this.ctx.globalAlpha = 0.1 + 0.45 * me.hypoxia.severity; this.ctx.fillStyle = '#2b3a46'; this.ctx.fillRect(mb.x, mb.y, mb.w, mb.h);
+      this.ctx.globalAlpha = 1;
+      // penetration path: direct (permissive) -> tortuous (restrictive). Amplitude scales with restriction.
+      const amp = mb.h * 0.35 * me.penetration.combinedRestriction;
+      const segs = 24; this.ctx.strokeStyle = me.predicted ? '#8a7a9a' : '#4b6b57'; this.ctx.lineWidth = 1.4; this.ctx.beginPath();
+      for (let i = 0; i <= segs; i++) { const t = i / segs; const x = mb.x + mb.w * t; const y = mb.y + mb.h * 0.5 + Math.sin(t * Math.PI * 5) * amp * (1 - t); if (i === 0) this.ctx.moveTo(x, y); else this.ctx.lineTo(x, y); }
+      this.ctx.stroke();
+      // border + labels
+      this.ctx.strokeStyle = '#9a938a'; this.ctx.lineWidth = 1; this.ctx.strokeRect(mb.x, mb.y, mb.w, mb.h);
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+      const mtag = me.contextTransfer ? ' (context-transfer)' : me.predicted ? ' (predicted)' : '';
+      this.ctx.fillText(`TME [${me.tumourModel}] ${me.microenvironmentState}${mtag}`, mb.x, mb.y - 4);
+      this.ctx.font = '8px system-ui, sans-serif';
+      this.ctx.fillText(`ECM ${me.ecm.collagen}/${me.ecm.hyaluronicAcid} | O2 ${me.oxygen.state} | penetration ${me.penetration.penetrationModifier} (schematic; modifies penetration only)`, mb.x, mb.y + mb.h + 12);
+      this.ctx.fillText('immune / vascular / remodeling / metastasis NOT evaluated', mb.x, mb.y + mb.h + 22);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -858,6 +893,28 @@ CanvasRenderer.prototype._tumorFrame = function _tumorFrame() {
     burdenBar: { x: x0, y, w: barW, scale, viable: f.normalizedViableBurden, apoptotic: f.normalizedApoptoticBurden },
     curve: { x: x0, y: y + 34, w: barW, h: 16, points: points.slice(-160) },
     tumourResponseEvidence: f.tumourResponseEvidence, clinicalResponseEvidence: f.clinicalResponseEvidence, survivalEvidence: f.survivalEvidence,
+  };
+};
+
+// Phase 7A passive tumour-microenvironment diagram frame. Schematic + scientific (not
+// artistic): an ECM mesh (density -> spacing/opacity), an oxygen/hypoxia overlay (hypoxic =
+// darker), and a drug-penetration path (direct when permissive, tortuous when restrictive).
+// Derived from the engine (read-only). Ordinal / schematic only - never real ECM density /
+// oxygen concentration. No vasculature / immune cells / remodeling.
+CanvasRenderer.prototype._microenvironmentFrame = function _microenvironmentFrame() {
+  const eng = this.microenvironmentEngine;
+  if (!eng || eng.isIdle()) return { available: false, microenvironmentState: eng ? eng.state.microenvironmentState : 'unavailable', tumourModel: eng ? eng.tumourModel : null };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const x0 = 0.55 * W; const y = H * 0.08; const w = 0.36 * W; const h = 0.2 * H;
+  return {
+    available: true, tumourModel: f.tumourModel, species: f.species, formulation: f.formulation,
+    microenvironmentState: f.microenvironmentState,
+    ecm: f.ecm, diffusion: f.diffusion, mechanical: f.mechanical, oxygen: f.oxygen, hypoxia: f.hypoxia, penetration: f.penetration,
+    predicted: f.predicted, contextTransfer: f.contextTransfer, evidenceLevel: f.evidenceLevel,
+    field: { x: x0, y, w, h },
+    modifiesTransport: f.modifiesTransport, replacesTransport: f.replacesTransport, modifiesSignalling: f.modifiesSignalling,
+    immuneEvidence: f.immuneEvidence, vascularEvidence: f.vascularEvidence, remodelingEvidence: f.remodelingEvidence,
   };
 };
 

@@ -63,3 +63,13 @@ the cell-model level: B16 / B16BL6 / B16-F10 tumour evidence is never merged wit
 The simulator stops at the schematic treatment-response trajectory; clinical / RECIST / survival /
 metastasis / immune / PK stay `NOT_EVALUATED`. See `tumor-response-evidence-review.md`,
 `tumor-prediction-framework.md`, and `tumor-context-transfer-policy.md`.
+
+Phase 7A adds `MICROENVIRONMENT_EVIDENCE_LEVELS` (8 tiers) for the passive tumour
+microenvironment. Like the population layer, it has **no experimental tier**: the frozen package
+holds no direct TME characterization for this context, so every active microenvironment value is a
+labelled prediction (general tumour-ECM / hypoxia biology) or `NOT_REPORTED`. The non-combination
+rule holds at the species level — mouse / human / rat passive environments are isolated (human
+carries its own distinct values, not copied from mouse; a cross-species reuse requires a
+`CONTEXT_TRANSFER_PREDICTION`), and rat stays `NOT_REPORTED`. The layer only **modifies** drug
+penetration; it stops at the penetration modifier, with immune / vascular / remodeling / metastasis
+`NOT_EVALUATED`. See `microenvironment-evidence-review.md`, `microenvironment-prediction-policy.md`.

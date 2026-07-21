@@ -610,3 +610,48 @@ PBPK / toxicity / dose recommendation (Phase 7+). Docs:
 `formulation-response-profiles.md`, `tumor-prediction-framework.md`,
 `tumor-context-transfer-policy.md`, `phase6d-validation-report.md`,
 `phase6d-animation-specification.md`, `phase6d-developer-notes.md`, `tumor-response-limitations.md`.
+
+## Phase 7A — Passive tumour microenvironment (TME)
+
+`MicroenvironmentEngine` is the first tumour-microenvironment layer — a **passive modulator**,
+not an immune / angiogenesis / metastasis / remodeling phase. It reads the nine Phase-7A
+registries + the active species / tumour model / formulation and computes the passive physical /
+biochemical environment (ECM / collagen / hyaluronic acid / interstitial space / oxygen / hypoxia
+/ mechanical barrier) that **modifies drug penetration**. It is deterministic (no RNG),
+registry-driven, evidence- and prediction-aware.
+
+**Core principle:** the microenvironment MODIFIES transport / uptake / penetration — it never
+REPLACES an upstream engine, alters upstream biological logic, or directly modifies intracellular
+signalling. Its penetration modifier is ADVISORY (`modifiesTransport: true`, `replacesTransport:
+false`, `modifiesSignalling: false`).
+
+**Objects** (`microenvironmentObjects.js`): ECMState (+ CollagenNetwork / hyaluronic acid /
+proteoglycan / fluid), InterstitialSpace, DiffusionBarrier, OxygenEnvironment, HypoxiaState,
+MechanicalBarrier, PenetrationModifier, MicroenvironmentState — all schematic ordinal / 0-1, never
+a real ECM density / collagen mass / interstitial pressure / oxygen concentration / diffusion
+coefficient. **Registries** (nine): `microenvironment-context`, `ecm`, `diffusion`, `mechanical`,
+`oxygen`, `hypoxia`, `penetration`, `microenvironment-evidence`, `microenvironment-prediction`.
+
+**Model:** ECM / diffusion / mechanical / hypoxia resistances combine (weighted) into
+`combinedRestriction`; `penetrationModifier = clamp(1 - combinedRestriction, floor, 1)`;
+`microenvironmentState ∈ {permissive … extremely_restrictive}`. Denser ECM / stiffer barrier /
+more hypoxia → lower penetration. Deterministic **evaluation timeline** (8 milestones) + a
+`validate()` (registry + consistency: prediction labelling, evidence completeness, component-
+variant existence, oxygen/hypoxia coherence, dense-ECM-not-permissive).
+
+**Evidence + species policy:** additive `MICROENVIRONMENT_EVIDENCE_LEVELS` (8 tiers, **no
+experimental tier** — the frozen package has no direct TME dataset). Mouse **B16BL6 =
+MECHANISTIC_PREDICTION** (default); **human = predictive-exploratory** with its **own distinct**
+values (not copied; mandated non-clinical warning); **rat = NOT_REPORTED** (idle). Strict species
+isolation; no silent transfer. No hardcoded scientific values in engine source. Renderer draws a
+**schematic** ECM mesh (density → spacing/opacity) + oxygen/hypoxia overlay + direct-vs-tortuous
+penetration path (no photorealism / vasculature / immune cells); the evidence panel gains a
+**fifteenth** section. Config key `tmeSources` (distinct from the frozen Phase-4B
+`microenvironmentSources`). **STOP at penetration modification** — immune / vascular / remodeling
+/ metastasis stay `NOT_EVALUATED`; no fibroblasts / CAF / MMP / angiogenesis / migration /
+lymphatic / systemic biology. Docs: `docs/profile-b-simulator-phase7a-implementation.md`,
+`microenvironment-runtime-architecture.md`, `passive-microenvironment-model.md`,
+`microenvironment-evidence-review.md`, `microenvironment-prediction-policy.md`,
+`microenvironment-registry-guide.md`, `microenvironment-renderer-guide.md`,
+`microenvironment-validation-report.md`, `phase7a-developer-notes.md`,
+`microenvironment-limitations.md` (+ `CHANGELOG.md`).
