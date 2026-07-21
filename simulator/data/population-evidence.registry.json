@@ -1,0 +1,55 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6C population-response evidence records. The frozen Profile-B package contains NO population-level apoptosis dataset (no apoptotic fraction, no viable/apoptotic accounting, no cellularity). Every record here is therefore qualitative and carries citation NOT_REPORTED; population relationships are LABELLED PREDICTIONS derived from single-cell evidence, never experimental population facts.",
+  "verification_status_vocabulary": [
+    "VERIFIED_PRIMARY_STUDY",
+    "VERIFIED_IN_FROZEN_PACKAGE",
+    "CONTEXT_TRANSFER",
+    "PREDICTION_ONLY",
+    "NOT_REPORTED"
+  ],
+  "evidence_records": {
+    "pop_b16bl6_transfer": {
+      "kind": "population_context_transfer",
+      "cell_model": "B16BL6",
+      "citation": "NOT_REPORTED (population apoptotic-fraction dataset not reported; derived from the single-cell B16 -> B16BL6 apoptosis transfer)",
+      "verification_status": "CONTEXT_TRANSFER",
+      "supports": ["population composition evolves as the single-cell apoptosis trajectory progresses (qualitative)"],
+      "does_not_support": ["any biological apoptotic %", "any real cell count", "tumour or clinical outcome"],
+      "note": "Population echo of the Phase-6B context transfer; schematic only."
+    },
+    "pop_b16_mech": {
+      "kind": "population_mechanistic_prediction",
+      "cell_model": "B16",
+      "citation": "NOT_REPORTED (single-cell apoptosis mechanism grounded in B16; population-level accounting not reported)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["a susceptible sub-population accumulates apoptosis while a resistant fraction persists (qualitative)"],
+      "does_not_support": ["measured apoptotic fraction", "cell counts", "tumour response"],
+      "note": "Mechanistic prediction; schematic fractions only."
+    },
+    "pop_b16f10_mech": {
+      "kind": "population_mechanistic_prediction",
+      "cell_model": "B16-F10",
+      "citation": "NOT_REPORTED (single-cell apoptosis mechanism grounded in B16-F10; population-level accounting not reported)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["a susceptible sub-population accumulates apoptosis while a resistant fraction persists (qualitative)"],
+      "does_not_support": ["measured apoptotic fraction", "cell counts", "tumour response"],
+      "note": "Mechanistic prediction; kept separate from B16; schematic fractions only."
+    }
+  },
+  "context_transfer_records": {
+    "pop_transfer_b16_to_b16bl6": {
+      "source_cell_model": "B16",
+      "target_cell_model": "B16BL6",
+      "shared_biological_features": ["same species", "melanoma lineage", "shared intrinsic apoptotic machinery (Phase 6B)"],
+      "uncertain_differences": ["subline-specific susceptible fraction", "subline-specific adaptation / recovery propensity"],
+      "rationale": "The population composition for the canonical B16BL6 line inherits the single-cell mechanism transferred from B16 in Phase 6B; no direct B16BL6 population dataset exists.",
+      "reference_ids": ["pop_b16bl6_transfer"]
+    }
+  },
+  "integrity_rules": {
+    "no_fabricated_counts": "No record may state a cell count, density, cellularity, apoptotic index, or biological %.",
+    "prediction_never_experimental": "Population relationships are labelled predictions; none is presented as experimental.",
+    "not_reported_stays": "Absent population data stays NOT_REPORTED; it is never upgraded to a measurement."
+  }
+}

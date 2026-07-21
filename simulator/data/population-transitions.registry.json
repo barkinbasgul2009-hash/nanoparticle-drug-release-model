@@ -1,0 +1,34 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6C population state machine (legal transitions + irreversibility) and the deterministic population-response dynamics defaults. All values are SCHEMATIC tuning knobs for a normalized virtual population - never biological rates, cell counts, or doubling times. Recovery is legal ONLY before apoptosis_dominant; committed apoptotic cells are never resurrected.",
+  "state_machine": {
+    "initial_state": "healthy",
+    "recoverable_states": ["minimal_response", "adaptive_response", "partial_response", "mixed_population", "apoptosis_accumulating"],
+    "irreversible_states": ["apoptosis_dominant", "stable_terminal_state"],
+    "legal_transitions": {
+      "healthy": ["minimal_response"],
+      "minimal_response": ["adaptive_response", "healthy"],
+      "adaptive_response": ["partial_response", "minimal_response"],
+      "partial_response": ["mixed_population", "adaptive_response"],
+      "mixed_population": ["apoptosis_accumulating", "partial_response"],
+      "apoptosis_accumulating": ["apoptosis_dominant", "mixed_population"],
+      "apoptosis_dominant": ["stable_terminal_state"],
+      "stable_terminal_state": []
+    },
+    "recovery_policy": "Backward (recovery) edges exist only among the recoverable states and only reclassify SURVIVING cells; they never lower the apoptotic fraction. No transition out of apoptosis_dominant / stable_terminal_state."
+  },
+  "defaults": {
+    "dt_hours": 0.5,
+    "susceptible_ceiling": 0.85,
+    "susceptible_ceiling_note": "A resistant living sub-population never becomes apoptotic (schematic heterogeneity); apoptotic_fraction is capped at this ceiling.",
+    "apoptosis_conversion_rate_per_hour": 0.09,
+    "pre_commitment_leak": 0.12,
+    "pre_commitment_leak_note": "Small sub-threshold accumulation representing the most-susceptible tail of the population before the modal (single) cell commits.",
+    "adaptation_rate_per_hour": 0.08,
+    "recovery_rate_per_hour": 0.1,
+    "adaptive_stress_window": { "low": 0.15, "high": 0.6 },
+    "adaptive_stress_window_note": "Sustained-but-survivable schematic stress drives adaptation of living cells; above the window cells trend to apoptosis, below it there is little to adapt to.",
+    "relief_sensitivity": 0.5,
+    "terminal_plateau_hours": 2.0
+  }
+}

@@ -251,6 +251,41 @@ export function apoptosisLevelActive(level) {
   return _APOPTOSIS_EXPERIMENTAL.has(level) || _APOPTOSIS_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// ---------------------------------------------------------------------------
+// Phase 6C - population-response evidence vocabulary (ADDITIVE; earlier arrays
+// unchanged). Phase 6C reasons about a SCHEMATIC virtual cell population derived
+// from the Phase-6B single-cell apoptosis trajectory. The frozen package has NO
+// population-level dataset, so a population relationship is only ever a LABELLED
+// prediction where single-cell evidence exists (and NOT_REPORTED otherwise) - it
+// is NEVER presented as experimental, and it never claims real cell counts. The
+// simulator STOPS at population composition; tumour / clinical outcome is NEVER
+// evaluated.
+export const POPULATION_EVIDENCE_LEVELS = Object.freeze([
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _POPULATION_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid population evidence level? */
+export function isPopulationEvidenceLevel(level) { return POPULATION_EVIDENCE_LEVELS.includes(level); }
+/** True if a population evidence level is a labelled prediction (population is never experimental). */
+export function isPopulationPrediction(level) { return _POPULATION_PREDICTION.has(level); }
+/** True if a population evidence level is a cross-cell-model context transfer. */
+export function isPopulationTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION'; }
+/** Would this population level be eligible to run? (not UNAVAILABLE / NOT_REPORTED) */
+export function populationLevelActive(level) {
+  return _POPULATION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

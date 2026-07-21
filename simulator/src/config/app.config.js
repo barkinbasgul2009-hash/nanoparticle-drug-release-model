@@ -173,6 +173,20 @@ export const APP_CONFIG = Object.freeze({
   }),
   apoptosis: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 6C: population-response registries (schematic virtual population derived from the
+  // Phase-6B single-cell apoptosis trajectory; normalized fractions only; STOP at population
+  // composition - no tumour/survival/clinical outcome). Mouse B16BL6 = context-transfer
+  // prediction (default); B16 / B16-F10 mechanistic predictions; HaCaT + rat NOT_REPORTED.
+  populationSources: Object.freeze({
+    context: 'population-context.registry.json',
+    state: 'population-state.registry.json',
+    transitions: 'population-transitions.registry.json',
+    evidence: 'population-evidence.registry.json',
+    prediction: 'population-prediction.registry.json',
+    interventions: 'population-interventions.registry.json',
+  }),
+  population: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
