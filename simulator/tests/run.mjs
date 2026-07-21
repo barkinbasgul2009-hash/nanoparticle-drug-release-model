@@ -22,10 +22,11 @@ import transcription from './transcription.test.mjs';
 import translation from './translation.test.mjs';
 import proteinFunction from './proteinFunction.test.mjs';
 import apoptosis from './apoptosis.test.mjs';
+import population from './population.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population,
 ];
 
 for (const suite of suites) {

@@ -511,3 +511,49 @@ autophagic death, no population/tumour/tissue/immune outcome, no PK/PD/clinical.
 `caspase-and-aif-execution-model.md`, `apoptosis-intervention-model.md`,
 `apoptosis-context-transfer-policy.md`, `phase6b-validation-report.md`,
 `phase6b-animation-specification.md`, `phase6b-developer-notes.md`.
+
+## Phase 6C — Population response & tissue-level dynamics
+
+`PopulationEngine` is the thirteenth separate layer and the first to reason about **many
+cells at once** — but only as a **schematic virtual population** derived from the Phase-6B
+single-cell apoptosis trajectory. It reads the `ApoptosisEngine` + six Phase-6C registries
+**read-only**, modifies nothing upstream, invents no new intracellular biology, and is
+deterministic (no RNG). `TransportAnimator` steps it **after** apoptosis:
+
+```
+… → apoptosis → population viability → population composition
+  → population state evolution → population history → STOP
+```
+
+**Object** (`populationObjects.js`): `PopulationState` — normalized `[0,1]` fractions only
+(`living`, `apoptotic`, `adapted`, `recovered`, `cumulativeApoptosis`), **never** a real cell
+count / density / cellularity. **Registries** (six): `population-context` (per-species/
+cell-model profiles), `population-state` (state vocabulary + composition thresholds),
+`population-transitions` (FSM + dynamics defaults), `population-evidence`,
+`population-prediction`, `population-interventions` (upstream-applied echo policy).
+
+**Conservation + strict FSM:** `living + apoptotic = 1` at every step; apoptotic is
+non-decreasing (committed cells never resurrect); recovery reclassifies surviving cells only
+and is legal **only before** `apoptosis_dominant`. States: `healthy → minimal_response →
+adaptive_response → partial_response → mixed_population → apoptosis_accumulating →
+apoptosis_dominant → stable_terminal_state`. `transitionTo` throws on illegal transitions;
+`validate()` proves no recovery out of an irreversible state. Deterministic **replay history**
+(one entry per step) + a milestone timeline. No population growth / proliferation / mitosis.
+
+**Evidence policy:** additive `POPULATION_EVIDENCE_LEVELS` (8 tiers, **no experimental
+tier** — population is never experimental). A population profile is available only where
+single-cell apoptosis evidence exists **and** population evidence is absent → a labelled
+prediction. Mouse **B16BL6 = CONTEXT_TRANSFER_PREDICTION** (default; echoes the 6B B16→B16BL6
+transfer); **B16 / B16-F10 = MECHANISTIC_PREDICTION** (separate, selectable); **HaCaT / rat =
+NOT_REPORTED** (idle; no fallback). All citations `NOT_REPORTED` (qualitative only); no
+hardcoded scientific values in engine source. Renderer draws a **restrained** stacked
+composition bar (living/adaptive/recovered/apoptotic) + an apoptotic-fraction history
+sparkline (no blood/explosions/dead-body graphics); the evidence panel gains a **thirteenth**
+section. **STOP at population composition** — `tumourResponseEvidence` / `survivalEvidence` /
+`clinicalOutcomeEvidence` stay `NOT_EVALUATED`; no tumour/immune/vascular/fibrosis/wound-
+healing/PK/PD/toxicity/clinical outcome. Docs:
+`docs/profile-b-simulator-phase6c-implementation.md`, `population-runtime-architecture.md`,
+`population-response-model.md`, `population-evidence-review.md`,
+`population-prediction-policy.md`, `population-state-machine.md`,
+`population-validation-report.md`, `population-animation-specification.md`,
+`population-developer-notes.md`, `population-limitations.md`.

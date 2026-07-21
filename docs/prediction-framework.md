@@ -60,3 +60,16 @@ the additive `APOPTOSIS_EVIDENCE_LEVELS`). It applies the same four rules, plus 
    profile that references another cell model's evidence without the transfer label. See
    `apoptosis-context-transfer-policy.md`. `NOT_REPORTED` (HaCaT, rat) still stays `NOT_REPORTED`
    — a transfer is only made where a defensible same-species, same-lineage source exists.
+
+## Extension in Phase 6C — a prediction-only layer (no experimental tier)
+Phase 6C (population response) applies the same rules with one structural difference: the
+frozen package has **no measured population composition**, so the population layer has **no
+`EXPERIMENTAL_*` tier at all**. A population relationship is therefore always a labelled
+prediction (`MECHANISTIC_PREDICTION` / `CONTEXT_TRANSFER_PREDICTION`) or `NOT_REPORTED`. The
+availability **gate**: a population profile exists only where (a) single-cell apoptosis
+evidence exists and (b) population evidence is absent. So B16BL6 is a
+`CONTEXT_TRANSFER_PREDICTION` (echoing the 6B B16→B16BL6 transfer), B16 / B16-F10 are separate
+`MECHANISTIC_PREDICTION`s, and HaCaT / rat (single-cell apoptosis `NOT_REPORTED`) stay
+`NOT_REPORTED` and idle — no human/rat fallback. No apoptotic fraction, cell count, or
+percentage is fabricated; all citations stay `NOT_REPORTED`. See
+`population-prediction-policy.md`.

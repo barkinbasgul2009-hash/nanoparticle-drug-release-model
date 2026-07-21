@@ -140,3 +140,29 @@ export interface PopulationStats {
   recoveredFraction: number; cumulativeApoptosis: number;
   evidenceLevel: PopulationEvidenceLevel; timeH: number; steps: number;
 }
+/** Alias for the reported per-step statistics (spec name). */
+export type PopulationStatistics = PopulationStats;
+
+/** One recorded step of the deterministic replay history. */
+export interface PopulationHistoryEntry {
+  timeH: number; populationState: PopulationFsmState;
+  livingFraction: number; apoptoticFraction: number;
+  adaptedFraction: number; recoveredFraction: number; cumulativeApoptosis: number;
+  evidenceLevel: PopulationEvidenceLevel; predictionLevel: PopulationEvidenceLevel;
+  confidence: Confidence; uncertainty: string;
+}
+export type PopulationHistory = PopulationHistoryEntry[];
+
+/** Renderer-facing state (restrained composition bar + apoptotic-fraction sparkline). */
+export interface PopulationRendererState {
+  available: boolean; cellModel: string | null; populationState: PopulationFsmState;
+  livingFraction?: number; apoptoticFraction?: number; adaptedFraction?: number; recoveredFraction?: number;
+  cumulativeApoptosis?: number; predicted?: boolean; contextTransfer?: boolean;
+  evidenceLevel?: PopulationEvidenceLevel; confidence?: Confidence;
+  compositionBar?: { x: number; y: number; w: number; living: number; adapted: number; recovered: number; apoptotic: number };
+  sparkline?: { x: number; y: number; w: number; h: number; points: number[] };
+  tumourResponseEvidence?: 'NOT_EVALUATED'; survivalEvidence?: 'NOT_EVALUATED'; clinicalOutcomeEvidence?: 'NOT_EVALUATED';
+}
+
+/** Validation result. */
+export interface PopulationValidationRecord { ok: boolean; errors: string[]; warnings: string[]; }

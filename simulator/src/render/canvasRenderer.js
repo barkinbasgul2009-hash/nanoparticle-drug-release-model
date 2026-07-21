@@ -40,6 +40,7 @@ export class CanvasRenderer {
     this.lastTranslationFrame = null;   // Phase 5D: { outputs } translation / protein-synthesis diagram
     this.lastFunctionFrame = null;      // Phase 6A: { functions, states } protein-function / cellular-response diagram
     this.lastApoptosisFrame = null;     // Phase 6B: apoptosis commitment/execution diagram
+    this.lastPopulationFrame = null;    // Phase 6C: population composition/viability diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -78,6 +79,8 @@ export class CanvasRenderer {
   setProteinFunctionEngine(proteinFunctionEngine) { this.proteinFunctionEngine = proteinFunctionEngine; return this; }
   /** Phase 6B: attach the apoptosis engine so the commitment/execution diagram is drawn. */
   setApoptosisEngine(apoptosisEngine) { this.apoptosisEngine = apoptosisEngine; return this; }
+  /** Phase 6C: attach the population engine so the population composition diagram is drawn. */
+  setPopulationEngine(populationEngine) { this.populationEngine = populationEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -134,6 +137,8 @@ export class CanvasRenderer {
     this.lastFunctionFrame = this._functionFrame();
     // Phase 6B: apoptosis commitment/execution diagram frame (headless-testable).
     this.lastApoptosisFrame = this._apoptosisFrame();
+    // Phase 6C: population composition/viability diagram frame (headless-testable).
+    this.lastPopulationFrame = this._populationFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -462,6 +467,36 @@ export class CanvasRenderer {
       this.ctx.fillText(`mito ${ap.mitochondria.membranePotential} / MOMP ${ap.mitochondria.momp} / morph ${ap.morphology} - schematic timing; single cell; population NOT evaluated`, cb.x, iy + 20);
     }
 
+    // Phase 6C: population composition / viability diagram (restrained; schematic fractions).
+    // A single stacked composition bar (living / adapted / recovered / apoptotic) + a small
+    // history sparkline of the apoptotic fraction. No blood / explosions / dead-body graphics.
+    const pop = this.lastPopulationFrame;
+    if (pop && pop.available) {
+      const pb = pop.compositionBar;
+      // segment colours: living green, adaptive cyan, recovered blue, apoptotic orange.
+      const segs = [
+        { f: pb.living, c: '#4b9e5f' }, { f: pb.adapted, c: '#3fb6c4' },
+        { f: pb.recovered, c: '#4b73ab' }, { f: pb.apoptotic, c: '#d08a3a' },
+      ];
+      let sx = pb.x;
+      for (const s of segs) { const w = pb.w * Math.max(0, Math.min(1, s.f)); this.ctx.fillStyle = s.c; this.ctx.globalAlpha = pop.predicted ? 0.72 : 0.85; this.ctx.fillRect(sx, pb.y, w, 8); sx += w; }
+      this.ctx.globalAlpha = 1; this.ctx.strokeStyle = '#9a938a'; this.ctx.lineWidth = 1; this.ctx.strokeRect(pb.x, pb.y, pb.w, 8);
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+      const ptag = pop.contextTransfer ? ' (context-transfer prediction)' : pop.predicted ? ' (predicted)' : '';
+      this.ctx.fillText(`Population [${pop.cellModel}] ${pop.populationState}${ptag}`, pb.x, pb.y - 3);
+      this.ctx.font = '8px system-ui, sans-serif';
+      this.ctx.fillText(`living ${pop.livingFraction} | apoptotic ${pop.apoptoticFraction} | adaptive ${pop.adaptedFraction} | recovered ${pop.recoveredFraction}  (schematic population fraction; not cell counts)`, pb.x, pb.y + 20);
+      // history sparkline of the apoptotic fraction (deterministic replay trace).
+      const sp = pop.sparkline;
+      if (sp && sp.points && sp.points.length > 1) {
+        this.ctx.strokeStyle = '#d08a3a'; this.ctx.lineWidth = 1; this.ctx.beginPath();
+        sp.points.forEach((v, i) => { const x = sp.x + (sp.w * i) / (sp.points.length - 1); const y = sp.y + sp.h - sp.h * Math.max(0, Math.min(1, v)); if (i === 0) this.ctx.moveTo(x, y); else this.ctx.lineTo(x, y); });
+        this.ctx.stroke();
+      }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+      this.ctx.fillText('tumour / survival / clinical outcome NOT evaluated', pb.x, pb.y + 30);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -731,6 +766,32 @@ CanvasRenderer.prototype._apoptosisFrame = function _apoptosisFrame() {
     mitochondria: f.mitochondria, caspaseBranch: f.caspaseBranch, aifBranch: f.aifBranch,
     totalExecutionDrive: f.totalExecutionDrive, morphology: f.morphology,
     interventions: f.interventions,
+  };
+};
+
+// Phase 6C population composition / viability diagram frame. Publication style, restrained:
+// a single stacked composition bar (living / adaptive / recovered / apoptotic) + a history
+// sparkline of the apoptotic fraction (deterministic replay trace). Derived from the engine
+// (read-only). Normalized SCHEMATIC fractions only - never real cell counts. No blood /
+// explosions / dead-body graphics. Tumour / survival / clinical outcome is NOT evaluated.
+CanvasRenderer.prototype._populationFrame = function _populationFrame() {
+  const eng = this.populationEngine;
+  if (!eng || eng.isIdle()) return { available: false, populationState: eng ? eng.pop.populationState : 'unavailable', cellModel: eng ? eng.cellModel : null };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const y = H * 0.16; const x0 = 0.08 * W; const barW = 0.4 * W;
+  const hist = eng.getHistory();
+  const points = hist.length ? hist.map((h) => h.apoptoticFraction) : [f.apoptoticFraction];
+  return {
+    available: true, cellModel: f.cellModel, populationState: f.populationState,
+    livingFraction: f.livingFraction, apoptoticFraction: f.apoptoticFraction,
+    adaptedFraction: f.adaptedFraction, recoveredFraction: f.recoveredFraction,
+    cumulativeApoptosis: f.cumulativeApoptosis,
+    predicted: f.predicted, contextTransfer: f.contextTransfer,
+    evidenceLevel: f.evidenceLevel, confidence: f.confidence,
+    compositionBar: { x: x0, y, w: barW, living: f.livingFraction, adapted: f.adaptedFraction, recovered: f.recoveredFraction, apoptotic: f.apoptoticFraction },
+    sparkline: { x: x0, y: y + 34, w: barW, h: 14, points: points.slice(-120) },
+    tumourResponseEvidence: f.tumourResponseEvidence, survivalEvidence: f.survivalEvidence, clinicalOutcomeEvidence: f.clinicalOutcomeEvidence,
   };
 };
 

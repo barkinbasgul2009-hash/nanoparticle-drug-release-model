@@ -27,6 +27,7 @@ export class TransportAnimator {
     this.translationEngine = deps.translationEngine || null; // Phase 5D: separate translation layer
     this.proteinFunctionEngine = deps.proteinFunctionEngine || null; // Phase 6A: separate protein-function layer
     this.apoptosisEngine = deps.apoptosisEngine || null; // Phase 6B: separate apoptosis layer
+    this.populationEngine = deps.populationEngine || null; // Phase 6C: separate population layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -53,6 +54,7 @@ export class TransportAnimator {
     if (this.translationEngine) this.translationEngine.restart();
     if (this.proteinFunctionEngine) this.proteinFunctionEngine.restart();
     if (this.apoptosisEngine) this.apoptosisEngine.restart();
+    if (this.populationEngine) this.populationEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -106,6 +108,10 @@ export class TransportAnimator {
     // reversible pre-commitment -> irreversible commitment -> mitochondrial/caspase/AIF
     // execution). It reads the 6A cellular-stress states read-only and never mutates them.
     if (this.apoptosisEngine) events.push(...this.apoptosisEngine.step(dtHours));
+    // Phase 6C: the SEPARATE population layer derives a schematic virtual-population
+    // composition (fractions + state machine) from the Phase-6B single-cell apoptosis
+    // trajectory. It reads apoptosis read-only and never mutates any upstream engine.
+    if (this.populationEngine) events.push(...this.populationEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -140,6 +146,7 @@ export class TransportAnimator {
       translation: this.translationEngine ? this.translationEngine.stats() : null,
       proteinFunction: this.proteinFunctionEngine ? this.proteinFunctionEngine.stats() : null,
       apoptosis: this.apoptosisEngine ? this.apoptosisEngine.stats() : null,
+      population: this.populationEngine ? this.populationEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

@@ -18,7 +18,9 @@
 // population evidence is absent; they are always LABELLED predictions, never experimental.
 
 import { PopulationState } from './populationObjects.js';
-import { isPopulationEvidenceLevel, isPopulationPrediction, isPopulationTransfer } from '../evidence/evidenceEngine.js';
+import { isPopulationEvidenceLevel, isPopulationPrediction, isPopulationTransfer, populationLevelActive } from '../evidence/evidenceEngine.js';
+
+const KNOWN_SPECIES = new Set(['mouse', 'human', 'rat']);
 
 const STATE_ORDER = [
   'healthy', 'minimal_response', 'adaptive_response', 'partial_response',
@@ -62,8 +64,8 @@ export class PopulationEngine {
   _build() {
     const p = this._profile();
     this.profile = p;
-    this.timeH = 0; this._stepCount = 0; this.timeline = [];
-    this._prevP = null;
+    this.timeH = 0; this._stepCount = 0; this.timeline = []; this.history = [];
+    this._prevP = null; this._initEmitted = false; this._milestones = new Set();
     this.available = !!(p && p.population_available && this.apop);
     this.pop = new PopulationState('pop_0', {
       species: this.species, cell_model: this.cellModel,
@@ -82,7 +84,8 @@ export class PopulationEngine {
   setCellModel(cellModel) { this.cellModel = cellModel; this._build(); this._log('info', 'population', `cell model -> ${cellModel} (available=${this.available})`); return this; }
 
   restart() {
-    this.timeH = 0; this._stepCount = 0; this.timeline = []; this._prevP = null;
+    this.timeH = 0; this._stepCount = 0; this.timeline = []; this.history = [];
+    this._prevP = null; this._initEmitted = false; this._milestones = new Set();
     const p = this.profile;
     this.pop = new PopulationState('pop_0', {
       species: this.species, cell_model: this.cellModel,
@@ -103,11 +106,26 @@ export class PopulationEngine {
   /** Attempt a population FSM transition; throws on an illegal transition (strict FSM). */
   transitionTo(next) {
     if (!this._legal(this.pop.populationState, next)) throw new Error(`illegal population transition: ${this.pop.populationState} -> ${next}`);
-    if (this.pop.populationState !== next) { this.pop.populationState = next; this._push('state', next); }
+    if (this.pop.populationState !== next) {
+      this.pop.populationState = next; this._push('state', next);
+      this._push('milestone', 'population_composition_changed', { state: next });
+    }
     return this.pop.populationState;
   }
 
   _push(kind, event, extra) { this.timeline.push({ timeH: r2(this.timeH), kind, event, ...(extra || {}) }); }
+  /** Push a one-time milestone timeline event (deduplicated by event name). */
+  _milestone(event, extra) { if (!this._milestones.has(event)) { this._milestones.add(event); this._push('milestone', event, extra); } }
+
+  /** One-time init events (labels the prediction / transfer / experimental status of the run). */
+  _emitInit() {
+    if (this._initEmitted) return; this._initEmitted = true;
+    this._milestone('population_initialized', { cellModel: this.cellModel, evidenceLevel: this.profile.evidence_level });
+    if (isPopulationTransfer(this.profile.evidence_level)) this._milestone('context_transfer_activated', { evidenceLevel: this.profile.evidence_level });
+    else if (isPopulationPrediction(this.profile.evidence_level)) this._milestone('prediction_activated', { evidenceLevel: this.profile.evidence_level });
+    // Population is never experimental; the hook exists only so the timeline can declare it.
+    if (!isPopulationPrediction(this.profile.evidence_level) && populationLevelActive(this.profile.evidence_level) && !isPopulationTransfer(this.profile.evidence_level)) this._milestone('experimental_evidence_active', { evidenceLevel: this.profile.evidence_level });
+  }
 
   // ---- upstream single-cell drivers (read-only) --------------------------
 
@@ -130,10 +148,15 @@ export class PopulationEngine {
     if (this.isIdle()) { this.timeH += dt; this._stepCount += 1; return []; }
     const events = [];
     const d = this.dyn; const th = this.thr;
+    this._emitInit();
     const drv = this._drivers();
     this.pop._stressSignal = drv.P;
+    // stress first propagates into the population once the schematic driver clears minimal.
+    if (drv.P >= (th.stress_minimal ?? 0.08)) this._milestone('stress_propagated', { stress: r3(drv.P) });
 
     const apoptoticBefore = this.pop.apoptoticFraction;
+    const recoveredBefore = this.pop.recoveredFraction;
+    const adaptedBefore = this.pop.adaptedFraction;
 
     // 1) apoptotic accumulation (monotonic, bounded by the susceptible ceiling; a resistant
     //    fraction never dies). Committed modal cell drives conversion; before commitment only
@@ -171,12 +194,25 @@ export class PopulationEngine {
     this.pop.adaptedFraction = clamp01(this.pop.adaptedFraction);
     this.pop.recoveredFraction = clamp01(this.pop.recoveredFraction);
 
+    // adaptation / recovery milestones (first meaningful increase).
+    if (this.pop.recoveredFraction > recoveredBefore + 1e-9) this._milestone('recovery_initiated', { recovered: r3(this.pop.recoveredFraction) });
+    if (this.pop.adaptedFraction > adaptedBefore + 1e-9) this._milestone('adaptive_response', { adapted: r3(this.pop.adaptedFraction) });
+
     // 4) population state machine (one legal step per tick toward the composition target).
     const dApop = this.pop.apoptoticFraction - apoptoticBefore;
     this._advanceState(this._deriveTargetState(), dApop, events);
 
     this._prevP = drv.P;
     this.pop.updatedAt = this.timeH;
+    // deterministic replay history (recorded per step).
+    this.history.push({
+      timeH: r2(this.timeH), populationState: this.pop.populationState,
+      livingFraction: r3(this.pop.livingFraction), apoptoticFraction: r3(this.pop.apoptoticFraction),
+      adaptedFraction: r3(this.pop.adaptedFraction), recoveredFraction: r3(this.pop.recoveredFraction),
+      cumulativeApoptosis: r3(this.pop.cumulativeApoptosis),
+      evidenceLevel: this.profile.evidence_level, predictionLevel: this.profile.prediction_level,
+      confidence: this.pop.confidence, uncertainty: this.pop.uncertainty,
+    });
     this.timeH += dt; this._stepCount += 1;
     return events;
   }
@@ -201,9 +237,10 @@ export class PopulationEngine {
     if (cur === 'apoptosis_dominant') {
       // terminal only once apoptotic accumulation has plateaued for the dwell window.
       if (dApop < (this.thr.terminal_epsilon ?? 0.0015)) {
-        if (this.pop._terminalSince == null) this.pop._terminalSince = this.timeH;
+        if (this.pop._terminalSince == null) { this.pop._terminalSince = this.timeH; this._milestone('population_stabilized', { apoptotic: r3(this.pop.apoptoticFraction) }); }
         if ((this.timeH - this.pop._terminalSince) >= (this.dyn.terminal_plateau_hours ?? 2.0)) {
           this.transitionTo('stable_terminal_state');
+          this._milestone('terminal_population_state', { apoptotic: r3(this.pop.apoptoticFraction) });
           events.push({ type: 'population:stable_terminal_state', timeH: this.timeH });
         }
       } else { this.pop._terminalSince = null; }
@@ -225,6 +262,7 @@ export class PopulationEngine {
   // ---- accessors ---------------------------------------------------------
 
   getTimeline() { return this.timeline.slice(); }
+  getHistory() { return this.history.slice(); }
   summaryLevel() { return this.isIdle() ? (this.profile && this.profile.evidence_level === 'NOT_REPORTED' ? 'NOT_REPORTED' : 'UNAVAILABLE') : (this.profile.evidence_level || 'MECHANISTIC_PREDICTION'); }
   summaryMessage() {
     if (this.isIdle()) return `Population: Not Reported / Unavailable for ${this.species} (${this.cellModel}).`;
@@ -259,12 +297,71 @@ export class PopulationEngine {
     };
   }
 
-  /** Conservation + monotonicity self-check (used by Part-2 validation/tests). */
+  /** Conservation + monotonicity self-check (used by validation/tests). */
   conservationOk() {
     const L = this.pop.livingFraction; const A = this.pop.apoptoticFraction;
     const sum = L + A;
     const subOk = (this.pop.adaptedFraction + this.pop.recoveredFraction) <= L + 1e-9;
     return Math.abs(sum - 1) < 1e-9 && subOk && A >= -1e-12;
+  }
+
+  // ---- validation --------------------------------------------------------
+
+  /** Registry + runtime integrity. STOP at population composition; no downstream fields. */
+  validate() {
+    const errors = []; const warnings = [];
+    const FORBIDDEN = ['tumour', 'tumor', 'recist', 'survival', 'immune', 'macrophage', 'dendritic', 't_cell', 'cytokine', 'angiogen', 'vascular', 'fibrosis', 'wound', 'toxicity', 'pharmacokinet', 'pharmacodynam', 'clinical', 'patient', 'metasta', 'invasion', 'proliferat', 'mitosis', 'cell_cycle', 'necrosis'];
+    const profs = this.ctxReg.profiles || {};
+    const evRecs = this.evReg.evidence_records || {};
+    const seen = new Set();
+    for (const [pid, p] of Object.entries(profs)) {
+      if (seen.has(pid)) errors.push(`duplicate population profile id: ${pid}`); seen.add(pid);
+      if (p.profile_id && p.profile_id !== pid) errors.push(`profile ${pid} profile_id mismatch (${p.profile_id})`);
+      if (!KNOWN_SPECIES.has(p.species)) errors.push(`profile ${pid} invalid species: ${p.species}`);
+      if (!p.cell_model) errors.push(`profile ${pid} missing cell_model`);
+      // NOT_REPORTED / idle profiles must not be available and must not borrow a prediction.
+      if (!p.population_available) {
+        if (p.evidence_level !== 'NOT_REPORTED' && p.evidence_level !== 'UNAVAILABLE') errors.push(`profile ${pid} unavailable but evidence_level ${p.evidence_level}`);
+        continue;
+      }
+      if (!isPopulationEvidenceLevel(p.evidence_level)) errors.push(`profile ${pid} invalid evidence_level`);
+      // population is NEVER experimental - only labelled predictions may be active.
+      if (!isPopulationPrediction(p.evidence_level)) errors.push(`profile ${pid} active population must be a labelled prediction (got ${p.evidence_level})`);
+      // context transfer must carry a distinct source/target record.
+      if (isPopulationTransfer(p.evidence_level)) {
+        if (!p.context_transfer || !p.context_transfer.source_cell_model || !p.context_transfer.target_cell_model) errors.push(`profile ${pid} CONTEXT_TRANSFER_PREDICTION without a transfer record`);
+        else if (p.context_transfer.source_cell_model === p.context_transfer.target_cell_model) errors.push(`profile ${pid} transfer source == target`);
+      }
+      // no silent cell-model mixing: a referenced evidence record for another cell model
+      // requires an explicit transfer label.
+      for (const rid of (p.evidence_refs || [])) {
+        const rec = evRecs[rid];
+        if (rec && rec.cell_model && rec.cell_model !== p.cell_model && !isPopulationTransfer(p.evidence_level)) errors.push(`profile ${pid} (${p.cell_model}) silently uses ${rec.cell_model} evidence ${rid} without a transfer label`);
+      }
+      // no fabricated quantitative values: citations must stay NOT_REPORTED (qualitative only).
+      for (const rid of (p.evidence_refs || [])) {
+        const rec = evRecs[rid];
+        if (rec && typeof rec.citation === 'string' && !/NOT_REPORTED/.test(rec.citation)) warnings.push(`profile ${pid} evidence ${rid} citation is not NOT_REPORTED-qualitative`);
+      }
+      // forbidden downstream concepts must not be declared as population fields.
+      for (const bad of FORBIDDEN) if ((p.population_model || '').toLowerCase().includes(bad)) errors.push(`profile ${pid} references a forbidden downstream concept: ${bad}`);
+    }
+    // no human / rat fallback: those profiles must be idle (NOT_REPORTED), never borrowing mouse.
+    for (const [pid, p] of Object.entries(profs)) {
+      if ((p.species === 'human' || p.species === 'rat') && p.population_available) errors.push(`profile ${pid} (${p.species}) must not be available - no human/rat fallback`);
+    }
+    // FSM integrity: no recovery out of an irreversible state.
+    const irr = new Set(this.sm.irreversible_states || []);
+    const rec = new Set(this.sm.recoverable_states || []);
+    for (const [from, tos] of Object.entries(this.sm.legal_transitions || {})) {
+      if (irr.has(from)) for (const to of tos) if (rec.has(to) || to === 'healthy') errors.push(`FSM allows recovery from an irreversible state: ${from} -> ${to}`);
+    }
+    // runtime fraction bounds + conservation (current state).
+    const f = [this.pop.livingFraction, this.pop.apoptoticFraction, this.pop.adaptedFraction, this.pop.recoveredFraction];
+    if (f.some((x) => x < -1e-9 || x > 1 + 1e-9)) errors.push('runtime fraction out of [0,1]');
+    if (Math.abs(this.pop.livingFraction + this.pop.apoptoticFraction - 1) > 1e-9) errors.push('runtime fractions do not sum to one (living + apoptotic != 1)');
+    if ((this.pop.adaptedFraction + this.pop.recoveredFraction) > this.pop.livingFraction + 1e-9) errors.push('adapted + recovered exceed living');
+    return { ok: errors.length === 0, errors, warnings };
   }
 
   _log(level, cat, msg, data) { if (this.logger && this.logger[level]) this.logger[level](cat, msg, data); }

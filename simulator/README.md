@@ -235,6 +235,37 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/apoptosis-intervention-model.md`, `docs/apoptosis-context-transfer-policy.md`,
   `docs/phase6b-validation-report.md`, `docs/phase6b-animation-specification.md`,
   `docs/phase6b-developer-notes.md`.
+- **Phase 6C — Population response & tissue-level dynamics (single cell → population
+  composition):** a new `PopulationEngine` reads the Phase-6B apoptosis trajectory + six
+  Phase-6C registries **read-only** and derives a **schematic virtual population** —
+  normalized fractions (`living`, `apoptotic`, `adapted`, `recovered`, `cumulativeApoptosis`)
+  and a strict population state machine `healthy → minimal_response → adaptive_response →
+  partial_response → mixed_population → apoptosis_accumulating → apoptosis_dominant →
+  stable_terminal_state`. It answers *"what fraction of cells are in each state?"* and invents
+  no new intracellular biology. Deterministic — **no RNG**; **conservation** `living +
+  apoptotic = 1` at every step; apoptotic is **non-decreasing** (committed cells never
+  resurrect); recovery reclassifies surviving cells only and is legal **only before**
+  `apoptosis_dominant`; `transitionTo` throws on illegal transitions; **no population growth /
+  proliferation / mitosis**. Deterministic **replay history** (one entry per step) + a
+  milestone timeline. Object: `PopulationState` — **normalized fractions only, never real cell
+  counts / density / cellularity**. Default mouse = **B16BL6 = CONTEXT_TRANSFER_PREDICTION**
+  (echoes the 6B B16→B16BL6 transfer); **B16 / B16-F10 = MECHANISTIC_PREDICTION** (separate,
+  selectable); **HaCaT / rat = NOT_REPORTED** (idle; no fallback). Additive
+  `POPULATION_EVIDENCE_LEVELS` (8 tiers, **no experimental tier** — population is never
+  experimental); a population profile is available only where single-cell apoptosis evidence
+  exists **and** population evidence is absent; all citations `NOT_REPORTED`; no hardcoded
+  scientific values in engine source. Renderer draws a **restrained** stacked composition bar
+  (living/adaptive/recovered/apoptotic) + an apoptotic-fraction history sparkline (no
+  blood/explosions/dead-body graphics); the evidence panel shows a **thirteenth** section.
+  **Stops at population composition** — `tumourResponseEvidence` / `survivalEvidence` /
+  `clinicalOutcomeEvidence` stay **NOT_EVALUATED**; no tumour/immune/vascular/fibrosis/
+  wound-healing/PK/PD/toxicity/clinical outcome. Docs:
+  `docs/profile-b-simulator-phase6c-implementation.md`,
+  `docs/population-runtime-architecture.md`, `docs/population-response-model.md`,
+  `docs/population-evidence-review.md`, `docs/population-prediction-policy.md`,
+  `docs/population-state-machine.md`, `docs/population-validation-report.md`,
+  `docs/population-animation-specification.md`, `docs/population-developer-notes.md`,
+  `docs/population-limitations.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

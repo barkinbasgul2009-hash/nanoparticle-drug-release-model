@@ -34,3 +34,19 @@ the whole profile.** Every cross-study bridge is recorded explicitly in
 Distinct systems (skin released-API · AuNP spheroid carrier · dextran vascular ·
 liposomal/protein clinical NPs) are **never silently merged**. Any transfer is an
 explicit, labelled bridge with a stated mismatch and uncertainty direction.
+
+## Simulator per-layer evidence vocabularies (additive)
+The isolated `simulator/` build layers additive, per-phase evidence vocabularies on top of
+this architecture (each new array leaves all earlier arrays unchanged): transport
+`EVIDENCE_LEVELS`; signal `SIGNAL_EVIDENCE_LEVELS`; gene `GENE_EVIDENCE_LEVELS`; translation
+`TRANSLATION_EVIDENCE_LEVELS`; protein function `FUNCTION_EVIDENCE_LEVELS`; apoptosis
+`APOPTOSIS_EVIDENCE_LEVELS` (11 tiers, incl. `CONTEXT_TRANSFER_PREDICTION`); and — Phase 6C —
+`POPULATION_EVIDENCE_LEVELS` (8 tiers). The population vocabulary deliberately has **no
+experimental tier**: the frozen package holds no measured population composition, so a
+population relationship is only ever a labelled prediction (`MECHANISTIC_PREDICTION` /
+`CONTEXT_TRANSFER_PREDICTION`) or `NOT_REPORTED`. The non-combination rule is enforced at the
+cell-model level too: population behaviour never transfers across cell models without an
+explicit `CONTEXT_TRANSFER_PREDICTION` record (validator-enforced), and `NOT_REPORTED`
+single-cell contexts (HaCaT, rat) yield `NOT_REPORTED` populations — no human/rat fallback.
+The simulator stops at population composition; tumour / survival / clinical outcome stays
+`NOT_EVALUATED`. See `population-prediction-policy.md` and `population-evidence-review.md`.
