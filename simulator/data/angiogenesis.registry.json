@@ -1,0 +1,18 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B angiogenic states + vessel architecture as SCHEMATIC abstractions. Represents vessel density / branching complexity / maturity / organization only - NOT individual endothelial cells, blood pressure, capillary ultrastructure, or blood rheology. Schematic 0-1 values; no absolute vessel count / diameter. Vessels MODIFY delivery/oxygen/nutrient only - they never signal, remodel, or induce apoptosis.",
+  "angiogenic_states": {
+    "poorly_vascularized":   { "vessel_density": 0.2,  "branching_complexity": "low",       "organization": "sparse" },
+    "moderately_vascularized": { "vessel_density": 0.5, "branching_complexity": "moderate",  "organization": "irregular" },
+    "highly_vascularized":   { "vessel_density": 0.75, "branching_complexity": "high",       "organization": "disorganized" },
+    "hypervascular":         { "vessel_density": 0.9,  "branching_complexity": "very_high",  "organization": "chaotic" }
+  },
+  "vessel_maturity": {
+    "immature":   { "maturity_value": 0.2, "delivery_efficiency": 0.35, "note": "leaky/abnormal - high permeability but inefficient" },
+    "developing": { "maturity_value": 0.45, "delivery_efficiency": 0.5 },
+    "mature":     { "maturity_value": 0.75, "delivery_efficiency": 0.75 },
+    "stable":     { "maturity_value": 0.9,  "delivery_efficiency": 0.85 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Tumour vasculature is typically abnormal (hypervascular but immature/chaotic); schematic ordinal only."
+}

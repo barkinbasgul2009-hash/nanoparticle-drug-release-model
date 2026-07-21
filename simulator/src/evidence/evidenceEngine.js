@@ -367,6 +367,43 @@ export function microenvironmentLevelActive(level) {
   return _MICROENV_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// ---------------------------------------------------------------------------
+// Phase 7B - tumour vasculature / angiogenesis evidence vocabulary (ADDITIVE;
+// earlier arrays unchanged). Phase 7B represents the ACTIVE vascular component of
+// the microenvironment (vessel architecture / density / maturity / perfusion /
+// oxygen + nutrient supply / permeability) that MODIFIES drug delivery + oxygen +
+// nutrient availability. It does NOT signal, induce apoptosis, or remodel. The
+// frozen package contains NO direct tumour-vasculature dataset for this
+// formulation, so a vascular relationship is only ever a LABELLED prediction
+// (general tumour-vasculature biology applied to this context) or NOT_REPORTED -
+// never experimental, never a fabricated blood flow / vessel count / pO2 /
+// diameter / perfusion rate. No experimental tier exists here.
+export const VASCULAR_EVIDENCE_LEVELS = Object.freeze([
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _VASCULAR_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid vascular evidence level? */
+export function isVascularEvidenceLevel(level) { return VASCULAR_EVIDENCE_LEVELS.includes(level); }
+/** True if a vascular evidence level is a labelled prediction (never experimental). */
+export function isVascularPrediction(level) { return _VASCULAR_PREDICTION.has(level); }
+/** True if a vascular evidence level is a cross-species/context transfer. */
+export function isVascularTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION'; }
+/** Would this vascular level be eligible to run? (not UNAVAILABLE / NOT_REPORTED) */
+export function vascularLevelActive(level) {
+  return _VASCULAR_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

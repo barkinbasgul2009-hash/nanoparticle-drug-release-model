@@ -1,0 +1,65 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B tumour-vasculature context profiles per species + tumour model. Each names the ordinal component states (angiogenic state / vessel maturity / perfusion / oxygen supply / nutrient / permeability) describing that context's ACTIVE vascular architecture. The frozen package has NO direct tumour-vasculature dataset for this NLC, so every profile is a LABELLED prediction (general tumour-vasculature biology) or NOT_REPORTED - never experimental. Species are strictly isolated; no profile silently transfers (distinct values, not copied). Vessels MODIFY delivery/oxygen/nutrient only.",
+  "profiles": {
+    "mouse_b16bl6_vascular": {
+      "profile_id": "mouse_b16bl6_vascular",
+      "species": "mouse", "tumour_model": "B16BL6",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "components": { "angiogenic_state": "highly_vascularized", "vessel_maturity": "immature", "perfusion": "low", "oxygen_supply": "moderate", "nutrient": "adequate", "permeability": "high" },
+      "supported_vascular_state": ["poorly_vascularized", "moderately_vascularized", "highly_vascularized", "hypervascular"],
+      "supported_perfusion": ["very_low", "low", "moderate", "high", "very_high"],
+      "supported_oxygen": ["very_low", "low", "moderate", "high", "very_high"],
+      "supported_predictions": ["relative_perfusion", "relative_delivery", "relative_permeability", "relative_oxygen"],
+      "supported_formulations": ["cationic_nlc", "anionic_nlc", "neutral_nlc", "free_tripterine", "vehicle_control"],
+      "default_runtime": true, "vascular_available": true,
+      "confidence": "LOW",
+      "uncertainty": "Abnormal melanoma vasculature (highly vascularized but immature/chaotic, poorly perfused, leaky/high-permeability) is inferred from general tumour biology; no direct vascular characterization for this B16BL6 tripterine-NLC context is in the frozen package. All values schematic ordinal.",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "evidence_refs": ["va_b16bl6_vasculature", "va_b16bl6_perfusion"],
+      "limitations": "No absolute blood flow / vessel count / pO2 / vascular diameter / perfusion rate (all NOT_REPORTED).",
+      "excluded_processes": ["immune", "vegf_signalling", "hif_regulation", "vascular_inflammation", "fibroblast", "metastasis", "lymphatics"]
+    },
+    "human_skin_vascular": {
+      "profile_id": "human_skin_vascular",
+      "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "components": { "angiogenic_state": "moderately_vascularized", "vessel_maturity": "developing", "perfusion": "moderate", "oxygen_supply": "moderate", "nutrient": "adequate", "permeability": "moderate" },
+      "supported_vascular_state": ["poorly_vascularized", "moderately_vascularized", "highly_vascularized", "hypervascular"],
+      "supported_perfusion": ["very_low", "low", "moderate", "high", "very_high"],
+      "supported_oxygen": ["very_low", "low", "moderate", "high", "very_high"],
+      "supported_predictions": ["relative_perfusion", "relative_delivery", "relative_permeability", "relative_oxygen"],
+      "supported_formulations": ["cationic_nlc"],
+      "vascular_available": true, "predictive_exploratory": true, "default_shown": false,
+      "confidence": "LOW",
+      "uncertainty": "A PREDICTIVE, exploratory human skin/tumour vasculature with its OWN distinct ordinal states - NOT copied from mouse. Not validated for human clinical response; abstract vascular architecture only.",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "human_translation_warning": "This vasculature is a mechanistic, exploratory prediction of the passive/active human vascular environment and is not validated for human clinical response.",
+      "evidence_refs": ["va_human_vasculature"],
+      "limitations": "Predictive only; no human vascular measurement; all values schematic ordinal (NOT_REPORTED quantitatively).",
+      "excluded_processes": ["immune", "vegf_signalling", "hif_regulation", "vascular_inflammation", "fibroblast", "metastasis", "lymphatics", "clinical_response"]
+    },
+    "rat_skin_vascular": {
+      "profile_id": "rat_skin_vascular",
+      "species": "rat", "tumour_model": "none",
+      "drug": "tripterine (celastrol)", "formulation": "vehicle_control",
+      "components": {},
+      "supported_vascular_state": [], "supported_perfusion": [], "supported_oxygen": [], "supported_predictions": [],
+      "supported_formulations": [],
+      "vascular_available": false,
+      "confidence": "LOW",
+      "uncertainty": "Rat data support skin permeation only; no rat tumour vasculature dataset. No vascular architecture is generated from skin-permeation evidence alone.",
+      "evidence_level": "NOT_REPORTED", "prediction_level": "NOT_REPORTED",
+      "evidence_refs": [],
+      "reason": "no rat tumour vasculature evidence -> NOT_REPORTED",
+      "limitations": "Not modelled.",
+      "excluded_processes": ["immune", "vegf_signalling", "hif_regulation", "vascular_inflammation", "fibroblast", "metastasis", "lymphatics"]
+    }
+  },
+  "context_rules": {
+    "modifier_not_replacement": "Vasculature MODIFIES oxygen / nutrient / drug accessibility / penetration opportunity; it never signals, induces apoptosis, remodels, or replaces an upstream engine.",
+    "species_isolation": "Mouse / human / rat vascular profiles are strictly isolated; no vasculature transfers silently - a cross-species use requires a CONTEXT_TRANSFER_PREDICTION label.",
+    "not_reported_stays": "Rat stays NOT_REPORTED; human is a labelled predictive-exploratory mode.",
+    "independent_from_ecm": "Vascular oxygen supply is independent from the Phase-7A passive ECM oxygen field."
+  }
+}

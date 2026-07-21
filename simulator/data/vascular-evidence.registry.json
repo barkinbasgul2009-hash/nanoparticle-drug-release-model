@@ -1,0 +1,37 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B vascular evidence records. The frozen package contains NO direct tumour-vasculature dataset (no vessel count, blood flow, pO2, vascular diameter, or perfusion rate for this context). Every record is qualitative (general tumour-vasculature biology) with citation NOT_REPORTED; vascular relationships are LABELLED PREDICTIONS, never experimental facts.",
+  "verification_status_vocabulary": ["VERIFIED_PRIMARY_STUDY", "VERIFIED_IN_FROZEN_PACKAGE", "CONTEXT_TRANSFER", "PREDICTION_ONLY", "NOT_REPORTED"],
+  "evidence_records": {
+    "va_b16bl6_vasculature": {
+      "kind": "vascular_architecture_prediction", "species": "mouse", "tumour_model": "B16BL6",
+      "citation": "NOT_REPORTED (melanoma tumour vasculature is typically abnormal - hypervascular but immature/chaotic and leaky; general tumour biology applied predictively)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["abnormal, immature, leaky tumour vessels (qualitative)"],
+      "does_not_support": ["absolute vessel count", "vascular diameter", "vessel ultrastructure"],
+      "note": "Mechanistic prediction; schematic ordinal only."
+    },
+    "va_b16bl6_perfusion": {
+      "kind": "vascular_perfusion_prediction", "species": "mouse", "tumour_model": "B16BL6",
+      "citation": "NOT_REPORTED (tumour vessels are often poorly perfused despite high density, limiting drug delivery and oxygen supply; general tumour biology applied predictively)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["poor perfusion despite high vessel density lowers delivery + oxygen supply (qualitative)"],
+      "does_not_support": ["absolute blood flow", "pO2", "perfusion rate"],
+      "note": "Passive/architecture modifier only; no vascular signalling."
+    },
+    "va_human_vasculature": {
+      "kind": "vascular_architecture_prediction", "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "citation": "NOT_REPORTED (human skin/tumour vasculature predicted with own distinct states; predictive, not validated)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["moderately vascularized, developing human vessels (qualitative, predictive)"],
+      "does_not_support": ["any validated human vascular measurement", "clinical response"],
+      "note": "Predictive-exploratory; distinct from mouse (not copied)."
+    }
+  },
+  "integrity_rules": {
+    "no_fabricated_quantities": "No blood flow / vessel count / pO2 / vascular diameter / perfusion rate is stated.",
+    "prediction_never_experimental": "Vascular relationships are labelled predictions; none is presented as experimental (there is no experimental vascular tier).",
+    "not_reported_stays": "Absent vascular data stays NOT_REPORTED; it is never upgraded to a measurement.",
+    "no_silent_species_transfer": "Species are isolated; a cross-species use requires an explicit CONTEXT_TRANSFER_PREDICTION."
+  }
+}

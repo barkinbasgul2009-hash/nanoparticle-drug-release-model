@@ -1,0 +1,13 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B vascular oxygen SUPPLY states as ORDINAL levels, represented INDEPENDENTLY from the Phase-7A passive ECM oxygen field. Modifies downstream oxygen availability (advisory). Schematic 0-1 supply per state; NO absolute pO2 / oxygen partial pressure.",
+  "oxygen_supply_states": {
+    "very_low":  { "supply": 0.15 },
+    "low":       { "supply": 0.35 },
+    "moderate":  { "supply": 0.55 },
+    "high":      { "supply": 0.8 },
+    "very_high": { "supply": 0.95 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Relative oxygen supply only; no pO2 (NOT_REPORTED). Independent from the ECM passive oxygen field."
+}

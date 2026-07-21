@@ -223,6 +223,24 @@ export const APP_CONFIG = Object.freeze({
   }),
   tme: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 7B: tumour-vasculature / angiogenesis registries. The ACTIVE vascular component of
+  // the microenvironment (vessel architecture / perfusion / oxygen + nutrient supply /
+  // permeability) that MODIFIES drug delivery. It never signals / induces apoptosis / remodels
+  // or alters upstream logic. STOP at delivery modification. Mouse B16BL6 = MECHANISTIC_
+  // PREDICTION (default); human = predictive-exploratory; rat = NOT_REPORTED.
+  vascularSources: Object.freeze({
+    context: 'vascular-context.registry.json',
+    angiogenesis: 'angiogenesis.registry.json',
+    perfusion: 'perfusion.registry.json',
+    oxygenSupply: 'oxygen-supply.registry.json',
+    nutrient: 'nutrient.registry.json',
+    permeability: 'permeability.registry.json',
+    delivery: 'delivery.registry.json',
+    evidence: 'vascular-evidence.registry.json',
+    prediction: 'vascular-prediction.registry.json',
+  }),
+  vascular: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
