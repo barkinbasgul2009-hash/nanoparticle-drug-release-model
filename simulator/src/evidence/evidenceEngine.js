@@ -212,6 +212,45 @@ export function functionLevelActive(level) {
   return _FUNCTION_EXPERIMENTAL.has(level) || _FUNCTION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// Phase 6B APOPTOSIS evidence vocabulary. ADDITIVE - does not modify any earlier array.
+// Extends the refined tiers with CONTEXT_TRANSFER_PREDICTION (a relationship transferred
+// from one cell model to another, e.g. B16 -> B16BL6, always explicitly labelled and never
+// experimental in the target). Experimental always outranks a prediction; a prediction
+// never overwrites experimental data. Population / tumour outcome stays NOT_EVALUATED.
+export const APOPTOSIS_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC',
+  'EXPERIMENTAL_DRUG_CELL_SPECIFIC',
+  'EXPERIMENTAL_PATHWAY_SPECIFIC',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _APOPTOSIS_EXPERIMENTAL = new Set([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC', 'EXPERIMENTAL_DRUG_CELL_SPECIFIC', 'EXPERIMENTAL_PATHWAY_SPECIFIC',
+]);
+const _APOPTOSIS_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid apoptosis evidence level? */
+export function isApoptosisEvidenceLevel(level) { return APOPTOSIS_EVIDENCE_LEVELS.includes(level); }
+/** True if an apoptosis evidence level is experimental (outranks predictions). */
+export function isApoptosisExperimental(level) { return _APOPTOSIS_EXPERIMENTAL.has(level); }
+/** True if an apoptosis evidence level is a labelled prediction (never presented as experimental). */
+export function isApoptosisPrediction(level) { return _APOPTOSIS_PREDICTION.has(level); }
+/** True if an apoptosis evidence level is a cross-cell-model context transfer. */
+export function isApoptosisTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION'; }
+/** Would this apoptosis level be eligible to run/animate? (not UNAVAILABLE / NOT_REPORTED) */
+export function apoptosisLevelActive(level) {
+  return _APOPTOSIS_EXPERIMENTAL.has(level) || _APOPTOSIS_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

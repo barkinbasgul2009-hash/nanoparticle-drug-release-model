@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -51,6 +51,8 @@ export function buildAnatomyPanelModels(deps) {
   const translationLevel = translation && translation.engine ? translation.engine.summaryLevel() : null;
   // Phase 6A: protein function & early cellular response summary level (idle => NOT_REPORTED).
   const functionLevel = proteinFunction && proteinFunction.engine ? proteinFunction.engine.summaryLevel() : null;
+  // Phase 6B: apoptosis commitment & execution summary level (idle => NOT_REPORTED/UNAVAILABLE).
+  const apoptosisLevel = apoptosis && apoptosis.engine ? apoptosis.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -63,6 +65,7 @@ export function buildAnatomyPanelModels(deps) {
     geneRegulation: geneLevel,
     translation: translationLevel,
     proteinFunction: functionLevel,
+    apoptosis: apoptosisLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -74,8 +77,23 @@ export function buildAnatomyPanelModels(deps) {
       geneRegulation: transcription && transcription.engine ? transcription.engine.summaryMessage() : null,
       translation: translation && translation.engine ? translation.engine.summaryMessage() : null,
       proteinFunction: proteinFunction && proteinFunction.engine ? proteinFunction.engine.summaryMessage() : null,
+      apoptosis: apoptosis && apoptosis.engine ? apoptosis.engine.summaryMessage() : null,
     },
   };
+  // Phase 6B: apoptosis commitment & execution detail (data only). Separates apoptosis /
+  // pathway / intervention / cell-model-transfer evidence; population + tumour outcome
+  // remain NOT_EVALUATED.
+  const apoptosisInfo = apoptosis && apoptosis.engine && !apoptosis.engine.isIdle() ? (() => {
+    const fr = apoptosis.engine.frame();
+    return {
+      level: apoptosis.engine.summaryLevel(), cellModel: fr.cellModel, state: fr.state, reversibility: fr.reversibility,
+      committed: fr.committed, contextTransfer: fr.contextTransfer, predicted: fr.predicted,
+      apoptosisEvidence: fr.evidenceLevel, mitochondria: fr.mitochondria, caspaseBranch: fr.caspaseBranch, aifBranch: fr.aifBranch,
+      totalExecutionDrive: fr.totalExecutionDrive, morphology: fr.morphology, interventions: fr.interventions,
+      timingWarning: 'Apoptosis timing is schematic and is not a validated biological timescale.',
+      populationOutcomeEvidence: 'NOT_EVALUATED', tumourResponseEvidence: 'NOT_EVALUATED',
+    };
+  })() : (apoptosis && apoptosis.engine ? { level: apoptosis.engine.summaryLevel(), cellModel: apoptosis.engine.cellModel, state: apoptosis.engine.apop.state, committed: false, populationOutcomeEvidence: 'NOT_EVALUATED', tumourResponseEvidence: 'NOT_EVALUATED' } : null);
   // Phase 6A: protein-function & early-cellular-response detail (data only). Clearly
   // separates protein-abundance / protein-function / cellular-response / cell-fate evidence.
   const proteinFunctionInfo = proteinFunction && proteinFunction.engine && !proteinFunction.engine.isIdle() ? {
@@ -169,6 +187,7 @@ export function buildAnatomyPanelModels(deps) {
       geneRegulation: geneRegulationInfo,
       translation: translationInfo,
       proteinFunction: proteinFunctionInfo,
+      apoptosis: apoptosisInfo,
     },
     navigation: {
       title: 'Navigation',

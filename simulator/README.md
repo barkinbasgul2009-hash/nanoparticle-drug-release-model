@@ -203,6 +203,38 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/protein-function-evidence-review.md`, `docs/early-cellular-response-profiles.md`,
   `docs/functional-prediction-framework.md`, `docs/phase6a-validation-report.md`,
   `docs/phase6a-animation-specification.md`, `docs/phase6a-developer-notes.md`.
+- **Phase 6B — Apoptosis commitment & execution (persistent stress → irreversible death
+  program):** a new `ApoptosisEngine` reads the Phase-6A cellular-stress states + Phase-5B
+  signaling + Phase-6B registries **read-only** and drives **apoptosis eligibility →
+  reversible pre-commitment → an irreversible commitment gate → mitochondrial transition
+  (ΔΨm loss, MOMP) → cytochrome-c/caspase-dependent branch AND/OR AIF-associated
+  (caspase-independent) branch → apoptotic cell state** — and **stops at the single cell**.
+  Objects: `ApoptosisState`, `MitochondrialApoptosisState`, `CaspaseCascadeState`,
+  `AIFExecutionState`, `ApoptosisIntervention`. Strict FSM: `stressed`/`apoptosis_eligible`/
+  `pre_commitment` are recoverable; `committed` onward are **irreversible** (illegal
+  transitions throw). Deterministic — **no RNG, no random death probabilities**; commitment
+  needs *net* pressure (pressure minus a survival offset) sustained above threshold for the
+  persistence window. Two parallel branches with **partial** caspase dependence combine into a
+  bounded schematic execution drive. Default mouse = **B16BL6 = CONTEXT_TRANSFER_PREDICTION**
+  (canonical line; explicit B16→B16BL6 transfer record, never a silent copy); **B16** &
+  **B16-F10** are separate selectable experimental profiles (B16-F10 carries the PI3K
+  activator); **HaCaT** & **rat** are **NOT_REPORTED** (idle). Interventions are
+  target-isolated + timing-sensitive: ROS scavenger + PI3K activator can *prevent* commitment
+  **before** the gate; caspase inhibitor (partial) + AIF knockdown (strong) only *attenuate* an
+  already-committed cell. `APOPTOSIS_EVIDENCE_LEVELS` (additive, 11 tiers); all apoptosis
+  citations `NOT_REPORTED` (qualitative only — no fabricated DOI/rate/%/ΔΨm/kinetics); no
+  hardcoded scientific values in engine source. Renderer draws a **restrained** commitment
+  bar + branch indicators (no explosions/flames/skulls/blood/red-flash); the evidence panel
+  shows a **twelfth** section. **Stops at the single-cell apoptotic state** — the cell object
+  is never removed; `populationOutcomeEvidence`/`tumourResponseEvidence` stay
+  **NOT_EVALUATED**; no necrosis/necroptosis/pyroptosis/ferroptosis/autophagic death, no
+  population/tumour/tissue/immune outcome, no PK/PD/clinical. Docs:
+  `docs/profile-b-simulator-phase6b-implementation.md`,
+  `docs/apoptosis-runtime-architecture.md`, `docs/apoptosis-evidence-review.md`,
+  `docs/mitochondrial-apoptosis-pathway.md`, `docs/caspase-and-aif-execution-model.md`,
+  `docs/apoptosis-intervention-model.md`, `docs/apoptosis-context-transfer-policy.md`,
+  `docs/phase6b-validation-report.md`, `docs/phase6b-animation-specification.md`,
+  `docs/phase6b-developer-notes.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

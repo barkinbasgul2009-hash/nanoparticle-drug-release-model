@@ -458,3 +458,56 @@ tumour/immune/tissue/PK/PD/toxicity. Docs:
 `protein-function-evidence-review.md`, `early-cellular-response-profiles.md`,
 `functional-prediction-framework.md`, `phase6a-validation-report.md`,
 `phase6a-animation-specification.md`, `phase6a-developer-notes.md`.
+
+## Phase 6B — Apoptosis commitment & execution runtime
+
+`ApoptosisEngine` is the twelfth separate layer. It reads the Phase-6A
+`ProteinFunctionEngine` cellular-stress states + the Phase-5B `SignalPropagationEngine`
+**read-only** plus four Phase-6B registries, modifies nothing upstream, and is deterministic
+(no RNG — **no random death probabilities**). `TransportAnimator` steps it **after** protein
+function. It is the first phase where a single cell may enter an **irreversible** death
+program:
+
+```
+persistent stress (6A) → apoptosis eligibility → reversible pre-commitment
+  → commitment gate  ── IRREVERSIBLE ──▶ mitochondrial transition (ΔΨm loss, MOMP)
+    → cytochrome-c → caspase-dependent branch │ AIF → AIF-associated branch
+      → apoptotic morphology → apoptotic cell state   [STOP — single cell only]
+```
+
+**Objects** (`apoptosisObjects.js`): `ApoptosisState`, `MitochondrialApoptosisState`,
+`CaspaseCascadeState`, `AIFExecutionState`, `ApoptosisIntervention`. **Registries** (four
+separable): `apoptosis-dynamics` (strict FSM + ordinal vocabularies + dynamics defaults),
+`apoptosis-context` (per-species/cell-model profiles), `apoptosis-interventions`,
+`apoptosis-evidence`.
+
+**Strict FSM with an irreversibility gate:** `stressed`/`apoptosis_eligible`/`pre_commitment`
+are recoverable (pressure can fall, the cell steps back down); `committed` onward are
+irreversible (`transitionTo` throws on any illegal transition; `validate()` proves the
+registry never allows recovery from an irreversible state). Commitment requires *net* pressure
+(pressure minus a survival offset) to persist above the commitment threshold for the
+persistence window. Two parallel execution branches (caspase-dependent via cytochrome-c; AIF-
+associated / caspase-independent via AIF) combine into a bounded schematic execution drive,
+with **partial** caspase dependence.
+
+**Cell-model policy:** default mouse = **B16BL6 = CONTEXT_TRANSFER_PREDICTION** (canonical
+line; strongest mechanism evidence is in B16, so B16BL6 carries an explicit B16→B16BL6
+transfer record — never a silent copy); **B16** and **B16-F10** are separate selectable
+experimental profiles (B16-F10 also carries the PI3K-activator intervention); **HaCaT** and
+**rat** are `NOT_REPORTED` → idle. **Interventions** are target-isolated and timing-sensitive:
+ROS scavenger + PI3K activator act upstream and can *prevent* commitment before the gate;
+caspase inhibitor (partial) + AIF knockdown (strong, dominant branch) act during execution and
+only *attenuate* an already-committed cell.
+
+**Evidence discipline:** `APOPTOSIS_EVIDENCE_LEVELS` (additive, 11 tiers, incl.
+`CONTEXT_TRANSFER_PREDICTION`); all apoptosis citations are `NOT_REPORTED` (qualitative
+relationships only — no fabricated DOI/rate/%/ΔΨm/kinetics); no hardcoded scientific values in
+engine source. The evidence panel gains a **twelfth** section. **STOP at the single-cell
+apoptotic state** — the cell object is never removed and `populationOutcomeEvidence` /
+`tumourResponseEvidence` stay `NOT_EVALUATED`; no necrosis/necroptosis/pyroptosis/ferroptosis/
+autophagic death, no population/tumour/tissue/immune outcome, no PK/PD/clinical. Docs:
+`docs/profile-b-simulator-phase6b-implementation.md`, `apoptosis-runtime-architecture.md`,
+`apoptosis-evidence-review.md`, `mitochondrial-apoptosis-pathway.md`,
+`caspase-and-aif-execution-model.md`, `apoptosis-intervention-model.md`,
+`apoptosis-context-transfer-policy.md`, `phase6b-validation-report.md`,
+`phase6b-animation-specification.md`, `phase6b-developer-notes.md`.

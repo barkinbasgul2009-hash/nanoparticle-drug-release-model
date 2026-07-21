@@ -1,0 +1,53 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6B APOPTOSIS DYNAMICS registry. Strict finite-state-machine vocabulary + schematic runtime dynamics (pressure weights, commitment threshold, branch weights, delays) + mitochondrial / caspase / AIF / morphology state vocabularies. Consumed READ-ONLY by apoptosisEngine.js. All thresholds/weights/timings are SCHEMATIC simulation abstractions - NOT biological clinical thresholds, mV values, %s, or kinetic constants. No parameter is hard-coded in the engine.",
+  "timing_disclaimer": "Apoptosis timing is schematic and is not a validated biological timescale. Simulation units, not biological seconds.",
+  "state_machine": {
+    "states": ["idle", "not_reported", "unavailable", "homeostatic", "stressed", "apoptosis_eligible", "pre_commitment", "commitment_threshold_reached", "committed", "mitochondrial_transition", "execution_in_progress", "apoptotic", "execution_complete"],
+    "irreversible_states": ["committed", "mitochondrial_transition", "execution_in_progress", "apoptotic", "execution_complete"],
+    "recoverable_states": ["stressed", "apoptosis_eligible", "pre_commitment"],
+    "legal_transitions": {
+      "idle": ["idle", "homeostatic", "stressed", "not_reported", "unavailable"],
+      "homeostatic": ["homeostatic", "stressed"],
+      "stressed": ["stressed", "apoptosis_eligible", "homeostatic"],
+      "apoptosis_eligible": ["apoptosis_eligible", "pre_commitment", "stressed", "homeostatic"],
+      "pre_commitment": ["pre_commitment", "commitment_threshold_reached", "apoptosis_eligible", "stressed", "homeostatic"],
+      "commitment_threshold_reached": ["commitment_threshold_reached", "committed"],
+      "committed": ["committed", "mitochondrial_transition"],
+      "mitochondrial_transition": ["mitochondrial_transition", "execution_in_progress"],
+      "execution_in_progress": ["execution_in_progress", "apoptotic"],
+      "apoptotic": ["apoptotic", "execution_complete"],
+      "execution_complete": ["execution_complete"],
+      "not_reported": ["not_reported"],
+      "unavailable": ["unavailable"]
+    }
+  },
+  "vocabularies": {
+    "membrane_potential_states": ["normal", "slightly_reduced", "reduced", "severely_reduced", "collapsed", "not_reported"],
+    "bax_bcl2_balance_states": ["anti_apoptotic_dominant", "balanced", "pro_apoptotic_shift", "strong_pro_apoptotic_shift", "not_reported"],
+    "momp_states": ["inactive", "sensitized", "initiating", "active", "complete", "not_reported"],
+    "cytochrome_c_states": ["retained", "release_ready", "released", "not_reported"],
+    "caspase_states": ["inactive", "primed", "activating", "active", "partially_inhibited", "inhibited", "complete", "not_reported"],
+    "parp_states": ["intact", "cleavage_started", "partially_cleaved", "cleaved", "not_reported"],
+    "aif_states": ["mitochondrial", "release_ready", "released", "translocation_ready", "execution_active", "suppressed_by_knockdown", "not_reported"],
+    "morphology_states": ["normal", "early_apoptotic", "condensing", "fragmentation_ready", "late_apoptotic"]
+  },
+  "defaults": {
+    "dt_hours": 0.5,
+    "pressure_weights": { "oxidative_stress": 0.4, "survival_withdrawal": 0.35, "mitochondrial_stress": 0.2, "stress_readiness": 0.05 },
+    "accumulation_rate_per_hour": 0.12,
+    "relief_rate_per_hour": 0.18,
+    "eligibility_threshold": 0.25,
+    "pre_commitment_threshold": 0.4,
+    "commitment_threshold": 0.6,
+    "commitment_persist_hours": 4.0,
+    "survival_counter_weight": 0.35,
+    "survival_accumulation_penalty": 0.1,
+    "stage_delay_hours": { "mitochondrial_transition": 2.0, "momp": 2.0, "release": 2.0, "caspase": 3.0, "parp": 3.0, "aif": 3.0, "morphology": 4.0, "complete": 4.0 },
+    "commitment_threshold_label": "Schematic apoptosis commitment threshold"
+  },
+  "branch_model": {
+    "total_execution": "caspase_dependent_contribution + aif_associated_contribution + other_permitted_contribution (schematic, bounded)",
+    "note": "Total execution drive is the sum of distinct branch contributions; the final apoptotic state remains discrete and irreversible after the commitment gate. Branch WEIGHTS are per-profile (apoptosis-context.registry.json) and reflect the exact reported partial dependence (e.g. B16: strong AIF, partial caspase)."
+  }
+}

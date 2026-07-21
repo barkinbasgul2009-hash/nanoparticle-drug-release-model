@@ -26,6 +26,7 @@ export class TransportAnimator {
     this.transcriptionEngine = deps.transcriptionEngine || null; // Phase 5C: separate transcription layer
     this.translationEngine = deps.translationEngine || null; // Phase 5D: separate translation layer
     this.proteinFunctionEngine = deps.proteinFunctionEngine || null; // Phase 6A: separate protein-function layer
+    this.apoptosisEngine = deps.apoptosisEngine || null; // Phase 6B: separate apoptosis layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -51,6 +52,7 @@ export class TransportAnimator {
     if (this.transcriptionEngine) this.transcriptionEngine.restart();
     if (this.translationEngine) this.translationEngine.restart();
     if (this.proteinFunctionEngine) this.proteinFunctionEngine.restart();
+    if (this.apoptosisEngine) this.apoptosisEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -100,6 +102,10 @@ export class TransportAnimator {
     // (functional eligibility -> activation -> reversible cellular-state change). It reads
     // the 5D mature proteins + 5B signaling read-only and modifies no upstream engine.
     if (this.proteinFunctionEngine) events.push(...this.proteinFunctionEngine.step(dtHours));
+    // Phase 6B: the SEPARATE apoptosis layer advances commitment + execution (eligibility ->
+    // reversible pre-commitment -> irreversible commitment -> mitochondrial/caspase/AIF
+    // execution). It reads the 6A cellular-stress states read-only and never mutates them.
+    if (this.apoptosisEngine) events.push(...this.apoptosisEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -133,6 +139,7 @@ export class TransportAnimator {
       transcription: this.transcriptionEngine ? this.transcriptionEngine.stats() : null,
       translation: this.translationEngine ? this.translationEngine.stats() : null,
       proteinFunction: this.proteinFunctionEngine ? this.proteinFunctionEngine.stats() : null,
+      apoptosis: this.apoptosisEngine ? this.apoptosisEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

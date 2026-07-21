@@ -44,6 +44,7 @@ import { SignalPropagationEngine } from './biology/signalPropagationEngine.js';
 import { TranscriptionEngine } from './biology/transcriptionEngine.js';
 import { TranslationEngine } from './biology/translationEngine.js';
 import { ProteinFunctionEngine } from './biology/proteinFunctionEngine.js';
+import { ApoptosisEngine } from './biology/apoptosisEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -139,6 +140,7 @@ export async function createApp(opts = {}) {
   let transcription = null; // Phase 5C: gene regulation / transcription (runtime) layer
   let translation = null; // Phase 5D: translation / protein-synthesis (runtime) layer
   let proteinFunction = null; // Phase 6A: protein function / early cellular response layer
+  let apoptosis = null; // Phase 6B: apoptosis commitment / execution layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -394,6 +396,39 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 6B: apoptosis commitment & execution. Reads the Phase-6A cellular-stress
+      // states + Phase-5B signaling + Phase-6B registries read-only and drives eligibility
+      // -> reversible pre-commitment -> irreversible commitment -> mitochondrial + caspase/
+      // AIF execution -> apoptotic cell state. STOP (single cell; no population/tumour).
+      if (proteinFunction) {
+        try {
+          const apCtx = await anatomyLoader.load(config.apoptosisSources.context, 'generic');
+          const apDyn = await anatomyLoader.load(config.apoptosisSources.dynamics, 'generic');
+          const apInt = await anatomyLoader.load(config.apoptosisSources.interventions, 'generic');
+          const apEv = await anatomyLoader.load(config.apoptosisSources.evidence, 'generic');
+          const apEngine = new ApoptosisEngine({
+            contextRegistry: apCtx, dynamicsRegistry: apDyn, interventionRegistry: apInt, evidenceRegistry: apEv,
+            proteinFunctionEngine: proteinFunction.engine, signalEngine: signalPropagation ? signalPropagation.engine : null,
+            species: engine.species, logger,
+          });
+          if (renderer.setApoptosisEngine) renderer.setApoptosisEngine(apEngine);
+          apoptosis = {
+            engine: apEngine,
+            step: (dt) => apEngine.step(dt),
+            run: (steps, dt) => apEngine.run(steps, dt),
+            stats: () => apEngine.stats(),
+            frame: () => apEngine.frame(),
+            timeline: () => apEngine.getTimeline(),
+            restart: () => apEngine.restart(),
+            validate: () => apEngine.validate(),
+            setIntervention: (t, a) => apEngine.setIntervention(t, a),
+            setCellModel: (m) => apEngine.setCellModel(m),
+          };
+        } catch (err) {
+          logger.warn('load', 'apoptosis not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
@@ -403,7 +438,8 @@ export async function createApp(opts = {}) {
         signalEngine: signalPropagation ? signalPropagation.engine : null,
         transcriptionEngine: transcription ? transcription.engine : null,
         translationEngine: translation ? translation.engine : null,
-        proteinFunctionEngine: proteinFunction ? proteinFunction.engine : null, renderer, logger,
+        proteinFunctionEngine: proteinFunction ? proteinFunction.engine : null,
+        apoptosisEngine: apoptosis ? apoptosis.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -462,6 +498,8 @@ export async function createApp(opts = {}) {
     translation,
     // Phase 6A addition (may be null if the protein-function registries failed to load):
     proteinFunction,
+    // Phase 6B addition (may be null if the apoptosis registries failed to load):
+    apoptosis,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -485,11 +523,12 @@ export async function createApp(opts = {}) {
     if (transcription) transcription.engine.setSpecies(speciesId);
     if (translation) translation.engine.setSpecies(speciesId);
     if (proteinFunction) proteinFunction.engine.setSpecies(speciesId);
+    if (apoptosis) apoptosis.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -509,7 +548,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

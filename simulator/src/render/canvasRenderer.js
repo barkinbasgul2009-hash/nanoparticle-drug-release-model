@@ -39,6 +39,7 @@ export class CanvasRenderer {
     this.lastTranscriptionFrame = null; // Phase 5C: { tfs, promoters, genes } gene-regulation diagram
     this.lastTranslationFrame = null;   // Phase 5D: { outputs } translation / protein-synthesis diagram
     this.lastFunctionFrame = null;      // Phase 6A: { functions, states } protein-function / cellular-response diagram
+    this.lastApoptosisFrame = null;     // Phase 6B: apoptosis commitment/execution diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -75,6 +76,8 @@ export class CanvasRenderer {
   setTranslationEngine(translationEngine) { this.translationEngine = translationEngine; return this; }
   /** Phase 6A: attach the protein-function engine so the cellular-response diagram is drawn. */
   setProteinFunctionEngine(proteinFunctionEngine) { this.proteinFunctionEngine = proteinFunctionEngine; return this; }
+  /** Phase 6B: attach the apoptosis engine so the commitment/execution diagram is drawn. */
+  setApoptosisEngine(apoptosisEngine) { this.apoptosisEngine = apoptosisEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -129,6 +132,8 @@ export class CanvasRenderer {
     this.lastTranslationFrame = this._translationFrame();
     // Phase 6A: protein-function / early-cellular-response diagram frame (headless-testable).
     this.lastFunctionFrame = this._functionFrame();
+    // Phase 6B: apoptosis commitment/execution diagram frame (headless-testable).
+    this.lastApoptosisFrame = this._apoptosisFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -432,6 +437,31 @@ export class CanvasRenderer {
       this.ctx.fillText('Protein function -> early cellular response (schematic, reversible; cell fate NOT evaluated)', 8, this.viewport.height - 86);
     }
 
+    // Phase 6B: apoptosis commitment/execution diagram (restrained; single cell). No
+    // explosions/flames/skulls/blood/red-flash - a commitment bar + branch indicators only.
+    const ap = this.lastApoptosisFrame;
+    if (ap && ap.available) {
+      const cb = ap.commitmentBar;
+      // commitment progress bar: reversible border pre-commitment, locked marker after
+      this.ctx.strokeStyle = cb.locked ? '#6a4bab' : '#9a938a'; this.ctx.lineWidth = cb.locked ? 1.8 : 1;
+      this.ctx.strokeRect(cb.x, cb.y, cb.w, 7);
+      this.ctx.fillStyle = '#8a7a9a'; this.ctx.globalAlpha = 0.7;
+      this.ctx.fillRect(cb.x, cb.y + 1, cb.w * Math.max(0, Math.min(1, cb.pressure)), 5); this.ctx.globalAlpha = 1;
+      if (cb.locked) { this.ctx.fillStyle = '#6a4bab'; this.ctx.fillRect(cb.x + cb.w + 3, cb.y, 5, 7); } // locked-state marker
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+      const tag = ap.contextTransfer ? ' (context-transfer prediction)' : ap.predicted ? ' (predicted)' : '';
+      this.ctx.fillText(`Apoptosis [${ap.cellModel}] ${ap.state}${cb.locked ? ' ■ committed' : ''}${tag}`, cb.x, cb.y - 3);
+      // branch indicators (caspase / AIF), faded when inhibited/knocked-down
+      const iy = cb.y + 16;
+      this.ctx.font = '8px system-ui, sans-serif';
+      this.ctx.globalAlpha = ap.caspaseBranch.inhibited ? 0.4 : 0.9; this.ctx.fillStyle = '#4b6b57';
+      this.ctx.fillText(`caspase: ${ap.caspaseBranch.executioner} / PARP ${ap.caspaseBranch.parp}`, cb.x, iy);
+      this.ctx.globalAlpha = ap.aifBranch.knockdown ? 0.4 : 0.9; this.ctx.fillStyle = '#7a5a3c';
+      this.ctx.fillText(`AIF: ${ap.aifBranch.state}`, cb.x, iy + 10);
+      this.ctx.globalAlpha = 1; this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+      this.ctx.fillText(`mito ${ap.mitochondria.membranePotential} / MOMP ${ap.mitochondria.momp} / morph ${ap.morphology} - schematic timing; single cell; population NOT evaluated`, cb.x, iy + 20);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -682,6 +712,26 @@ CanvasRenderer.prototype._functionFrame = function _functionFrame() {
   }));
   const edges = f.edges.filter((e) => e.active).map((e) => ({ id: e.id, sign: e.sign, predicted: e.predicted, feedback: e.feedback }));
   return { functions, states, edges };
+};
+
+// Phase 6B apoptosis commitment/execution diagram frame. Publication style, restrained:
+// a commitment progress bar (reversible border pre-commitment, locked marker after
+// commitment), mitochondrial / caspase-branch / AIF-branch indicators, morphology label.
+// Derived from the engine (read-only). No explosions/flames/skulls/blood/red-flash.
+CanvasRenderer.prototype._apoptosisFrame = function _apoptosisFrame() {
+  const eng = this.apoptosisEngine;
+  if (!eng || eng.isIdle()) return { available: false, state: eng ? eng.apop.state : 'unavailable', cellModel: eng ? eng.cellModel : null };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const y = H * 0.06; const x0 = 0.08 * W; const barW = 0.4 * W;
+  return {
+    available: true, cellModel: f.cellModel, state: f.state, reversibility: f.reversibility, committed: f.committed,
+    contextTransfer: f.contextTransfer, predicted: f.predicted, evidenceLevel: f.evidenceLevel,
+    commitmentBar: { x: x0, y, w: barW, pressure: f.apoptoticPressure, survival: f.survivalPressure, locked: f.reversibility === 'irreversible' },
+    mitochondria: f.mitochondria, caspaseBranch: f.caspaseBranch, aifBranch: f.aifBranch,
+    totalExecutionDrive: f.totalExecutionDrive, morphology: f.morphology,
+    interventions: f.interventions,
+  };
 };
 
 export default CanvasRenderer;

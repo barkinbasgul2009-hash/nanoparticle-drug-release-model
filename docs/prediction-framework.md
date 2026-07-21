@@ -47,3 +47,16 @@ supported a prediction is. `UNAVAILABLE` and `NOT_REPORTED` keep their meaning (
 Every predicted value's label lives in the registry (`formulations.*.binding.evidence_level`,
 `species_target.*.evidence_level`) so a reviewer can confirm that (a) no prediction is presented as
 experimental, and (b) no numeric value was fabricated.
+
+## Extension in Phase 6B — the context-transfer prediction
+Phase 6B (apoptosis) adds a distinct prediction *kind*: **`CONTEXT_TRANSFER_PREDICTION`** (part of
+the additive `APOPTOSIS_EVIDENCE_LEVELS`). It applies the same four rules, plus one:
+
+5. **A cross-cell-model extrapolation is labelled a transfer and carries a transfer record.**
+   The canonical mouse line is **B16BL6**, but the strongest celastrol apoptosis mechanism
+   evidence is in **B16**. Rather than silently reuse B16 data as B16BL6 fact, the default mouse
+   runtime is `CONTEXT_TRANSFER_PREDICTION` with an explicit `B16 → B16BL6` transfer record; the
+   experimental B16 and B16-F10 profiles stay separate and selectable. `validate()` rejects any
+   profile that references another cell model's evidence without the transfer label. See
+   `apoptosis-context-transfer-policy.md`. `NOT_REPORTED` (HaCaT, rat) still stays `NOT_REPORTED`
+   — a transfer is only made where a defensible same-species, same-lineage source exists.

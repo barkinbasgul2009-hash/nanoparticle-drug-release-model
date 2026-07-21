@@ -159,6 +159,20 @@ export const APP_CONFIG = Object.freeze({
   }),
   proteinFunction: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 6B: apoptosis commitment & execution. The engine reads the Phase-6A cellular-
+  // stress states + Phase-5B signaling + these registries read-only and drives apoptosis
+  // eligibility -> reversible pre-commitment -> irreversible commitment -> mitochondrial
+  // transition -> caspase and/or AIF execution -> apoptotic cell state (STOP; single cell,
+  // no population/tumour outcome). Mouse B16BL6 = context-transfer prediction (default);
+  // B16 / B16-F10 selectable; HaCaT + rat NOT_REPORTED.
+  apoptosisSources: Object.freeze({
+    context: 'apoptosis-context.registry.json',
+    dynamics: 'apoptosis-dynamics.registry.json',
+    interventions: 'apoptosis-interventions.registry.json',
+    evidence: 'apoptosis-evidence.registry.json',
+  }),
+  apoptosis: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 
