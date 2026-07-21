@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A penetration-modifier combination model. Combines the passive ECM / diffusion / mechanical / hypoxia resistances into a single schematic drug-penetration modifier and an ordinal microenvironment state. The penetration modifier influences EFFECTIVE extracellular drug availability / penetration probability / intracellular exposure ONLY - it NEVER modifies drug chemistry, binding affinity, protein interactions, or genetic regulation. Schematic; no absolute penetration rate.",
+  "combination_weights": { "ecm": 0.4, "diffusion": 0.25, "mechanical": 0.2, "hypoxia": 0.15 },
+  "penetration_floor": 0.05,
+  "penetration_note": "penetration_modifier = clamp(1 - combined_restriction, penetration_floor, 1); 1 = no restriction (full penetration), lower = reduced effective penetration.",
+  "microenvironment_states": ["permissive", "slightly_restrictive", "moderately_restrictive", "highly_restrictive", "extremely_restrictive"],
+  "state_thresholds": {
+    "permissive": 0.15,
+    "slightly_restrictive": 0.35,
+    "moderately_restrictive": 0.55,
+    "highly_restrictive": 0.75,
+    "thresholds_basis": "SCHEMATIC ordinal boundaries on the combined passive restriction [0,1]; above highly_restrictive = extremely_restrictive. NOT measured penetration fractions."
+  },
+  "stop_boundary": "microenvironment modifies penetration (effective extracellular drug availability / penetration probability / intracellular exposure)",
+  "excluded_downstream_processes": [
+    "immune_biology", "vascular_biology", "angiogenesis", "ecm_remodeling", "fibrosis",
+    "collagen_synthesis", "collagen_degradation", "fibroblasts", "caf_activation", "mmps",
+    "cytokines", "chemokines", "vegf_signalling", "cell_migration", "invasion", "metastasis",
+    "lymphatics", "vascular_leakage", "systemic_circulation", "immune_killing", "immune_suppression", "checkpoint_inhibition"
+  ]
+}

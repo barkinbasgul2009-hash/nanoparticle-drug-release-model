@@ -204,6 +204,25 @@ export const APP_CONFIG = Object.freeze({
   }),
   tumor: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 7A: passive tumour-microenvironment (TME) registries. A PASSIVE modulator that
+  // modifies drug penetration (ECM / collagen / hyaluronic acid / interstitial / oxygen /
+  // hypoxia / mechanical) - it never replaces upstream engines or alters upstream biological
+  // logic. STOP at penetration modification. Mouse B16BL6 = MECHANISTIC_PREDICTION (default);
+  // human = predictive-exploratory; rat = NOT_REPORTED.
+  // (key is `tmeSources`, distinct from the frozen Phase-4B `microenvironmentSources`.)
+  tmeSources: Object.freeze({
+    context: 'microenvironment-context.registry.json',
+    ecm: 'ecm.registry.json',
+    diffusion: 'diffusion.registry.json',
+    mechanical: 'mechanical.registry.json',
+    oxygen: 'oxygen.registry.json',
+    hypoxia: 'hypoxia.registry.json',
+    penetration: 'penetration.registry.json',
+    evidence: 'microenvironment-evidence.registry.json',
+    prediction: 'microenvironment-prediction.registry.json',
+  }),
+  tme: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

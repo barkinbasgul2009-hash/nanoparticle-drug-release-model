@@ -1,0 +1,64 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A passive tumour-microenvironment (TME) context profiles per species + tumour model. Each names the ordinal component variants (collagen / hyaluronic acid / proteoglycan / fluid / interstitial diffusion / mechanical / oxygen / hypoxia) that describe that context's PASSIVE environment. The frozen package has NO direct TME dataset for this NLC, so every profile is a LABELLED prediction (general tumour-ECM / hypoxia biology) or NOT_REPORTED - never experimental. Species are strictly isolated; no profile silently transfers (distinct values, not copied).",
+  "profiles": {
+    "mouse_b16bl6_tme": {
+      "profile_id": "mouse_b16bl6_tme",
+      "species": "mouse", "tumour_model": "B16BL6",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "components": { "collagen": "moderate", "hyaluronic_acid": "high", "proteoglycan": "moderate", "extracellular_fluid": "moderate", "interstitial": "restrictive", "mechanical": "dense", "oxygen": "moderate_hypoxia", "hypoxia": "moderate" },
+      "supported_ecm": ["collagen", "hyaluronic_acid", "proteoglycan", "extracellular_fluid"],
+      "supported_hypoxia": ["normoxic", "mild", "moderate", "severe"],
+      "supported_diffusion": ["open", "moderate", "restrictive", "highly_restrictive"],
+      "supported_predictions": ["ecm_restriction", "hypoxia_influence", "penetration_reduction", "oxygen_limitation"],
+      "supported_formulations": ["cationic_nlc", "anionic_nlc", "neutral_nlc", "free_tripterine", "vehicle_control"],
+      "default_runtime": true, "microenvironment_available": true,
+      "confidence": "LOW",
+      "uncertainty": "Passive melanoma TME (dense ECM, hyaluronic-acid rich, moderately hypoxic) is inferred from general tumour biology; no direct TME characterization for this B16BL6 tripterine-NLC context is in the frozen package. All values are schematic ordinal.",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "evidence_refs": ["me_b16bl6_ecm", "me_b16bl6_hypoxia"],
+      "limitations": "No ECM fibre density / collagen mass / interstitial pressure / oxygen concentration / diffusion coefficient / penetration rate (all NOT_REPORTED).",
+      "excluded_processes": ["immune", "angiogenesis", "ecm_remodeling", "fibrosis", "metastasis", "invasion", "vascular"]
+    },
+    "human_skin_tme": {
+      "profile_id": "human_skin_tme",
+      "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "components": { "collagen": "dense", "hyaluronic_acid": "moderate", "proteoglycan": "moderate", "extracellular_fluid": "low", "interstitial": "highly_restrictive", "mechanical": "highly_dense", "oxygen": "mild_hypoxia", "hypoxia": "mild" },
+      "supported_ecm": ["collagen", "hyaluronic_acid", "proteoglycan", "extracellular_fluid"],
+      "supported_hypoxia": ["normoxic", "mild", "moderate", "severe"],
+      "supported_diffusion": ["open", "moderate", "restrictive", "highly_restrictive"],
+      "supported_predictions": ["ecm_restriction", "hypoxia_influence", "penetration_reduction", "oxygen_limitation"],
+      "supported_formulations": ["cationic_nlc"],
+      "microenvironment_available": true, "predictive_exploratory": true, "default_shown": false,
+      "confidence": "LOW",
+      "uncertainty": "A PREDICTIVE, exploratory human skin/TME environment (collagen-rich dermis) with its OWN distinct ordinal values - NOT copied from mouse. Not validated for human clinical response; passive environment only.",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "human_translation_warning": "This microenvironment is a mechanistic, exploratory prediction of the passive human environment and is not validated for human clinical response.",
+      "evidence_refs": ["me_human_ecm"],
+      "limitations": "Predictive only; no human TME measurement; all values schematic ordinal (NOT_REPORTED quantitatively).",
+      "excluded_processes": ["immune", "angiogenesis", "ecm_remodeling", "fibrosis", "metastasis", "invasion", "vascular", "clinical_response"]
+    },
+    "rat_skin_tme": {
+      "profile_id": "rat_skin_tme",
+      "species": "rat", "tumour_model": "none",
+      "drug": "tripterine (celastrol)", "formulation": "vehicle_control",
+      "components": {},
+      "supported_ecm": [], "supported_hypoxia": [], "supported_diffusion": [], "supported_predictions": [],
+      "supported_formulations": [],
+      "microenvironment_available": false,
+      "confidence": "LOW",
+      "uncertainty": "Rat data support skin permeation only; no rat tumour microenvironment dataset. No passive TME is generated from skin-permeation evidence alone.",
+      "evidence_level": "NOT_REPORTED", "prediction_level": "NOT_REPORTED",
+      "evidence_refs": [],
+      "reason": "no rat tumour microenvironment evidence -> NOT_REPORTED",
+      "limitations": "Not modelled.",
+      "excluded_processes": ["immune", "angiogenesis", "ecm_remodeling", "fibrosis", "metastasis", "invasion", "vascular"]
+    }
+  },
+  "context_rules": {
+    "modifier_not_replacement": "The microenvironment MODIFIES transport / uptake / penetration; it never replaces an upstream engine or alters upstream biological logic.",
+    "species_isolation": "Mouse / human / rat profiles are strictly isolated; no passive microenvironment transfers silently - a cross-species use requires a CONTEXT_TRANSFER_PREDICTION label.",
+    "not_reported_stays": "Rat stays NOT_REPORTED; human is a labelled predictive-exploratory mode."
+  }
+}

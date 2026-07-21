@@ -1,0 +1,45 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A extracellular-matrix (ECM) components as PASSIVE structural abstractions. Collagen / hyaluronic acid / proteoglycan / extracellular fluid are represented only by ordinal density / porosity / resistance descriptors with schematic 0-1 values - NOT individual fibres, cross-link chemistry, collagen synthesis/degradation, matrix turnover, fibroblasts, or MMPs. All values are schematic; no ECM fibre density / collagen mass / absolute diffusion coefficient is claimed.",
+  "collagen": {
+    "description": "Passive structural network (density / alignment / packing -> porosity + penetration effect). No biosynthesis / degradation / fibroblast activity.",
+    "variants": {
+      "sparse":       { "density": 0.2,  "alignment": "loose",   "packing": "open",   "porosity_effect": 0.75, "penetration_effect": 0.15 },
+      "moderate":     { "density": 0.5,  "alignment": "mixed",   "packing": "medium", "porosity_effect": 0.5,  "penetration_effect": 0.4 },
+      "dense":        { "density": 0.75, "alignment": "aligned", "packing": "tight",  "porosity_effect": 0.3,  "penetration_effect": 0.7 },
+      "highly_dense": { "density": 0.9,  "alignment": "aligned", "packing": "very_tight", "porosity_effect": 0.15, "penetration_effect": 0.85 }
+    },
+    "evidence_level": "MECHANISTIC_PREDICTION"
+  },
+  "hyaluronic_acid": {
+    "description": "Hydration modifier / diffusion modifier / interstitial resistance modifier only. No enzymatic degradation, HAS enzymes, or hyaluronidase biology.",
+    "variants": {
+      "low":      { "hydration_modifier": 0.3, "diffusion_modifier": 0.1,  "interstitial_resistance": 0.15 },
+      "moderate": { "hydration_modifier": 0.5, "diffusion_modifier": 0.35, "interstitial_resistance": 0.4 },
+      "high":     { "hydration_modifier": 0.8, "diffusion_modifier": 0.6,  "interstitial_resistance": 0.65 }
+    },
+    "evidence_level": "MECHANISTIC_PREDICTION"
+  },
+  "proteoglycan": {
+    "description": "Passive charge/mesh resistance contribution (schematic).",
+    "variants": {
+      "low":      { "resistance": 0.1 },
+      "moderate": { "resistance": 0.35 },
+      "high":     { "resistance": 0.6 }
+    },
+    "evidence_level": "MECHANISTIC_PREDICTION"
+  },
+  "extracellular_fluid": {
+    "description": "Available extracellular fluid / porosity (higher porosity = lower resistance).",
+    "variants": {
+      "low":      { "porosity": 0.25 },
+      "moderate": { "porosity": 0.45 },
+      "high":     { "porosity": 0.7 }
+    },
+    "evidence_level": "MECHANISTIC_PREDICTION"
+  },
+  "ecm_composite": {
+    "description": "How the components combine into a single passive ECM penetration-resistance (schematic weighted mean). Exposes density / porosity / stiffness / diffusion_resistance / penetration_resistance at runtime.",
+    "composite_weights": { "collagen": 0.45, "hyaluronic_acid": 0.3, "proteoglycan": 0.15, "extracellular_fluid": 0.1 }
+  }
+}

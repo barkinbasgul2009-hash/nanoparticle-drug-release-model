@@ -1,0 +1,37 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A microenvironment evidence records. The frozen package contains NO direct TME dataset (no ECM density, collagen mass, interstitial pressure, oxygen concentration, or diffusion coefficient for this context). Every record is therefore qualitative (general tumour-ECM / hypoxia biology) with citation NOT_REPORTED; microenvironment relationships are LABELLED PREDICTIONS, never experimental TME facts.",
+  "verification_status_vocabulary": ["VERIFIED_PRIMARY_STUDY", "VERIFIED_IN_FROZEN_PACKAGE", "CONTEXT_TRANSFER", "PREDICTION_ONLY", "NOT_REPORTED"],
+  "evidence_records": {
+    "me_b16bl6_ecm": {
+      "kind": "passive_ecm_prediction", "species": "mouse", "tumour_model": "B16BL6",
+      "citation": "NOT_REPORTED (melanoma passive ECM / hyaluronic-acid restriction of nanoparticle transport; general tumour biology applied predictively)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["dense/hyaluronic-rich ECM raises passive penetration resistance (qualitative)"],
+      "does_not_support": ["ECM fibre density", "collagen mass", "absolute diffusion coefficient", "penetration rate"],
+      "note": "Mechanistic prediction; schematic ordinal only."
+    },
+    "me_b16bl6_hypoxia": {
+      "kind": "passive_hypoxia_prediction", "species": "mouse", "tumour_model": "B16BL6",
+      "citation": "NOT_REPORTED (solid-tumour hypoxia lowers oxygen availability + penetration; general tumour biology applied predictively)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["moderate tumour hypoxia lowers oxygen availability + penetration modifier (qualitative)"],
+      "does_not_support": ["absolute pO2", "HIF-1a activation (not modelled in 7A)", "vascular structure"],
+      "note": "Passive modifier only; no signalling."
+    },
+    "me_human_ecm": {
+      "kind": "passive_ecm_prediction", "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "citation": "NOT_REPORTED (human collagen-rich dermis raises passive penetration resistance; predictive, own distinct values)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["collagen-rich human dermis raises passive penetration resistance (qualitative, predictive)"],
+      "does_not_support": ["any validated human TME measurement", "clinical response"],
+      "note": "Predictive-exploratory; distinct from mouse (not copied)."
+    }
+  },
+  "integrity_rules": {
+    "no_fabricated_quantities": "No ECM fibre density / collagen mass / interstitial pressure / oxygen concentration / diffusion coefficient / penetration rate is stated.",
+    "prediction_never_experimental": "Microenvironment relationships are labelled predictions; none is presented as experimental (there is no experimental TME tier).",
+    "not_reported_stays": "Absent TME data stays NOT_REPORTED; it is never upgraded to a measurement.",
+    "no_silent_species_transfer": "Species are isolated; a cross-species use requires an explicit CONTEXT_TRANSFER_PREDICTION."
+  }
+}

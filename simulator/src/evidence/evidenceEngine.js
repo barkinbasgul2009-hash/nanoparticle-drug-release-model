@@ -331,6 +331,42 @@ export function tumorLevelActive(level) {
   return _TUMOR_EXPERIMENTAL.has(level) || _TUMOR_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// ---------------------------------------------------------------------------
+// Phase 7A - passive tumour-microenvironment (TME) evidence vocabulary (ADDITIVE;
+// earlier arrays unchanged). Phase 7A represents the PASSIVE physical/biochemical
+// environment (ECM / collagen / hyaluronic acid / interstitial space / oxygen /
+// hypoxia / mechanical barrier) that MODIFIES drug penetration - it does not kill
+// cells, signal, or remodel. The frozen package contains NO direct TME dataset for
+// this formulation, so a microenvironment relationship is only ever a LABELLED
+// prediction (general tumour-ECM / hypoxia biology applied to this context) or
+// NOT_REPORTED - never experimental, never a fabricated concentration / density /
+// pressure / diffusion coefficient. No experimental tier exists here.
+export const MICROENVIRONMENT_EVIDENCE_LEVELS = Object.freeze([
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _MICROENV_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid microenvironment evidence level? */
+export function isMicroenvironmentEvidenceLevel(level) { return MICROENVIRONMENT_EVIDENCE_LEVELS.includes(level); }
+/** True if a microenvironment evidence level is a labelled prediction (never experimental). */
+export function isMicroenvironmentPrediction(level) { return _MICROENV_PREDICTION.has(level); }
+/** True if a microenvironment evidence level is a cross-species/context transfer. */
+export function isMicroenvironmentTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION'; }
+/** Would this microenvironment level be eligible to run? (not UNAVAILABLE / NOT_REPORTED) */
+export function microenvironmentLevelActive(level) {
+  return _MICROENV_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE
