@@ -266,6 +266,41 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/population-state-machine.md`, `docs/population-validation-report.md`,
   `docs/population-animation-specification.md`, `docs/population-developer-notes.md`,
   `docs/population-limitations.md`.
+- **Phase 6D — Tumour growth, regression & treatment response (population → schematic tumour
+  burden):** a new `TumorResponseEngine` reads the Phase-6C population + eight Phase-6D
+  registries **read-only** and derives a **schematic normalized tumour burden** (baseline 1.0,
+  **never mm³**) and a treatment-response trajectory `untreated_growth → treatment_started →
+  growth_continues/slowed → stable_burden → partial_regression → strong_regression →
+  minimal_residual_burden`, with `treatment_ended → rebound_possible → rebound_in_progress`. It
+  is the first tumour-level layer but **not** a clinical layer. Deterministic — **no RNG**;
+  **population-gated** (no tumour response without population input); two **distinct** treatment
+  paths (growth suppression **and** increased loss), `net = growth − loss` (schematic); burden
+  bounded, non-negative, gradual (no instant disappearance), holds at a minimal-residual floor
+  (not zero / not a cure); `transitionTo` throws on illegal transitions (no regression without
+  treatment; no `cure` state). Deterministic **replay history** + a normalized **response
+  curve**. Objects: `TumorBurdenState`, `TumorGrowthPressure`, `TumorLossPressure`,
+  `TumorTreatmentEvent` (living fraction is a **distinct** abstraction from proliferation; loss
+  is reduced viable burden, **not** immune/physical clearance). Additive `TUMOR_EVIDENCE_LEVELS`
+  (11 tiers incl. `EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC`) — a tumour experimental tier exists
+  because the package holds a verified in vivo antimelanoma PD study (Chen 2012,
+  doi:10.2147/IJN.S32476, B16BL6) supporting treatment **direction** + formulation **ranking**
+  (cationic > anionic/neutral; NLC > free) qualitatively; every exact value stays
+  **NOT_REPORTED**. Default mouse = **B16BL6 = EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC** + cationic
+  NLC; **B16 / B16-F10** separate experimental (free tripterine); **human = predictive-
+  exploratory / UNAVAILABLE** (no active human melanoma population; mandated non-clinical
+  warning); **rat = NOT_REPORTED**. Cationic / anionic / neutral NLC / free tripterine / vehicle
+  stay separate formulation profiles; no hardcoded scientific values in engine source. Renderer
+  draws a **restrained** relative-burden bar + response curve (no realistic tumour / blood /
+  necrotic debris / clinical scan / sensational imagery); the evidence panel shows a
+  **fourteenth** section. **Stops at the response trajectory** — clinical / RECIST / survival /
+  metastasis / immune / PK stay **NOT_EVALUATED**; no clinical response / patient outcome /
+  PBPK / toxicity / dose recommendation. Docs:
+  `docs/profile-b-simulator-phase6d-implementation.md`,
+  `docs/tumor-response-runtime-architecture.md`, `docs/tumor-growth-regression-model.md`,
+  `docs/tumor-response-evidence-review.md`, `docs/formulation-response-profiles.md`,
+  `docs/tumor-prediction-framework.md`, `docs/tumor-context-transfer-policy.md`,
+  `docs/phase6d-validation-report.md`, `docs/phase6d-animation-specification.md`,
+  `docs/phase6d-developer-notes.md`, `docs/tumor-response-limitations.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

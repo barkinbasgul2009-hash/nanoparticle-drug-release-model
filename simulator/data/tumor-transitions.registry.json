@@ -1,0 +1,43 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour treatment-response state machine (legal transitions) + deterministic response dynamics defaults. All values are SCHEMATIC tuning knobs for a normalized virtual tumour burden - never biological growth constants, kill coefficients, doubling times, or dose-response parameters. Regression requires net loss pressure; growth requires positive net growth pressure; strong regression is impossible without treatment.",
+  "state_machine": {
+    "initial_state": "untreated_growth",
+    "legal_transitions": {
+      "untreated_growth": ["treatment_started", "unresolved"],
+      "treatment_started": ["growth_continues", "growth_slowed"],
+      "growth_continues": ["growth_slowed", "stable_burden", "treatment_ended"],
+      "growth_slowed": ["stable_burden", "growth_continues", "partial_regression", "treatment_ended"],
+      "stable_burden": ["partial_regression", "growth_slowed", "growth_continues", "treatment_ended"],
+      "partial_regression": ["strong_regression", "stable_burden", "treatment_ended"],
+      "strong_regression": ["minimal_residual_burden", "partial_regression", "treatment_ended"],
+      "minimal_residual_burden": ["treatment_ended", "strong_regression"],
+      "treatment_ended": ["stable_post_treatment", "rebound_possible"],
+      "rebound_possible": ["rebound_in_progress", "stable_post_treatment"],
+      "rebound_in_progress": ["unresolved", "stable_post_treatment"],
+      "stable_post_treatment": ["rebound_possible"],
+      "unresolved": []
+    },
+    "forbidden_transitions": [
+      "untreated_growth -> strong_regression (no treatment / no justified biological event)",
+      "untreated_growth -> partial_regression",
+      "minimal_residual_burden -> cure (out of scope)"
+    ],
+    "notes": "Regression states are reachable only after treatment_started. Rebound states are reachable only after treatment_ended. There is no cure / complete_response / clinical_remission state."
+  },
+  "defaults": {
+    "dt_hours": 0.5,
+    "burden_step_scale": 0.12,
+    "baseline_growth_pressure": 0.10,
+    "growth_pressure_note": "schematic baseline proliferative pressure of the untreated tumour (ordinal, not a growth rate)",
+    "population_viability_weight": 1.0,
+    "cycling_capacity_default": 1.0,
+    "resource_limitation": "logistic damping (upper_bound - burden)/upper_bound",
+    "loss_apoptotic_coupling": 0.18,
+    "loss_induction_scale": 0.12,
+    "loss_induction_scale_note": "scales the ordinal formulation loss-induction class into the schematic pressure regime so regression is gradual (never an instant disappearance)",
+    "treatment_suppression_decay_per_hour": 0.15,
+    "treatment_loss_decay_per_hour": 0.12,
+    "rebound_growth_recovery_per_hour": 0.1
+  }
+}

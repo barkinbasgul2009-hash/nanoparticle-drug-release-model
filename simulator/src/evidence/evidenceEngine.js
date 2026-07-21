@@ -286,6 +286,51 @@ export function populationLevelActive(level) {
   return _POPULATION_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// ---------------------------------------------------------------------------
+// Phase 6D - tumour growth / treatment-response evidence vocabulary (ADDITIVE;
+// earlier arrays unchanged). Phase 6D represents a SCHEMATIC virtual tumour-cell
+// burden (normalized 0-1) and a treatment-response trajectory. Unlike the
+// population layer, a tumour-level EXPERIMENTAL tier exists here because the frozen
+// package DOES contain in vivo antimelanoma pharmacodynamic evidence (Chen 2012,
+// B16BL6, formulation ranking) - but it supports DIRECTION / RANKING only; every
+// exact tumour volume / rate / % stays NOT_REPORTED. Predictions are always labelled
+// and never overwrite experimental evidence. The simulator STOPS at the schematic
+// treatment-response trajectory; no clinical / RECIST / survival / patient outcome
+// is ever represented.
+export const TUMOR_EVIDENCE_LEVELS = Object.freeze([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC',
+  'EXPERIMENTAL_DRUG_CELL_SPECIFIC',
+  'EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC',
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _TUMOR_EXPERIMENTAL = new Set([
+  'EXPERIMENTAL_FORMULATION_SPECIFIC', 'EXPERIMENTAL_DRUG_CELL_SPECIFIC', 'EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC',
+]);
+const _TUMOR_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+/** Valid tumour evidence level? */
+export function isTumorEvidenceLevel(level) { return TUMOR_EVIDENCE_LEVELS.includes(level); }
+/** True if a tumour evidence level is experimental (outranks predictions; never fabricated). */
+export function isTumorExperimental(level) { return _TUMOR_EXPERIMENTAL.has(level); }
+/** True if a tumour evidence level is a labelled prediction (never presented as experimental). */
+export function isTumorPrediction(level) { return _TUMOR_PREDICTION.has(level); }
+/** True if a tumour evidence level is a cross-cell-model context transfer. */
+export function isTumorTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION'; }
+/** Would this tumour level be eligible to run? (not UNAVAILABLE / NOT_REPORTED) */
+export function tumorLevelActive(level) {
+  return _TUMOR_EXPERIMENTAL.has(level) || _TUMOR_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
+}
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

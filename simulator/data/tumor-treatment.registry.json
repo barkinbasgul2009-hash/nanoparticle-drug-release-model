@@ -1,0 +1,31 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour treatment schedule definitions. Distinguishes REPORTED biological timing (only where a primary source is extracted) from SCHEMATIC simulation timing. No actual dosing interval, mouse dose, or human-equivalent dose is invented; the frozen package's exact schedule is NOT extracted, so the default schedule is schematic.",
+  "timing_types": ["reported_biological", "schematic_simulation"],
+  "schedules": {
+    "single_schematic": {
+      "id": "single_schematic", "timing_type": "schematic_simulation", "description": "A single schematic treatment event; treatment on from the start, no end.",
+      "events": [{ "repeat_index": 0, "start_units": 0, "end_units": null }],
+      "units": "schematic_simulation_steps", "evidence_level": "MECHANISTIC_PREDICTION"
+    },
+    "treat_then_stop_schematic": {
+      "id": "treat_then_stop_schematic", "timing_type": "schematic_simulation", "description": "Schematic treatment on, then discontinued to expose rebound-ready architecture.",
+      "events": [{ "repeat_index": 0, "start_units": 0, "end_units": 60 }],
+      "units": "schematic_simulation_steps", "evidence_level": "MECHANISTIC_PREDICTION"
+    },
+    "repeated_schematic": {
+      "id": "repeated_schematic", "timing_type": "schematic_simulation", "description": "Repeated schematic treatment events (registry-supported repetition).",
+      "events": [{ "repeat_index": 0, "start_units": 0, "end_units": 30 }, { "repeat_index": 1, "start_units": 50, "end_units": 80 }],
+      "units": "schematic_simulation_steps", "evidence_level": "MECHANISTIC_PREDICTION"
+    },
+    "untreated_control": {
+      "id": "untreated_control", "timing_type": "schematic_simulation", "description": "No treatment event; untreated control trajectory.",
+      "events": [], "units": "schematic_simulation_steps", "evidence_level": "EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC"
+    }
+  },
+  "timing_policy": {
+    "no_fabricated_intervals": "No biological dosing interval / dose / human-equivalent dose is invented.",
+    "reported_requires_extraction": "A schedule is labelled reported_biological only if a primary source's schedule is extracted; otherwise it is schematic_simulation.",
+    "default": "single_schematic"
+  }
+}

@@ -187,6 +187,23 @@ export const APP_CONFIG = Object.freeze({
   }),
   population: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 6D: tumour growth / treatment-response registries (schematic normalized burden
+  // derived from the Phase-6C population; STOP at the treatment-response trajectory - no
+  // clinical/RECIST/survival/patient outcome). Mouse B16BL6 = experimental tumour-model
+  // (Chen 2012 direction + formulation ranking); B16 / B16-F10 separate; human predictive-
+  // exploratory / UNAVAILABLE; rat NOT_REPORTED.
+  tumorSources: Object.freeze({
+    context: 'tumor-context.registry.json',
+    response: 'tumor-response.registry.json',
+    transitions: 'tumor-transitions.registry.json',
+    model: 'tumor-model.registry.json',
+    formulation: 'tumor-formulation.registry.json',
+    treatment: 'tumor-treatment.registry.json',
+    evidence: 'tumor-evidence.registry.json',
+    prediction: 'tumor-prediction.registry.json',
+  }),
+  tumor: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

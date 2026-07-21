@@ -28,6 +28,7 @@ export class TransportAnimator {
     this.proteinFunctionEngine = deps.proteinFunctionEngine || null; // Phase 6A: separate protein-function layer
     this.apoptosisEngine = deps.apoptosisEngine || null; // Phase 6B: separate apoptosis layer
     this.populationEngine = deps.populationEngine || null; // Phase 6C: separate population layer
+    this.tumorEngine = deps.tumorEngine || null; // Phase 6D: separate tumour-response layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -55,6 +56,7 @@ export class TransportAnimator {
     if (this.proteinFunctionEngine) this.proteinFunctionEngine.restart();
     if (this.apoptosisEngine) this.apoptosisEngine.restart();
     if (this.populationEngine) this.populationEngine.restart();
+    if (this.tumorEngine) this.tumorEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -112,6 +114,10 @@ export class TransportAnimator {
     // composition (fractions + state machine) from the Phase-6B single-cell apoptosis
     // trajectory. It reads apoptosis read-only and never mutates any upstream engine.
     if (this.populationEngine) events.push(...this.populationEngine.step(dtHours));
+    // Phase 6D: the SEPARATE tumour-response layer derives a schematic normalized tumour
+    // burden + treatment-response trajectory from the Phase-6C population composition. It reads
+    // the population read-only and never mutates any upstream engine.
+    if (this.tumorEngine) events.push(...this.tumorEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -147,6 +153,7 @@ export class TransportAnimator {
       proteinFunction: this.proteinFunctionEngine ? this.proteinFunctionEngine.stats() : null,
       apoptosis: this.apoptosisEngine ? this.apoptosisEngine.stats() : null,
       population: this.populationEngine ? this.populationEngine.stats() : null,
+      tumor: this.tumorEngine ? this.tumorEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

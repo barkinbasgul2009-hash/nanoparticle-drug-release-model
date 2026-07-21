@@ -73,3 +73,18 @@ evidence exists and (b) population evidence is absent. So B16BL6 is a
 `NOT_REPORTED` and idle — no human/rat fallback. No apoptotic fraction, cell count, or
 percentage is fabricated; all citations stay `NOT_REPORTED`. See
 `population-prediction-policy.md`.
+
+## Extension in Phase 6D — an experimental tumour tier + a labelled trajectory prediction
+Phase 6D (tumour response) restores an **experimental tier** (`TUMOR_EVIDENCE_LEVELS`, additive,
+11 tiers incl. `EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC`), because the frozen package holds a verified
+in vivo antimelanoma PD study (Chen 2012, doi:10.2147/IJN.S32476, B16BL6). But that evidence
+supports only the treatment **direction** and formulation **ranking** (cationic > anionic/neutral;
+NLC > free) — the **shape** of the normalized burden trajectory (and rebound) is a
+`MECHANISTIC_PREDICTION`, and the response curve is always labelled with its evidence level,
+prediction status, `quantitativeStatus = NOT_REPORTED`, and a simulation-time warning (never shown
+as extracted data). Note the tumour-level default **B16BL6 is experimental here**, unlike the
+6B/6C apoptosis/population layers where B16BL6 was a context transfer — because the PD evidence is
+directly in B16BL6. B16 / B16-F10 stay separate; **human is UNAVAILABLE** at runtime (predictive-
+exploratory only, mandated non-clinical warning, no mouse parameter copied); **rat is
+NOT_REPORTED** (no fallback). No tumour volume / rate / doubling time / % / dose / survival is
+fabricated. See `tumor-prediction-framework.md` and `tumor-context-transfer-policy.md`.

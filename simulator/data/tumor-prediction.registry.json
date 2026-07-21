@@ -1,0 +1,54 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour-response prediction records. Each documents a labelled prediction: category, confidence, rationale, source/target model + species + formulation, assumptions, uncertainty, limitations, evidence IDs, quantitative-status, and whether it may be shown by default. Predictions never overwrite experimental evidence.",
+  "prediction_records": {
+    "pred_tum_b16bl6_trajectory": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "mouse_b16bl6_tumor",
+      "claim": "The schematic B16BL6 tumour burden declines under cationic-NLC treatment (loss pressure from apoptosis exceeds growth pressure) and rebounds if treatment stops with viable cells remaining.",
+      "confidence": "LOW",
+      "rationale": "Direction is experimentally supported (Chen 2012); the burden TRAJECTORY shape is a schematic mechanistic prediction (no extracted curve).",
+      "source_model": "B16BL6 in vivo PD", "target_model": "B16BL6 schematic burden",
+      "source_species": "mouse", "target_species": "mouse",
+      "source_formulation": "cationic_nlc", "target_formulation": "cationic_nlc",
+      "assumptions": ["population apoptosis couples to tumour loss", "surviving viable fraction can rebound", "no resistance / clonal evolution modelled"],
+      "uncertainty": "Exact trajectory shape, rate, and magnitude NOT_REPORTED.",
+      "limitations": "Not a measured growth curve; not a clinical response.",
+      "reference_ids": ["tum_chen_b16bl6_pd", "tum_chen_b16bl6_ranking"],
+      "quantitative_status": "NOT_REPORTED",
+      "may_show_by_default": true
+    },
+    "pred_tum_rebound": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "mouse_b16bl6_tumor",
+      "claim": "After treatment discontinuation, a surviving viable fraction can drive rebound growth (rebound_possible -> rebound_in_progress).",
+      "confidence": "LOW",
+      "rationale": "Mechanistic: treatment removes suppression/loss; residual viable cells resume growth. Not experimentally measured here.",
+      "source_model": "B16BL6", "target_model": "B16BL6 post-treatment",
+      "source_species": "mouse", "target_species": "mouse",
+      "source_formulation": "cationic_nlc", "target_formulation": "cationic_nlc",
+      "assumptions": ["no resistance modelled", "growth pressure recovers when treatment stops"],
+      "uncertainty": "Rebound timing/magnitude NOT_REPORTED.",
+      "limitations": "Prediction-ready architecture only.",
+      "reference_ids": [],
+      "quantitative_status": "NOT_REPORTED",
+      "may_show_by_default": true
+    },
+    "pred_tum_human_exploratory": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "human_melanoma_tumor",
+      "claim": "A human tumour-response view would be a mechanistic extrapolation from preclinical evidence only.",
+      "confidence": "LOW",
+      "rationale": "No human melanoma population exists in Profile B; any human trajectory is exploratory and NOT validated. Runtime keeps human UNAVAILABLE (population-gated).",
+      "source_model": "B16BL6 preclinical", "target_model": "human_melanoma_predictive",
+      "source_species": "mouse", "target_species": "human",
+      "source_formulation": "cationic_nlc", "target_formulation": "cationic_nlc",
+      "assumptions": ["human skin delivery pathway active", "no mouse parameter silently copied"],
+      "uncertainty": "Entirely unvalidated for human clinical response.",
+      "limitations": "No clinical efficacy / cure / survival / dose recommendation. Not shown by default (no human melanoma population).",
+      "reference_ids": ["tum_transfer_b16bl6_to_human_note"],
+      "quantitative_status": "UNAVAILABLE",
+      "may_show_by_default": false
+    }
+  }
+}

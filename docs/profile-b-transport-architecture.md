@@ -557,3 +557,56 @@ healing/PK/PD/toxicity/clinical outcome. Docs:
 `population-prediction-policy.md`, `population-state-machine.md`,
 `population-validation-report.md`, `population-animation-specification.md`,
 `population-developer-notes.md`, `population-limitations.md`.
+
+## Phase 6D — Tumour growth, regression & treatment-response
+
+`TumorResponseEngine` is the fourteenth separate layer and the first to represent a **schematic
+tumour-level treatment response** — but NOT a clinical-response layer. It reads the Phase-6C
+`PopulationEngine` (composition + history) **read-only** + eight Phase-6D registries, modifies
+nothing upstream, is **population-gated** (no tumour response without population input), and is
+deterministic (no RNG — no uncontrolled random growth/regression). `TransportAnimator` steps it
+**after** population:
+
+```
+… → population composition → viable tumour-cell burden → growth pressure vs loss pressure
+  → treatment-response trajectory → growth / stabilization / regression / rebound → STOP
+```
+
+**Objects** (`tumorObjects.js`): `TumorBurdenState` (normalized burden, baseline 1.0, never
+mm³), `TumorGrowthPressure`, `TumorLossPressure` (two distinct treatment paths; living fraction
+is a DISTINCT abstraction from proliferation; loss is reduced viable burden, NOT immune/physical
+clearance), `TumorTreatmentEvent` (explicit reported-vs-schematic timing). **Registries** (eight):
+`tumor-context`, `tumor-model`, `tumor-response`, `tumor-transitions`, `tumor-formulation`,
+`tumor-treatment`, `tumor-evidence`, `tumor-prediction`.
+
+**Strict response FSM:** `untreated_growth → treatment_started → growth_continues | growth_slowed
+→ stable_burden → partial_regression → strong_regression → minimal_residual_burden`;
+`treatment_ended → stable_post_treatment | rebound_possible → rebound_in_progress`.
+`transitionTo` throws on illegal transitions; there is **no** regression from `untreated_growth`
+and **no** `cure` / `complete_response` state. `net_growth_pressure = growth − loss` (schematic);
+burden is bounded, non-negative, holds at a minimal-residual floor (not zero), and regresses
+**gradually** (no instant disappearance). Deterministic **replay history** + a normalized
+**response curve** + a milestone timeline.
+
+**Evidence + cell-model policy:** additive `TUMOR_EVIDENCE_LEVELS` (11 tiers incl.
+`EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC`). Unlike the population layer a tumour experimental tier
+exists — the frozen package holds a verified in vivo antimelanoma PD study (Chen 2012,
+doi:10.2147/IJN.S32476, B16BL6) supporting treatment **direction** + formulation **ranking**
+(cationic > anionic/neutral; NLC > free) qualitatively; every exact value stays `NOT_REPORTED`.
+Mouse **B16BL6 = EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC** (default; note this is experimental at the
+tumour level, unlike the 6B/6C B16→B16BL6 apoptosis transfer); **B16 / B16-F10** separate
+experimental (free tripterine); **human = predictive-exploratory / UNAVAILABLE** at runtime (no
+active human melanoma population; mandated non-clinical warning); **rat = NOT_REPORTED**. Cationic
+/ anionic / neutral NLC, free tripterine, and vehicle stay separate formulation profiles; the
+ranking is B16BL6-specific and never transferred silently. No hardcoded scientific values in
+engine source. Renderer draws a **restrained** relative-burden bar (viable/apoptotic partition,
+baseline tick, treatment-on indicator) + a normalized response curve (no realistic tumour / blood
+/ necrotic debris / clinical scan / sensational imagery); the evidence panel gains a
+**fourteenth** section. **STOP at the response trajectory** — clinical / RECIST / survival /
+metastasis / immune / PK evidence stay `NOT_EVALUATED`; no clinical response / patient outcome /
+PBPK / toxicity / dose recommendation (Phase 7+). Docs:
+`docs/profile-b-simulator-phase6d-implementation.md`, `tumor-response-runtime-architecture.md`,
+`tumor-growth-regression-model.md`, `tumor-response-evidence-review.md`,
+`formulation-response-profiles.md`, `tumor-prediction-framework.md`,
+`tumor-context-transfer-policy.md`, `phase6d-validation-report.md`,
+`phase6d-animation-specification.md`, `phase6d-developer-notes.md`, `tumor-response-limitations.md`.

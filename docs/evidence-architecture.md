@@ -50,3 +50,16 @@ explicit `CONTEXT_TRANSFER_PREDICTION` record (validator-enforced), and `NOT_REP
 single-cell contexts (HaCaT, rat) yield `NOT_REPORTED` populations — no human/rat fallback.
 The simulator stops at population composition; tumour / survival / clinical outcome stays
 `NOT_EVALUATED`. See `population-prediction-policy.md` and `population-evidence-review.md`.
+
+Phase 6D adds `TUMOR_EVIDENCE_LEVELS` (11 tiers, incl. `EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC`).
+This layer **does** have an experimental tier: the frozen package contains a verified in vivo
+antimelanoma PD study (Chen 2012, `chen-2012-tripterine-nlc`, doi:10.2147/IJN.S32476, B16BL6),
+which supports treatment **direction** and surface-charge formulation **ranking** (cationic >
+anionic/neutral; NLC > free) — qualitatively only; every exact tumour value stays `NOT_REPORTED`
+(the trajectory shape is a labelled `MECHANISTIC_PREDICTION`). The non-combination rule holds at
+the cell-model level: B16 / B16BL6 / B16-F10 tumour evidence is never merged without an explicit
+`CONTEXT_TRANSFER_PREDICTION`; **no human EXPERIMENTAL label** is derived from mouse data (human is
+`UNAVAILABLE`, predictive-exploratory only), and **rat has no tumour fallback** (`NOT_REPORTED`).
+The simulator stops at the schematic treatment-response trajectory; clinical / RECIST / survival /
+metastasis / immune / PK stay `NOT_EVALUATED`. See `tumor-response-evidence-review.md`,
+`tumor-prediction-framework.md`, and `tumor-context-transfer-policy.md`.

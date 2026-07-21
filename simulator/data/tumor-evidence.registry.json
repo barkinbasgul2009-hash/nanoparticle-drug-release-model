@@ -1,0 +1,72 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour-response evidence records. The B16BL6 records are grounded in the verified Chen 2012 primary study (in vivo antimelanoma pharmacodynamics + surface-charge formulation ranking) and support treatment DIRECTION / RANKING qualitatively; every exact tumour volume / rate / % is NOT_REPORTED. B16 and B16-F10 records are qualitative primary-study relationships with citation NOT_REPORTED (no verified numeric extraction). B16 / B16BL6 / B16-F10 are never merged.",
+  "verification_status_vocabulary": ["VERIFIED_PRIMARY_STUDY", "VERIFIED_IN_FROZEN_PACKAGE", "CONTEXT_TRANSFER", "PREDICTION_ONLY", "NOT_REPORTED"],
+  "evidence_records": {
+    "tum_chen_b16bl6_pd": {
+      "kind": "in_vivo_pharmacodynamic",
+      "cell_model": "B16BL6",
+      "citation": "Chen Y, Zhou L, Yuan L, Zhang Z-h, Liu X, Wu Q. Int J Nanomedicine 2012;7:3023-3033. doi:10.2147/IJN.S32476 (PMC3392146)",
+      "verification_status": "VERIFIED_PRIMARY_STUDY",
+      "supports": ["in vivo antimelanoma pharmacodynamic activity (direction)", "topical / percutaneous tripterine-NLC treatment context", "tumour-growth inhibition (qualitative)"],
+      "does_not_support": ["exact tumour volume/mm3", "growth curve", "regression rate", "doubling time", "dose-response", "% tumour-growth inhibition", "clinical / survival outcome"],
+      "quantitative_status": "NOT_REPORTED (direction only; exact PD magnitudes not extracted here)",
+      "note": "B16BL6 in vivo antimelanoma PD; supports treatment direction, not exact magnitude."
+    },
+    "tum_chen_b16bl6_ranking": {
+      "kind": "formulation_ranking",
+      "cell_model": "B16BL6",
+      "citation": "Chen Y, et al. Int J Nanomedicine 2012;7:3023-3033. doi:10.2147/IJN.S32476",
+      "verification_status": "VERIFIED_PRIMARY_STUDY",
+      "supports": ["cationic tripterine-NLC superior antimelanoma direction vs anionic / neutral (qualitative)", "NLC formulations improved over free tripterine where reported"],
+      "does_not_support": ["exact effect differences / percentages / tumour-volume gaps", "anionic-vs-neutral strict ordering", "any transfer of this ranking to B16 / B16-F10"],
+      "quantitative_status": "NOT_REPORTED (ranking direction only)",
+      "note": "Formulation ranking is B16BL6-specific; not merged into other cell models."
+    },
+    "tum_chen_b16bl6_control": {
+      "kind": "untreated_control",
+      "cell_model": "B16BL6",
+      "citation": "Chen Y, et al. Int J Nanomedicine 2012;7:3023-3033. doi:10.2147/IJN.S32476",
+      "verification_status": "VERIFIED_PRIMARY_STUDY",
+      "supports": ["an untreated / vehicle-control melanoma reference exists (qualitative)"],
+      "does_not_support": ["exact control growth curve", "control tumour volume"],
+      "quantitative_status": "NOT_REPORTED",
+      "note": "Control reference for interpreting treatment relative to a compatible control."
+    },
+    "tum_b16_growth_inhibition": {
+      "kind": "tumour_growth_inhibition",
+      "cell_model": "B16",
+      "citation": "NOT_REPORTED (B16 celastrol antitumour primary study; qualitative relationship: growth inhibition + ROS-dependent mitochondrial apoptosis + PI3K/AKT suppression)",
+      "verification_status": "VERIFIED_PRIMARY_STUDY",
+      "supports": ["tumour-growth inhibition (qualitative)", "apoptosis-related loss pressure", "qualitative antitumour response"],
+      "does_not_support": ["exact tumour data", "any copy of parameters into B16BL6"],
+      "quantitative_status": "NOT_REPORTED",
+      "note": "B16 free-celastrol; separate context; qualitative only."
+    },
+    "tum_b16f10_growth_inhibition": {
+      "kind": "tumour_growth_inhibition",
+      "cell_model": "B16-F10",
+      "citation": "NOT_REPORTED (B16-F10 celastrol primary study; qualitative: reduced viability / proliferation suppression / apoptosis / cell-cycle effects, PI3K/AKT/mTOR suppression)",
+      "verification_status": "VERIFIED_PRIMARY_STUDY",
+      "supports": ["reduced viability (qualitative)", "proliferation suppression (growth pressure down)", "apoptosis-related loss pressure", "schematic cell-cycle / growth-readiness modifier"],
+      "does_not_support": ["invasion / metastasis / migration burden (Phase 6D excludes these)", "exact tumour data"],
+      "quantitative_status": "NOT_REPORTED",
+      "note": "B16-F10; separate context; Phase 6D uses growth/loss/response direction only."
+    }
+  },
+  "context_transfer_records": {
+    "tum_transfer_b16bl6_to_human_note": {
+      "source_cell_model": "B16BL6", "target_context": "human_melanoma_predictive",
+      "shared_biological_features": ["celastrol mechanism", "topical delivery pathway"],
+      "uncertain_differences": ["human vs mouse tumour biology", "no human melanoma population in Profile B", "no validated human efficacy"],
+      "rationale": "Documents that any human tumour-response view would be a mechanistic extrapolation, not a validated clinical claim; runtime keeps human UNAVAILABLE (population-gated).",
+      "reference_ids": []
+    }
+  },
+  "integrity_rules": {
+    "no_fabricated_quantities": "No tumour volume / diameter / weight / doubling time / rate constant / % / dose is stated.",
+    "experimental_direction_only": "Experimental records support direction / ranking qualitatively; exact magnitudes stay NOT_REPORTED.",
+    "no_cell_model_merge": "B16 / B16BL6 / B16-F10 records are never combined without an explicit transfer label.",
+    "no_clinical_claim": "No record asserts clinical response, survival, cure, or patient outcome."
+  }
+}

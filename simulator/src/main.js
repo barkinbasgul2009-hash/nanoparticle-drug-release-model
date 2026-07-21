@@ -46,6 +46,7 @@ import { TranslationEngine } from './biology/translationEngine.js';
 import { ProteinFunctionEngine } from './biology/proteinFunctionEngine.js';
 import { ApoptosisEngine } from './biology/apoptosisEngine.js';
 import { PopulationEngine } from './biology/populationEngine.js';
+import { TumorResponseEngine } from './biology/tumorResponseEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -143,6 +144,7 @@ export async function createApp(opts = {}) {
   let proteinFunction = null; // Phase 6A: protein function / early cellular response layer
   let apoptosis = null; // Phase 6B: apoptosis commitment / execution layer
   let population = null; // Phase 6C: population-response / composition layer
+  let tumor = null; // Phase 6D: tumour growth / treatment-response layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -466,6 +468,47 @@ export async function createApp(opts = {}) {
         }
       }
 
+      // Phase 6D: tumour growth / treatment-response. Reads the Phase-6C population + Phase-6D
+      // registries read-only and derives a SCHEMATIC normalized tumour burden + treatment-
+      // response trajectory. Population-gated. STOP at the response trajectory - no clinical/
+      // RECIST/survival/PK outcome.
+      if (population) {
+        try {
+          const tCtx = await anatomyLoader.load(config.tumorSources.context, 'generic');
+          const tResp = await anatomyLoader.load(config.tumorSources.response, 'generic');
+          const tTrans = await anatomyLoader.load(config.tumorSources.transitions, 'generic');
+          const tModel = await anatomyLoader.load(config.tumorSources.model, 'generic');
+          const tForm = await anatomyLoader.load(config.tumorSources.formulation, 'generic');
+          const tTreat = await anatomyLoader.load(config.tumorSources.treatment, 'generic');
+          const tEv = await anatomyLoader.load(config.tumorSources.evidence, 'generic');
+          const tPred = await anatomyLoader.load(config.tumorSources.prediction, 'generic');
+          const tumEngine = new TumorResponseEngine({
+            contextRegistry: tCtx, responseRegistry: tResp, transitionsRegistry: tTrans, modelRegistry: tModel,
+            formulationRegistry: tForm, treatmentRegistry: tTreat, evidenceRegistry: tEv, predictionRegistry: tPred,
+            populationEngine: population.engine, species: engine.species, logger,
+          });
+          if (renderer.setTumorEngine) renderer.setTumorEngine(tumEngine);
+          tumor = {
+            engine: tumEngine,
+            step: (dt) => tumEngine.step(dt),
+            run: (steps, dt) => tumEngine.run(steps, dt),
+            stats: () => tumEngine.stats(),
+            frame: () => tumEngine.frame(),
+            history: () => tumEngine.getHistory(),
+            timeline: () => tumEngine.getTimeline(),
+            responseCurve: () => tumEngine.responseCurve(),
+            restart: () => tumEngine.restart(),
+            validate: () => tumEngine.validate(),
+            setCellModel: (m) => tumEngine.setCellModel(m),
+            setFormulation: (f) => tumEngine.setFormulation(f),
+            setSchedule: (s) => tumEngine.setSchedule(s),
+            setTreatment: (a) => tumEngine.setTreatment(a),
+          };
+        } catch (err) {
+          logger.warn('load', 'tumor not loaded', { err: String(err) });
+        }
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
@@ -477,7 +520,8 @@ export async function createApp(opts = {}) {
         translationEngine: translation ? translation.engine : null,
         proteinFunctionEngine: proteinFunction ? proteinFunction.engine : null,
         apoptosisEngine: apoptosis ? apoptosis.engine : null,
-        populationEngine: population ? population.engine : null, renderer, logger,
+        populationEngine: population ? population.engine : null,
+        tumorEngine: tumor ? tumor.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -540,6 +584,8 @@ export async function createApp(opts = {}) {
     apoptosis,
     // Phase 6C addition (may be null if the population registries failed to load):
     population,
+    // Phase 6D addition (may be null if the tumour registries failed to load):
+    tumor,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -567,11 +613,14 @@ export async function createApp(opts = {}) {
     // Phase 6C: the population layer follows the selected species (rebuilds from its profile;
     // unsupported / NOT_REPORTED species become idle). Only one population exists at a time.
     if (population) population.engine.setSpecies(speciesId);
+    // Phase 6D: the tumour layer follows the selected species (rebuilds from its profile;
+    // population-gated -> human/rat become idle). Only one tumour model runs at a time.
+    if (tumor) tumor.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -591,7 +640,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

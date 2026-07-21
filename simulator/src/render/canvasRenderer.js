@@ -41,6 +41,7 @@ export class CanvasRenderer {
     this.lastFunctionFrame = null;      // Phase 6A: { functions, states } protein-function / cellular-response diagram
     this.lastApoptosisFrame = null;     // Phase 6B: apoptosis commitment/execution diagram
     this.lastPopulationFrame = null;    // Phase 6C: population composition/viability diagram
+    this.lastTumorFrame = null;         // Phase 6D: tumour burden / treatment-response diagram
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -81,6 +82,8 @@ export class CanvasRenderer {
   setApoptosisEngine(apoptosisEngine) { this.apoptosisEngine = apoptosisEngine; return this; }
   /** Phase 6C: attach the population engine so the population composition diagram is drawn. */
   setPopulationEngine(populationEngine) { this.populationEngine = populationEngine; return this; }
+  /** Phase 6D: attach the tumour engine so the tumour burden / response diagram is drawn. */
+  setTumorEngine(tumorEngine) { this.tumorEngine = tumorEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -139,6 +142,8 @@ export class CanvasRenderer {
     this.lastApoptosisFrame = this._apoptosisFrame();
     // Phase 6C: population composition/viability diagram frame (headless-testable).
     this.lastPopulationFrame = this._populationFrame();
+    // Phase 6D: tumour burden / treatment-response diagram frame (headless-testable).
+    this.lastTumorFrame = this._tumorFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -497,6 +502,40 @@ export class CanvasRenderer {
       this.ctx.fillText('tumour / survival / clinical outcome NOT evaluated', pb.x, pb.y + 30);
     }
 
+    // Phase 6D: tumour burden / treatment-response diagram (restrained; schematic). A relative
+    // burden bar (viable + apoptotic) + a normalized response curve. No realistic tumour /
+    // blood / necrotic debris / clinical scan / sensational imagery.
+    const tum = this.lastTumorFrame;
+    if (tum && tum.available) {
+      const tb = tum.burdenBar;
+      // burden region: viable (slate) + apoptotic (orange) partition of the relative burden.
+      this.ctx.strokeStyle = '#9a938a'; this.ctx.lineWidth = 1; this.ctx.strokeRect(tb.x, tb.y, tb.w, 8);
+      const vw = tb.w * Math.max(0, Math.min(1, tb.viable / tb.scale));
+      const aw = tb.w * Math.max(0, Math.min(1, tb.apoptotic / tb.scale));
+      this.ctx.globalAlpha = tum.predicted && !tum.experimental ? 0.72 : 0.85;
+      this.ctx.fillStyle = '#5b6b86'; this.ctx.fillRect(tb.x, tb.y, vw, 8);
+      this.ctx.fillStyle = '#d08a3a'; this.ctx.fillRect(tb.x + vw, tb.y, aw, 8);
+      this.ctx.globalAlpha = 1;
+      // baseline (1.0) reference tick
+      const bx = tb.x + tb.w * Math.min(1, 1.0 / tb.scale); this.ctx.strokeStyle = '#6a4bab'; this.ctx.beginPath(); this.ctx.moveTo(bx, tb.y - 2); this.ctx.lineTo(bx, tb.y + 10); this.ctx.stroke();
+      // treatment-on indicator
+      if (tum.treatmentState === 'on') { this.ctx.fillStyle = '#4b9e5f'; this.ctx.fillRect(tb.x - 8, tb.y, 4, 8); }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+      const ttag = tum.contextTransfer ? ' (context-transfer)' : tum.experimental ? ' (experimental direction)' : tum.predicted ? ' (predicted)' : '';
+      this.ctx.fillText(`Tumour [${tum.cellModel} / ${tum.formulation}] ${tum.responseState}${ttag}`, tb.x, tb.y - 4);
+      this.ctx.font = '8px system-ui, sans-serif';
+      this.ctx.fillText(`rel. burden ${tum.currentBurden} | growth ${tum.growthPressure} | loss ${tum.lossPressure} | net ${tum.netGrowthPressure}  (normalized schematic; not mm3)`, tb.x, tb.y + 20);
+      // normalized response curve (deterministic replay trace of relative burden)
+      const rc = tum.curve;
+      if (rc && rc.points && rc.points.length > 1) {
+        this.ctx.strokeStyle = '#5b6b86'; this.ctx.lineWidth = 1; this.ctx.beginPath();
+        rc.points.forEach((v, i) => { const x = rc.x + (rc.w * i) / (rc.points.length - 1); const y = rc.y + rc.h - rc.h * Math.max(0, Math.min(1, v / tb.scale)); if (i === 0) this.ctx.moveTo(x, y); else this.ctx.lineTo(x, y); });
+        this.ctx.stroke();
+      }
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
+      this.ctx.fillText('clinical / RECIST / survival / metastasis / PK NOT evaluated', tb.x, tb.y + 30);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -792,6 +831,33 @@ CanvasRenderer.prototype._populationFrame = function _populationFrame() {
     compositionBar: { x: x0, y, w: barW, living: f.livingFraction, adapted: f.adaptedFraction, recovered: f.recoveredFraction, apoptotic: f.apoptoticFraction },
     sparkline: { x: x0, y: y + 34, w: barW, h: 14, points: points.slice(-120) },
     tumourResponseEvidence: f.tumourResponseEvidence, survivalEvidence: f.survivalEvidence, clinicalOutcomeEvidence: f.clinicalOutcomeEvidence,
+  };
+};
+
+// Phase 6D tumour burden / treatment-response diagram frame. Publication style, restrained:
+// a relative-burden bar (viable + apoptotic partition) with a baseline (1.0) reference tick +
+// a treatment-on indicator, and a normalized response curve (deterministic replay trace of the
+// relative burden). Derived from the engine (read-only). Normalized SCHEMATIC burden only -
+// never a real tumour volume. No realistic tumour / blood / necrotic debris / clinical scan /
+// sensational imagery. Clinical / survival outcome is NOT evaluated.
+CanvasRenderer.prototype._tumorFrame = function _tumorFrame() {
+  const eng = this.tumorEngine;
+  if (!eng || eng.isIdle()) return { available: false, responseState: eng ? eng.burden.responseState : 'unavailable', cellModel: eng ? eng.cellModel : null };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const y = H * 0.27; const x0 = 0.08 * W; const barW = 0.4 * W;
+  const scale = eng.upperBound || 1.5;
+  const hist = eng.getHistory();
+  const points = hist.length ? hist.map((h) => h.currentBurden) : [f.currentBurden];
+  return {
+    available: true, cellModel: f.cellModel, species: f.species, formulation: f.formulation, tumorModel: f.tumorModel,
+    responseState: f.responseState, treatmentState: f.treatmentState,
+    currentBurden: f.currentBurden, growthPressure: f.growthPressure, lossPressure: f.lossPressure, netGrowthPressure: f.netGrowthPressure,
+    predicted: f.predicted, experimental: f.experimental, contextTransfer: f.contextTransfer,
+    evidenceLevel: f.evidenceLevel, confidence: f.confidence, quantitativeStatus: f.quantitativeStatus,
+    burdenBar: { x: x0, y, w: barW, scale, viable: f.normalizedViableBurden, apoptotic: f.normalizedApoptoticBurden },
+    curve: { x: x0, y: y + 34, w: barW, h: 16, points: points.slice(-160) },
+    tumourResponseEvidence: f.tumourResponseEvidence, clinicalResponseEvidence: f.clinicalResponseEvidence, survivalEvidence: f.survivalEvidence,
   };
 };
 

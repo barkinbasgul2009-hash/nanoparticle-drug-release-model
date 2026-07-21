@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -55,6 +55,8 @@ export function buildAnatomyPanelModels(deps) {
   const apoptosisLevel = apoptosis && apoptosis.engine ? apoptosis.engine.summaryLevel() : null;
   // Phase 6C: population-response summary level (idle => NOT_REPORTED/UNAVAILABLE).
   const populationLevel = population && population.engine ? population.engine.summaryLevel() : null;
+  // Phase 6D: tumour-response summary level (idle => NOT_REPORTED/UNAVAILABLE).
+  const tumorLevel = tumor && tumor.engine ? tumor.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -69,6 +71,7 @@ export function buildAnatomyPanelModels(deps) {
     proteinFunction: functionLevel,
     apoptosis: apoptosisLevel,
     populationResponse: populationLevel,
+    tumorResponse: tumorLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -82,6 +85,7 @@ export function buildAnatomyPanelModels(deps) {
       proteinFunction: proteinFunction && proteinFunction.engine ? proteinFunction.engine.summaryMessage() : null,
       apoptosis: apoptosis && apoptosis.engine ? apoptosis.engine.summaryMessage() : null,
       populationResponse: population && population.engine ? population.engine.summaryMessage() : null,
+      tumorResponse: tumor && tumor.engine ? tumor.engine.summaryMessage() : null,
     },
   };
   // Phase 6B: apoptosis commitment & execution detail (data only). Separates apoptosis /
@@ -126,6 +130,40 @@ export function buildAnatomyPanelModels(deps) {
     populationState: population.engine.pop.populationState, populationEvidence: population.engine.summaryLevel(),
     notReportedFields: ['population_apoptotic_fraction'], stopBoundary: 'population composition',
     tumourResponseEvidence: 'NOT_EVALUATED', survivalEvidence: 'NOT_EVALUATED', clinicalOutcomeEvidence: 'NOT_EVALUATED',
+  } : null);
+  // Phase 6D: tumour growth & treatment-response detail (data only). A schematic normalized
+  // tumour burden + treatment-response trajectory derived from the population; clearly
+  // distinguishes experimental direction / prediction / context-transfer / human-extrapolation
+  // / unavailable. Clinical / RECIST / survival / metastasis / PK stay NOT_EVALUATED.
+  const tumorInfo = tumor && tumor.engine && !tumor.engine.isIdle() ? (() => {
+    const fr = tumor.engine.frame();
+    const p = tumor.engine.profile || {};
+    return {
+      title: 'Tumor Growth & Treatment Response',
+      species: fr.species, cellModel: fr.cellModel, tumorModel: fr.tumorModel, drug: p.drug || null,
+      formulation: fr.formulation, route: p.route || null, treatmentContext: fr.treatmentState,
+      responseState: fr.responseState, responseDirection: fr.netGrowthPressure < 0 ? 'regression' : fr.netGrowthPressure > 0 ? 'growth' : 'stable',
+      tumourResponseEvidence: fr.evidenceLevel, growthModelType: fr.tumorModel, quantitativeDataAvailability: fr.quantitativeStatus,
+      predictionLevel: fr.predictionLevel, confidence: fr.confidence, uncertainty: fr.uncertainty,
+      experimental: fr.experimental, predicted: fr.predicted, contextTransfer: fr.contextTransfer,
+      relativeBurden: fr.currentBurden, viableBurden: fr.normalizedViableBurden, apoptoticBurden: fr.normalizedApoptoticBurden,
+      growthPressure: fr.growthPressure, lossPressure: fr.lossPressure, netGrowthPressure: fr.netGrowthPressure,
+      timingType: 'schematic_simulation',
+      burdenWarning: fr.burdenWarning,
+      humanTranslationWarning: fr.humanTranslationWarning,
+      sourceReferences: (p.evidence_refs || []),
+      stopBoundary: 'schematic treatment-response trajectory + normalized burden',
+      excludedClinicalOutcomes: (p.excluded_downstream_processes || []),
+      clinicalResponseEvidence: 'NOT_EVALUATED', survivalEvidence: 'NOT_EVALUATED', recistEvidence: 'NOT_EVALUATED',
+      metastasisEvidence: 'NOT_EVALUATED', immuneEvidence: 'NOT_EVALUATED', pkEvidence: 'NOT_EVALUATED',
+    };
+  })() : (tumor && tumor.engine ? {
+    title: 'Tumor Growth & Treatment Response', species: tumor.engine.species, cellModel: tumor.engine.cellModel,
+    responseState: tumor.engine.burden.responseState, tumourResponseEvidence: tumor.engine.summaryLevel(),
+    humanTranslationWarning: (tumor.engine.profile && tumor.engine.profile.human_translation_warning) || null,
+    reason: (tumor.engine.profile && tumor.engine.profile.reason) || null,
+    stopBoundary: 'schematic treatment-response trajectory + normalized burden',
+    clinicalResponseEvidence: 'NOT_EVALUATED', survivalEvidence: 'NOT_EVALUATED', recistEvidence: 'NOT_EVALUATED',
   } : null);
   // Phase 6A: protein-function & early-cellular-response detail (data only). Clearly
   // separates protein-abundance / protein-function / cellular-response / cell-fate evidence.
@@ -222,6 +260,7 @@ export function buildAnatomyPanelModels(deps) {
       proteinFunction: proteinFunctionInfo,
       apoptosis: apoptosisInfo,
       populationResponse: populationInfo,
+      tumorResponse: tumorInfo,
     },
     navigation: {
       title: 'Navigation',
