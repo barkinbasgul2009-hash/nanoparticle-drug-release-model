@@ -58,7 +58,7 @@ export class VascularEngine {
   _build() {
     const p = this._profile();
     this.profile = p;
-    this.timeH = 0; this._stepCount = 0;
+    this.timeH = 0; this._stepCount = 0; this.timeline = [];
     this.available = !!(p && p.vascular_available);
     this.formulation = this._formulationOverride && p && (p.supported_formulations || []).includes(this._formulationOverride)
       ? this._formulationOverride : (p ? p.formulation : null);
@@ -116,6 +116,18 @@ export class VascularEngine {
     const deliveryModifier = clamp(w.perfusion * perfusionEff + w.permeability * permeability + w.vessel_density * vesselDensity + w.maturity_efficiency * maturityEfficiency, floor, 1);
     const deliveryState = this._deliveryState(deliveryModifier);
     Object.assign(s.delivery, { deliveryModifier: r3(deliveryModifier), effectiveArrival: r3(deliveryModifier), deliveryState });
+
+    // deterministic evaluation timeline (vascular field is computed once per context).
+    this.timeline = [
+      { kind: 'milestone', event: 'vascular_profile_loaded', detail: { tumourModel: this.tumourModel, evidenceLevel: this.profile.evidence_level } },
+      { kind: 'milestone', event: 'vascular_network_generated', detail: { angiogenicState: s.network.vessels.angiogenicState, density: s.network.density } },
+      { kind: 'milestone', event: 'perfusion_calculated', detail: { state: s.perfusion.state, efficiency: s.perfusion.efficiency } },
+      { kind: 'milestone', event: 'oxygen_supply_updated', detail: { state: s.oxygen.state, supply: s.oxygen.supply } },
+      { kind: 'milestone', event: 'nutrient_environment_updated', detail: { state: s.nutrient.state, availability: s.nutrient.availability } },
+      { kind: 'milestone', event: 'permeability_applied', detail: { state: s.permeability.state, value: s.permeability.value } },
+      { kind: 'milestone', event: 'drug_delivery_modified', detail: { deliveryModifier: s.delivery.deliveryModifier, state: deliveryState } },
+      { kind: 'milestone', event: 'transport_continues', detail: {} },
+    ];
   }
 
   _deliveryState(mod) {
@@ -148,6 +160,8 @@ export class VascularEngine {
   }
 
   // ---- accessors ---------------------------------------------------------
+
+  getTimeline() { return this.timeline.slice(); }
 
   summaryLevel() { return this.isIdle() ? (this.profile && this.profile.evidence_level === 'NOT_REPORTED' ? 'NOT_REPORTED' : 'UNAVAILABLE') : (this.profile.evidence_level || 'MECHANISTIC_PREDICTION'); }
   summaryMessage() {
@@ -189,6 +203,64 @@ export class VascularEngine {
       immuneEvidence: 'NOT_EVALUATED', vegfSignallingEvidence: 'NOT_EVALUATED', hifRegulationEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
       timeH: r2(this.timeH), summaryLevel: this.summaryLevel(),
     };
+  }
+
+  // ---- validation --------------------------------------------------------
+
+  /** Registry + consistency integrity. STOP at delivery; no downstream biology fields. */
+  validate() {
+    const errors = []; const warnings = [];
+    const FORBIDDEN = ['immune', 'macrophage', 'nk_cell', 't_cell', 'b_cell', 'fibroblast', 'caf', 'vegf', 'hif', 'lymphatic', 'metasta', 'invasion', 'intravasation', 'extravasation', 'coagulation', 'thrombosis', 'inflammation', 'remodel', 'clearance', 'endothelial_signalling'];
+    const perfIdx = { very_low: 0, low: 1, moderate: 2, high: 3, very_high: 4 };
+    const profs = this.ctxReg.profiles || {};
+    const evRecs = this.evReg.evidence_records || {};
+    const seen = new Set();
+    for (const [pid, p] of Object.entries(profs)) {
+      if (seen.has(pid)) errors.push(`duplicate vascular profile id: ${pid}`); seen.add(pid);
+      if (p.profile_id && p.profile_id !== pid) errors.push(`profile ${pid} profile_id mismatch`);
+      if (!KNOWN_SPECIES.has(p.species)) errors.push(`profile ${pid} invalid/unsupported species: ${p.species}`);
+      if (!p.tumour_model) errors.push(`profile ${pid} missing tumour_model`);
+      if (!isVascularEvidenceLevel(p.evidence_level)) errors.push(`profile ${pid} invalid evidence_level`);
+      // no rat available tumour vasculature (no fallback from skin permeation)
+      if (p.species === 'rat' && p.vascular_available) errors.push(`profile ${pid} rat must not have an available vasculature (no rat fallback)`);
+      if (!p.vascular_available) {
+        if (p.evidence_level !== 'NOT_REPORTED' && p.evidence_level !== 'UNAVAILABLE') errors.push(`profile ${pid} unavailable but evidence_level ${p.evidence_level}`);
+        continue;
+      }
+      // prediction labelling: an active vasculature is NEVER experimental (only predictions exist)
+      if (!isVascularPrediction(p.evidence_level)) errors.push(`profile ${pid} active vasculature must be a labelled prediction (got ${p.evidence_level})`);
+      // evidence completeness
+      const refs = (p.evidence_refs || []);
+      if (!refs.length) errors.push(`profile ${pid} available but has no evidence_refs`);
+      for (const rid of refs) if (!evRecs[rid]) errors.push(`profile ${pid} references missing evidence record ${rid}`);
+      const c = p.components || {};
+      // component variants must exist in their registries (renderer compatibility)
+      if (c.angiogenic_state && !(this.angReg.angiogenic_states && this.angReg.angiogenic_states[c.angiogenic_state])) errors.push(`profile ${pid} unsupported angiogenic_state ${c.angiogenic_state}`);
+      if (c.vessel_maturity && !(this.angReg.vessel_maturity && this.angReg.vessel_maturity[c.vessel_maturity])) errors.push(`profile ${pid} unsupported vessel_maturity ${c.vessel_maturity}`);
+      if (c.perfusion && !(this.perfReg.perfusion_states && this.perfReg.perfusion_states[c.perfusion])) errors.push(`profile ${pid} unsupported perfusion ${c.perfusion}`);
+      if (c.oxygen_supply && !(this.oxyReg.oxygen_supply_states && this.oxyReg.oxygen_supply_states[c.oxygen_supply])) errors.push(`profile ${pid} unsupported oxygen_supply ${c.oxygen_supply}`);
+      if (c.nutrient && !(this.nutReg.nutrient_states && this.nutReg.nutrient_states[c.nutrient])) errors.push(`profile ${pid} unsupported nutrient ${c.nutrient}`);
+      if (c.permeability && !(this.permReg.permeability_states && this.permReg.permeability_states[c.permeability])) errors.push(`profile ${pid} unsupported permeability ${c.permeability}`);
+      // registry-driven support-list checks (chosen variant must be in the profile's supported list)
+      if (c.angiogenic_state && (p.supported_vascular_state || []).length && !p.supported_vascular_state.includes(c.angiogenic_state)) errors.push(`profile ${pid} angiogenic_state ${c.angiogenic_state} not in supported_vascular_state`);
+      if (c.perfusion && (p.supported_perfusion || []).length && !p.supported_perfusion.includes(c.perfusion)) errors.push(`profile ${pid} perfusion ${c.perfusion} not in supported_perfusion`);
+      if (c.oxygen_supply && (p.supported_oxygen || []).length && !p.supported_oxygen.includes(c.oxygen_supply)) errors.push(`profile ${pid} oxygen_supply ${c.oxygen_supply} not in supported_oxygen`);
+      // formulation compatibility
+      if (p.formulation && (p.supported_formulations || []).length && !p.supported_formulations.includes(p.formulation)) errors.push(`profile ${pid} formulation ${p.formulation} not in supported_formulations`);
+      // consistency: oxygen supply and perfusion are both blood-flow-derived - reject an
+      // impossible combination (e.g. very_high oxygen supply with very_low perfusion).
+      if (c.oxygen_supply != null && c.perfusion != null && perfIdx[c.oxygen_supply] != null && perfIdx[c.perfusion] != null) {
+        if (Math.abs(perfIdx[c.oxygen_supply] - perfIdx[c.perfusion]) >= 3) errors.push(`profile ${pid} inconsistent oxygen/perfusion combination: ${c.oxygen_supply} + ${c.perfusion}`);
+      }
+      // forbidden downstream biology must not be declared as a vascular field
+      for (const bad of FORBIDDEN) if ((p.tumour_model || '').toLowerCase().includes(bad)) errors.push(`profile ${pid} references a forbidden downstream concept: ${bad}`);
+    }
+    // runtime: delivery modifier bounds
+    if (this.available) {
+      const dm = this.state.delivery.deliveryModifier;
+      if (dm < 0 || dm > 1) errors.push('delivery modifier out of [0,1]');
+    }
+    return { ok: errors.length === 0, errors, warnings };
   }
 
   _log(level, cat, msg, data) { if (this.logger && this.logger[level]) this.logger[level](cat, msg, data); }

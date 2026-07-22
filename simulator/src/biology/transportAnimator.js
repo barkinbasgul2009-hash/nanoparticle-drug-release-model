@@ -30,6 +30,7 @@ export class TransportAnimator {
     this.populationEngine = deps.populationEngine || null; // Phase 6C: separate population layer
     this.tumorEngine = deps.tumorEngine || null; // Phase 6D: separate tumour-response layer
     this.microenvironmentEngine = deps.microenvironmentEngine || null; // Phase 7A: passive TME layer
+    this.vascularEngine = deps.vascularEngine || null; // Phase 7B: tumour-vasculature layer
     this.renderer = deps.renderer || null;
     this.logger = deps.logger || null;
     this.spawnCount = deps.spawnCount || 14;
@@ -59,6 +60,7 @@ export class TransportAnimator {
     if (this.populationEngine) this.populationEngine.restart();
     if (this.tumorEngine) this.tumorEngine.restart();
     if (this.microenvironmentEngine) this.microenvironmentEngine.restart();
+    if (this.vascularEngine) this.vascularEngine.restart();
     this._step = 0;
     this._spawned = 0;
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -124,6 +126,10 @@ export class TransportAnimator {
     // context; stepping advances its clock (replay/animator compatible). It reads registries +
     // context only and modifies no upstream engine (its penetration modifier is advisory).
     if (this.microenvironmentEngine) events.push(...this.microenvironmentEngine.step(dtHours));
+    // Phase 7B: the SEPARATE tumour-vasculature layer holds a static vascular field per
+    // context; stepping advances its clock (replay/animator compatible). It reads registries +
+    // context (and Phase 7A read-only) and modifies no upstream engine (delivery modifier is advisory).
+    if (this.vascularEngine) events.push(...this.vascularEngine.step(dtHours));
     this._step += 1;
     if (this.onEvent) for (const e of events) this.onEvent(e);
     if (this.renderer && this.renderer.draw) this.renderer.draw();
@@ -161,6 +167,7 @@ export class TransportAnimator {
       population: this.populationEngine ? this.populationEngine.stats() : null,
       tumor: this.tumorEngine ? this.tumorEngine.stats() : null,
       microenvironment: this.microenvironmentEngine ? this.microenvironmentEngine.stats() : null,
+      vascular: this.vascularEngine ? this.vascularEngine.stats() : null,
       timeH: this.engine.timeH,
     };
   }

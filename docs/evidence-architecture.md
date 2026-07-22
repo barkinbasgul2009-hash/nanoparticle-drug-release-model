@@ -73,3 +73,13 @@ carries its own distinct values, not copied from mouse; a cross-species reuse re
 `CONTEXT_TRANSFER_PREDICTION`), and rat stays `NOT_REPORTED`. The layer only **modifies** drug
 penetration; it stops at the penetration modifier, with immune / vascular / remodeling / metastasis
 `NOT_EVALUATED`. See `microenvironment-evidence-review.md`, `microenvironment-prediction-policy.md`.
+
+Phase 7B adds `VASCULAR_EVIDENCE_LEVELS` (8 tiers) for the active tumour vasculature. Like the
+population and passive-microenvironment layers, it has **no experimental tier**: the frozen package
+holds no direct tumour-vasculature characterization for this context, so every active vascular
+value is a labelled prediction (general tumour-vasculature biology) or `NOT_REPORTED`. Species are
+isolated (human carries its own distinct states, not copied from mouse; a cross-species reuse
+requires a `CONTEXT_TRANSFER_PREDICTION`), and rat has no available vasculature (`NOT_REPORTED`, no
+fallback). The layer only **modifies** drug delivery; it stops at the delivery modifier, with immune
+/ VEGF / HIF / metastasis `NOT_EVALUATED`. See `vascular-evidence-review.md`,
+`vascular-prediction-policy.md`.

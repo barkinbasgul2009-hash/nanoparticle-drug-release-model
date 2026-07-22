@@ -11,7 +11,7 @@
  * @returns {Record<string, object>}
  */
 export function buildAnatomyPanelModels(deps) {
-  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment } = deps;
+  const { model, state, presets, citations, scaleLevels, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular } = deps;
   const s = state.get();
   const currentLayer = s.selectedStructure || null;
   const level = s.currentScale;
@@ -59,6 +59,8 @@ export function buildAnatomyPanelModels(deps) {
   const tumorLevel = tumor && tumor.engine ? tumor.engine.summaryLevel() : null;
   // Phase 7A: passive microenvironment summary level (idle => NOT_REPORTED/UNAVAILABLE).
   const microenvironmentLevel = microenvironment && microenvironment.engine ? microenvironment.engine.summaryLevel() : null;
+  // Phase 7B: vascular summary level (idle => NOT_REPORTED/UNAVAILABLE).
+  const vascularLevel = vascular && vascular.engine ? vascular.engine.summaryLevel() : null;
   const evidenceLevels = {
     transport: transportLevel,
     release: releaseLevel,
@@ -75,6 +77,7 @@ export function buildAnatomyPanelModels(deps) {
     populationResponse: populationLevel,
     tumorResponse: tumorLevel,
     microenvironment: microenvironmentLevel,
+    vascular: vascularLevel,
     messages: {
       transport: transport && transport.engine ? transport.engine.message() : null,
       passiveUptake: uptake && uptake.engine ? uptake.engine.message() : null,
@@ -90,6 +93,7 @@ export function buildAnatomyPanelModels(deps) {
       populationResponse: population && population.engine ? population.engine.summaryMessage() : null,
       tumorResponse: tumor && tumor.engine ? tumor.engine.summaryMessage() : null,
       microenvironment: microenvironment && microenvironment.engine ? microenvironment.engine.summaryMessage() : null,
+      vascular: vascular && vascular.engine ? vascular.engine.summaryMessage() : null,
     },
   };
   // Phase 6B: apoptosis commitment & execution detail (data only). Separates apoptosis /
@@ -198,6 +202,35 @@ export function buildAnatomyPanelModels(deps) {
     stopBoundary: 'microenvironment modifies penetration',
     immuneEvidence: 'NOT_EVALUATED', vascularEvidence: 'NOT_EVALUATED', remodelingEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
   } : null);
+  // Phase 7B: tumour-vasculature detail (data only). The active vascular component that
+  // modifies drug delivery; each modifier exposes its evidence / prediction status, confidence,
+  // species, tumour model, supporting literature, uncertainty, limitations, and excluded
+  // biology. Immune / VEGF / HIF / metastasis stay NOT_EVALUATED.
+  const vascularInfo = vascular && vascular.engine && !vascular.engine.isIdle() ? (() => {
+    const fr = vascular.engine.frame();
+    const p = vascular.engine.profile || {};
+    return {
+      title: 'Tumor Vasculature & Angiogenesis',
+      species: fr.species, tumourModel: fr.tumourModel, drug: p.drug || null, formulation: fr.formulation,
+      angiogenicState: fr.vessels.angiogenicState, vesselMaturity: fr.vessels.maturity, deliveryState: fr.delivery.deliveryState,
+      vascularEvidence: fr.evidenceLevel, predictionLevel: fr.predictionLevel, predictionStatus: fr.predicted ? 'PREDICTION' : (fr.contextTransfer ? 'CONTEXT_TRANSFER' : 'NOT_REPORTED'),
+      predicted: fr.predicted, contextTransfer: fr.contextTransfer, confidence: fr.confidence, uncertainty: fr.uncertainty,
+      vessels: fr.vessels, perfusion: fr.perfusion, oxygenSupply: fr.oxygenSupply, nutrient: fr.nutrient, permeability: fr.permeability,
+      deliveryModifier: fr.delivery.deliveryModifier, effectiveArrival: fr.delivery.effectiveArrival, effectiveDeliveryPenetration: fr.effectiveDeliveryPenetration,
+      supportingLiterature: (p.evidence_refs || []),
+      limitations: p.limitations || null,
+      humanTranslationWarning: fr.humanTranslationWarning,
+      modifiesDelivery: fr.modifiesDelivery, modifiesSignalling: fr.modifiesSignalling, inducesApoptosis: fr.inducesApoptosis, remodels: fr.remodels,
+      excludedBiology: (p.excluded_processes || []),
+      stopBoundary: 'vascular delivery modifies drug availability',
+      immuneEvidence: 'NOT_EVALUATED', vegfSignallingEvidence: 'NOT_EVALUATED', hifRegulationEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
+    };
+  })() : (vascular && vascular.engine ? {
+    title: 'Tumor Vasculature & Angiogenesis', species: vascular.engine.species, tumourModel: vascular.engine.tumourModel,
+    vascularEvidence: vascular.engine.summaryLevel(), reason: (vascular.engine.profile && vascular.engine.profile.reason) || null,
+    stopBoundary: 'vascular delivery modifies drug availability',
+    immuneEvidence: 'NOT_EVALUATED', vegfSignallingEvidence: 'NOT_EVALUATED', hifRegulationEvidence: 'NOT_EVALUATED', metastasisEvidence: 'NOT_EVALUATED',
+  } : null);
   // Phase 6A: protein-function & early-cellular-response detail (data only). Clearly
   // separates protein-abundance / protein-function / cellular-response / cell-fate evidence.
   const proteinFunctionInfo = proteinFunction && proteinFunction.engine && !proteinFunction.engine.isIdle() ? {
@@ -295,6 +328,7 @@ export function buildAnatomyPanelModels(deps) {
       populationResponse: populationInfo,
       tumorResponse: tumorInfo,
       microenvironment: microenvironmentInfo,
+      vascular: vascularInfo,
     },
     navigation: {
       title: 'Navigation',

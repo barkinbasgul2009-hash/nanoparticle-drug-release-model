@@ -331,6 +331,37 @@ project's production artifacts (`web/`, `R/`, `app/`, `tests/`), which are untou
   `docs/microenvironment-registry-guide.md`, `docs/microenvironment-renderer-guide.md`,
   `docs/microenvironment-validation-report.md`, `docs/phase7a-developer-notes.md`,
   `docs/microenvironment-limitations.md`, `CHANGELOG.md`.
+- **Phase 7B — Tumour vasculature & angiogenesis (passive TME → drug delivery modifier):** a new
+  `VascularEngine` models the **active vascular component** (vessel architecture / density /
+  maturity / organization, perfusion, oxygen + nutrient supply, permeability) that **modifies drug
+  delivery**. It is not an immune / metastasis / fibroblast phase. **Core principle:** blood
+  vessels do NOT signal and do NOT induce apoptosis — they MODIFY oxygen / nutrient / drug
+  accessibility / penetration opportunity only (`modifiesSignalling: false`,
+  `inducesApoptosis: false`, `remodels: false`); the delivery modifier is advisory. Deterministic
+  (**no RNG**), registry-driven; optionally reads the Phase-7A engine **read-only** for a combined
+  delivery × penetration view. Objects: `VesselState`, `VascularNetwork`, `PerfusionState`,
+  `OxygenSupply`, `NutrientEnvironment`, `PermeabilityState`, `DeliveryModifier` — all schematic
+  ordinal / 0-1, never real vessel count / blood flow / pO₂ / diameter / perfusion rate. Vessel
+  density / perfusion / permeability / maturity combine into `deliveryModifier = clamp(…, floor, 1)`
+  + an ordinal delivery state (`poor … excellent`); higher perfusion / permeability /
+  vascularization / maturity → higher delivery. Additive `VASCULAR_EVIDENCE_LEVELS` (8 tiers, **no
+  experimental tier** — no direct vasculature dataset). Mouse **B16BL6 = MECHANISTIC_PREDICTION**
+  (default; abnormal melanoma vasculature — highly vascularized but immature, poorly perfused,
+  leaky); **human = predictive-exploratory** with its **own distinct** states (not copied;
+  non-clinical warning); **rat = NOT_REPORTED** (idle). Nine registries; no hardcoded science;
+  config key `vascularSources`. Renderer draws **schematic** branching vessels (count/amplitude →
+  density, opacity → maturity) + a perfusion tint + a delivery-strength path (no endothelial cells /
+  blood cells / flow vectors); an eight-event evaluation timeline; a `validate()` (registry +
+  consistency, e.g. rejects `very_high` oxygen + `very_low` perfusion and an available rat
+  vasculature); the evidence panel shows a **sixteenth** section. **Stops at delivery
+  modification** — immune / VEGF / HIF / metastasis stay **NOT_EVALUATED**; no VEGF/HIF signalling /
+  vascular inflammation / immune trafficking / fibroblast / CAF / ECM remodeling / lymphatics /
+  metastasis. Docs: `docs/profile-b-simulator-phase7b-implementation.md`,
+  `docs/vascular-runtime-architecture.md`, `docs/tumor-vasculature-model.md`,
+  `docs/vascular-evidence-review.md`, `docs/vascular-prediction-policy.md`,
+  `docs/vascular-registry-guide.md`, `docs/vascular-renderer-guide.md`,
+  `docs/vascular-validation-report.md`, `docs/phase7b-developer-notes.md`,
+  `docs/vascular-limitations.md`, `CHANGELOG.md`.
 
 ## Phase 2 + 2.5 + 2.6 at a glance
 - **Anatomy is data, not code:** `simulator/data/anatomy.registry.json` defines the five

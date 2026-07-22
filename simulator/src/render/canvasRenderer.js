@@ -43,6 +43,7 @@ export class CanvasRenderer {
     this.lastPopulationFrame = null;    // Phase 6C: population composition/viability diagram
     this.lastTumorFrame = null;         // Phase 6D: tumour burden / treatment-response diagram
     this.lastMicroenvironmentFrame = null; // Phase 7A: passive TME diagram (ECM/oxygen/penetration)
+    this.lastVascularFrame = null;      // Phase 7B: tumour-vasculature diagram (vessels/perfusion/delivery)
     this.particleColor = '#3a3f4b';
     this.moleculeColor = '#7a5a3c';
     this.intracellularColor = '#8a4b6b';
@@ -87,6 +88,8 @@ export class CanvasRenderer {
   setTumorEngine(tumorEngine) { this.tumorEngine = tumorEngine; return this; }
   /** Phase 7A: attach the microenvironment engine so the passive TME diagram is drawn. */
   setMicroenvironmentEngine(microenvironmentEngine) { this.microenvironmentEngine = microenvironmentEngine; return this; }
+  /** Phase 7B: attach the vascular engine so the tumour-vasculature diagram is drawn. */
+  setVascularEngine(vascularEngine) { this.vascularEngine = vascularEngine; return this; }
 
   mount(mountEl) {
     this.mounted = true;
@@ -149,6 +152,8 @@ export class CanvasRenderer {
     this.lastTumorFrame = this._tumorFrame();
     // Phase 7A: passive tumour-microenvironment diagram frame (headless-testable).
     this.lastMicroenvironmentFrame = this._microenvironmentFrame();
+    // Phase 7B: tumour-vasculature diagram frame (headless-testable).
+    this.lastVascularFrame = this._vascularFrame();
     if (!this.ctx) return layout; // headless: computed but not painted
 
     this.clear();
@@ -571,6 +576,43 @@ export class CanvasRenderer {
       this.ctx.fillText('immune / vascular / remodeling / metastasis NOT evaluated', mb.x, mb.y + mb.h + 22);
     }
 
+    // Phase 7B: tumour-vasculature diagram (schematic; educational). Simplified branching
+    // vessels (density/branching), a perfusion-tinted fill, and a drug-delivery path whose
+    // strength tracks the delivery modifier. No endothelial cells / blood cells / flow vectors.
+    const va = this.lastVascularFrame;
+    if (va && va.available) {
+      const vb = va.field;
+      // perfusion tint (more perfused = warmer/brighter fill).
+      this.ctx.globalAlpha = 0.08 + 0.22 * va.perfusion.efficiency; this.ctx.fillStyle = '#8a3a3a'; this.ctx.fillRect(vb.x, vb.y, vb.w, vb.h);
+      this.ctx.globalAlpha = 1;
+      // simplified branching vessels: count + branch amplitude track density; opacity tracks maturity.
+      const nBranches = Math.max(2, Math.round(2 + 5 * va.vessels.density));
+      this.ctx.strokeStyle = '#a34b4b'; this.ctx.lineWidth = 1;
+      for (let b = 0; b < nBranches; b++) {
+        const bx = vb.x + (vb.w * (b + 0.5)) / nBranches;
+        this.ctx.globalAlpha = 0.35 + 0.5 * va.vessels.densityAlpha;
+        this.ctx.beginPath(); this.ctx.moveTo(bx, vb.y + vb.h);
+        // branch toward the top with a small fork (schematic vessel tree)
+        this.ctx.lineTo(bx, vb.y + vb.h * 0.5);
+        this.ctx.lineTo(bx - vb.w * 0.04, vb.y + vb.h * 0.2);
+        this.ctx.moveTo(bx, vb.y + vb.h * 0.5); this.ctx.lineTo(bx + vb.w * 0.04, vb.y + vb.h * 0.2);
+        this.ctx.stroke();
+      }
+      this.ctx.globalAlpha = 1;
+      // drug-delivery path: thickness/opacity track the delivery modifier.
+      this.ctx.strokeStyle = va.predicted ? '#8a7a9a' : '#4b6b57'; this.ctx.lineWidth = 0.8 + 2.4 * va.delivery.deliveryModifier;
+      this.ctx.globalAlpha = 0.4 + 0.5 * va.delivery.deliveryModifier;
+      this.ctx.beginPath(); this.ctx.moveTo(vb.x, vb.y + vb.h * 0.5); this.ctx.lineTo(vb.x + vb.w, vb.y + vb.h * 0.5); this.ctx.stroke();
+      this.ctx.globalAlpha = 1;
+      this.ctx.strokeStyle = '#9a938a'; this.ctx.lineWidth = 1; this.ctx.strokeRect(vb.x, vb.y, vb.w, vb.h);
+      this.ctx.fillStyle = this.model.palette.label_text || '#33302b'; this.ctx.font = '9px system-ui, sans-serif';
+      const vtag = va.contextTransfer ? ' (context-transfer)' : va.predicted ? ' (predicted)' : '';
+      this.ctx.fillText(`Vasculature [${va.tumourModel}] ${va.vessels.angiogenicState} / ${va.delivery.deliveryState}${vtag}`, vb.x, vb.y - 4);
+      this.ctx.font = '8px system-ui, sans-serif';
+      this.ctx.fillText(`perfusion ${va.perfusion.state} | O2 ${va.oxygenSupply.state} | perm ${va.permeability.state} | delivery ${va.delivery.deliveryModifier} (schematic; modifies delivery only)`, vb.x, vb.y + vb.h + 12);
+      this.ctx.fillText('immune / VEGF / HIF / metastasis NOT evaluated', vb.x, vb.y + vb.h + 22);
+    }
+
     // Phase 3.1: evidence-level caption (users must always know the mode).
     if (this.engine && this.engine.evidenceLevelName && this.engine.particles && this.engine.particles.length) {
       this.ctx.fillStyle = this.model.palette.label_text || '#33302b';
@@ -915,6 +957,29 @@ CanvasRenderer.prototype._microenvironmentFrame = function _microenvironmentFram
     field: { x: x0, y, w, h },
     modifiesTransport: f.modifiesTransport, replacesTransport: f.replacesTransport, modifiesSignalling: f.modifiesSignalling,
     immuneEvidence: f.immuneEvidence, vascularEvidence: f.vascularEvidence, remodelingEvidence: f.remodelingEvidence,
+  };
+};
+
+// Phase 7B tumour-vasculature diagram frame. Schematic + educational: simplified branching
+// vessels (count/amplitude track density, opacity tracks maturity), a perfusion tint, and a
+// drug-delivery path whose strength tracks the delivery modifier. Derived from the engine
+// (read-only). Ordinal / schematic only - never real vessel count / blood flow / pO2. No
+// endothelial cells / blood cells / capillary ultrastructure / flow vectors.
+CanvasRenderer.prototype._vascularFrame = function _vascularFrame() {
+  const eng = this.vascularEngine;
+  if (!eng || eng.isIdle()) return { available: false, tumourModel: eng ? eng.tumourModel : null };
+  const f = eng.frame();
+  const W = this.viewport.width; const H = this.viewport.height;
+  const x0 = 0.55 * W; const y = H * 0.34; const w = 0.36 * W; const h = 0.2 * H;
+  const matAlpha = { immature: 0.3, developing: 0.5, mature: 0.8, stable: 0.95 };
+  return {
+    available: true, tumourModel: f.tumourModel, species: f.species, formulation: f.formulation,
+    vessels: { angiogenicState: f.vessels.angiogenicState, density: f.vessels.density, densityAlpha: matAlpha[f.vessels.maturity] ?? 0.5, maturity: f.vessels.maturity },
+    perfusion: f.perfusion, oxygenSupply: f.oxygenSupply, nutrient: f.nutrient, permeability: f.permeability, delivery: f.delivery,
+    predicted: f.predicted, contextTransfer: f.contextTransfer, evidenceLevel: f.evidenceLevel,
+    field: { x: x0, y, w, h },
+    modifiesDelivery: f.modifiesDelivery, modifiesSignalling: f.modifiesSignalling,
+    immuneEvidence: f.immuneEvidence, vegfSignallingEvidence: f.vegfSignallingEvidence, metastasisEvidence: f.metastasisEvidence,
   };
 };
 

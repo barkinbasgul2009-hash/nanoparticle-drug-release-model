@@ -48,6 +48,7 @@ import { ApoptosisEngine } from './biology/apoptosisEngine.js';
 import { PopulationEngine } from './biology/populationEngine.js';
 import { TumorResponseEngine } from './biology/tumorResponseEngine.js';
 import { MicroenvironmentEngine } from './biology/microenvironmentEngine.js';
+import { VascularEngine } from './biology/vascularEngine.js';
 
 /**
  * @param {{ config?: object, fetcher?: (url:string)=>Promise<string>, mount?: boolean, containerResolver?: (id:string)=>any }} [opts]
@@ -147,6 +148,7 @@ export async function createApp(opts = {}) {
   let population = null; // Phase 6C: population-response / composition layer
   let tumor = null; // Phase 6D: tumour growth / treatment-response layer
   let microenvironment = null; // Phase 7A: passive tumour-microenvironment layer
+  let vascular = null; // Phase 7B: tumour-vasculature / angiogenesis layer
   if (anatomy) {
     try {
       const transportReg = await anatomyLoader.load(config.transportSources.transport, 'generic');
@@ -547,6 +549,43 @@ export async function createApp(opts = {}) {
         logger.warn('load', 'microenvironment not loaded', { err: String(err) });
       }
 
+      // Phase 7B: tumour vasculature / angiogenesis. Reads the Phase-7B registries + active
+      // species/tumour-model/formulation, optionally reads the Phase-7A microenvironment engine
+      // read-only for a combined delivery x penetration view, and computes a vascular delivery
+      // modifier. It MODIFIES delivery/oxygen/nutrient only - never signals / induces apoptosis /
+      // remodels / alters upstream logic. STOP at delivery modification.
+      try {
+        const vaCtx = await anatomyLoader.load(config.vascularSources.context, 'generic');
+        const vaAng = await anatomyLoader.load(config.vascularSources.angiogenesis, 'generic');
+        const vaPerf = await anatomyLoader.load(config.vascularSources.perfusion, 'generic');
+        const vaOxy = await anatomyLoader.load(config.vascularSources.oxygenSupply, 'generic');
+        const vaNut = await anatomyLoader.load(config.vascularSources.nutrient, 'generic');
+        const vaPerm = await anatomyLoader.load(config.vascularSources.permeability, 'generic');
+        const vaDel = await anatomyLoader.load(config.vascularSources.delivery, 'generic');
+        const vaEv = await anatomyLoader.load(config.vascularSources.evidence, 'generic');
+        const vaPred = await anatomyLoader.load(config.vascularSources.prediction, 'generic');
+        const vaEngine = new VascularEngine({
+          contextRegistry: vaCtx, angiogenesisRegistry: vaAng, perfusionRegistry: vaPerf, oxygenSupplyRegistry: vaOxy,
+          nutrientRegistry: vaNut, permeabilityRegistry: vaPerm, deliveryRegistry: vaDel, evidenceRegistry: vaEv, predictionRegistry: vaPred,
+          microenvironmentEngine: microenvironment ? microenvironment.engine : null, species: engine.species, logger,
+        });
+        if (renderer.setVascularEngine) renderer.setVascularEngine(vaEngine);
+        vascular = {
+          engine: vaEngine,
+          step: (dt) => vaEngine.step(dt),
+          stats: () => vaEngine.stats(),
+          frame: () => vaEngine.frame(),
+          timeline: () => vaEngine.getTimeline(),
+          restart: () => vaEngine.restart(),
+          validate: () => vaEngine.validate(),
+          setTumourModel: (m) => vaEngine.setTumourModel(m),
+          setFormulation: (f) => vaEngine.setFormulation(f),
+          deliveryModifier: () => vaEngine.deliveryModifier(),
+        };
+      } catch (err) {
+        logger.warn('load', 'vascular not loaded', { err: String(err) });
+      }
+
       const animator = new TransportAnimator({
         engine, releaseEngine: release ? release.engine : null,
         uptakeEngine: uptake ? uptake.engine : null,
@@ -560,7 +599,8 @@ export async function createApp(opts = {}) {
         apoptosisEngine: apoptosis ? apoptosis.engine : null,
         populationEngine: population ? population.engine : null,
         tumorEngine: tumor ? tumor.engine : null,
-        microenvironmentEngine: microenvironment ? microenvironment.engine : null, renderer, logger,
+        microenvironmentEngine: microenvironment ? microenvironment.engine : null,
+        vascularEngine: vascular ? vascular.engine : null, renderer, logger,
         spawnCount: (config.transport && config.transport.spawnCount) || 14,
         untilReleased: true,
       });
@@ -627,6 +667,8 @@ export async function createApp(opts = {}) {
     tumor,
     // Phase 7A addition (may be null if the microenvironment registries failed to load):
     microenvironment,
+    // Phase 7B addition (may be null if the vascular registries failed to load):
+    vascular,
   };
 
   // Phase 2.6: species-driven switch. Prepares the architecture for a future
@@ -660,11 +702,14 @@ export async function createApp(opts = {}) {
     // Phase 7A: the passive microenvironment follows the selected species (rebuilds its passive
     // field; rat becomes idle). It modifies penetration only; no upstream engine is altered.
     if (microenvironment) microenvironment.engine.setSpecies(speciesId);
+    // Phase 7B: the tumour vasculature follows the selected species (rebuilds its vascular
+    // field; rat becomes idle). It modifies delivery only; no upstream engine is altered.
+    if (vascular) vascular.engine.setSpecies(speciesId);
     const level = state.get().currentScale;
     if (renderer.setLevel) renderer.setLevel(level); // recompute layout with the new profile
     // Phase 3.1: refresh panels so the evidence-level label follows the species.
     if (app.panelModels) {
-      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment });
+      app.panelModels = buildAnatomyPanelModels({ model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular });
       renderAnatomyPanels(ui, app.panelModels);
     }
     logger.info('anatomy', `species -> ${speciesId}${transport ? ' (transport: ' + transport.engine.evidenceLevelName() + ')' : ''}`);
@@ -684,7 +729,7 @@ export async function createApp(opts = {}) {
   // Populate the (previously empty) UI panels with anatomy content.
   if (anatomy) {
     const models = buildAnatomyPanelModels({
-      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment,
+      model: anatomy, state, presets, citations, scaleLevels: scale.ids(), transport, release, uptake, endocytosis, intracellular, targetEngagement, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular,
     });
     app.panelModels = models;
     renderAnatomyPanels(ui, models);

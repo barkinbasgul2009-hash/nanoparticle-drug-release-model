@@ -103,3 +103,16 @@ values (not copied from mouse), a mandated non-clinical warning, and not shown b
 `CONTEXT_TRANSFER_PREDICTION`); the microenvironment only **modifies** penetration and never
 signals or replaces upstream logic. See `microenvironment-prediction-policy.md` and
 `microenvironment-evidence-review.md`.
+
+## Extension in Phase 7B — a prediction-only vascular layer
+Phase 7B (tumour vasculature) is likewise **prediction-only**: `VASCULAR_EVIDENCE_LEVELS`
+(additive, 8 tiers) has **no experimental tier**, because the frozen package holds no direct
+tumour-vasculature dataset. Every active vascular relationship is a labelled prediction (general
+tumour-vasculature biology) or `NOT_REPORTED`. Prediction may estimate *relative* perfusion /
+delivery / permeability / oxygen availability, but never fabricates an absolute blood flow, vessel
+count, pO₂, vascular diameter, or perfusion rate (all `NOT_REPORTED`). Mouse B16BL6 =
+`MECHANISTIC_PREDICTION` (default, shown); human = a predictive-exploratory `MECHANISTIC_PREDICTION`
+with its **own distinct** states (not copied from mouse), a mandated non-clinical warning, not shown
+by default; rat = `NOT_REPORTED` (no fallback). Species are strictly isolated; the vasculature only
+**modifies** delivery and never signals, induces apoptosis, remodels, or replaces upstream logic.
+See `vascular-prediction-policy.md` and `vascular-evidence-review.md`.

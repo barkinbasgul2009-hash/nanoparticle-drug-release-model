@@ -4,7 +4,24 @@ All notable changes to the isolated Profile-B `simulator/` build. Production (`w
 `app/`, `tests/`) and CI are untouched throughout; the Stage-2 PR is not merged. Dates are
 omitted in favour of phase ordering.
 
-## Simulator — Phase 7A · Passive Tumor Microenvironment (latest)
+## Simulator — Phase 7B · Tumor Vasculature & Angiogenesis (latest)
+Added the active vascular component of the tumour microenvironment as a **passive modulator** of
+drug delivery (vessel architecture / density / maturity / organization, perfusion, oxygen +
+nutrient supply, permeability). Blood vessels never signal, induce apoptosis, or remodel; the
+delivery modifier is advisory. New `VascularEngine` (deterministic, registry-driven, optionally
+reads the Phase-7A engine read-only for a combined delivery × penetration view), nine registries,
+runtime objects, `types/vascular.ts`, an additive `VASCULAR_EVIDENCE_LEVELS` (8 tiers, **no
+experimental tier**), a schematic renderer diagram (branching vessels + perfusion tint +
+delivery-strength path), a sixteenth evidence-panel section, an eight-event evaluation timeline,
+`validate()` (registry + consistency, e.g. rejects `very_high` oxygen + `very_low` perfusion and
+an available rat vasculature), and `vascular.test.mjs` (108 assertions). Mouse B16BL6 =
+MECHANISTIC_PREDICTION (default; abnormal melanoma vasculature — highly vascularized but immature,
+poorly perfused, leaky); human = predictive-exploratory with its own distinct states; rat =
+NOT_REPORTED. **STOP at delivery modification** — immune / VEGF / HIF / metastasis stay
+NOT_EVALUATED. Config key `vascularSources`. Suite: 2203 passed, 0 failed; tsc clean; production
+diff empty.
+
+## Simulator — Phase 7A · Passive Tumor Microenvironment
 Added the first tumour-microenvironment layer as a **passive modulator** that modifies drug
 penetration (ECM / collagen / hyaluronic acid / interstitial space / oxygen / hypoxia /
 mechanical barrier). It never replaces an upstream engine, alters upstream logic, or touches
