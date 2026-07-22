@@ -21,21 +21,24 @@ export default async function run() {
   const R = {}; for (const [k, f] of Object.entries(APP_CONFIG.immuneSources)) R[k] = await loader.load(f, 'generic');
   const A = (v) => ({ value: v, availability: 'AVAILABLE' });
 
-  // --- Section 3 absence: innate-derived inputs are UNAVAILABLE (never zero) ---
-  const bare = new ImmuneAdaptiveEngine({ registries: R }).evaluate({ explicitInputs: { tumor_immune_visibility: A(0.6) }, frameIndex: 0 });
-  ok(bare.frame.metadata.innateAvailable === false, 'AUDIT: Section 3 innate absent in production (innateAvailable=false)');
-  ok(bare.context.inputs.macrophage_contribution.value === null && bare.context.inputs.macrophage_contribution.availability === 'UNAVAILABLE', 'AUDIT: innate input UNAVAILABLE with value:null (NOT zero)');
+  // --- Section 3 now WIRED (Part 2 repair): a real innate runtime populates adaptive inputs ---
+  const fed = new ImmuneAdaptiveEngine({ registries: R }).evaluate({ explicitInputs: { tumor_immune_visibility: A(0.6), immune_accessibility: A(0.6), antigen_availability: A(0.6), vascular_access: A(0.6) }, frameIndex: 0 });
+  ok(fed.frame.metadata.innateAvailable === true, 'REPAIRED (G-innate): Section 3 innate present + available in production (innateAvailable=true)');
+  ok(fed.context.inputs.macrophage_contribution.value !== null && fed.context.inputs.macrophage_contribution.availability !== 'UNAVAILABLE', 'REPAIRED: real innate populates the adaptive macrophage input (not null, not zero-fabricated)');
+  // INVARIANT preserved: a fully-unfed engine keeps innate-derived inputs UNAVAILABLE (value:null, never zero)
+  const empty = new ImmuneAdaptiveEngine({ registries: R }).evaluate({ frameIndex: 0 });
+  ok(empty.context.inputs.macrophage_contribution.value === null && empty.context.inputs.macrophage_contribution.availability === 'UNAVAILABLE', 'INVARIANT: unfed innate input UNAVAILABLE with value:null (NOT zero)');
 
-  // --- TRANSITION TRUTH TEST: production states cross boundaries but 0 transition records (G2) ---
+  // --- TRANSITION TRUTH TEST: production states cross boundaries and now emit REAL records (G2 repaired) ---
   const eng = new ImmuneAdaptiveEngine({ registries: R });
   const states = new Set(); let totalTransitions = 0;
   for (let i = 0; i < 8; i++) {
     const vis = Math.min(0.95, 0.2 + i * 0.1);
-    const r = eng.evaluate({ explicitInputs: { tumor_immune_visibility: A(vis), antigen_availability: A(vis), antigen_presentation_potential: A(vis), adaptive_priming_potential: A(vis), dendritic_contribution: A(vis), immune_accessibility: A(0.6), vascular_access: A(0.6), vascular_functionality: A(0.6) }, innateContribution: { readiness: A(0.5), tumorPressure: A(0.4), nk: A(0.4), macrophage: A(0.35), adaptivePrimingPotential: A(vis) }, frameIndex: i });
+    const r = eng.evaluate({ explicitInputs: { tumor_immune_visibility: A(vis), antigen_availability: A(vis), antigen_presentation_potential: A(vis), adaptive_priming_potential: A(vis), dendritic_contribution: A(vis), immune_accessibility: A(0.6), vascular_access: A(0.6), vascular_functionality: A(0.6) }, frameIndex: i });
     states.add(r.cd8.priming.state); totalTransitions += (r.frame.transitionRecords || []).length;
   }
   ok(states.size >= 3, `AUDIT: production CD8 priming crosses multiple states (${states.size} distinct)`);
-  eq(totalTransitions, 0, 'AUDIT (G2): production runtime emits 0 transition records despite crossing states -> transitions IMPLEMENTED_BUT_UNWIRED');
+  ok(totalTransitions > 0, `AUDIT (G2 REPAIRED): production runtime now emits real transition records (${totalTransitions}) as states cross boundaries`);
 
   // --- Frame producers: single canonical builder, divergent nested domain-state shapes (G3) ---
   const f4 = eng.getPublishedFrame();

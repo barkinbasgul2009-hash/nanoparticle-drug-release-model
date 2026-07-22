@@ -46,6 +46,7 @@ export function buildAdaptiveContext(def = {}) {
     if (innate.macrophage) inputs.macrophage_contribution = fieldFromMetric(innate.macrophage);
     if (innate.nk) inputs.nk_contribution = fieldFromMetric(innate.nk);
     if (innate.dendritic) inputs.dendritic_contribution = fieldFromMetric(innate.dendritic);
+    if (innate.antigenPresentation) inputs.antigen_presentation_potential = fieldFromMetric(innate.antigenPresentation);
     if (innate.readiness) inputs.innate_immune_readiness = fieldFromMetric(innate.readiness);
     if (innate.tumorPressure) inputs.innate_tumor_pressure = fieldFromMetric(innate.tumorPressure);
     if (innate.adaptivePrimingPotential) inputs.adaptive_priming_potential = fieldFromMetric(innate.adaptivePrimingPotential);

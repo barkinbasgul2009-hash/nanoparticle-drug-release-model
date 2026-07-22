@@ -1,12 +1,16 @@
-// Phase-7C immune frame builder + publication boundary. Assembles the immutable ImmuneFrame from the
-// validated input snapshot, the domain states, the contribution ledger, and the issue list; validates
-// bounds/availability/serializability; then DEEP-FREEZES the frame so no consumer (including Phase 8A)
-// can mutate published immune state. Deterministic; plain data only at the boundary.
+// Phase-7C CANONICAL immune frame builder + sole publication boundary (Part 2 Section 2). Assembles the
+// immutable ImmuneFrame from already-computed immutable biological outputs + transition records +
+// evidence/prediction references + contribution ledger; validates identity / duplicate ids / serializ-
+// ability; generates non-biological structural summaries; enforces deterministic transition ordering;
+// then DEEP-FREEZES the frame. It performs NO biological calculation and NEVER mutates input
+// contributions. Every production frame producer publishes through this one builder. Deterministic.
 
 import {
   ImmuneFrame, ImmuneContributionLedger, ISSUE_SEVERITY, AVAILABILITY, deepFreeze,
 } from './immuneObjects.js';
 import { validateSerializable } from './immuneSerialization.js';
+
+export const CANONICAL_FRAME_SCHEMA_VERSION = '7C.2.0';
 
 /** Split issues into warnings (INFO/WARNING) and errors (ERROR/FATAL) as plain data. */
 function partitionIssues(issues) {
@@ -41,6 +45,25 @@ export function buildImmuneFrame(def = {}) {
     } : null,
   } : {};
 
+  // Deterministic transition ordering (frame index, then machine, then id).
+  const transitionRecords = (def.transitionRecords || []).slice().sort((a, b) =>
+    (a.frameIndex ?? 0) - (b.frameIndex ?? 0) || String(a.machine).localeCompare(String(b.machine)) || String(a.transitionId).localeCompare(String(b.transitionId)));
+  const evidenceRecords = def.evidenceRecords || []; const predictionRecords = def.predictionRecords || [];
+
+  // Canonical validation: reject duplicate ids (contribution / transition / evidence / prediction).
+  const dupErrors = [];
+  const dedup = (rows, key, label) => { const seen = new Set(); for (const r of rows) { const id = r && r[key]; if (id != null) { if (seen.has(id)) dupErrors.push({ code: 'IMMUNE_SERIALIZATION_VALIDATION_FAILED', severity: ISSUE_SEVERITY.ERROR, module: 'canonicalFrameBuilder', message: `duplicate ${label} id ${id}` }); seen.add(id); } } };
+  dedup(ledger, 'contributionId', 'contribution'); dedup(transitionRecords, 'transitionId', 'transition');
+  dedup(evidenceRecords.map((e) => ({ id: e.id || e.evidence_id || e.evidenceId })), 'id', 'evidence');
+  dedup(predictionRecords.map((p) => ({ id: p.prediction_id || p.predictionId })), 'id', 'prediction');
+
+  // Structural (non-biological) summaries.
+  const summary = {
+    warningCount: warnings.length, errorCount: errors.length + dupErrors.length, transitionCount: transitionRecords.length,
+    evidenceCount: evidenceRecords.length, predictionCount: predictionRecords.length, contributionCount: ledger.length,
+    appliedContributions: ledger.filter((c) => c.applied).length,
+  };
+
   const frame = new ImmuneFrame({
     registryBundleVersion: def.registryBundleVersion, stateMachineVersion: def.stateMachineVersion,
     frameId: def.frameId, simulationId: def.simulationId, simulationTime: def.simulationTime, frameIndex: def.frameIndex,
@@ -51,8 +74,9 @@ export function buildImmuneFrame(def = {}) {
     tumorVisibility: domain.tumorVisibility, innateImmunity: domain.innateImmunity, antigenPresentation: domain.antigenPresentation,
     adaptiveImmunity: domain.adaptiveImmunity, checkpointState: domain.checkpointState, immuneSuppression: domain.immuneSuppression,
     immuneEscape: domain.immuneEscape, immuneEffect: domain.immuneEffect, resistanceReadiness: domain.resistanceReadiness,
-    contributionLedger: ledger, evidenceRecords: def.evidenceRecords || [], predictionRecords: def.predictionRecords || [],
-    transitionRecords: def.transitionRecords || [], warnings, errors, metadata: def.metadata || {},
+    contributionLedger: ledger, evidenceRecords, predictionRecords,
+    transitionRecords, warnings, errors: errors.concat(dupErrors),
+    metadata: { canonicalSchemaVersion: CANONICAL_FRAME_SCHEMA_VERSION, summary, ...(def.metadata || {}) },
   });
 
   // Publication-boundary validation: serialization safety (records an error, does not throw for
@@ -62,6 +86,16 @@ export function buildImmuneFrame(def = {}) {
 
   // Immutability: deep-freeze at the publication boundary so no downstream engine can mutate it.
   return deepFreeze(frame);
+}
+
+/**
+ * The Canonical ImmuneFrame Builder - a thin authoritative wrapper over buildImmuneFrame (the sole
+ * publication path). Production frame producers assemble already-computed immutable outputs and call
+ * this; it performs NO biology and never mutates inputs.
+ */
+export class CanonicalImmuneFrameBuilder {
+  static build(def) { return buildImmuneFrame(def); }
+  static schemaVersion() { return CANONICAL_FRAME_SCHEMA_VERSION; }
 }
 
 export default buildImmuneFrame;

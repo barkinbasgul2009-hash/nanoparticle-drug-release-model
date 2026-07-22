@@ -1,20 +1,28 @@
 {
   "artifact": "phase7c-gap-register",
-  "note": "Every gap has one PRIMARY category (A missing-implementation / B missing-wiring / C contract-mismatch / D test-only-illusion), secondary tags, severity, and repair priority. Read-only audit; nothing repaired here.",
+  "note": "Every gap has one PRIMARY category (A missing-implementation / B missing-wiring / C contract-mismatch / D test-only-illusion), secondary tags, severity, and repair priority. Part 1 was read-only audit; the `part2_status` field records what Part 2 (Runtime Wiring Repair / Transition Population / Canonical ImmuneFrame Integration) actually repaired.",
+  "part2_repair_summary": {
+    "repaired": ["G1", "G2", "G6", "G7"],
+    "partially_repaired": [],
+    "out_of_part2_scope": ["G3", "G4", "G5", "G8"],
+    "statement": "Part 2 implemented the real Section-3 innate runtime (G1), wired the shared state machines so real transition records are produced and enter the canonical frame (G2), and removed the synthetic innate/transition test illusions by exercising the real production paths (G6, G7). The remaining contract-convergence and lifecycle gaps (G3/G4/G5/G8) are unchanged and remain renderer-masked / read-only as before."
+  },
   "gaps": [
     {
       "id": "G1", "title": "Section 3 innate immune runtime does not exist",
       "primary_category": "A_MISSING_IMPLEMENTATION", "secondary_tags": ["biological", "architectural"],
       "evidence": "No innate biology module (macrophage/NK/DC/antigen-presentation/innate-integration runtime). innate-immunity + antigen-presentation registries are structure-only.",
       "severity": "critical", "repair_priority": "defer_to_section3_documentation",
-      "note": "Section 4 was explicitly built to consume innate via an availability-gated contract; absence yields UNAVAILABLE (never zero). Repairing this is Section 3 scope, not Part 2 of this section."
+      "note": "Section 4 was explicitly built to consume innate via an availability-gated contract; absence yields UNAVAILABLE (never zero). Repairing this is Section 3 scope, not Part 2 of this section.",
+      "part2_status": "REPAIRED: immuneInnate.js (ImmuneInnateRuntime) + innate-runtime.registry.json now produce a real, immutable, availability-gated InnateImmuneContribution (macrophage continuum / NK / DC / antigen presentation / innate integration / adaptive priming) computed via the shared aggregation+confidence frameworks and consumed read-only by Section 4. Prediction-only; a missing input still yields UNAVAILABLE (never zero)."
     },
     {
       "id": "G2", "title": "Section-4 runtimes compute states but never emit transition records",
       "primary_category": "B_MISSING_WIRING", "secondary_tags": ["transition", "renderer", "replay"],
       "evidence": "Transition truth test: 4 CD8-priming states crossed over 8 production frames -> 0 transition records. immuneAdaptiveEngine passes no transitionRecords; runtimes use categorize() not ImmuneStateController.",
       "severity": "major", "repair_priority": "repair_in_part2",
-      "note": "ImmuneStateController + TransitionRecord + immune-transition registry (26 machines) all exist and are correct; only the wiring from the Section-4 runtimes to the controllers + into buildImmuneFrame is missing."
+      "note": "ImmuneStateController + TransitionRecord + immune-transition registry (26 machines) all exist and are correct; only the wiring from the Section-4 runtimes to the controllers + into buildImmuneFrame is missing.",
+      "part2_status": "REPAIRED: immuneTransitionPopulator.js steps the shared ImmuneStateMachines one legal step toward each computed state using previous-state propagation from the prior canonical frame, records only accepted legal changes, and buildImmuneFrame now carries them. The first frame seeds controllers with NO record (no false initial transition); transition ids derive from frame content (deterministic replay). Production frames now emit real transition records as states cross."
     },
     {
       "id": "G3", "title": "Two engines feed the canonical builder divergent nested domain-state shapes",
@@ -42,14 +50,16 @@
       "primary_category": "D_TEST_ONLY_ILLUSION", "secondary_tags": ["test coverage", "biological"],
       "evidence": "immuneAdaptive.test.mjs + immuneRender.test.mjs build innate={readiness:A(..),...} by hand and pass it in. Production Section-3 module does not exist.",
       "severity": "major", "repair_priority": "validate_in_part3",
-      "note": "Adaptive engine + frame builder + renderer paths ARE production; only the innate INPUT is synthetic. Flagged so fixture success is not read as real innate end-to-end validation."
+      "note": "Adaptive engine + frame builder + renderer paths ARE production; only the innate INPUT is synthetic. Flagged so fixture success is not read as real innate end-to-end validation.",
+      "part2_status": "REPAIRED: immuneAdaptive.test.mjs and immuneRender.test.mjs no longer inject a synthetic innateContribution; they feed raw upstream inputs and the engine's real Section-3 innate runtime computes the contribution. immuneWiring.test.mjs adds an explicit Section-3 -> Section-4 contract check."
     },
     {
       "id": "G7", "title": "Renderer transition-view test injects a synthetic transition record",
       "primary_category": "D_TEST_ONLY_ILLUSION", "secondary_tags": ["transition", "test coverage", "renderer"],
       "evidence": "immuneRender.test.mjs `withT` hand-builds a transitionRecords entry to exercise buildTransitionView; the same test also asserts production frames have 0 transition records.",
       "severity": "minor", "repair_priority": "validate_in_part3",
-      "note": "Honest + explicitly flagged in the test; not masking. Becomes real once G2 is repaired."
+      "note": "Honest + explicitly flagged in the test; not masking. Becomes real once G2 is repaired.",
+      "part2_status": "REPAIRED: with G2 wired, immuneRender.test.mjs now asserts real production transitions populate the transition view; the empty-view case is checked against an explicitly-emptied frame (never against production), so no illusion remains."
     },
     {
       "id": "G8", "title": "Adaptive context does not use the shared ImmuneInputAdapter for upstream reads",

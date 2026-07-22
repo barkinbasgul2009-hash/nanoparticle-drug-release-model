@@ -31,10 +31,11 @@ import immuneRuntime from './immuneRuntime.test.mjs';
 import immuneAdaptive from './immuneAdaptive.test.mjs';
 import immuneRender from './immuneRender.test.mjs';
 import immuneAudit from './immuneAudit.test.mjs';
+import immuneWiring from './immuneWiring.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring,
 ];
 
 for (const suite of suites) {

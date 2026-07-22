@@ -283,6 +283,29 @@ export interface ImmuneRenderRegistry {
   render_severity: { categories: RenderSeverity[]; issue_severity_map: Record<IssueSeverity, RenderSeverity> };
 }
 
+// ===========================================================================
+// Part 2 - Section 2: SECTION-3 INNATE RUNTIME + TRANSITION POPULATION + CANONICAL FRAME (additive).
+// ===========================================================================
+// One real, immutable Section-3 innate contribution (macrophage continuum + NK + dendritic + antigen
+// presentation + innate integration + adaptive priming potential). Availability-gated: a missing input
+// yields UNAVAILABLE, never zero. Prediction-only. Feeds Section 4 read-only.
+export interface InnateImmuneContribution {
+  runtimeType: 'innate'; owner: string; schemaVersion: string;
+  macrophage: { value: number | null; availability: Availability; polarizationAxis: number | null; polarizationState: string | null; tumorOpposingTendency: number | null; tumorSupportingTendency: number | null };
+  nk: { value: number | null; availability: Availability; available: number | null; activation: number | null; functionalCompetence: number | null; cytotoxicPotential: number | null; activationState: string | null };
+  dendritic: { value: number | null; availability: Availability; available: number | null; antigenUptakePotential: number | null; maturation: number | null; presentationPotential: number | null; maturationState: string | null };
+  antigenPresentation: { value: number | null; availability: Availability; effectivePresentation: number | null };
+  readiness: ImmuneMetric; tumorPressure: ImmuneMetric; adaptivePrimingPotential: ImmuneMetric;
+  states: { macrophage_polarization: string | null; nk_activation: string | null; dc_maturation: string | null };
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+// Result of populating transition records from real production state changes through the shared state
+// controllers. controllerStates / enteredAt are carried on the frame metadata for previous-state
+// propagation into the next frame. No false initial transition on the first frame.
+export interface PopulatedTransitions {
+  transitionRecords: ImmuneTransitionRecord[]; controllerStates: Record<string, string>; enteredAt: Record<string, number>;
+}
+
 export interface ExtendedImmuneResistanceContext extends ImmuneResistanceContext {
   immunePressureCurrent?: ImmuneMetric; immunePressurePersistent?: ImmuneMetric;
   immuneSuppressionCurrent?: ImmuneMetric; immuneSuppressionPersistent?: ImmuneMetric;

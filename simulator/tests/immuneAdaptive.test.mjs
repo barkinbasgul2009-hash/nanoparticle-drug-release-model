@@ -19,13 +19,14 @@ export default async function run() {
   const R = {}; for (const [k, f] of Object.entries(APP_CONFIG.immuneSources)) R[k] = await loader.load(f, 'generic');
   const A = (v, availability = 'AVAILABLE') => ({ value: v, availability });
   const mkEngine = () => new ImmuneAdaptiveEngine({ registries: R });
-  const innateFrom = (I) => ({ readiness: I.innate_immune_readiness, tumorPressure: I.innate_tumor_pressure, nk: I.nk_contribution, macrophage: I.macrophage_contribution, adaptivePrimingPotential: I.adaptive_priming_potential });
   const good = {
     tumor_immune_visibility: A(0.6), antigen_availability: A(0.55), immune_accessibility: A(0.6), dendritic_contribution: A(0.6),
     antigen_presentation_potential: A(0.6), adaptive_priming_potential: A(0.65), innate_immune_readiness: A(0.55), innate_tumor_pressure: A(0.4),
     nk_contribution: A(0.4), macrophage_contribution: A(0.35), vascular_access: A(0.6), vascular_functionality: A(0.6),
   };
-  const runN = (eng, inputs, n, extra = {}) => { let r; for (let i = 0; i < n; i++) r = eng.evaluate({ explicitInputs: inputs, innateContribution: innateFrom(inputs), frameIndex: i, ...extra }); return r; };
+  // Feed raw inputs only; the engine's REAL Section-3 innate runtime computes the innate contribution
+  // (explicit innate-derived fields in `good` still override the adaptive inputs where supplied).
+  const runN = (eng, inputs, n, extra = {}) => { let r; for (let i = 0; i < n; i++) r = eng.evaluate({ explicitInputs: inputs, frameIndex: i, ...extra }); return r; };
 
   // ---- CD8 staged behaviour ----
   const r = runN(mkEngine(), good, 1);

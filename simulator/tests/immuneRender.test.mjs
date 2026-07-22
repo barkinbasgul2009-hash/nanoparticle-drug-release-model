@@ -24,9 +24,8 @@ export default async function run() {
   const R = {}; for (const [k, f] of Object.entries(APP_CONFIG.immuneSources)) R[k] = await loader.load(f, 'generic');
   const A = (v) => ({ value: v, availability: 'AVAILABLE' });
   const good = { tumor_immune_visibility: A(0.6), antigen_availability: A(0.55), immune_accessibility: A(0.6), dendritic_contribution: A(0.6), antigen_presentation_potential: A(0.6), adaptive_priming_potential: A(0.65), innate_immune_readiness: A(0.55), innate_tumor_pressure: A(0.4), nk_contribution: A(0.4), macrophage_contribution: A(0.35), vascular_access: A(0.6), vascular_functionality: A(0.6) };
-  const innate = { readiness: good.innate_immune_readiness, tumorPressure: good.innate_tumor_pressure, nk: good.nk_contribution, macrophage: good.macrophage_contribution, adaptivePrimingPotential: good.adaptive_priming_potential };
-  const eng = new ImmuneAdaptiveEngine({ registries: R });
-  const frames = []; for (let i = 0; i < 5; i++) frames.push(eng.evaluate({ explicitInputs: good, innateContribution: innate, frameIndex: i }).frame);
+  const eng = new ImmuneAdaptiveEngine({ registries: R });   // real Section-3 innate runtime drives states + transitions
+  const frames = []; for (let i = 0; i < 5; i++) frames.push(eng.evaluate({ explicitInputs: good, frameIndex: i }).frame);
   const bare = new ImmuneAdaptiveEngine({ registries: R }).evaluate({ frameIndex: 0 }).frame;   // Section-3 absent -> UNAVAILABLE
 
   // ---- renderer ----
@@ -85,17 +84,20 @@ export default async function run() {
   const tv = buildTransitionView(withT);
   eq(tv.length, 1, 'transition view: one row per transition record (never inferred)');
   ok(tv[0].component === 'cd8' && tv[0].previousState === 'UNPRIMED' && tv[0].newState === 'PRIMED' && tv[0].hasEvidence, 'transition row carries prev/new state + evidence traceability');
-  eq(buildTransitionView(frames).length, 0, 'no transition records -> empty transition view (not fabricated)');
+  eq(buildTransitionView([{ ...frames[0], transitionRecords: [] }]).length, 0, 'no transition records -> empty transition view (not fabricated)');
+  ok(buildTransitionView(frames).length >= 1, 'real production transitions populate the transition view (wired, not fabricated)');
   ok(buildEvidenceView(frames).length === 5 && buildEvidenceView(frames)[0].traceTo.frame, 'evidence view rows + traceability to frame');
   ok(buildPredictionView(frames).length === 5 && buildPredictionView(frames)[0].status === 'AVAILABLE', 'prediction view rows + lifecycle status');
   const cv = buildContributionView(frames[4]);
   ok(cv.length >= 1 && cv.every((r) => ['Applied', 'Rejected', 'Superseded', 'Unavailable', 'Partially Applied', 'Not Applicable'].includes(r.applicationStatus)), 'contribution view: each row has an application status');
   // double-counting: force duplicate contributions to produce exclusions
   const dupEng = new ImmuneAdaptiveEngine({ registries: R });
-  const dupRes = dupEng.evaluate({ explicitInputs: good, innateContribution: innate, frameIndex: 0 });
+  const dupRes = dupEng.evaluate({ explicitInputs: good, frameIndex: 0 });
   ok(Array.isArray(dupRes.exclusions), 'engine surfaces exclusion records');
   ok(buildDoubleCountingView(dupRes.frame).every((r) => r.doubleCounting === true), 'double-counting view returns only exclusion rows');
-  const wv = buildWarningView([bare], R.render);
+  // an out-of-range explicit input produces a real IMMUNE_VALUE_OUT_OF_RANGE warning to exercise the view
+  const warned = new ImmuneAdaptiveEngine({ registries: R }).evaluate({ explicitInputs: { tumor_immune_visibility: A(5) }, frameIndex: 0 }).frame;
+  const wv = buildWarningView([warned], R.render);
   ok(wv.length >= 1 && wv[0].renderSeverity && ['INFO', 'MINOR', 'MODERATE', 'MAJOR', 'CRITICAL'].includes(wv[0].renderSeverity), 'warning view maps to registry render severity');
 
   // ---- debugger ----

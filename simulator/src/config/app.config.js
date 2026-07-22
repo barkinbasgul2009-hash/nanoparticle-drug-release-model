@@ -323,6 +323,8 @@ export const APP_CONFIG = Object.freeze({
     adaptiveIntegration: 'adaptive-integration.registry.json',
     // Part 2 - Section 1 read-only renderer / timeline / replay visualization registry.
     render: 'immune-render.registry.json',
+    // Part 2 - Section 2 Section-3 innate runtime coefficients (real innate biology).
+    innateRuntime: 'innate-runtime.registry.json',
   }),
   immune: Object.freeze({ dtHours: 0.5 }),
 
