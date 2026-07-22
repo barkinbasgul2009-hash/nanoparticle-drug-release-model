@@ -1,0 +1,15 @@
+{
+  "artifact": "phase7c-contract-matrix",
+  "note": "Inter-module contract validation (read-only). Failure classes: fatal / recoverable / compatibility_warning / unavailable_input / partial_availability / schema_mismatch / semantic_mismatch. No silent coercion; no zero fallback.",
+  "contracts": [
+    { "from": "Phase 7A microenvironment", "to": "Phase 7C (input)", "reader": "ImmuneInputAdapter (S1) / buildAdaptiveContext (S4)", "fields": ["penetrationModifier()", "oxygen.availability", "hypoxia.severity"], "status": "OK", "availability_semantics": "idle 7A -> UNAVAILABLE (never assumed normoxia)", "failure_class": "partial_availability" },
+    { "from": "Phase 7B vasculature", "to": "Phase 7C (input)", "reader": "ImmuneInputAdapter (S1) / buildAdaptiveContext (S4)", "fields": ["deliveryModifier()", "perfusionModifier()", "vesselDensity()"], "status": "OK", "availability_semantics": "idle 7B -> UNAVAILABLE", "failure_class": "partial_availability" },
+    { "from": "Section 3 innate", "to": "Section 4 adaptive", "reader": "buildAdaptiveContext(innateContribution)", "fields": ["readiness", "tumorPressure", "nk", "macrophage", "dendritic", "adaptivePrimingPotential"], "status": "UNAVAILABLE_INPUT", "reason": "Section 3 does not exist; innateContribution=null in production -> innate-derived fields UNAVAILABLE (not zero)", "failure_class": "unavailable_input" },
+    { "from": "Section 4 runtimes", "to": "buildImmuneFrame", "reader": "immuneAdaptiveEngine._assembleFrame", "fields": ["adaptiveImmunity", "checkpointState", "immuneSuppression", "immuneEscape", "immuneEffect", "resistanceReadiness"], "status": "SEMANTIC_MISMATCH_vs_S1", "reason": "S4 domain-state nested shapes differ from S1 carrier shapes (esp. immuneEscape)", "failure_class": "semantic_mismatch" },
+    { "from": "final ImmuneFrame", "to": "renderer", "reader": "ImmuneRenderer SPECS", "fields": ["18 components"], "status": "OK_via_spec_table", "reason": "renderer reads both shapes with fallbacks; missing -> UNAVAILABLE (never zero)", "failure_class": "compatibility_warning" },
+    { "from": "final ImmuneFrame", "to": "timeline/replay", "reader": "ImmuneTimeline/ImmuneReplay", "fields": ["frameId", "frameIndex", "simulationTime", "schemaVersion", "resistanceContractVersion"], "status": "OK", "failure_class": "none" },
+    { "from": "serialized frame", "to": "replay", "reader": "ImmuneReplay.validate", "fields": ["ordering", "schema", "contract", "serializability"], "status": "OK", "note": "round-trip stable (ancestor-path cycle detector allows shared DAG refs)", "failure_class": "none" },
+    { "from": "final ImmuneFrame", "to": "Phase 8A adapter", "reader": "buildExtendedImmuneResistanceContext", "fields": ["resistanceReadiness.*", "causalGroups"], "status": "OK", "reason": "available=false when biology unavailable -> Phase 8A fallback preserved; version-mismatch safe-fails", "failure_class": "compatibility_warning" }
+  ],
+  "phase8a_non_immune_unchanged": { "verified": true, "evidence": "resistanceEngine.js not modified; production diff vs origin/main empty; resistance test suite green." }
+}

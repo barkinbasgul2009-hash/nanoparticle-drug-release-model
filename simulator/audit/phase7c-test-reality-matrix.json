@@ -1,0 +1,21 @@
+{
+  "artifact": "phase7c-test-reality-matrix",
+  "note": "Classifies Phase-7C tests by type + dependency (production module vs synthetic input vs injected record). Flags tests that could pass while production wiring stays incomplete. Read-only audit.",
+  "suites": [
+    { "suite": "immune.test.mjs (S1)", "types": ["unit", "contract"], "uses": "production ImmuneMicroenvironmentEngine + real registries", "synthetic_inputs": false, "illusion": "none", "note": "real S1 production path; frames are UNAVAILABLE by design (biology pending)" },
+    { "suite": "immuneRuntime.test.mjs (S2)", "types": ["unit"], "uses": "production shared frameworks (aggregation/confidence/transitions/double-counting/validation)", "synthetic_inputs": "constructed contributions", "illusion": "none", "note": "framework unit tests; legitimate" },
+    { "suite": "immuneAdaptive.test.mjs (S4)", "types": ["integration"], "uses": "production ImmuneAdaptiveEngine + real registries", "synthetic_inputs": "explicitInputs + innateContribution injected by hand", "illusion": "D_TEST_ONLY_ILLUSION (innate)", "flag": "G6 - real engine/frame/builder path but SYNTHETIC innate input (no Section-3 module)" },
+    { "suite": "immuneRender.test.mjs (P2S1)", "types": ["integration", "replay", "serialization"], "uses": "production engine frames + production renderer/timeline/replay/views/debugger/search/export", "synthetic_inputs": "explicitInputs + innateContribution + one injected transitionRecords entry", "illusion": "D_TEST_ONLY_ILLUSION (transition record)", "flag": "G7 - transition view exercised with a hand-built record; SAME test asserts production frames have 0 transition records (honest)" }
+  ],
+  "coverage_by_type": { "unit": true, "contract": "partial", "integration": true, "end_to_end": "fixture-backed only", "snapshot": false, "golden": false, "property_based": false, "metamorphic": false, "replay": true, "serialization": true, "performance": false, "regression": "via full-suite re-run" },
+  "tests_that_can_pass_while_production_wiring_incomplete": [
+    "immuneAdaptive.test.mjs (synthetic innate hides missing Section 3)",
+    "immuneRender.test.mjs transition-view assertions (injected record hides G2 unwired transitions)"
+  ],
+  "no_illusion_confirmed": [
+    "no hand-built final frame bypassing buildImmuneFrame",
+    "no zero-for-unavailable",
+    "no mocked Phase-8A immune values",
+    "no test deep-freezes what production leaves mutable"
+  ]
+}

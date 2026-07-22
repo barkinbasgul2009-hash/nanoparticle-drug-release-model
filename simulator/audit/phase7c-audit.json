@@ -1,0 +1,48 @@
+{
+  "artifact": "phase7c-audit",
+  "phase": "7C Part 2 Section 2 Part 1 (read-only audit)",
+  "note": "Non-runtime documentation artifact (not loaded by config, not under data/). Machine-readable audit inventory + section verification. No biology / thresholds / weights changed; no transitions fabricated; no unavailable->zero coercion.",
+  "verification_method": "direct repository inspection + production-path diagnostics (see immuneAudit.test.mjs)",
+  "inventory": {
+    "biology_modules_src_biology": [
+      "immuneObjects.js", "immuneStateMachines.js", "immuneInputAdapter.js", "immuneFrameBuilder.js", "immuneSerialization.js",
+      "immuneMicroenvironmentEngine.js", "immuneResistanceAdapter.js", "immuneRuntime.js", "immuneRegistryFramework.js",
+      "immuneTransitions.js", "immuneAggregation.js", "immuneConfidence.js", "immuneEvidencePrediction.js", "immuneDoubleCounting.js", "immuneValidation.js",
+      "immuneAdaptiveContext.js", "immuneAdaptiveShared.js", "immuneCd8.js", "immuneCd4.js", "immuneTreg.js",
+      "immuneCheckpoint.js", "immuneSuppressionRuntime.js", "immuneEscapeRuntime.js", "immuneAdaptiveIntegration.js", "immuneAdaptiveEngine.js"
+    ],
+    "render_modules_src_render": ["immuneRenderer.js", "immuneTimeline.js", "immuneViews.js", "immuneDebugger.js", "immuneExport.js"],
+    "registries_data": ["immune-context", "immune-visibility", "innate-immunity(structure-only)", "antigen-presentation(structure-only)", "adaptive-immunity(structure-only)", "immune-checkpoint(structure)", "immune-suppression(structure)", "immune-escape(structure)", "immune-effect(structure)", "immune-transition(26 machines)", "immune-evidence", "immune-prediction", "immune-validation", "immune-aggregation", "immune-confidence", "adaptive-context", "adaptive-cd8", "adaptive-cd4", "adaptive-treg", "adaptive-checkpoint", "adaptive-suppression", "adaptive-escape", "adaptive-integration", "immune-render"],
+    "tests": ["immune.test.mjs (S1)", "immuneRuntime.test.mjs (S2)", "immuneAdaptive.test.mjs (S4)", "immuneRender.test.mjs (P2S1)", "immuneAudit.test.mjs (P2S2P1 diagnostics)"],
+    "types": ["src/types/immune.ts (S1+S2+S4+P2S1 additive)"]
+  },
+  "section_status": {
+    "section_1_contracts": { "status": "IMPLEMENTED_AND_USED", "notes": "ImmuneFrame, availability model, confidence, evidence/prediction record slots, contribution ledger, runtime issue model, registry framework, version metadata, deterministic serialization all implemented and used. buildImmuneFrame is the single canonical top-level frame builder." },
+    "section_2_shared": { "status": "IMPLEMENTED; PARTIALLY_REUSED", "notes": "Aggregation + confidence + double-counting guard ARE reused by Section 4. State-machine GUARD (immuneStateMachines) reused. The stateful transition CONTROLLER (immuneTransitions.ImmuneStateController) and the evidence/prediction record FRAMEWORK (immuneEvidencePrediction) are IMPLEMENTED but NOT used by any production engine." },
+    "section_3_innate": { "status": "MISSING", "notes": "No innate biology runtime module exists (no macrophage/NK/DC/antigen-presentation/innate-integration runtime). Only Section-1 UNAVAILABLE carriers + structure-only registries. innate-immunity/antigen-presentation registries define structure but no engine computes them." },
+    "section_4_adaptive": { "status": "IMPLEMENTED_AND_USED", "notes": "CD8/CD4/Treg/checkpoint(PD1/PDL1/axis/CTLA4)/suppression/escape/adaptive-integration/net-integration all implemented, run in acyclic order via immuneAdaptiveEngine, publish immutable frames via buildImmuneFrame, availability+confidence aware, ledger + double-counting participation. Does NOT emit transition records." },
+    "part2_section1_renderer": { "status": "IMPLEMENTED_AND_USED", "notes": "Renderer, inspector, timeline, replay, views, debugger, search, export, serialization validation all operational + read-only. Consumes both Section-1 and Section-4 frame shapes via a spec table with fallbacks." },
+    "phase8a_integration": { "status": "READ_ONLY_ADAPTER_PRESENT", "notes": "immuneResistanceAdapter.buildImmuneResistanceContext (S1) + buildExtendedImmuneResistanceContext (S4). Reports available=false when biology unavailable -> Phase 8A fallback preserved. Phase 8A non-immune logic unchanged (resistanceEngine.js untouched; production diff empty)." }
+  },
+  "transition_truth_test": {
+    "scenario": "production ImmuneAdaptiveEngine, 8 frames, tumor_immune_visibility rising 0.2->0.95 (crosses CD8 priming boundaries), hysteresis/residence respected",
+    "observed_state_sequence": ["PRIMING_LIMITED", "PRIMING_LIMITED", "PARTIALLY_PRIMED", "PARTIALLY_PRIMED", "PRIMED", "PRIMED", "STRONGLY_PRIMED", "STRONGLY_PRIMED"],
+    "distinct_states_crossed": 4,
+    "transition_records_produced": 0,
+    "result": "IMPLEMENTED_BUT_UNWIRED",
+    "renderer_correctly_avoids_inference": true
+  },
+  "frame_producers": {
+    "canonical_builder": { "id": "buildImmuneFrame", "file": "src/biology/immuneFrameBuilder.js", "authoritative": true, "used_by": ["immuneMicroenvironmentEngine (S1)", "immuneAdaptiveEngine (S4)"] },
+    "producer_1": { "id": "immuneMicroenvironmentEngine (S1)", "input_path": "ImmuneInputAdapter", "domainState_shape": "Section-1 UNAVAILABLE carriers (TumorVisibilityState/InnateImmunityState/AdaptiveImmunityState/CheckpointState/ImmuneSuppressionState/ImmuneEscapeState/ImmuneEffectState/ResistanceReadinessState)" },
+    "producer_2": { "id": "immuneAdaptiveEngine (S4)", "input_path": "buildAdaptiveContext (reads 7A/7B engines + innateContribution directly)", "domainState_shape": "Section-4 computed contributions (adaptiveImmunity{cd8,cd4,treg,adaptive}, checkpointState{pd1,pdl1,axis,ctla4}, immuneSuppression{pressure,components}, immuneEscape{dimensions,magnitudeState,persistenceState}, immuneEffect{potential,controlState,failureState})" },
+    "finding": "ONE canonical top-level builder; TWO engines feed it DIVERGENT nested domainState shapes; TWO divergent input-normalization paths (ImmuneInputAdapter vs buildAdaptiveContext)."
+  },
+  "critical_area_status": {
+    "SECTION_3": "missing",
+    "TRANSITIONS": "implemented but unwired",
+    "FRAME_PUBLICATION": "single canonical builder exists; multiple producers feed divergent nested domain-state shapes; renderer spec-table masks divergence",
+    "PREDICTIONS": "operational but static registry-reference-only (Section-2 lifecycle framework unused in production)",
+    "END_TO_END_VALIDATION": "fixture-backed (synthetic innateContribution + synthetic transition record injected in tests); production adaptive path is real but innate inputs are synthetic"
+  }
+}

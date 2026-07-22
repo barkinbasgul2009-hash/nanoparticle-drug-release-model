@@ -1,0 +1,69 @@
+{
+  "artifact": "phase7c-gap-register",
+  "note": "Every gap has one PRIMARY category (A missing-implementation / B missing-wiring / C contract-mismatch / D test-only-illusion), secondary tags, severity, and repair priority. Read-only audit; nothing repaired here.",
+  "gaps": [
+    {
+      "id": "G1", "title": "Section 3 innate immune runtime does not exist",
+      "primary_category": "A_MISSING_IMPLEMENTATION", "secondary_tags": ["biological", "architectural"],
+      "evidence": "No innate biology module (macrophage/NK/DC/antigen-presentation/innate-integration runtime). innate-immunity + antigen-presentation registries are structure-only.",
+      "severity": "critical", "repair_priority": "defer_to_section3_documentation",
+      "note": "Section 4 was explicitly built to consume innate via an availability-gated contract; absence yields UNAVAILABLE (never zero). Repairing this is Section 3 scope, not Part 2 of this section."
+    },
+    {
+      "id": "G2", "title": "Section-4 runtimes compute states but never emit transition records",
+      "primary_category": "B_MISSING_WIRING", "secondary_tags": ["transition", "renderer", "replay"],
+      "evidence": "Transition truth test: 4 CD8-priming states crossed over 8 production frames -> 0 transition records. immuneAdaptiveEngine passes no transitionRecords; runtimes use categorize() not ImmuneStateController.",
+      "severity": "major", "repair_priority": "repair_in_part2",
+      "note": "ImmuneStateController + TransitionRecord + immune-transition registry (26 machines) all exist and are correct; only the wiring from the Section-4 runtimes to the controllers + into buildImmuneFrame is missing."
+    },
+    {
+      "id": "G3", "title": "Two engines feed the canonical builder divergent nested domain-state shapes",
+      "primary_category": "C_CONTRACT_MISMATCH", "secondary_tags": ["architectural", "serialization", "renderer"],
+      "evidence": "immuneEscape: S1 {components,escapePressure,persistentEscape} vs S4 {dimensions,magnitudeState,overallEscapePressure,persistenceState}. adaptiveImmunity.cd8: S1 CD8State(metric slots) vs S4 CD8Contribution. Same top-level 32 keys, divergent nested shapes.",
+      "severity": "major", "repair_priority": "repair_in_part2",
+      "note": "Renderer masks divergence via a spec table with fallbacks. Canonical builder migration should converge the domain-state contract (single authoritative shape) OR formalize a versioned domain-state adapter."
+    },
+    {
+      "id": "G4", "title": "Two divergent input-normalization paths",
+      "primary_category": "C_CONTRACT_MISMATCH", "secondary_tags": ["architectural"],
+      "evidence": "S1 engine uses ImmuneInputAdapter; S4 engine uses buildAdaptiveContext (reads 7A/7B engines directly). Different field names/normalization.",
+      "severity": "moderate", "repair_priority": "repair_in_part2",
+      "note": "Not fatal; both are read-only and availability-aware. Convergence reduces drift."
+    },
+    {
+      "id": "G5", "title": "Section-2 transition-controller + evidence/prediction lifecycle frameworks unused in production",
+      "primary_category": "B_MISSING_WIRING", "secondary_tags": ["transition", "prediction", "evidence"],
+      "evidence": "ImmuneStateController, immuneEvidencePrediction (ImmunePredictionRecord/makePrediction) not imported by any src engine. Frames carry STATIC registry-reference records only.",
+      "severity": "moderate", "repair_priority": "repair_in_part2",
+      "note": "Predictions/evidence resolve against registries (valid) but have no runtime lifecycle (created/confirmed/invalidated)."
+    },
+    {
+      "id": "G6", "title": "End-to-end tests inject a synthetic innateContribution (no real Section 3)",
+      "primary_category": "D_TEST_ONLY_ILLUSION", "secondary_tags": ["test coverage", "biological"],
+      "evidence": "immuneAdaptive.test.mjs + immuneRender.test.mjs build innate={readiness:A(..),...} by hand and pass it in. Production Section-3 module does not exist.",
+      "severity": "major", "repair_priority": "validate_in_part3",
+      "note": "Adaptive engine + frame builder + renderer paths ARE production; only the innate INPUT is synthetic. Flagged so fixture success is not read as real innate end-to-end validation."
+    },
+    {
+      "id": "G7", "title": "Renderer transition-view test injects a synthetic transition record",
+      "primary_category": "D_TEST_ONLY_ILLUSION", "secondary_tags": ["transition", "test coverage", "renderer"],
+      "evidence": "immuneRender.test.mjs `withT` hand-builds a transitionRecords entry to exercise buildTransitionView; the same test also asserts production frames have 0 transition records.",
+      "severity": "minor", "repair_priority": "validate_in_part3",
+      "note": "Honest + explicitly flagged in the test; not masking. Becomes real once G2 is repaired."
+    },
+    {
+      "id": "G8", "title": "Adaptive context does not use the shared ImmuneInputAdapter for upstream reads",
+      "primary_category": "B_MISSING_WIRING", "secondary_tags": ["architectural"],
+      "evidence": "buildAdaptiveContext reads vascular/micro engines directly rather than via ImmuneInputAdapter (which the S1 engine uses).",
+      "severity": "minor", "repair_priority": "repair_in_part2",
+      "note": "Cosmetic architectural drift; both read-only."
+    }
+  ],
+  "severity_summary": { "blocker": 0, "critical": 1, "major": 3, "moderate": 2, "minor": 2, "informational": 0 },
+  "no_illusion_confirmations": [
+    "No test hand-builds a final frame bypassing buildImmuneFrame (all use engine.evaluate().frame).",
+    "No test uses zero where production requires unavailable (UNAVAILABLE metrics carry value:null).",
+    "No test validates Phase 8A with mocked immune values (8A adapter reads real engine readiness).",
+    "No test deep-freezes objects production leaves mutable (buildImmuneFrame deep-freezes in production)."
+  ]
+}
