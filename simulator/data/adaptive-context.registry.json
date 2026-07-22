@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 adaptive input-contract configuration. Declares the fields the immutable AdaptiveImmuneContext exposes (consumed READ-ONLY from the Section-1 ImmuneFrame's innate/visibility outputs and Section-3 innate contribution when present), the validation rules, and the temporal-window constants. IMPORTANT: Section 3 (innate biology) is not implemented in this build, so innate-derived fields resolve to UNAVAILABLE (never zero); the adaptive runtime remains operational and availability-gated. Prediction-only.",
+  "input_fields": [
+    "tumor_immune_visibility", "antigen_availability", "immune_accessibility", "macrophage_contribution",
+    "nk_contribution", "dendritic_contribution", "antigen_presentation_potential", "innate_immune_readiness",
+    "innate_tumor_pressure", "adaptive_priming_potential", "vascular_access", "vascular_functionality"
+  ],
+  "validation_rules": {
+    "finite_required": true, "normalized_range": [0, 1], "availability_required": true,
+    "no_zero_substitution": "unavailable inputs stay UNAVAILABLE; never substituted with zero.",
+    "temporal_ordering_required": true, "version_compatibility_required": true
+  },
+  "temporal": {
+    "priming_delay_frames": 1, "recruitment_delay_frames": 1, "infiltration_delay_frames": 1,
+    "activation_persistence_frames": 2, "dysfunction_window_frames": 3, "suppression_persistence_frames": 2,
+    "checkpoint_persistence_frames": 2, "escape_observation_window_frames": 3,
+    "note": "abstract simulation-frame constants only; no real-world time units; all registry-driven."
+  },
+  "innate_availability": {
+    "section3_present": false,
+    "state_when_absent": "UNAVAILABLE",
+    "note": "Section 3 innate biology is not implemented; innate-derived adaptive inputs are UNAVAILABLE (structurally valid, never fabricated). The adaptive runtime computes availability-gated outputs and remains fully operational when innate inputs are supplied."
+  },
+  "coefficient_policy": {
+    "valid_range": "temporal constants are non-negative integer frame counts",
+    "source": "repository abstract simulation-time conventions",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "temporal constants gate delayed priming/recruitment/exhaustion; they are frame counts, not real time.",
+    "limitations": "No real-world durations (NOT_REPORTED)."
+  }
+}

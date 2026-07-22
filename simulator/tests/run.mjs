@@ -28,10 +28,11 @@ import microenvironment from './microenvironment.test.mjs';
 import vascular from './vascular.test.mjs';
 import immune from './immune.test.mjs';
 import immuneRuntime from './immuneRuntime.test.mjs';
+import immuneAdaptive from './immuneAdaptive.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive,
 ];
 
 for (const suite of suites) {

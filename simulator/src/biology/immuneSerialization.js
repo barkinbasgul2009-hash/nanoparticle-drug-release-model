@@ -5,17 +5,20 @@
 
 import { ImmuneRuntimeIssue, ISSUE_SEVERITY } from './immuneObjects.js';
 
-/** Deterministic JSON with recursively sorted object keys (arrays keep order). */
+/**
+ * Deterministic JSON with recursively sorted object keys (arrays keep order). Tracks only the current
+ * ANCESTOR PATH, so shared references (a DAG) are allowed and only TRUE cycles throw.
+ */
 export function stableStringify(value) {
-  const seen = new WeakSet();
+  const path = new WeakSet();   // ancestors on the current descent path (not all visited nodes)
   const norm = (v) => {
     if (v === null || typeof v !== 'object') return v;
-    if (seen.has(v)) throw new Error('circular reference in immune frame');
-    seen.add(v);
-    if (Array.isArray(v)) return v.map(norm);
-    const out = {};
-    for (const k of Object.keys(v).sort()) { const val = v[k]; if (typeof val === 'function') throw new Error(`function found at key ${k}`); out[k] = norm(val); }
-    seen.delete(v);
+    if (path.has(v)) throw new Error('circular reference in immune frame');
+    path.add(v);
+    let out;
+    if (Array.isArray(v)) out = v.map(norm);
+    else { out = {}; for (const k of Object.keys(v).sort()) { const val = v[k]; if (typeof val === 'function') throw new Error(`function found at key ${k}`); out[k] = norm(val); } }
+    path.delete(v);   // leaving this node's subtree; siblings may legitimately reference it again
     return out;
   };
   return JSON.stringify(norm(value));

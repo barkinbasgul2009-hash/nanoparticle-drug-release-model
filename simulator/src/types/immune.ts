@@ -188,3 +188,77 @@ export interface ImmuneConfidenceRegistry {
   confidence_framework_version: string; categories: Record<ConfidenceCategory, { min: number; max: number }>;
   propagation: { base_confidence: number; penalties: Record<string, number>; floor: number; ceiling: number }; policy: Record<string, string>;
 }
+
+// ===========================================================================
+// Part 1 - Section 4: ADAPTIVE IMMUNITY / CHECKPOINTS / SUPPRESSION / ESCAPE (additive).
+// ===========================================================================
+export interface StagedMetric { value: number | null; state?: string | null; availability: Availability; }
+export interface AdaptiveImmuneContext {
+  schemaVersion: string; registryVersion: string; frameIndex: number; simulationTime: number;
+  sourceImmuneFrameId: string | null; sourceImmuneSchemaVersion: string | null;
+  temporalContext: { frameIndex: number; currentTime: number; deltaTime: number; initializationStatus: string };
+  inputs: Record<string, ImmuneMetric>; availability: Record<string, Availability>; previousAdaptiveState: unknown; innateAvailable: boolean;
+}
+export interface CD8Contribution {
+  runtimeType: 'cd8'; owner: string; schemaVersion: string;
+  priming: StagedMetric; recruitment: StagedMetric; infiltration: StagedMetric; activation: StagedMetric;
+  effectorCompetence: ImmuneMetric; targetEngagement: ImmuneMetric; cytotoxicPotential: ImmuneMetric;
+  dysfunction: ImmuneMetric; exhaustion: StagedMetric; recoveryPotential: ImmuneMetric;
+  effectiveContribution: ImmuneMetric; blockedPotential: ImmuneMetric & { causes: string[] };
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface CD4HelperContribution {
+  runtimeType: 'cd4'; owner: string; schemaVersion: string;
+  priming: StagedMetric; recruitment: ImmuneMetric; infiltration: ImmuneMetric; activation: StagedMetric; helperCompetence: ImmuneMetric;
+  support: Record<string, ImmuneMetric>; cd8Support: Record<string, number | null>;
+  blockedPotential: ImmuneMetric & { causes: string[] }; effectiveContribution: ImmuneMetric;
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface TregContribution {
+  runtimeType: 'treg'; owner: string; schemaVersion: string;
+  recruitment: StagedMetric; infiltration: StagedMetric; activation: StagedMetric; suppressiveCompetence: StagedMetric; suppressivePersistence: ImmuneMetric;
+  effectiveSuppressiveContribution: ImmuneMetric; contributions: Record<string, ImmuneMetric>; blockedSuppressivePotential: ImmuneMetric;
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface CheckpointContribution {
+  runtimeType: 'checkpoint'; owner: string; schemaVersion: string;
+  pd1: StagedMetric; pdl1: StagedMetric; axis: { engagement: number | null; state: string | null; availability: Availability; persistent: number | null }; ctla4: StagedMetric;
+  pd_axis_engagement: number | null; persistent: number | null; ctla4_pressure: number | null;
+  contributions: Record<string, ImmuneMetric>; overallCheckpointBurden: ImmuneMetric;
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface IntegratedSuppressionContribution {
+  runtimeType: 'integrated_suppression'; owner: string; schemaVersion: string;
+  pressure: number | null; state: string | null; availability: Availability; persistence: number | null; persistent: number | null;
+  components: Array<{ id: string; value: number | null; availability: Availability; weight: number }>; contributions: Record<string, ImmuneMetric>;
+  cd4_helper_support: number | null; blockedAdaptiveFunction: ImmuneMetric; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface ImmuneEscapeContribution {
+  runtimeType: 'immune_escape'; owner: string; schemaVersion: string;
+  recognitionEscape: ImmuneMetric; accessEscape: ImmuneMetric; primingEscape: ImmuneMetric; effectorEscape: ImmuneMetric;
+  checkpointEscape: ImmuneMetric; suppressionEscape: ImmuneMetric; exhaustionEscape: ImmuneMetric;
+  overallEscapePressure: ImmuneMetric; escapeMagnitudeState: string | null; escapePersistenceState: string | null;
+  recoveryPotential: ImmuneMetric; availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface AdaptiveImmuneContribution {
+  runtimeType: 'adaptive_immune'; owner: string; schemaVersion: string;
+  readiness: ImmuneMetric; activation: ImmuneMetric; effectorCompetence: ImmuneMetric; effectiveCytotoxicPotential: ImmuneMetric;
+  persistence: ImmuneMetric; recoveryPotential: ImmuneMetric; suppressionBurden: ImmuneMetric; checkpointBurden: ImmuneMetric;
+  blockedPotential: ImmuneMetric & { categories: string[] }; escapePressure: ImmuneMetric; overallAdaptiveContribution: ImmuneMetric;
+  availability: Availability; confidence: ConfidenceResult; evidenceRefs: string[]; predictionRefs: string[]; warnings: unknown[];
+}
+export interface NetImmuneIntegration {
+  overallImmuneReadiness: ImmuneMetric; overallImmuneCompetence: ImmuneMetric; innateImmunePressure: ImmuneMetric; adaptiveImmunePressure: ImmuneMetric;
+  netImmuneMediatedTumorLossPotential: ImmuneMetric; blockedImmunePotential: ImmuneMetric & { decomposition: Record<string, unknown> };
+  overallSuppressionBurden: ImmuneMetric; overallCheckpointBurden: ImmuneMetric; overallImmuneEscapePressure: ImmuneMetric;
+  immuneControlState: string | null; immuneFailureState: string | null; availability: Availability; confidence: ConfidenceResult;
+}
+export interface ExtendedImmuneResistanceContext extends ImmuneResistanceContext {
+  immunePressureCurrent?: ImmuneMetric; immunePressurePersistent?: ImmuneMetric;
+  immuneSuppressionCurrent?: ImmuneMetric; immuneSuppressionPersistent?: ImmuneMetric;
+  checkpointBurdenCurrent?: ImmuneMetric; checkpointBurdenPersistent?: ImmuneMetric;
+  immuneEscapeCurrent?: ImmuneMetric; immuneEscapePersistent?: ImmuneMetric;
+  cd8DysfunctionBurden?: ImmuneMetric; cd8ExhaustionBurden?: ImmuneMetric; ineffectiveEngagementBurden?: ImmuneMetric;
+  blockedImmunePotential?: ImmuneMetric; adaptiveRecoveryPotential?: ImmuneMetric;
+  immuneControlState?: string | null; immuneFailureState?: string | null; causalGroups?: Record<string, string[]>;
+}

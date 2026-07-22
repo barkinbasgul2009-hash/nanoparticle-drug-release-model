@@ -312,6 +312,15 @@ export const APP_CONFIG = Object.freeze({
     // Part 1 - Section 2 shared runtime frameworks (aggregation + confidence).
     aggregation: 'immune-aggregation.registry.json',
     confidence: 'immune-confidence.registry.json',
+    // Part 1 - Section 4 adaptive immunity / checkpoints / suppression / escape coefficients.
+    adaptiveContext: 'adaptive-context.registry.json',
+    cd8: 'adaptive-cd8.registry.json',
+    cd4: 'adaptive-cd4.registry.json',
+    treg: 'adaptive-treg.registry.json',
+    adaptiveCheckpoint: 'adaptive-checkpoint.registry.json',
+    adaptiveSuppression: 'adaptive-suppression.registry.json',
+    adaptiveEscape: 'adaptive-escape.registry.json',
+    adaptiveIntegration: 'adaptive-integration.registry.json',
   }),
   immune: Object.freeze({ dtHours: 0.5 }),
 

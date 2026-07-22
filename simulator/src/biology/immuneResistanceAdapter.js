@@ -85,12 +85,50 @@ export function buildImmuneResistanceContext(immuneFrame, opts = {}) {
   };
 }
 
+/**
+ * Section 4: map the RICH resistance-readiness (from the adaptive engine) to an extended, versioned
+ * Phase-8A context. Additive over the Section-1 fields (same contract version): it adds current/
+ * persistent immune features and causal-group metadata so Phase 8A can DEDUPLICATE summarised
+ * mechanisms (e.g. checkpoint burden vs suppression burden). Read-only; never mutates; fails safely to
+ * an unavailable context when readiness is missing/unavailable so Phase 8A keeps its fallback.
+ */
+export function buildExtendedImmuneResistanceContext(readiness, opts = {}) {
+  const expected = opts.expectedContractVersion || IMMUNE_RESISTANCE_CONTRACT_VERSION;
+  if (!readiness) return unavailableContext('no immune resistance-readiness available', { warnings: [{ code: 'IMMUNE_RESISTANCE_ADAPTER_UNAVAILABLE', message: 'no readiness' }] });
+  if (readiness.contractVersion && readiness.contractVersion !== expected) return unavailableContext('immune contract version mismatch', { compatible: false, warnings: [{ code: 'IMMUNE_FRAME_VERSION_MISMATCH', message: `expected ${expected}, got ${readiness.contractVersion}` }] });
+  if (!isUsable(readiness.availability)) return unavailableContext('immune biology unavailable', {});
+  const base = {
+    available: true, status: readiness.availability, compatible: true, contractVersion: readiness.contractVersion || expected,
+    schemaVersion: '7C.1.0', engineVersion: 'immuneAdaptiveEngine', reason: null,
+    // Section-1 fields
+    immuneSuppression: metric(readiness.immuneSuppression), immuneEscape: metric(readiness.immuneEscape),
+    persistentImmuneEscape: metric(readiness.immuneEscapePersistent || readiness.persistentImmuneEscape),
+    checkpointPressure: metric(readiness.checkpointPressure), tumorVisibility: metric(readiness.tumorVisibility),
+    exhaustedAdaptiveResponse: metric(readiness.exhaustedAdaptiveResponse), immuneMediatedTumorLossModifier: metric(readiness.immuneMediatedTumorLossModifier),
+    // Section-4 extended features
+    immunePressureCurrent: metric(readiness.immunePressureCurrent), immunePressurePersistent: metric(readiness.immunePressurePersistent),
+    immuneSuppressionCurrent: metric(readiness.immuneSuppressionCurrent), immuneSuppressionPersistent: metric(readiness.immuneSuppressionPersistent),
+    checkpointBurdenCurrent: metric(readiness.checkpointBurdenCurrent), checkpointBurdenPersistent: metric(readiness.checkpointBurdenPersistent),
+    immuneEscapeCurrent: metric(readiness.immuneEscapeCurrent), immuneEscapePersistent: metric(readiness.immuneEscapePersistent),
+    cd8DysfunctionBurden: metric(readiness.cd8DysfunctionBurden), cd8ExhaustionBurden: metric(readiness.cd8ExhaustionBurden),
+    ineffectiveEngagementBurden: metric(readiness.ineffectiveEngagementBurden), blockedImmunePotential: metric(readiness.blockedImmunePotential),
+    adaptiveRecoveryPotential: metric(readiness.adaptiveRecoveryPotential),
+    immuneControlState: readiness.immuneControlState || null, immuneFailureState: readiness.immuneFailureState || null,
+    // cross-phase double-counting metadata
+    causalGroups: readiness.causalGroups || {}, warnings: [],
+  };
+  return base;
+}
+
 /** Thin class wrapper (holds the expected contract version) for engine-style consumption. */
 export class ImmuneResistanceAdapter {
   constructor(opts = {}) { this.expectedContractVersion = opts.expectedContractVersion || IMMUNE_RESISTANCE_CONTRACT_VERSION; }
   /** @param {object} immuneEngine an ImmuneMicroenvironmentEngine (read-only) */
   fromEngine(immuneEngine) { return buildImmuneResistanceContext(immuneEngine ? immuneEngine.getPublishedFrame() : null, { expectedContractVersion: this.expectedContractVersion }); }
   fromFrame(immuneFrame) { return buildImmuneResistanceContext(immuneFrame, { expectedContractVersion: this.expectedContractVersion }); }
+  /** Section 4: from the adaptive engine's rich readiness (extended, versioned). */
+  fromAdaptiveEngine(adaptiveEngine) { return buildExtendedImmuneResistanceContext(adaptiveEngine ? adaptiveEngine.getResistanceReadiness() : null, { expectedContractVersion: this.expectedContractVersion }); }
+  fromReadiness(readiness) { return buildExtendedImmuneResistanceContext(readiness, { expectedContractVersion: this.expectedContractVersion }); }
 }
 
 export default buildImmuneResistanceContext;
