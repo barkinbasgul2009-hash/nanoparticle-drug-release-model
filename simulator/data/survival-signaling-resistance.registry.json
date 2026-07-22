@@ -1,0 +1,20 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A survival-signaling resistance represented ONLY at the pathway-abstraction level. Compensatory survival signaling may reduce treatment-effect propagation / apoptosis susceptibility through a bounded adapter. The full signaling engine is NOT recreated and molecular activation is NEVER assigned without registry evidence. Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "apoptosis_susceptibility_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no survival-signaling protection",
+    "1_interpretation": "1 = maximal schematic survival-signaling protection the model represents",
+    "source": "general compensatory survival-signaling resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "feeds resistanceToSignalingAdapter; does not re-run or mutate the Phase-5B signal-propagation engine.",
+    "limitations": "No molecular node activation level (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":   { "apoptosis_susceptibility_reduction": 0.0 },
+    "weak":     { "apoptosis_susceptibility_reduction": 0.12 },
+    "moderate": { "apoptosis_susceptibility_reduction": 0.28 },
+    "strong":   { "apoptosis_susceptibility_reduction": 0.45 },
+    "dominant": { "apoptosis_susceptibility_reduction": 0.6 }
+  }
+}

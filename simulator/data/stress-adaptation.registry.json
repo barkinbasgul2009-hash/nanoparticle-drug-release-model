@@ -1,0 +1,21 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A stress-adaptation resistance. Represents reduced stress-to-apoptosis conversion / increased sublethal-stress tolerance / delayed apoptosis commitment as an ordinal state producing a BOUNDED resistance modifier. Phase-6 stress values are NEVER overwritten - the modifier is additive and consumed by an adapter. Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "stress_to_apoptosis_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no stress adaptation (full stress-to-apoptosis conversion)",
+    "1_interpretation": "1 = maximal schematic reduction in stress-to-apoptosis conversion the model represents",
+    "source": "general stress-response adaptation biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "feeds resistanceToStressAdapter; the Phase-6 stress engine is untouched.",
+    "limitations": "No stress-marker level or conversion rate (all NOT_REPORTED)."
+  },
+  "states": {
+    "baseline":   { "stress_to_apoptosis_reduction": 0.0 },
+    "primed":     { "stress_to_apoptosis_reduction": 0.12 },
+    "elevated":   { "stress_to_apoptosis_reduction": 0.28 },
+    "established": { "stress_to_apoptosis_reduction": 0.42 },
+    "persistent": { "stress_to_apoptosis_reduction": 0.5 },
+    "resolving":  { "stress_to_apoptosis_reduction": 0.2 }
+  }
+}

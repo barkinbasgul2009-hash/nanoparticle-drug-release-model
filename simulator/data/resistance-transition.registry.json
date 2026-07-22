@@ -1,0 +1,175 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A explicit finite-state machines for the resistance runtime. Every legal transition is ENUMERATED here; any transition not listed is ILLEGAL and rejected by the state-machine guard. Categorical machines list exact edges (matching the Phase-8A specification); ordinal-magnitude machines are bidirectional single-step over an ordered state list (their legal_transitions are the enumerated adjacency). No state becomes permanent solely because it was previously active.",
+  "state_machines": {
+    "drug_tolerance": {
+      "type": "categorical",
+      "initial_state": "absent",
+      "states": ["absent", "emerging", "established", "maintained", "resolving", "resolved"],
+      "legal_transitions": {
+        "absent": ["emerging"],
+        "emerging": ["established", "resolving"],
+        "established": ["maintained", "resolving"],
+        "maintained": ["resolving"],
+        "resolving": ["resolved"],
+        "resolved": ["emerging"]
+      },
+      "conditional_transitions": { "resolved->emerging": "only after new supported treatment pressure" },
+      "disallowed": ["absent->maintained", "resolved->established"]
+    },
+    "adaptive_resistance": {
+      "type": "categorical",
+      "initial_state": "absent",
+      "states": ["absent", "initiating", "developing", "established", "maintained", "declining", "resolved", "persistence_evaluation"],
+      "legal_transitions": {
+        "absent": ["initiating"],
+        "initiating": ["developing", "declining"],
+        "developing": ["established", "declining"],
+        "established": ["maintained", "declining", "persistence_evaluation"],
+        "maintained": ["declining", "persistence_evaluation"],
+        "declining": ["resolved"],
+        "resolved": [],
+        "persistence_evaluation": []
+      },
+      "disallowed": ["absent->established", "absent->persistent"]
+    },
+    "acquired_resistance": {
+      "type": "categorical",
+      "initial_state": "absent",
+      "states": ["absent", "suspected", "emerging", "established", "persistent", "partially_reversible", "re_sensitized"],
+      "legal_transitions": {
+        "absent": ["suspected"],
+        "suspected": ["emerging", "absent"],
+        "emerging": ["established", "partially_reversible"],
+        "established": ["persistent", "partially_reversible"],
+        "persistent": ["partially_reversible"],
+        "partially_reversible": ["re_sensitized"],
+        "re_sensitized": ["suspected"]
+      },
+      "conditional_transitions": {
+        "persistent->partially_reversible": "only when supported",
+        "re_sensitized->suspected": "after renewed pressure where supported"
+      },
+      "disallowed": ["absent->persistent", "suspected->persistent", "single_frame_to_established"]
+    },
+    "persistent_resistance": {
+      "type": "categorical",
+      "initial_state": "not_evaluated",
+      "states": ["not_evaluated", "persistence_pending", "persistent", "partially_reversible", "reversed"],
+      "legal_transitions": {
+        "not_evaluated": ["persistence_pending"],
+        "persistence_pending": ["persistent", "not_evaluated"],
+        "persistent": ["partially_reversible"],
+        "partially_reversible": ["reversed"],
+        "reversed": ["persistence_pending"]
+      },
+      "conditional_transitions": { "reversed->persistence_pending": "only under renewed supported pressure" },
+      "disallowed": ["not_evaluated->persistent", "persistence_pending->reversed"]
+    },
+    "re_sensitization": {
+      "type": "categorical",
+      "initial_state": "not_applicable",
+      "states": ["not_applicable", "not_observed", "possible", "partial", "substantial", "complete", "unknown"],
+      "legal_transitions": {
+        "not_applicable": ["not_observed"],
+        "not_observed": ["possible"],
+        "possible": ["partial", "not_observed"],
+        "partial": ["substantial", "not_observed"],
+        "substantial": ["complete", "partial"],
+        "complete": [],
+        "unknown": ["not_observed"]
+      },
+      "disallowed": ["not_applicable->complete", "not_observed->complete"]
+    },
+    "treatment_exposure": {
+      "type": "categorical",
+      "initial_state": "untreated",
+      "states": ["untreated", "single_exposure", "repeated_exposure", "sustained_exposure", "interrupted", "washout", "rechallenge"],
+      "legal_transitions": {
+        "untreated": ["single_exposure"],
+        "single_exposure": ["sustained_exposure", "interrupted"],
+        "repeated_exposure": ["sustained_exposure", "interrupted"],
+        "sustained_exposure": ["interrupted"],
+        "interrupted": ["repeated_exposure", "washout"],
+        "washout": ["rechallenge", "untreated"],
+        "rechallenge": ["sustained_exposure", "interrupted"]
+      },
+      "disallowed": ["untreated->washout", "untreated->rechallenge"]
+    },
+    "population_subpopulation": {
+      "type": "categorical",
+      "initial_state": "sensitive",
+      "states": ["sensitive", "tolerant", "adaptive_resistant", "persistent_resistant", "partially_re_sensitized"],
+      "legal_transitions": {
+        "sensitive": ["tolerant", "adaptive_resistant"],
+        "tolerant": ["sensitive", "adaptive_resistant"],
+        "adaptive_resistant": ["sensitive", "persistent_resistant"],
+        "persistent_resistant": ["partially_re_sensitized"],
+        "partially_re_sensitized": ["persistent_resistant", "adaptive_resistant"]
+      },
+      "conditional_transitions": {
+        "sensitive->adaptive_resistant": "only if profile-supported",
+        "tolerant->sensitive": "through resolution",
+        "adaptive_resistant->sensitive": "through complete reversal",
+        "adaptive_resistant->persistent_resistant": "through persistence criteria",
+        "persistent_resistant->partially_re_sensitized": "where supported"
+      },
+      "note": "Population identity never changes without updating fractions AND recording a ResistanceTransition."
+    },
+    "treatment_pressure": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "absent",
+      "states": ["absent", "negligible", "low", "moderate", "high", "very_high"],
+      "legal_transitions": {
+        "absent": ["negligible"],
+        "negligible": ["absent", "low"],
+        "low": ["negligible", "moderate"],
+        "moderate": ["low", "high"],
+        "high": ["moderate", "very_high"],
+        "very_high": ["high"]
+      }
+    },
+    "selection_pressure": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "absent",
+      "states": ["absent", "negligible", "low", "moderate", "high", "very_high"],
+      "legal_transitions": {
+        "absent": ["negligible"],
+        "negligible": ["absent", "low"],
+        "low": ["negligible", "moderate"],
+        "moderate": ["low", "high"],
+        "high": ["moderate", "very_high"],
+        "very_high": ["high"]
+      }
+    },
+    "population_enrichment": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "none",
+      "states": ["none", "weak", "moderate", "strong"],
+      "legal_transitions": {
+        "none": ["weak"],
+        "weak": ["none", "moderate"],
+        "moderate": ["weak", "strong"],
+        "strong": ["moderate"]
+      }
+    },
+    "resistance_burden_category": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "none",
+      "states": ["none", "low", "moderate", "high", "very_high"],
+      "legal_transitions": {
+        "none": ["low"],
+        "low": ["none", "moderate"],
+        "moderate": ["low", "high"],
+        "high": ["moderate", "very_high"],
+        "very_high": ["high"]
+      }
+    }
+  },
+  "origin_classifications": ["PRE_EXISTING_SELECTION", "TREATMENT_INDUCED_ADAPTATION", "TOLERANCE_TRANSITION", "PERSISTENCE_TRANSITION", "MICROENVIRONMENT_PROTECTION", "UNKNOWN_OR_MIXED"],
+  "rules": {
+    "enumerated_only": "A transition absent from legal_transitions is illegal and rejected.",
+    "no_implicit_persistence": "No state persists solely because it was previously active; persistence requires meeting the persistence-criteria registry.",
+    "every_transition_records_event": "Every significant transition generates a ResistanceEvent with an origin classification."
+  }
+}

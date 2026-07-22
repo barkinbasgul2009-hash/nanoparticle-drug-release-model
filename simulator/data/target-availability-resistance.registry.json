@@ -1,0 +1,21 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A target-availability resistance: reduced target availability / altered target dependence as an ordinal state producing an ADDITIVE target-effectiveness modifier. Receptor / protein concentrations are NEVER fabricated and the existing target-engagement registry values are NEVER silently modified. Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "target_effectiveness_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = unchanged target effectiveness",
+    "1_interpretation": "1 = maximal schematic reduction in target effectiveness the model represents",
+    "source": "general target-alteration resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "feeds a target-effectiveness adapter; Phase-5A target-engagement values are untouched.",
+    "limitations": "No receptor / protein concentration or occupancy (all NOT_REPORTED)."
+  },
+  "states": {
+    "unchanged_target_context":  { "target_effectiveness_reduction": 0.0 },
+    "reduced_target_availability": { "target_effectiveness_reduction": 0.3 },
+    "altered_target_dependency": { "target_effectiveness_reduction": 0.4 },
+    "target_bypass_consistent":  { "target_effectiveness_reduction": 0.55 },
+    "unsupported":               { "target_effectiveness_reduction": null, "evidence_level": "UNSUPPORTED" },
+    "unknown":                   { "target_effectiveness_reduction": null, "evidence_level": "NOT_REPORTED" }
+  }
+}

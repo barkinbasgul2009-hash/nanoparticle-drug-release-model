@@ -1,0 +1,26 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A baseline resistance profile schema + policy. Every simulation begins with an EXPLICIT baseline resistance profile (intrinsic sensitivity, baseline resistant/tolerant fractions, pathway dependence, apoptosis/uptake competence, stress tolerance, microenvironment protection). The per-species baseline values live in resistance-context.registry.json; this registry defines the required fields, allowed missing-information states, and the rule that an UNKNOWN profile is NEVER defaulted to fully sensitive. Schematic; no measured baseline value is fabricated.",
+  "baseline_fields": [
+    "intrinsic_sensitivity", "baseline_resistant_fraction", "baseline_tolerant_fraction",
+    "baseline_pathway_dependence", "baseline_apoptosis_competence", "baseline_uptake_competence",
+    "baseline_stress_tolerance", "baseline_microenvironment_protection",
+    "evidence_level", "confidence", "uncertainty", "source_ids", "limitations"
+  ],
+  "missing_information_states": ["NOT_REPORTED", "UNAVAILABLE", "UNSUPPORTED", "MECHANISTIC_PREDICTION"],
+  "competence_vocabulary": ["competent", "reduced", "weak", "unknown"],
+  "pathway_dependence_vocabulary": ["mixed_survival_signaling", "heterogeneous", "single_dominant", "unknown"],
+  "protection_vocabulary": ["none", "low", "moderate", "high", "unknown"],
+  "coefficient_policy": {
+    "valid_range": "baseline_resistant_fraction + baseline_tolerant_fraction in [0,1]; together they must leave a non-negative sensitive remainder",
+    "source": "per-context predicted baseline heterogeneity (general melanoma biology); no direct baseline resistance dataset in the frozen package",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "baseline fractions seed the subpopulation model; they are the starting composition, not a measured baseline.",
+    "limitations": "No measured baseline resistant-cell fraction or IC50 (all NOT_REPORTED)."
+  },
+  "rules": {
+    "no_default_to_sensitive": "An unknown baseline resolves to intrinsic_sensitivity='unknown' / NOT_REPORTED, never silently to fully sensitive.",
+    "explicit_only": "A simulation without an explicit baseline profile is UNSUPPORTED (idle), not assumed sensitive.",
+    "fixed_baseline": "Baseline is fixed per context; treatment-induced change is represented only by adaptive/acquired transitions."
+  }
+}

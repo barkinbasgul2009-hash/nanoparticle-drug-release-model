@@ -241,6 +241,51 @@ export const APP_CONFIG = Object.freeze({
   }),
   vascular: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 8A: adaptive & acquired drug-resistance registries. The resistance runtime represents
+  // resistance as a TIME-DEPENDENT process (reversible tolerance / adaptive / acquired persistence /
+  // selection / enrichment / re-sensitization) and produces an ADVISORY treatment-sensitivity
+  // modifier consumed on the NEXT frame. It consumes validated population / tumour-response /
+  // microenvironment / vascular outputs READ-ONLY and mutates NOTHING upstream. Prediction-only (NO
+  // experimental tier); mouse B16BL6 = MECHANISTIC_PREDICTION (default); human = predictive-
+  // exploratory; rat = NOT_REPORTED. Immune-associated resistance = UNAVAILABLE (Phase 7C not
+  // implemented). STOP at resistance state + advisory modifier (no combination therapy / forecasting
+  // / mutation / clinical outcome). Config key `resistanceSources` (distinct from all frozen keys).
+  resistanceSources: Object.freeze({
+    context: 'resistance-context.registry.json',
+    baseline: 'baseline-resistance.registry.json',
+    intrinsic: 'intrinsic-sensitivity.registry.json',
+    exposure: 'treatment-exposure.registry.json',
+    pressure: 'treatment-pressure.registry.json',
+    survivor: 'survivor-state.registry.json',
+    tolerance: 'drug-tolerance.registry.json',
+    adaptive: 'adaptive-resistance.registry.json',
+    acquired: 'acquired-resistance.registry.json',
+    persistent: 'persistent-resistance.registry.json',
+    mechanism: 'resistance-mechanism.registry.json',
+    uptake: 'uptake-resistance.registry.json',
+    efflux: 'efflux-resistance.registry.json',
+    target: 'target-availability-resistance.registry.json',
+    survivalSignaling: 'survival-signaling-resistance.registry.json',
+    stress: 'stress-adaptation.registry.json',
+    apoptosisEvasion: 'apoptosis-evasion.registry.json',
+    cellState: 'cell-state-resistance.registry.json',
+    microenvProtection: 'microenvironment-protection.registry.json',
+    immune: 'immune-associated-resistance.registry.json',
+    subpopulation: 'resistant-subpopulation.registry.json',
+    selection: 'selection-pressure.registry.json',
+    enrichment: 'population-enrichment.registry.json',
+    resensitization: 'resensitization.registry.json',
+    washout: 'washout.registry.json',
+    rechallenge: 'rechallenge.registry.json',
+    burden: 'resistance-burden.registry.json',
+    modifier: 'resistance-modifier.registry.json',
+    transition: 'resistance-transition.registry.json',
+    evidence: 'resistance-evidence.registry.json',
+    prediction: 'resistance-prediction.registry.json',
+    validation: 'resistance-validation.registry.json',
+  }),
+  resistance: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

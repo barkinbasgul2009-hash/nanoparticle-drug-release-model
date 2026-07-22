@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A selection-pressure model. Selection pressure depends on treatment pressure, differential subpopulation sensitivity, effective exposure, duration, population loss, survivor composition, microenvironment protection, and treatment interruptions. CRITICAL: selection pressure NEVER creates a new mechanism - it only changes RELATIVE population composition. Ordinal states + a bounded scalar. Schematic only.",
+  "coefficient_policy": {
+    "valid_range": "selection_pressure_value in [0,1]",
+    "0_interpretation": "0 = no differential selection",
+    "1_interpretation": "1 = maximal schematic selective pressure the model represents",
+    "source": "net treatment pressure x differential subpopulation sensitivity (predicted)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "selection_pressure_value drives enrichment strength in the population-enrichment registry; it does not add cytotoxic loss.",
+    "limitations": "No selection coefficient or fitness value (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":     { "selection_pressure_value": 0.0 },
+    "negligible": { "selection_pressure_value": 0.1 },
+    "low":        { "selection_pressure_value": 0.3 },
+    "moderate":   { "selection_pressure_value": 0.55 },
+    "high":       { "selection_pressure_value": 0.8 },
+    "very_high":  { "selection_pressure_value": 0.95 }
+  },
+  "state_thresholds": { "negligible": 0.05, "low": 0.2, "moderate": 0.45, "high": 0.7, "very_high": 0.88 },
+  "requires_differential_sensitivity": true,
+  "rules": {
+    "no_mechanism_creation": "Selection redistributes existing subpopulation fractions; it never invents a resistance mechanism.",
+    "no_duplicate_loss": "Selection alters composition only; cytotoxic loss is owned by the Phase-6 engines and is not duplicated here.",
+    "needs_difference": "With no differential subpopulation sensitivity, selection pressure is 'absent' (validation rejects selection claimed without differential sensitivity)."
+  }
+}

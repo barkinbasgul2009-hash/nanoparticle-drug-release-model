@@ -1,0 +1,33 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A adaptive-resistance model. Adaptive resistance is a TREATMENT-INDUCED change that develops during exposure and may remain reversible. Every adaptive state must carry a documented abstract mechanism category (compensatory pathway / survival-signaling / stress-response / apoptosis-threshold / altered target dependence / altered availability / microenvironment-supported) - there is NO unexplained adaptive resistance. Each state defines a bounded sensitivity-reduction modifier, reversibility, and evidence. Schematic; no fold-resistance or IC50 shift (NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "adaptive_sensitivity_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no adaptive reduction in treatment sensitivity",
+    "1_interpretation": "1 = maximal schematic adaptive reduction the model represents",
+    "source": "general adaptive/non-genetic resistance biology applied predictively (no direct adaptive-resistance dataset in the frozen package)",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "the reduction modifier is applied to treatment sensitivity through a bounded adapter; it never edits upstream signaling/apoptosis values directly.",
+    "limitations": "No fold-resistance / IC50 shift / pathway activation level (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":      { "adaptive_sensitivity_reduction": 0.0, "reversibility": "not_applicable", "meaning": "No adaptive resistance." },
+    "initiating":  { "adaptive_sensitivity_reduction": 0.1, "reversibility": "reversible", "meaning": "Adaptive response beginning under treatment pressure." },
+    "developing":  { "adaptive_sensitivity_reduction": 0.25, "reversibility": "reversible", "meaning": "Adaptive resistance developing (compensatory mechanism engaged)." },
+    "established": { "adaptive_sensitivity_reduction": 0.4, "reversibility": "reversible", "meaning": "Adaptive resistance established but treatment-dependent." },
+    "maintained":  { "adaptive_sensitivity_reduction": 0.5, "reversibility": "slowly_reversible", "meaning": "Adaptive resistance sustained under continued pressure." },
+    "declining":   { "adaptive_sensitivity_reduction": 0.2, "reversibility": "reversing", "meaning": "Adaptive resistance declining after pressure reduction." },
+    "resolved":    { "adaptive_sensitivity_reduction": 0.0, "reversibility": "resolved", "meaning": "Adaptive resistance resolved; sensitivity restored." }
+  },
+  "mechanism_categories": [
+    "compensatory_pathway_activation", "survival_signaling_increase", "stress_response_adaptation",
+    "apoptosis_threshold_adjustment", "altered_target_dependence", "altered_intracellular_availability",
+    "microenvironment_supported_adaptation"
+  ],
+  "rules": {
+    "requires_mechanism": "An adaptive state above 'absent' must reference a mechanism_category; unexplained adaptive resistance is rejected by validation.",
+    "reversible_by_default": "Adaptive resistance is treatment-induced and reversible unless a profile-supported persistence transition promotes it to acquired resistance.",
+    "no_direct_from_absent_to_established": "ABSENT may only enter INITIATING; single-frame jumps to ESTABLISHED/PERSISTENT are illegal (see resistance-transition registry)."
+  }
+}

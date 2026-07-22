@@ -1,0 +1,36 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistance-burden aggregation. Combines the bounded component burdens (intrinsic / tolerance / adaptive / persistent / microenvironment-protection / immune-escape) into a single BOUNDED total_resistance_burden using a documented saturating aggregation - NEVER a naive unbounded sum, and with explicit correlation discounting to avoid double counting overlapping mechanisms. Schematic normalized only.",
+  "coefficient_policy": {
+    "valid_range": "every component burden and total_resistance_burden in [0,1]",
+    "0_interpretation": "0 = no resistance burden",
+    "1_interpretation": "1 = maximal schematic resistance burden the model represents",
+    "source": "bounded aggregation of component burdens (predicted)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "aggregation weights + correlation discount tune how components combine; the saturating form guarantees boundedness.",
+    "limitations": "No absolute resistance metric; normalized only (NOT_REPORTED quantitatively)."
+  },
+  "components": ["intrinsic_resistance_burden", "tolerance_burden", "adaptive_resistance_burden", "persistent_resistance_burden", "microenvironment_protection_burden", "immune_escape_burden"],
+  "aggregation": {
+    "method": "weighted_saturating",
+    "note": "total = 1 - PRODUCT over components of (1 - w_i * b_i); a saturating combination bounded in [0,1] that avoids naive summation and softens correlated contributions.",
+    "weights": {
+      "intrinsic_resistance_burden": 0.9,
+      "tolerance_burden": 0.7,
+      "adaptive_resistance_burden": 0.85,
+      "persistent_resistance_burden": 1.0,
+      "microenvironment_protection_burden": 0.6,
+      "immune_escape_burden": 0.6
+    },
+    "correlation_discount": {
+      "tolerance_adaptive_overlap": 0.5,
+      "note": "Tolerance and adaptive burdens partially overlap (shared survival phenotype); the smaller of the two is discounted by this factor before aggregation to avoid double counting."
+    }
+  },
+  "dominant_mechanism_rule": "dominant_mechanism = the component with the largest weighted contribution; ties resolve deterministically by the fixed component order.",
+  "rules": {
+    "bounded": "total_resistance_burden is always in [0,1]; no unbounded sum.",
+    "no_double_count": "Correlated components (tolerance/adaptive) are discounted; microenvironment protection already folded into effective exposure is not re-added.",
+    "immune_absent": "immune_escape_burden is 0 while Phase 7C is UNAVAILABLE (not fabricated)."
+  }
+}

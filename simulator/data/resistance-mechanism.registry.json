@@ -1,0 +1,50 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistance-mechanism catalogue: controlled abstractions of the mechanism CATEGORIES a resistance state may reference, plus the apparent-resistance cause hierarchy that separates true cell-intrinsic resistance from delivery/uptake/target/apoptosis/microenvironment limitations. Mechanisms are qualitative abstractions - NO molecular detail (transporter names, expression levels, mutation identity) is invented; specific molecules appear only in evidence-backed profiles. Every active mechanism carries an evidence + prediction label.",
+  "mechanism_categories": {
+    "reduced_effective_intracellular_availability": { "category_index": 1, "abstraction": "availability", "meaning": "Lower effective intracellular drug availability (reduced exposure at the target compartment)." },
+    "increased_efflux_tendency":                    { "category_index": 2, "abstraction": "efflux", "meaning": "Relative increase in drug efflux tendency (qualitative)." },
+    "reduced_uptake_tendency":                      { "category_index": 3, "abstraction": "uptake", "meaning": "Relative reduction in cellular uptake tendency (qualitative)." },
+    "reduced_target_availability":                  { "category_index": 4, "abstraction": "target", "meaning": "Target reduction or reduced target availability / altered dependency." },
+    "compensatory_survival_signaling":              { "category_index": 5, "abstraction": "survival_signaling", "meaning": "Compensatory survival-signaling at the pathway-abstraction level." },
+    "alternative_pathway_dependence":               { "category_index": 6, "abstraction": "survival_signaling", "meaning": "Shift to an alternative pathway dependence." },
+    "stress_response_adaptation":                   { "category_index": 7, "abstraction": "stress_adaptation", "meaning": "Adaptation of the stress response reducing stress-to-apoptosis conversion." },
+    "apoptosis_evasion":                            { "category_index": 8, "abstraction": "apoptosis_evasion", "meaning": "Increased effective apoptosis threshold / reduced commitment." },
+    "cell_state_adaptation":                        { "category_index": 9, "abstraction": "cell_state", "meaning": "Abstract phenotypic cell-state adaptation." },
+    "slow_cycling_or_tolerant_phenotype":           { "category_index": 10, "abstraction": "cell_state", "meaning": "Slow-cycling / tolerant persister-like phenotype (abstraction)." },
+    "microenvironment_mediated_protection":         { "category_index": 11, "abstraction": "microenvironment", "meaning": "Protection conferred by ECM/hypoxia/perfusion/spatial limitation (distinct from intrinsic resistance)." },
+    "immune_associated_escape_pressure":            { "category_index": 12, "abstraction": "immune", "meaning": "Immune-associated escape pressure (requires Phase-7C outputs; UNAVAILABLE in this build)." },
+    "mixed_or_multifactorial_resistance":           { "category_index": 13, "abstraction": "mixed", "meaning": "Multiple contributing mechanisms without a single dominant one." },
+    "unknown_mechanism":                            { "category_index": 14, "abstraction": "unknown", "meaning": "Mechanism not identified / not reported." }
+  },
+  "apparent_resistance_hierarchy": {
+    "evaluation_order": [
+      "effective_drug_delivery_sufficient",
+      "intracellular_availability_sufficient",
+      "target_pathway_engaged",
+      "cellular_stress_induced",
+      "apoptosis_machinery_competent",
+      "survived_despite_validated_pressure",
+      "survivor_state_persisted_or_expanded"
+    ],
+    "classifications": [
+      "delivery_limited_response",
+      "uptake_limited_response",
+      "target_engagement_limited_response",
+      "apoptosis_limited_response",
+      "microenvironment_protected_response",
+      "adaptive_resistance_consistent",
+      "acquired_resistance_consistent",
+      "insufficient_evidence"
+    ],
+    "rule": "The first failing gate (delivery -> uptake -> target -> stress -> apoptosis) explains a weak response as a LIMITATION, not resistance. Only survival despite ALL validated biological pressure, that persists or expands, is consistent with adaptive/acquired resistance. Delivery failure is NEVER labelled acquired resistance."
+  },
+  "coefficient_policy": {
+    "valid_range": "mechanism categories are qualitative; per-mechanism modifiers live in their own registries and are bounded in [0,1]",
+    "source": "general tumour drug-resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "category assignment selects which per-mechanism abstraction registry contributes; it does not itself carry a numeric effect.",
+    "limitations": "No transporter/protein/mutation identity or level is stated unless a specific evidence-backed profile supplies it (none in this build)."
+  }
+}

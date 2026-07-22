@@ -404,6 +404,63 @@ export function vascularLevelActive(level) {
   return _VASCULAR_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE';
 }
 
+// ---------------------------------------------------------------------------
+// Phase 8A - adaptive & acquired drug-resistance evidence vocabulary (ADDITIVE;
+// earlier arrays unchanged). Phase 8A represents resistance as a TIME-DEPENDENT
+// biological process (reversible tolerance / adaptive resistance / acquired
+// persistence / selection / enrichment / re-sensitization) that produces an
+// ADVISORY treatment-sensitivity modifier - it never mutates an upstream engine.
+// The frozen package contains NO direct resistance / washout / rechallenge
+// dataset for this context (Chen 2012 measured tumour RESPONSE, not resistance),
+// so a resistance relationship is only ever a LABELLED prediction (general tumour
+// drug-resistance biology) or NOT_REPORTED - never experimental, never a
+// fabricated IC50 shift / fold-resistance / time-to-resistance / mutation /
+// resistant-cell count. No experimental tier exists here. Immune-associated
+// resistance is UNAVAILABLE (Phase 7C is not implemented in this build).
+export const RESISTANCE_EVIDENCE_LEVELS = Object.freeze([
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'UNSUPPORTED',
+  'INSUFFICIENT_EVIDENCE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _RESISTANCE_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+// Prediction-registry labels (the assumptions required to RUN Phase 8A - NOT Phase-8C forecasting).
+export const RESISTANCE_PREDICTION_LABELS = Object.freeze([
+  'MECHANISTIC_PREDICTION', 'CROSS_SPECIES_PREDICTION', 'CROSS_TUMOR_PREDICTION', 'FORMULATION_PREDICTION',
+  'RESISTANCE_MECHANISM_PREDICTION', 'PERSISTENCE_PREDICTION', 'REVERSIBILITY_PREDICTION',
+  'EVIDENCE_GAP', 'NOT_REPORTED', 'UNAVAILABLE', 'UNSUPPORTED',
+]);
+const _RESISTANCE_PREDICTION_LABELS = new Set(RESISTANCE_PREDICTION_LABELS);
+
+// Missing-information states the resistance engine distinguishes (never silently defaulted).
+export const RESISTANCE_MISSING_STATES = Object.freeze([
+  'NOT_REPORTED', 'UNAVAILABLE', 'UNSUPPORTED', 'UNKNOWN', 'INSUFFICIENT_EVIDENCE', 'MECHANISTIC_PREDICTION_REQUIRED',
+]);
+const _RESISTANCE_MISSING = new Set(RESISTANCE_MISSING_STATES);
+
+/** Valid resistance evidence level? */
+export function isResistanceEvidenceLevel(level) { return RESISTANCE_EVIDENCE_LEVELS.includes(level); }
+/** True if a resistance evidence level is a labelled prediction (never experimental). */
+export function isResistancePrediction(level) { return _RESISTANCE_PREDICTION.has(level); }
+/** True if a resistance level/label is a cross-context transfer (species / tumour / formulation / context). */
+export function isResistanceTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION' || level === 'CROSS_SPECIES_PREDICTION' || level === 'CROSS_TUMOR_PREDICTION' || level === 'FORMULATION_PREDICTION'; }
+/** Would this resistance level be eligible to run? (not UNAVAILABLE / NOT_REPORTED / UNSUPPORTED) */
+export function resistanceLevelActive(level) { return _RESISTANCE_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE'; }
+/** Valid resistance prediction-registry label? */
+export function isResistancePredictionLabel(label) { return _RESISTANCE_PREDICTION_LABELS.has(label); }
+/** A recognised resistance missing-information state? */
+export function isResistanceMissingState(state) { return _RESISTANCE_MISSING.has(state); }
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

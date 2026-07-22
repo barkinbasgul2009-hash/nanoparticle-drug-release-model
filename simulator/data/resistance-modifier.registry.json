@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistance-response modifier. The single ADVISORY output the resistance engine hands to subsequent response stages: a set of bounded modifiers (exposure/uptake/target effectiveness, stress/apoptosis sensitivity, population loss, recovery/regrowth pressure, durability, net treatment sensitivity). Every modifier is bounded and applied ADDITIVELY through explicit adapters; NONE mutates raw state owned by a previous engine. Schematic normalized only.",
+  "coefficient_policy": {
+    "valid_range": "every modifier in [0,1]",
+    "0_interpretation": "0 = maximal resistance effect (e.g. treatment sensitivity fully suppressed for that channel)",
+    "1_interpretation": "1 = no resistance effect (channel unmodified)",
+    "source": "derived from resistance burden + per-mechanism states (predicted)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "net_treatment_sensitivity_modifier is the headline advisory value consumed next frame; component modifiers feed their matching adapters.",
+    "limitations": "Advisory only; no measured efficacy change (NOT_REPORTED quantitatively)."
+  },
+  "modifier_fields": [
+    "exposure_effectiveness_modifier", "uptake_effectiveness_modifier", "target_effectiveness_modifier",
+    "stress_response_modifier", "apoptosis_sensitivity_modifier", "population_loss_modifier",
+    "recovery_pressure_modifier", "regrowth_pressure_modifier", "durability_modifier", "net_treatment_sensitivity_modifier"
+  ],
+  "net_combination": {
+    "method": "min_channel_bounded",
+    "note": "net_treatment_sensitivity_modifier = clamp(product of the effectiveness channels adjusted by burden, floor, 1); a single bounded advisory value. Applied next frame, never to the same response event that created it.",
+    "floor": 0.05
+  },
+  "rules": {
+    "additive_adapters_only": "Modifiers are consumed by resistance* adapters that return bounded modifiers; they never write into upstream engine state.",
+    "temporal_separation": "Modifiers are stored on frame N and consumed on frame N+1 (or the approved subsequent response stage); no same-stage causal loop.",
+    "bounded": "Every modifier is clamped to [0,1]."
+  }
+}

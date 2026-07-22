@@ -1,0 +1,24 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A microenvironment-mediated protection. Reduced response caused by ECM restriction / poor penetration / hypoxia / low perfusion / vascular heterogeneity / spatial limitation - consumed READ-ONLY from the Phase-7A passive-microenvironment and Phase-7B vascular engines. It must remain DISTINGUISHABLE from cell-intrinsic resistance: protection is a delivery/accessibility limitation, not acquired resistance, and is NOT double-counted with effective exposure. Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "each protection modifier in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no microenvironment protection",
+    "1_interpretation": "1 = maximal schematic microenvironment protection the model represents",
+    "source": "Phase-7A penetration modifier + Phase-7B delivery modifier (read-only), mapped predictively to protection",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "derived from upstream 7A/7B outputs; if those already reduced effective exposure, the double-counting guard prevents re-application.",
+    "limitations": "No absolute penetration depth, pO2, or perfusion rate (all NOT_REPORTED)."
+  },
+  "protection_levels": {
+    "none":     { "delivery_protection_modifier": 0.0, "stress_protection_modifier": 0.0, "apoptosis_protection_modifier": 0.0, "survivor_enrichment_modifier": 0.0 },
+    "low":      { "delivery_protection_modifier": 0.15, "stress_protection_modifier": 0.1, "apoptosis_protection_modifier": 0.1, "survivor_enrichment_modifier": 0.1 },
+    "moderate": { "delivery_protection_modifier": 0.35, "stress_protection_modifier": 0.2, "apoptosis_protection_modifier": 0.2, "survivor_enrichment_modifier": 0.25 },
+    "high":     { "delivery_protection_modifier": 0.55, "stress_protection_modifier": 0.35, "apoptosis_protection_modifier": 0.35, "survivor_enrichment_modifier": 0.4 }
+  },
+  "inputs": ["ecm_restriction", "penetration_limitation", "hypoxia", "low_perfusion", "vascular_heterogeneity", "spatially_limited_exposure"],
+  "rules": {
+    "not_intrinsic_resistance": "Microenvironment protection is recorded as a delivery/accessibility limitation, distinct from cell-intrinsic resistance.",
+    "no_double_count": "If 7A penetration / 7B delivery already reduced effective exposure, protection is not re-applied to the same exposure channel."
+  }
+}

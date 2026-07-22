@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A cell-state-associated resistance: a LIMITED phenotype abstraction only. States are abstract resistance-associated phenotypes - NOT a cell-cycle engine, NOT a cancer-stem-cell engine, NOT full epithelial-mesenchymal-transition biology. Stem-like / mesenchymal-like / slow-cycling labels are permitted only as abstractions and only when required by direct evidence. Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "phenotype_tolerance in [0,1] (additive, bounded contribution to tolerance/survivor enrichment)",
+    "0_interpretation": "0 = proliferative sensitive phenotype (no phenotype-derived tolerance)",
+    "1_interpretation": "1 = maximal schematic phenotype-derived tolerance the model represents",
+    "source": "general slow-cycling / persister phenotype biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "phenotype_tolerance biases survivor enrichment toward the tolerant subpopulation; it does not create a mechanism by itself.",
+    "limitations": "No cell-cycle phase, stemness marker, or EMT marker is modelled (all NOT_REPORTED)."
+  },
+  "states": {
+    "proliferative_sensitive": { "phenotype_tolerance": 0.0 },
+    "stress_adapted":          { "phenotype_tolerance": 0.2 },
+    "slow_cycling_tolerant":   { "phenotype_tolerance": 0.4 },
+    "survival_primed":         { "phenotype_tolerance": 0.35 },
+    "resistant_like":          { "phenotype_tolerance": 0.55 },
+    "mixed":                   { "phenotype_tolerance": 0.25 }
+  },
+  "excluded": ["cell_cycle_engine", "cancer_stem_cell_engine", "full_emt_biology", "single_cell_lineage_tracing"]
+}

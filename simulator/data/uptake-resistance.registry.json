@@ -1,0 +1,20 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A uptake-associated resistance: reduced cellular uptake as a RELATIVE ordinal state that lowers future effective intracellular availability through an ADDITIVE adapter. It never rewrites the Phase-4 uptake engine (upstream ownership preserved). Schematic; no measured uptake rate or transporter (NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "availability_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no uptake reduction",
+    "1_interpretation": "1 = maximal schematic uptake reduction the model represents",
+    "source": "general reduced-uptake resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "reduction feeds resistanceToUptakeAdapter only; the Phase-4 uptake engine is not mutated.",
+    "limitations": "No uptake rate / transporter identity (NOT_REPORTED)."
+  },
+  "states": {
+    "no_reduction":       { "availability_reduction": 0.0 },
+    "low_reduction":      { "availability_reduction": 0.15 },
+    "moderate_reduction": { "availability_reduction": 0.35 },
+    "high_reduction":     { "availability_reduction": 0.55 },
+    "not_reported":       { "availability_reduction": null, "evidence_level": "NOT_REPORTED" }
+  }
+}
