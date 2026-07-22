@@ -461,6 +461,52 @@ export function isResistancePredictionLabel(label) { return _RESISTANCE_PREDICTI
 /** A recognised resistance missing-information state? */
 export function isResistanceMissingState(state) { return _RESISTANCE_MISSING.has(state); }
 
+// ---------------------------------------------------------------------------
+// Phase 7C - immune-microenvironment evidence vocabulary (ADDITIVE; earlier
+// arrays unchanged). Phase 7C represents a bounded, mechanistic immune-
+// microenvironment abstraction (tumour visibility / innate + adaptive immunity /
+// antigen presentation / endogenous checkpoint pressure / immune suppression /
+// immune escape / net immune-mediated tumour-loss potential) that publishes an
+// immutable output frame consumed READ-ONLY by Phase 8A - it never mutates an
+// upstream engine. The frozen package contains NO direct immune dataset for this
+// tripterine-NLC context (Chen 2012 measured antimelanoma response, not immune
+// infiltration / checkpoint / cytotoxicity), so an immune relationship is only
+// ever a LABELLED prediction (general tumour-immunology biology) or NOT_REPORTED -
+// never experimental, never a fabricated cell count / expression level / cytokine
+// concentration. No experimental tier exists here.
+export const IMMUNE_EVIDENCE_LEVELS = Object.freeze([
+  'HIGH_CONFIDENCE_PREDICTION',
+  'LITERATURE_DERIVED_PREDICTION',
+  'MECHANISTIC_PREDICTION',
+  'CONTEXT_TRANSFER_PREDICTION',
+  'HYPOTHESIS',
+  'NOT_REPORTED',
+  'UNAVAILABLE',
+  'CONTRADICTORY_EVIDENCE',
+]);
+
+const _IMMUNE_PREDICTION = new Set([
+  'HIGH_CONFIDENCE_PREDICTION', 'LITERATURE_DERIVED_PREDICTION', 'MECHANISTIC_PREDICTION', 'CONTEXT_TRANSFER_PREDICTION', 'HYPOTHESIS',
+]);
+
+// Phase-7C prediction-registry labels (assumptions required to run the immune runtime).
+export const IMMUNE_PREDICTION_LABELS = Object.freeze([
+  'MECHANISTIC_PREDICTION', 'CROSS_SPECIES_PREDICTION', 'CROSS_TUMOR_PREDICTION', 'FORMULATION_PREDICTION',
+  'IMMUNE_CONTEXT_PREDICTION', 'EVIDENCE_GAP', 'NOT_REPORTED', 'UNAVAILABLE', 'UNSUPPORTED',
+]);
+const _IMMUNE_PREDICTION_LABELS = new Set(IMMUNE_PREDICTION_LABELS);
+
+/** Valid immune evidence level? */
+export function isImmuneEvidenceLevel(level) { return IMMUNE_EVIDENCE_LEVELS.includes(level); }
+/** True if an immune evidence level is a labelled prediction (never experimental). */
+export function isImmunePrediction(level) { return _IMMUNE_PREDICTION.has(level); }
+/** True if an immune evidence level is a cross-species/context transfer. */
+export function isImmuneTransfer(level) { return level === 'CONTEXT_TRANSFER_PREDICTION' || level === 'CROSS_SPECIES_PREDICTION' || level === 'CROSS_TUMOR_PREDICTION'; }
+/** Would this immune level be eligible to run? (not UNAVAILABLE / NOT_REPORTED) */
+export function immuneLevelActive(level) { return _IMMUNE_PREDICTION.has(level) || level === 'CONTRADICTORY_EVIDENCE'; }
+/** Valid immune prediction-registry label? */
+export function isImmunePredictionLabel(label) { return _IMMUNE_PREDICTION_LABELS.has(label); }
+
 /**
  * @typedef {object} EvidenceDescriptor
  * @property {string} confidence      // one of CONFIDENCE

@@ -1,0 +1,29 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C immune evidence records. CRITICAL: the frozen package contains NO direct tumour-immunology dataset for this tripterine-NLC context - no immune-cell infiltration, checkpoint expression, cytotoxicity, or cytokine measurement. The single verified primary study (Chen 2012) measured antimelanoma RESPONSE, not immune biology, and is NOT cited as immune evidence. Every immune relationship is therefore a LABELLED PREDICTION (general tumour-immunology biology) with citation NOT_REPORTED. Records preserve the distinction between measured finding, author interpretation, simulator interpretation, and model prediction.",
+  "verification_status_vocabulary": ["VERIFIED_PRIMARY_STUDY", "VERIFIED_IN_FROZEN_PACKAGE", "CONTEXT_TRANSFER", "PREDICTION_ONLY", "NOT_REPORTED"],
+  "evidence_records": {
+    "im_b16bl6_posture": {
+      "kind": "immune_posture_prediction", "species": "mouse", "tumour_model": "B16BL6",
+      "citation": "NOT_REPORTED (B16BL6 melanoma is generally regarded as poorly immunogenic / immunosuppressive; general tumour-immunology biology applied predictively)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["a moderately immunosuppressive baseline immune posture (qualitative prediction)"],
+      "does_not_support": ["immune-cell counts", "checkpoint expression levels", "cytotoxicity rates", "cytokine concentrations", "any clinical immunotherapy claim"],
+      "note": "Mechanistic prediction; schematic only. Section 1 exposes immune components as UNAVAILABLE."
+    },
+    "im_human_posture": {
+      "kind": "immune_posture_prediction", "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "citation": "NOT_REPORTED (predictive human immune posture with own distinct states; not validated)",
+      "verification_status": "PREDICTION_ONLY",
+      "supports": ["a heterogeneous human immune posture (qualitative, predictive)"],
+      "does_not_support": ["any validated human immune measurement", "clinical immune response"],
+      "note": "Predictive-exploratory; distinct from mouse (not copied)."
+    }
+  },
+  "integrity_rules": {
+    "no_experimental_immune_tier": "No record asserts an experimental immune finding; there is no experimental immune tier for this context.",
+    "chen2012_not_immune_evidence": "Chen 2012 measured antimelanoma response, not immune biology; it is NOT cited here as immune evidence.",
+    "no_fabricated_quantities": "No immune-cell count / checkpoint expression / cytokine level / cytotoxicity rate is stated (all NOT_REPORTED).",
+    "no_silent_species_transfer": "Species are isolated; a cross-species use requires an explicit CROSS_SPECIES_PREDICTION."
+  }
+}

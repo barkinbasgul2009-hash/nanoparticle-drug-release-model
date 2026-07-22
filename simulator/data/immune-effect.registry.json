@@ -1,0 +1,20 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C net immune-mediated tumour-loss potential. Derived from explicit component contributions (NK + CD8 cytotoxic potential, macrophage tumour-opposing contribution, immune visibility, antigen-presentation effectiveness, helper support) reduced by suppression / exhaustion / checkpoint pressure / immune escape. Phase 7C does NOT directly mutate tumour population; it PUBLISHES a proposed immune-mediated tumour-loss modifier that the population/response engine may consume. Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1].",
+  "positive_contributors": ["nk_cytotoxic_potential", "cd8_cytotoxic_contribution", "macrophage_tumor_opposing", "immune_visibility", "antigen_presentation_effectiveness", "cd4_helper_support"],
+  "negative_contributors": ["immune_suppression", "cd8_exhaustion", "checkpoint_pressure", "immune_escape"],
+  "outputs": {
+    "potential": "unrealized net immune-mediated tumour-loss potential [0,1]",
+    "effective_modifier": "realized proposed tumour-loss modifier after suppression/escape [0,1]",
+    "blocked_potential": "potential minus effective (what suppression/escape blocked) [0,1]",
+    "uncertainty": "string"
+  },
+  "coefficient_policy": {
+    "valid_range": "potential / effective_modifier / blocked_potential in [0,1]",
+    "source": "availability-aware aggregation of the component immune metrics (predicted)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "effective_modifier is a PROPOSED loss request, applied by a downstream engine once - never applied twice (as direct death AND an identical response modifier).",
+    "limitations": "No absolute tumour-cell kill count or rate (NOT_REPORTED)."
+  },
+  "double_counting_rules": { "loss_applied_once": "the proposed immune-mediated tumour-loss modifier is consumed by exactly one downstream engine; it is not both a direct population death and an identical response modifier." }
+}

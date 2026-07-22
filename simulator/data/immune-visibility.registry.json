@@ -1,0 +1,16 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C tumour immune-visibility structure. Defines the separable stages of immune recognition (antigen availability -> detectability -> presentation potential -> effective recognition) and their bounded contributors. Tumour-cell death is NOT equated with perfect visibility, and not all apoptosis is assumed strongly immunogenic. Section 1 establishes this contract; the calculation is implemented in a later section (outputs UNAVAILABLE for now). Schematic normalized [0,1]; no antigen count or immunogenicity constant (NOT_REPORTED).",
+  "stages": ["antigen_availability", "detectability", "presentation_potential", "effective_recognition"],
+  "allowed_contributors": ["treatment_induced_tumor_stress", "tumor_cell_damage", "apoptosis_associated_antigen_release", "baseline_antigenicity", "tumor_burden", "local_immune_access", "antigen_presentation_availability", "tumor_immune_evasion_pressure"],
+  "coefficient_policy": {
+    "valid_range": "each stage score in [0,1]",
+    "0_interpretation": "0 = not visible / not recognisable",
+    "1_interpretation": "1 = maximal schematic visibility the model represents",
+    "source": "general tumour-immunology biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "stages are separable; antigen presentation efficiency is NOT folded into visibility (it is computed separately) to avoid double counting.",
+    "limitations": "No antigen count / immunogenicity value (NOT_REPORTED)."
+  },
+  "double_counting_rules": { "no_presentation_in_visibility": "effective_recognition consumes antigen-presentation effectiveness once, from the antigen-presentation domain; visibility does not independently recompute it." }
+}

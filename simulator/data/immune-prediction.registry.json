@@ -1,0 +1,46 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C immune prediction records. Prediction is enabled ONLY as an evidence-aware mechanistic fallback (relative immune posture + direction), NEVER as clinical immunotherapy prediction. Each record documents the assumptions required to run the Phase-7C runtime - it never fabricates immune-cell counts, checkpoint expression, cytotoxicity, or cytokine levels. Allowed labels are enumerated in prediction_labels.",
+  "prediction_labels": ["MECHANISTIC_PREDICTION", "CROSS_SPECIES_PREDICTION", "CROSS_TUMOR_PREDICTION", "FORMULATION_PREDICTION", "IMMUNE_CONTEXT_PREDICTION", "EVIDENCE_GAP", "NOT_REPORTED", "UNAVAILABLE", "UNSUPPORTED"],
+  "prediction_records": {
+    "pred_im_b16bl6": {
+      "prediction_id": "pred_im_b16bl6",
+      "prediction_type": "MECHANISTIC_PREDICTION",
+      "source_context": "general tumour-immunology biology (poorly immunogenic melanoma)",
+      "target_context": "mouse_b16bl6_immune",
+      "species_transfer": "none (mouse -> mouse)", "tumor_transfer": "none (B16BL6 -> B16BL6)", "formulation_transfer": "none",
+      "mechanistic_basis": "B16BL6 melanoma is generally poorly immunogenic with an immunosuppressive microenvironment; applied predictively to establish a baseline immune posture. No direct immune dataset.",
+      "supporting_evidence_ids": ["im_b16bl6_posture"],
+      "assumptions": ["immune microenvironment abstraction only", "no checkpoint-inhibitor treatment", "component biology populated in later sections"],
+      "expected_direction": "moderate immunosuppression + limited immune-mediated tumour loss; endogenous checkpoint pressure present",
+      "predicted_state": "moderately_immunosuppressive_predicted",
+      "confidence": "LOW",
+      "uncertainty": "Relative posture + direction only; all quantities NOT_REPORTED.",
+      "falsifiability_statement": "A B16BL6 tripterine-NLC immune-profiling study showing strong endogenous anti-tumour immunity would contradict this prediction.",
+      "limitations": "Not a measured immune profile; schematic; Section 1 exposes components as UNAVAILABLE.",
+      "status": "MECHANISTIC_PREDICTION", "may_show_by_default": true
+    },
+    "pred_im_human": {
+      "prediction_id": "pred_im_human",
+      "prediction_type": "MECHANISTIC_PREDICTION",
+      "source_context": "general tumour-immunology biology (human skin melanoma, exploratory)",
+      "target_context": "human_skin_immune",
+      "species_transfer": "none (human context defined with own distinct values, not transferred from mouse)", "tumor_transfer": "none", "formulation_transfer": "none",
+      "mechanistic_basis": "Human skin melanoma is predicted to show a heterogeneous immune posture; exploratory only.",
+      "supporting_evidence_ids": ["im_human_posture"],
+      "assumptions": ["own distinct values (not copied from mouse)", "not validated for human clinical immune response"],
+      "expected_direction": "heterogeneous immune posture with higher uncertainty",
+      "predicted_state": "heterogeneous_predicted",
+      "confidence": "LOW",
+      "uncertainty": "Entirely predictive; all quantities NOT_REPORTED; not shown by default.",
+      "falsifiability_statement": "Any validated human dataset contradicting a heterogeneous immune posture for this context would falsify this exploratory prediction.",
+      "limitations": "Exploratory; mandated non-clinical warning; not shown by default.",
+      "status": "MECHANISTIC_PREDICTION", "may_show_by_default": false
+    }
+  },
+  "policy": {
+    "no_clinical_prediction": "These records describe assumptions required to run Phase 7C; they are NOT clinical immunotherapy / checkpoint-blockade / survival predictions.",
+    "never_fabricate": "No immune-cell count, checkpoint expression, cytotoxicity, cytokine level, or HLA type is produced.",
+    "prediction_distinguishable": "Every predicted immune relationship is programmatically distinguishable from an evidence-supported one (there are none here) via its prediction label."
+  }
+}

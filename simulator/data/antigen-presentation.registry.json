@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C antigen-presentation structure. Separates presentation CAPACITY (largely DC-driven) from maturation support, effective presentation, and suppression. Effective presentation is the single value consumed by tumour visibility's effective_recognition stage (computed once, to avoid double counting). Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1]; no MHC / peptide count (NOT_REPORTED).",
+  "stages": ["presentation_capacity", "maturation_support", "effective_presentation", "suppression"],
+  "coefficient_policy": {
+    "valid_range": "each stage score in [0,1]",
+    "source": "general antigen-presentation biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "effective_presentation is the sole presentation value exported to visibility + adaptive priming; it is not recomputed elsewhere.",
+    "limitations": "No MHC-I/II level, peptide count, or HLA typing (all NOT_REPORTED; HLA typing explicitly excluded)."
+  }
+}

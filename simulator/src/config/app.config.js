@@ -286,6 +286,32 @@ export const APP_CONFIG = Object.freeze({
   }),
   resistance: Object.freeze({ dtHours: 0.5 }),
 
+  // Phase 7C: immune-microenvironment registries (Part 1 - Section 1 foundational contracts). A
+  // bounded mechanistic immune runtime (tumour visibility / innate + adaptive immunity / antigen
+  // presentation / endogenous checkpoint pressure / immune suppression / immune escape / net immune-
+  // mediated tumour-loss potential) that reads validated tumour / TME (7A) / vascular (7B) outputs
+  // READ-ONLY and publishes a versioned, immutable ImmuneFrame consumed READ-ONLY by Phase 8A - it
+  // mutates NOTHING upstream and Phase 8A mutates nothing here. Prediction-only (NO experimental
+  // tier); mouse B16BL6 = MECHANISTIC_PREDICTION; human = predictive-exploratory; rat = NOT_REPORTED.
+  // Section 1 establishes contracts; the immune biology is populated in later sections (component
+  // outputs are structurally valid but UNAVAILABLE for now). Config key `immuneSources`.
+  immuneSources: Object.freeze({
+    context: 'immune-context.registry.json',
+    visibility: 'immune-visibility.registry.json',
+    innate: 'innate-immunity.registry.json',
+    antigenPresentation: 'antigen-presentation.registry.json',
+    adaptive: 'adaptive-immunity.registry.json',
+    checkpoint: 'immune-checkpoint.registry.json',
+    suppression: 'immune-suppression.registry.json',
+    escape: 'immune-escape.registry.json',
+    effect: 'immune-effect.registry.json',
+    transition: 'immune-transition.registry.json',
+    evidence: 'immune-evidence.registry.json',
+    prediction: 'immune-prediction.registry.json',
+    validation: 'immune-validation.registry.json',
+  }),
+  immune: Object.freeze({ dtHours: 0.5 }),
+
   // Default anatomy scene shown at boot (a clean cross-section of all layers).
   defaultScene: 'cross_section',
 

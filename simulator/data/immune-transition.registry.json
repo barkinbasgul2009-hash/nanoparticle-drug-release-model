@@ -1,0 +1,107 @@
+{
+  "$schema_version": "1.0",
+  "state_machine_version": "7C.1.0",
+  "purpose": "Phase-7C immune finite-state machines. Every legal transition is ENUMERATED here; any transition not listed is ILLEGAL and rejected by the generic guard (immuneStateMachines.js). Categorical machines list exact edges; ordinal-magnitude machines are single-step bidirectional over an ordered state list. Temporal states (priming / activation / exhaustion / recovery / checkpoint accumulation / Treg enrichment / persistent escape) depend on the PRIOR immutable frame, never on hidden module memory or wall-clock time. Section 1 establishes the machines; later sections drive the transitions.",
+  "state_machines": {
+    "cd8_functional_state": {
+      "type": "categorical",
+      "initial_state": "quiescent",
+      "states": ["quiescent", "primed", "activated", "effector", "exhausted", "recovering"],
+      "legal_transitions": {
+        "quiescent": ["primed"],
+        "primed": ["activated", "quiescent"],
+        "activated": ["effector", "exhausted"],
+        "effector": ["exhausted"],
+        "exhausted": ["recovering"],
+        "recovering": ["effector", "exhausted"]
+      },
+      "disallowed": ["quiescent->effector", "quiescent->exhausted"]
+    },
+    "nk_activation_state": {
+      "type": "categorical",
+      "initial_state": "resting",
+      "states": ["resting", "recruited", "activated", "suppressed"],
+      "legal_transitions": {
+        "resting": ["recruited"],
+        "recruited": ["activated", "resting"],
+        "activated": ["suppressed"],
+        "suppressed": ["activated"]
+      }
+    },
+    "dc_maturation_state": {
+      "type": "categorical",
+      "initial_state": "immature",
+      "states": ["immature", "antigen_loaded", "maturing", "mature", "suppressed"],
+      "legal_transitions": {
+        "immature": ["antigen_loaded"],
+        "antigen_loaded": ["maturing", "suppressed"],
+        "maturing": ["mature", "suppressed"],
+        "mature": ["suppressed"],
+        "suppressed": ["antigen_loaded"]
+      }
+    },
+    "macrophage_polarization_state": {
+      "type": "categorical",
+      "initial_state": "indeterminate",
+      "states": ["indeterminate", "tumor_opposing", "mixed", "tumor_supporting"],
+      "legal_transitions": {
+        "indeterminate": ["mixed", "tumor_opposing", "tumor_supporting"],
+        "tumor_opposing": ["mixed"],
+        "mixed": ["tumor_opposing", "tumor_supporting"],
+        "tumor_supporting": ["mixed"]
+      }
+    },
+    "treg_state": {
+      "type": "categorical",
+      "initial_state": "absent",
+      "states": ["absent", "present", "enriched", "activated"],
+      "legal_transitions": {
+        "absent": ["present"],
+        "present": ["enriched", "absent"],
+        "enriched": ["activated", "present"],
+        "activated": ["enriched"]
+      }
+    },
+    "checkpoint_pressure_state": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "none",
+      "states": ["none", "low", "moderate", "high", "very_high"],
+      "legal_transitions": {
+        "none": ["low"],
+        "low": ["none", "moderate"],
+        "moderate": ["low", "high"],
+        "high": ["moderate", "very_high"],
+        "very_high": ["high"]
+      }
+    },
+    "immune_visibility_state": {
+      "type": "ordinal_bidirectional",
+      "initial_state": "not_visible",
+      "states": ["not_visible", "low", "moderate", "high"],
+      "legal_transitions": {
+        "not_visible": ["low"],
+        "low": ["not_visible", "moderate"],
+        "moderate": ["low", "high"],
+        "high": ["moderate"]
+      }
+    },
+    "immune_escape_state": {
+      "type": "categorical",
+      "initial_state": "none",
+      "states": ["none", "emerging", "established", "persistent", "declining"],
+      "legal_transitions": {
+        "none": ["emerging"],
+        "emerging": ["established", "declining"],
+        "established": ["persistent", "declining"],
+        "persistent": ["declining"],
+        "declining": ["none", "emerging"]
+      },
+      "disallowed": ["none->persistent", "none->established"]
+    }
+  },
+  "rules": {
+    "enumerated_only": "A transition absent from legal_transitions is illegal and rejected.",
+    "prior_frame_only": "Temporal transitions read the prior immutable ImmuneFrame or an approved simulation-state container - never hidden module memory.",
+    "hysteresis_allowed": "Ordinal magnitude machines may use registry-defined hysteresis to avoid frame-to-frame oscillation; the triggering threshold is recorded in a transition record."
+  }
+}
