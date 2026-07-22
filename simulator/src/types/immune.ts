@@ -253,6 +253,36 @@ export interface NetImmuneIntegration {
   overallSuppressionBurden: ImmuneMetric; overallCheckpointBurden: ImmuneMetric; overallImmuneEscapePressure: ImmuneMetric;
   immuneControlState: string | null; immuneFailureState: string | null; availability: Availability; confidence: ConfidenceResult;
 }
+// ===========================================================================
+// Part 2 - Section 1: RENDERER / TIMELINE / REPLAY (read-only visualization; additive).
+// ===========================================================================
+export type RenderSeverity = 'INFO' | 'MINOR' | 'MODERATE' | 'MAJOR' | 'CRITICAL';
+export interface RenderableComponent {
+  id: string; title: string; value: number | null; state: string | null; band: string | null; persistenceState?: string;
+  availability: Availability; confidence: { score: number | null; category: ConfidenceCategory | null }; confidenceEncoding: number | null;
+  palette: string; paletteToken: string; paletteMeaning: string; unavailablePattern: string | null;
+  icon: string; label: string; text: string; stateDescription: string;
+  warnings: unknown[]; transitionIndicator: boolean; transitionCount: number; timestamp: number; sourceReferences: string[];
+}
+export interface ImmuneRenderFrame {
+  renderVersion: string; frameId: string; simulationTime: number; frameIndex: number; schemaVersion: string; engineVersion: string;
+  availability: Availability; status: string; components: RenderableComponent[];
+  warningCount: number; errorCount: number; transitionCount: number; contributionCount: number;
+  rendererMetadata: { readOnly: true; biologyAuthority: 'runtime'; deterministic: true };
+}
+export interface TransitionViewRow { transitionId: string; frameId: string; frameIndex: number; timestamp: number; component: string; previousState: string | null; newState: string | null; blocked: boolean; blockingReason: string | null; confidence: number | null; availability: Availability | null; evidenceRefs: string[]; predictionRefs: string[]; hasWarning: boolean; hasEvidence: boolean; hasPrediction: boolean; }
+export interface ContributionViewRow { contributionId: string; frameId: string; sourceModule: string; targetMetric: string | null; sourceMetric: string | null; availability: Availability; applied: boolean; applicationStatus: 'Applied' | 'Partially Applied' | 'Rejected' | 'Superseded' | 'Unavailable' | 'Not Applicable'; exclusionReason: string | null; doubleCounting?: boolean; }
+export interface WarningViewRow { warningId: string; code: string; severity: IssueSeverity; renderSeverity: RenderSeverity; module: string; frameId: string; frameIndex: number; timestamp: number; affectedField: string | null; message: string; recoverable: boolean; }
+export interface ModuleTraceEntry { order: number; module: string; availability: string; dependencies: { in: string[]; out: string[] }; }
+export interface SearchRow { type: string; id: string; module?: string; frameId: string; frameIndex: number; simulationTime: number; availability: Availability; text: string; }
+export interface ImmuneRenderRegistry {
+  render_version: string; component_titles: Record<string, string>;
+  palettes: Record<string, { id: string; token: string; pattern?: string; meaning: string }>;
+  category_palette: Record<string, string>; confidence_encoding: { bands: Record<ConfidenceCategory, number> };
+  value_bands: Record<string, number>; accessibility: { icons: Record<string, string>; require_text: boolean };
+  render_severity: { categories: RenderSeverity[]; issue_severity_map: Record<IssueSeverity, RenderSeverity> };
+}
+
 export interface ExtendedImmuneResistanceContext extends ImmuneResistanceContext {
   immunePressureCurrent?: ImmuneMetric; immunePressurePersistent?: ImmuneMetric;
   immuneSuppressionCurrent?: ImmuneMetric; immuneSuppressionPersistent?: ImmuneMetric;

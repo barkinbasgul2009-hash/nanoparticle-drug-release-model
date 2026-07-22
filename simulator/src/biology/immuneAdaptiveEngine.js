@@ -130,7 +130,7 @@ export class ImmuneAdaptiveEngine {
         resistanceReadiness,
       },
       ledger, evidenceRecords: [{ id: 'im_b16bl6_posture' }], predictionRecords: [{ prediction_id: 'pred_im_b16bl6' }],
-      issues, availability, status, metadata: { section: 'part1-section4', innateAvailable: context.innateAvailable, exclusions: guard.getExclusions().length },
+      issues, availability, status, metadata: { section: 'part1-section4', innateAvailable: context.innateAvailable, exclusionCount: guard.getExclusions().length, exclusions: guard.getExclusions() },
     });
   }
 
