@@ -121,3 +121,70 @@ export interface ImmuneStateMachineDefinition {
   legal_transitions: Record<string, string[]>; disallowed?: string[];
 }
 export interface ImmuneTransitionRegistry { state_machine_version: string; state_machines: Record<string, ImmuneStateMachineDefinition>; rules: Record<string, string>; }
+
+// ===========================================================================
+// Part 1 - Section 2: SHARED RUNTIME SYSTEMS (additive; reused by every later biological module).
+// ===========================================================================
+export type RuntimeLifecycleStatus =
+  | 'CREATED' | 'INITIALIZED' | 'READY' | 'RUNNING' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE' | 'PUBLISHED' | 'FROZEN' | 'ARCHIVED';
+export type ConfidenceCategory = 'VERY_LOW' | 'LOW' | 'MODERATE' | 'HIGH' | 'VERY_HIGH';
+export type EvidenceCategory =
+  | 'Experimental' | 'Clinical' | 'Mechanistic' | 'Computational' | 'LiteratureDerived'
+  | 'RepositoryAssumption' | 'ModelAssumption' | 'Calibration' | 'ExpertRule';
+export type PredictionCategory =
+  | 'ExpectedIncrease' | 'ExpectedDecrease' | 'ExpectedStability' | 'PotentialSuppression' | 'PotentialActivation'
+  | 'PotentialEscape' | 'PotentialExhaustion' | 'PotentialRecovery' | 'PotentialRecruitment' | 'PotentialInfiltration'
+  | 'PotentialFunctionalLoss' | 'PotentialFunctionalGain';
+export type PredictionStatus = 'AVAILABLE' | 'SUPERSEDED' | 'EXPIRED' | 'UNAVAILABLE';
+export type AggregationMethod =
+  | 'weighted_average' | 'weighted_sum' | 'bounded_additive' | 'bounded_multiplicative' | 'min_selector'
+  | 'max_selector' | 'dominant_contributor' | 'availability_aware_average' | 'confidence_weighted_average';
+export type ValidationLevel = 'PASSED' | 'WARNING' | 'RECOVERABLE' | 'FATAL';
+
+/** Base runtime object every immune biological object derives from. */
+export interface BaseImmuneRuntimeObject {
+  id: string; runtimeType: string; owner: string; schemaVersion: string; creationFrame: number;
+  status: RuntimeLifecycleStatus; availability: Availability; confidence: { score: number | null; category: ConfidenceCategory | null };
+  validationStatus: string; evidenceRefs: string[]; predictionRefs: string[]; contributionRefs: string[];
+  transitionRefs: string[]; warnings: unknown[]; metadata: Record<string, unknown>;
+}
+
+export interface ImmuneTransitionRecord {
+  transitionId: string; machine: string; previousState: string | null; newState: string | null;
+  trigger: string | null; reason: string | null; frameIndex: number; simulationTime: number | null;
+  confidence: number | null; availability: Availability; evidenceRefs: string[]; predictionRefs: string[];
+  warnings: unknown[]; blocked: boolean; blockingReason: string | null; metadata: Record<string, unknown>;
+}
+
+export interface AggregationContribution { id: string; value: number | null; weight?: number; availability: Availability; confidence?: number; signed?: number; evidenceId?: string; predictionId?: string; }
+export interface AggregationResult {
+  target: string; method: AggregationMethod; value: number | null; availability: Availability; confidence: number | null;
+  contributors: AggregationContribution[]; ignored: Array<{ id: string; reason: string }>;
+  conflicts: Array<{ positive: string[]; negative: string[] }>; warnings: Array<{ code: string; message: string }>;
+}
+export interface ConfidenceResult { score: number; category: ConfidenceCategory; }
+
+export interface SharedEvidenceRecord {
+  evidenceId: string; title: string; description: string; interpretation: string; category: EvidenceCategory;
+  sourceReference: string; strength: string; version: string; applicability: string; confidenceModifier: number; metadata: Record<string, unknown>;
+}
+export interface SharedPredictionRecord {
+  predictionId: string; description: string; targetMetric: string | null; category: PredictionCategory; confidence: number | null;
+  supportingEvidenceIds: string[]; affectedObjects: string[]; dependencies: string[]; availability: Availability;
+  version: string; status: PredictionStatus; createdFrame: number; metadata: Record<string, unknown>;
+}
+export interface ExclusionRecord {
+  exclusionId: string; reason: string; excludedContributor: string | null; replacementContributor: string | null;
+  registryRule: string | null; frameIndex: number; metadata: Record<string, unknown>;
+}
+export interface ValidationReportItem { level: ValidationLevel; message: string; field: string | null; }
+export interface ValidationReport { subject: string; issues: ValidationReportItem[]; }
+
+export interface ImmuneAggregationRegistry {
+  aggregation_framework_version: string; methods: Record<string, { description: string; bounded: boolean }>;
+  targets: Record<string, { method: AggregationMethod; min: number; max: number }>; conflict_resolution: Record<string, unknown>; rules: Record<string, string>;
+}
+export interface ImmuneConfidenceRegistry {
+  confidence_framework_version: string; categories: Record<ConfidenceCategory, { min: number; max: number }>;
+  propagation: { base_confidence: number; penalties: Record<string, number>; floor: number; ceiling: number }; policy: Record<string, string>;
+}

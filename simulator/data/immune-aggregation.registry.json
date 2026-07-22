@@ -1,0 +1,37 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C shared aggregation framework registry (Part 1 - Section 2). Declares the aggregation METHODS available to every immune module and the DEFAULT method + bounds per aggregation target. No biological module implements its own aggregation - each declares a target here and calls the shared ImmuneAggregator. Availability, confidence, evidence, prediction, and contribution traceability are always preserved; unavailable inputs are never treated as zero. Deterministic (ordered contributor iteration).",
+  "aggregation_framework_version": "7C.1.0",
+  "methods": {
+    "weighted_average":            { "description": "sum(w_i*v_i)/sum(w_i) over available inputs", "bounded": true },
+    "weighted_sum":                { "description": "sum(w_i*v_i), then clamped to bounds", "bounded": true },
+    "bounded_additive":            { "description": "clamp(sum(w_i*v_i), min, max)", "bounded": true },
+    "bounded_multiplicative":      { "description": "product of (1 - w_i*v_i) style saturating combination, bounded", "bounded": true },
+    "min_selector":                { "description": "minimum available input value", "bounded": true },
+    "max_selector":                { "description": "maximum available input value", "bounded": true },
+    "dominant_contributor":        { "description": "value of the largest weighted contribution", "bounded": true },
+    "availability_aware_average":  { "description": "weighted average over AVAILABLE/PARTIALLY_AVAILABLE inputs only (Section-1 utility)", "bounded": true },
+    "confidence_weighted_average": { "description": "weighted average with per-input confidence folded into the weight", "bounded": true }
+  },
+  "targets": {
+    "tumor_visibility":     { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_immunity":      { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "antigen_presentation": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_immunity":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "checkpoint_pressure":  { "method": "bounded_additive", "min": 0, "max": 1 },
+    "immune_suppression":   { "method": "bounded_multiplicative", "min": 0, "max": 1 },
+    "immune_escape":        { "method": "bounded_multiplicative", "min": 0, "max": 1 },
+    "net_immune_effect":    { "method": "confidence_weighted_average", "min": 0, "max": 1 }
+  },
+  "conflict_resolution": {
+    "policy": "explicit_no_silent_overwrite",
+    "note": "When modules produce competing effects (e.g. high CD8 activity + high checkpoint pressure), the aggregator records BOTH as contributions and resolves them through the declared method; a later module never silently overwrites an earlier result. Conflicts are recorded as warnings on the aggregation result.",
+    "conflict_flag_threshold": 0.5,
+    "conflict_flag_threshold_note": "If opposing signed contributions each exceed this magnitude, a conflict warning is attached (schematic)."
+  },
+  "rules": {
+    "registry_driven": "Every aggregation method + target is declared here, never hardcoded in a biological module.",
+    "availability_preserved": "Aggregate availability is AVAILABLE only if all inputs are available, PARTIALLY_AVAILABLE if some, UNAVAILABLE if none.",
+    "traceability_preserved": "Every aggregate records which inputs contributed, their weights, and which were ignored (and why)."
+  }
+}

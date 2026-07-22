@@ -309,6 +309,9 @@ export const APP_CONFIG = Object.freeze({
     evidence: 'immune-evidence.registry.json',
     prediction: 'immune-prediction.registry.json',
     validation: 'immune-validation.registry.json',
+    // Part 1 - Section 2 shared runtime frameworks (aggregation + confidence).
+    aggregation: 'immune-aggregation.registry.json',
+    confidence: 'immune-confidence.registry.json',
   }),
   immune: Object.freeze({ dtHours: 0.5 }),
 

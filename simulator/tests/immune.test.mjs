@@ -40,7 +40,7 @@ export default async function run() {
   ok(isImmunePredictionLabel('IMMUNE_CONTEXT_PREDICTION') && !isImmunePredictionLabel('NONSENSE'), 'immune prediction-label validity');
 
   // ---- registry bundle integrity ----
-  eq(Object.keys(APP_CONFIG.immuneSources).length, 13, 'immune registry bundle has 13 registries');
+  ok(Object.keys(APP_CONFIG.immuneSources).length >= 13, 'immune registry bundle has the Section-1 registries (>= 13; Section 2 adds more)');
   ok(R.context && R.context.profiles && R.transition && R.transition.state_machines, 'core immune registries present');
 
   // ---- utilities: availability-aware aggregation + clamp warnings + unavailable metric ----
