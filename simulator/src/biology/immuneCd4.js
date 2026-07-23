@@ -49,7 +49,8 @@ export class ImmuneCd4Runtime {
     // flat map for CD8 consumption
     const cd8Support = { cd8_priming_support: support.cd8_priming_support.value, cd8_activation_support: support.cd8_activation_support.value, cd8_persistence_support: support.cd8_persistence_support.value, recovery_support: support.recovery_support.value };
 
-    const capability = resultMetric(evalStage(this.agg, 'cd4_capability', [{ id: 'cap_priming', value: priming.value, weight: 0.4, availability: priming.availability }, { id: 'cap_activation', value: activation.value, weight: 0.6, availability: activation.availability }]));
+    const CW = this.reg.capability_weights;
+    const capability = resultMetric(evalStage(this.agg, 'cd4_capability', [{ id: 'cap_priming', value: priming.value, weight: CW.priming, availability: priming.availability }, { id: 'cap_activation', value: activation.value, weight: CW.activation, availability: activation.availability }]));
     const blocked = blockedPotential(capability, competence);
     const availability = overallAvailability([priming, recruitment, infiltration, activation, competence]);
     const unavailableCount = [I.antigen_presentation_potential, I.adaptive_priming_potential, I.immune_accessibility].filter((m) => asMetric(m).availability === AVAILABILITY.UNAVAILABLE).length;

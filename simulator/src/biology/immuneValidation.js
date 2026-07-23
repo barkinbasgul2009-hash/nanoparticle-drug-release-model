@@ -79,6 +79,32 @@ export const ImmuneValidators = {
     for (const e of records || []) { if (!e.evidenceId) r.add(VALIDATION_LEVEL.RECOVERABLE, 'evidence missing id'); if (e.confidenceModifier != null && !isFiniteNumber(e.confidenceModifier)) r.add(VALIDATION_LEVEL.WARNING, 'evidence confidenceModifier non-finite'); }
     return r;
   },
+  /**
+   * Validate the registry-driven scientific parameters migrated in Remediation Part 3 (CD8 CD4-support +
+   * capability weights, CD8 exhaustion driver-persistence threshold + recovery-duration fallback, CD4
+   * capability weights, integration escape-dampening). Every field must be present, finite, and in [0,1];
+   * capability-weight groups must sum to 1. FATAL on a missing/out-of-range/bad-sum value so the engine
+   * fails EARLY with a clear message rather than silently substituting a default.
+   */
+  scientificParameters(registries) {
+    const r = new ValidationReport('scientificParameters');
+    const cd8 = registries && registries.cd8; const cd4 = registries && registries.cd4; const integ = registries && registries.adaptiveIntegration;
+    const weight = (v, field) => { if (!isFiniteNumber(v)) r.add(VALIDATION_LEVEL.FATAL, `missing/non-finite ${field}`, field); else if (v < 0 || v > 1) r.add(VALIDATION_LEVEL.FATAL, `${field}=${v} out of [0,1]`, field); };
+    const group = (obj, keys, field) => { if (!obj) { r.add(VALIDATION_LEVEL.FATAL, `missing ${field}`, field); return; } let s = 0; for (const k of keys) { weight(obj[k], `${field}.${k}`); s += isFiniteNumber(obj[k]) ? obj[k] : NaN; } if (isFiniteNumber(s) && Math.abs(s - 1) > 1e-9) r.add(VALIDATION_LEVEL.FATAL, `${field} weights must sum to 1 (got ${s})`, field); };
+    if (!cd8) r.add(VALIDATION_LEVEL.FATAL, 'missing cd8 registry');
+    else {
+      weight(cd8.cd4_support_weights && cd8.cd4_support_weights.cd8_priming_support, 'cd8.cd4_support_weights.cd8_priming_support');
+      weight(cd8.cd4_support_weights && cd8.cd4_support_weights.cd8_activation_support, 'cd8.cd4_support_weights.cd8_activation_support');
+      weight(cd8.exhaustion && cd8.exhaustion.driver_persistence_threshold, 'cd8.exhaustion.driver_persistence_threshold');
+      weight(cd8.recovery && cd8.recovery.recovery_duration_fallback, 'cd8.recovery.recovery_duration_fallback');
+      group(cd8.capability_weights, ['priming', 'activation', 'competence'], 'cd8.capability_weights');
+    }
+    if (!cd4) r.add(VALIDATION_LEVEL.FATAL, 'missing cd4 registry');
+    else group(cd4.capability_weights, ['priming', 'activation'], 'cd4.capability_weights');
+    if (!integ) r.add(VALIDATION_LEVEL.FATAL, 'missing adaptiveIntegration registry');
+    else weight(integ.control_escape_dampening, 'adaptiveIntegration.control_escape_dampening');
+    return r;
+  },
 };
 
 export default ImmuneValidators;

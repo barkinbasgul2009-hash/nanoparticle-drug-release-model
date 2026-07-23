@@ -26,6 +26,7 @@ import { ImmuneSuppressionRuntime } from './immuneSuppressionRuntime.js';
 import { ImmuneEscapeRuntime } from './immuneEscapeRuntime.js';
 import { ImmuneAdaptiveIntegration } from './immuneAdaptiveIntegration.js';
 import { IMMUNE_RESISTANCE_CONTRACT_VERSION } from './immuneObjects.js';
+import { ImmuneValidators, VALIDATION_LEVEL } from './immuneValidation.js';
 
 const REQUIRED = ['cd8', 'cd4', 'treg', 'adaptiveCheckpoint', 'adaptiveSuppression', 'adaptiveEscape', 'adaptiveIntegration', 'adaptiveContext', 'aggregation', 'confidence', 'innateRuntime', 'transition'];
 
@@ -36,6 +37,9 @@ export class ImmuneAdaptiveEngine {
     const missing = REQUIRED.filter((k) => !deps.registries[k]);
     if (missing.length) throw new Error(`ImmuneAdaptiveEngine missing registries: ${missing.join(', ')}`);
     this.reg = deps.registries;
+    // fail early on malformed registry-driven scientific parameters (Remediation Part 3)
+    const sci = ImmuneValidators.scientificParameters(this.reg);
+    if (sci.level === VALIDATION_LEVEL.FATAL || sci.level === VALIDATION_LEVEL.RECOVERABLE) throw new Error(`ImmuneAdaptiveEngine invalid scientific parameters: ${sci.issues.map((i) => i.message).join('; ')}`);
     this.micro = deps.microenvironmentEngine || null;
     this.vascular = deps.vascularEngine || null;
     this.agg = new ImmuneAggregator(this.reg.aggregation);

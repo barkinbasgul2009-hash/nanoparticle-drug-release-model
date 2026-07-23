@@ -88,7 +88,7 @@ export class ImmuneAdaptiveIntegration {
     const netTumorLoss = combineSigned(this.agg, 'net_tumor_loss', netLossInputs, NW.net_tumor_loss);
 
     // control + failure states (not exact inverses)
-    const controlValue = isFiniteNumber(netTumorLoss.value) ? clamp01(netTumorLoss.value * (1 - clamp01(esc.overallEscapePressure ? esc.overallEscapePressure.value ?? 0 : 0) * 0.5)) : null;
+    const controlValue = isFiniteNumber(netTumorLoss.value) ? clamp01(netTumorLoss.value * (1 - clamp01(esc.overallEscapePressure ? esc.overallEscapePressure.value ?? 0 : 0) * this.reg.control_escape_dampening)) : null;
     const controlState = categorize(isFiniteNumber(controlValue) ? controlValue : 0, this.reg.control_state_thresholds);
     const failureValue = combineSigned(this.agg, 'immune_failure_v', {
       immune_escape: M(esc.overallEscapePressure ? esc.overallEscapePressure.value : null, esc.availability), suppression_burden: M(sup.pressure, sup.availability),

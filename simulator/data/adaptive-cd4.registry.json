@@ -9,6 +9,10 @@
     "helper_competence": { "activation": 0.5, "infiltration": 0.25, "prior_competence": 0.25 }
   },
   "negative_penalties": { "checkpoint_on_activation": 0.3, "suppression_on_activation": 0.3, "note": "applied once per stage via unique contribution ids." },
+  "capability_weights": {
+    "priming": 0.4, "activation": 0.6,
+    "note": "Weighted mix used to estimate pre-penalty CD4 helper capability for blocked-potential accounting. Weights sum to 1."
+  },
   "support_weights": {
     "cd8_priming_support": 0.5,
     "cd8_activation_support": 0.6,

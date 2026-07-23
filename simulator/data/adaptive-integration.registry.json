@@ -22,6 +22,8 @@
   "control_state_thresholds": { "NO_CONTROL": 0.0, "WEAK_CONTROL": 0.15, "PARTIAL_CONTROL": 0.35, "FUNCTIONAL_CONTROL": 0.6, "STRONG_CONTROL": 0.8 },
   "failure_state_thresholds": { "NONE": 0.0, "EMERGING": 0.2, "PARTIAL": 0.4, "SUBSTANTIAL": 0.6, "DOMINANT": 0.8 },
   "failure_weights": { "immune_escape": 0.4, "suppression_burden": 0.25, "checkpoint_burden": 0.2, "blocked_immune_potential": 0.15 },
+  "control_escape_dampening": 0.5,
+  "control_escape_dampening_note": "SCIENTIFIC_COEFFICIENT: fraction by which overall immune-escape pressure dampens realized immune control (controlValue = netTumorLoss * (1 - escapePressure * this)). In [0,1]; higher escape never improves control.",
   "control_note": "immune control considers realized immune pressure AND escape burden; control + failure are NOT exact inverses (a mixed state may exist). Neither infers tumour elimination.",
   "coefficient_policy": {
     "valid_range": "every output in [0,1]; signed weights denote applied penalties within a bounded aggregation",

@@ -10,6 +10,15 @@
     "target_engagement":   { "tumor_visibility": 0.3, "antigen_availability": 0.25, "immune_accessibility": 0.2, "infiltration": 0.15, "effector_competence": 0.1 },
     "cytotoxic_potential": { "effector_competence": 0.4, "target_engagement": 0.35, "activation": 0.15, "infiltration": 0.1 }
   },
+  "cd4_support_weights": {
+    "cd8_priming_support": 0.15,
+    "cd8_activation_support": 0.15,
+    "note": "Additive, bounded CD4 helper boost applied to CD8 priming and CD8 activation respectively. These are SEPARATE biological relationships (helper support to two distinct CD8 stages) that happen to share a default weight; they are intentionally NOT merged."
+  },
+  "capability_weights": {
+    "priming": 0.3, "activation": 0.35, "competence": 0.35,
+    "note": "Weighted mix used to estimate pre-penalty CD8 capability for blocked-potential accounting (capability minus effective cytotoxic). Weights sum to 1."
+  },
   "negative_penalties": {
     "checkpoint_on_activation": 0.35,
     "suppression_on_activation": 0.3,
@@ -27,11 +36,13 @@
   "exhaustion": {
     "contributors": { "dysfunction_pressure": 0.35, "persistent_checkpoint": 0.25, "persistent_suppression": 0.2, "ineffective_engagement_history": 0.1, "prior_exhaustion": 0.1 },
     "min_duration_frames": 2, "min_duration_note": "exhaustion must not switch on from a single noisy frame; the exhaustion driver must persist this many frames.",
-    "hysteresis_margin": 0.08, "recovery_eligibility_threshold": 0.4
+    "hysteresis_margin": 0.08, "recovery_eligibility_threshold": 0.4,
+    "driver_persistence_threshold": 0.4, "driver_persistence_note": "SCIENTIFIC_THRESHOLD: the prior-frame exhaustion driver must exceed this (strict >) for exhaustion to be treated as persisted and allowed to rise (distinct from recovery_eligibility_threshold)."
   },
   "recovery": {
     "contributors": { "suppression_reduction": 0.3, "checkpoint_reduction": 0.3, "residual_competence": 0.2, "recovery_duration": 0.1, "favorable_context": 0.1 },
-    "severity_penalty": { "SEVERE": 0.5, "PERSISTENT": 0.7 }, "recurrence_penalty": 0.1, "recovery_delay_frames": 2
+    "severity_penalty": { "SEVERE": 0.5, "PERSISTENT": 0.7 }, "recurrence_penalty": 0.1, "recovery_delay_frames": 2,
+    "recovery_duration_fallback": 0.5, "recovery_duration_fallback_note": "STRUCTURAL_FALLBACK: placeholder value for the unmodelled recovery-duration input (availability PARTIALLY_AVAILABLE); NOT a calibrated biological coefficient. Replace when a real recovery-duration signal exists."
   },
   "state_thresholds": {
     "priming":      { "UNPRIMED": 0.0, "PRIMING_LIMITED": 0.2, "PARTIALLY_PRIMED": 0.4, "PRIMED": 0.6, "STRONGLY_PRIMED": 0.8 },

@@ -50,7 +50,7 @@ export class ImmuneCd8Runtime {
       tumor_visibility: I.tumor_immune_visibility, prior_priming: priorMetric(prior, 'priming'),
     }, W.priming, 'cd8_priming_')));
     // CD4 priming support (additive boost, bounded)
-    if (isFiniteNumber(priming.value)) priming.value = clamp01(priming.value + 0.15 * support(cd4.cd8_priming_support));
+    if (isFiniteNumber(priming.value)) priming.value = clamp01(priming.value + this.reg.cd4_support_weights.cd8_priming_support * support(cd4.cd8_priming_support));
     // 2) recruitment (independent of priming success)
     const recruitment = resultMetric(evalStage(this.agg, 'cd8_recruitment', weightsToContribs({
       priming, immune_accessibility: I.immune_accessibility, vascular_access: I.vascular_access,
@@ -67,7 +67,7 @@ export class ImmuneCd8Runtime {
       prior_activation: priorMetric(prior, 'activation'),
     }, W.activation, 'cd8_act_')));
     if (isFiniteNumber(activation.value)) {
-      activation.value = clamp01(activation.value + 0.15 * support(cd4.cd8_activation_support));
+      activation.value = clamp01(activation.value + this.reg.cd4_support_weights.cd8_activation_support * support(cd4.cd8_activation_support));
       activation.value = applyReductions(activation.value, [pen('activation', 'pd_axis', 'checkpoint', NP.checkpoint_on_activation * support(cp.pd_axis_engagement)), pen('activation', 'suppression', 'suppression', NP.suppression_on_activation * support(sup.pressure))]);
     }
     // 5) effector competence (not identical to activation)
@@ -116,7 +116,7 @@ export class ImmuneCd8Runtime {
     let exhaustionValue = exhAgg.value;
     if (isFiniteNumber(exhaustionValue)) {
       const priorExh = exhaustionPrior.value || 0;
-      const driverPersisted = (prior && isFiniteNumber(prior._exhaustionDriver) && prior._exhaustionDriver > 0.4) || priorExh > 0;
+      const driverPersisted = (prior && isFiniteNumber(prior._exhaustionDriver) && prior._exhaustionDriver > EX.driver_persistence_threshold) || priorExh > 0;
       if (!driverPersisted) exhaustionValue = Math.min(exhaustionValue, priorExh + EX.hysteresis_margin);   // damp single-frame spike
     }
     const exhaustion = metric(exhaustionValue, exhAgg.availability);
@@ -127,17 +127,18 @@ export class ImmuneCd8Runtime {
     const recovery = resultMetric(evalStage(this.agg, 'cd8_recovery', weightsToContribs({
       suppression_reduction: metric(1 - support(sup.pressure), sup.pressure != null ? AVAILABILITY.AVAILABLE : AVAILABILITY.UNAVAILABLE),
       checkpoint_reduction: metric(1 - support(cp.pd_axis_engagement), cp.pd_axis_engagement != null ? AVAILABILITY.AVAILABLE : AVAILABILITY.UNAVAILABLE),
-      residual_competence: competence, recovery_duration: metric(0.5, AVAILABILITY.PARTIALLY_AVAILABLE), favorable_context: I.immune_accessibility,
+      residual_competence: competence, recovery_duration: metric(RC.recovery_duration_fallback, AVAILABILITY.PARTIALLY_AVAILABLE), favorable_context: I.immune_accessibility,
     }, RC.contributors, 'cd8_rec_')));
     if (isFiniteNumber(recovery.value)) recovery.value = applyReductions(recovery.value, [RC.severity_penalty[exhaustionState] || 0]);
 
     // effective CD8 contribution = cytotoxic potential (bounded, penalties already applied once)
     const effective = metric(cytotoxic.value, cytotoxic.availability);
     // capability = upstream priming+activation potential (pre-penalty proxy) for blocked accounting
+    const CW = this.reg.capability_weights;
     const capability = resultMetric(evalStage(this.agg, 'cd8_capability', [
-      { id: 'cap_priming', value: priming.value, weight: 0.3, availability: priming.availability },
-      { id: 'cap_activation', value: activation.value, weight: 0.35, availability: activation.availability },
-      { id: 'cap_competence', value: competence.value, weight: 0.35, availability: competence.availability },
+      { id: 'cap_priming', value: priming.value, weight: CW.priming, availability: priming.availability },
+      { id: 'cap_activation', value: activation.value, weight: CW.activation, availability: activation.availability },
+      { id: 'cap_competence', value: competence.value, weight: CW.competence, availability: competence.availability },
     ]));
     const blocked = blockedPotential(capability, effective);
 

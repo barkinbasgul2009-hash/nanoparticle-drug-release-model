@@ -38,10 +38,11 @@ import immunePredictionDeterminism from './immunePredictionDeterminism.test.mjs'
 import immuneRegression from './immuneRegression.test.mjs';
 import immuneCertification from './immuneCertification.test.mjs';
 import immuneIdentity from './immuneIdentity.test.mjs';
+import immuneRegistryBiology from './immuneRegistryBiology.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity, immuneRegistryBiology,
 ];
 
 for (const suite of suites) {
