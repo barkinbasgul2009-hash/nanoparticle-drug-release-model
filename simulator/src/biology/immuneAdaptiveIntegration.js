@@ -57,7 +57,7 @@ export class ImmuneAdaptiveIntegration {
       contrib('regulatory', asMetric(treg && treg.suppressiveCompetence).value ?? null, asMetric(treg && treg.suppressiveCompetence).availability, { weight: 1 }),
       contrib('exhaustion', asMetric(cd8.exhaustion).value ?? null, asMetric(cd8.exhaustion).availability, { weight: 1 }),
     ];
-    const blocked = resultMetric(evalStage(this.agg, 'immune_suppression', blockedInputs));   // bounded_multiplicative -> [0,1]
+    const blocked = resultMetric(evalStage(this.agg, 'immune_blocked_potential', blockedInputs));   // bounded_multiplicative -> [0,1] (canonical id; split from immune_suppression for semantic uniqueness)
     const availability = [readiness, activation, effectorCompetence].every((x) => x.availability === AVAILABILITY.UNAVAILABLE) ? AVAILABILITY.UNAVAILABLE
       : [readiness, activation, effectorCompetence].every((x) => x.availability === AVAILABILITY.AVAILABLE) ? AVAILABILITY.AVAILABLE : AVAILABILITY.PARTIALLY_AVAILABLE;
 

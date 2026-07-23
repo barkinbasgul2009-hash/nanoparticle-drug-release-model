@@ -31,8 +31,12 @@ export class ImmuneAggregator {
     this.reg = aggregationRegistry;
   }
 
-  methodFor(target) { const t = (this.reg.targets || {})[target]; return t ? t.method : 'availability_aware_average'; }
-  boundsFor(target) { const t = (this.reg.targets || {})[target] || {}; return { min: isFiniteNumber(t.min) ? t.min : 0, max: isFiniteNumber(t.max) ? t.max : 1 }; }
+  /** Resolve a declared target or THROW - no silent fallback for undeclared production targets. */
+  _target(target) { const t = (this.reg.targets || {})[target]; if (!t) throw new Error(`ImmuneAggregator: undeclared aggregation target '${target}' (no silent fallback; declare it in immune-aggregation.registry.json)`); return t; }
+  methodFor(target) { return this._target(target).method; }
+  boundsFor(target) { const t = this._target(target); return { min: isFiniteNumber(t.min) ? t.min : 0, max: isFiniteNumber(t.max) ? t.max : 1 }; }
+  /** Whether a target is explicitly declared (for consistency checks/tests). */
+  hasTarget(target) { return !!(this.reg.targets || {})[target]; }
 
   /**
    * @param {string} target aggregation target name (declared in the registry)

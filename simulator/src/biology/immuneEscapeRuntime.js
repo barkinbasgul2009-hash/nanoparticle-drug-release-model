@@ -35,7 +35,7 @@ export class ImmuneEscapeRuntime {
     // overall escape via shared aggregation (each dimension counted once)
     const overallContribs = Object.entries(R.overall_weights).map(([dim, w]) => contrib(dim, dims[dim] ? dims[dim].value : null, dims[dim] ? dims[dim].availability : AVAILABILITY.UNAVAILABLE, { weight: w }));
     if (guard) for (const c of overallContribs) guard.apply({ targetMetric: 'immune_escape_overall', sourceMetric: c.id, sourceModule: 'escape', value: c.value });
-    const overall = resultMetric(evalStage(this.agg, 'net_immune_effect', overallContribs));   // confidence-weighted-ish; bounded
+    const overall = resultMetric(evalStage(this.agg, 'immune_escape_overall', overallContribs));   // confidence_weighted_average; bounded (canonical id; renamed from the mislabelled net_immune_effect)
     const magnitudeState = categorize(isFiniteNumber(overall.value) ? overall.value : 0, R.magnitude_states);
 
     // temporal persistence (SEPARATE from magnitude)
