@@ -5,18 +5,22 @@
 // SIMULATION FRAME (never wall-clock time). Supports transition guards, minimum residence time, and
 // blocked transitions with an explicit blocking reason. No implicit transitions.
 
-let _seq = 0;
+// Part 2 remediation: this Section-2 shared-controller framework (exercised by the Section-2 tests; the
+// production engine uses immuneTransitionPopulator) no longer mints ids from a module-global counter.
+// TransitionRecord ids are CONTENT-DERIVED from identity-bearing fields so the framework is deterministic
+// wherever it is exercised.
+import { deterministicId } from './immuneSerialization.js';
 
-/** One recorded transition (applied or blocked). Serializable; frame-indexed. */
+/** One recorded transition (applied or blocked). Serializable; frame-indexed; content-derived id. */
 export class TransitionRecord {
   constructor(def = {}) {
-    this.transitionId = def.transitionId || `imt_${++_seq}`;
     this.machine = def.machine;
     this.previousState = def.previousState ?? null;
     this.newState = def.newState ?? null;
     this.trigger = def.trigger || null;
     this.reason = def.reason || null;
     this.frameIndex = Number.isInteger(def.frameIndex) ? def.frameIndex : 0;   // "timestamp" = sim frame
+    this.transitionId = def.transitionId || deterministicId('imt', { recordType: 'transition', machine: this.machine, previousState: this.previousState, newState: this.newState, frameIndex: this.frameIndex, trigger: this.trigger, blocked: def.blocked === true, blockingReason: def.blockingReason || null }, `f${this.frameIndex}`);
     this.simulationTime = typeof def.simulationTime === 'number' ? def.simulationTime : null;
     this.confidence = def.confidence ?? null;
     this.availability = def.availability || 'UNAVAILABLE';

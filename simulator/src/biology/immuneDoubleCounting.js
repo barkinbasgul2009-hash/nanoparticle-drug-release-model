@@ -4,21 +4,34 @@
 // suppression recounted inside escape). Wraps the Section-1 ImmuneContributionLedger and records an
 // explicit ExclusionRecord for every rejected/replaced contribution. Supports priority + mutually-
 // exclusive groups. Deterministic; frame-indexed.
+//
+// Part 2 remediation: exclusion ids are CONTENT-DERIVED from the canonical identity payload (record
+// type + frame + reason code + excluded/replacement contributor + aggregation target + registry rule),
+// never a module-global counter. Identical exclusion events therefore share one deterministic id
+// (duplicate policy = DEDUPLICATE); a same-id-with-different-payload is an integrity collision.
 
-let _ex = 0;
+import { deterministicId, registerIdentity } from './immuneSerialization.js';
 
-/** A record of one excluded (or replaced) contribution and why. */
+/** A record of one excluded (or replaced) contribution and why. Identity is content-derived. */
 export class ExclusionRecord {
   constructor(def = {}) {
-    this.exclusionId = def.exclusionId || `imx_${++_ex}`;
     this.reason = def.reason || 'duplicate';
     this.excludedContributor = def.excludedContributor || null;
     this.replacementContributor = def.replacementContributor || null;
     this.registryRule = def.registryRule || null;
+    this.aggregationTarget = def.aggregationTarget || null;
     this.frameIndex = Number.isInteger(def.frameIndex) ? def.frameIndex : 0;
+    // identity-BEARING payload only (no prose / labels / timestamps)
+    this.exclusionId = def.exclusionId || deterministicId('imx', {
+      recordType: 'exclusion', frameIndex: this.frameIndex, reasonCode: this.reason,
+      excludedContributor: this.excludedContributor, replacementContributor: this.replacementContributor,
+      aggregationTarget: this.aggregationTarget, registryRule: this.registryRule,
+    }, `f${this.frameIndex}`);
     this.metadata = def.metadata || {};
   }
-  toSerializable() { return { ...this, metadata: { ...this.metadata } }; }
+  /** The canonical identity payload (used for collision detection). */
+  identityPayload() { return { recordType: 'exclusion', frameIndex: this.frameIndex, reasonCode: this.reason, excludedContributor: this.excludedContributor, replacementContributor: this.replacementContributor, aggregationTarget: this.aggregationTarget, registryRule: this.registryRule }; }
+  toSerializable() { return { exclusionId: this.exclusionId, reason: this.reason, excludedContributor: this.excludedContributor, replacementContributor: this.replacementContributor, registryRule: this.registryRule, aggregationTarget: this.aggregationTarget, frameIndex: this.frameIndex, metadata: { ...this.metadata } }; }
 }
 
 /**
@@ -51,7 +64,7 @@ export class ImmuneContributionGuard {
     // mutually-exclusive group check
     if (c.mutuallyExclusiveGroup && this.appliedGroups.has(c.mutuallyExclusiveGroup)) {
       const existingKey = this.appliedGroups.get(c.mutuallyExclusiveGroup);
-      const ex = new ExclusionRecord({ reason: 'mutually_exclusive_group', excludedContributor: key, replacementContributor: existingKey, registryRule: c.registryRule || c.mutuallyExclusiveGroup, frameIndex: c.frameIndex });
+      const ex = new ExclusionRecord({ reason: 'mutually_exclusive_group', excludedContributor: key, replacementContributor: existingKey, registryRule: c.registryRule || c.mutuallyExclusiveGroup, aggregationTarget: c.targetMetric, frameIndex: c.frameIndex });
       this.exclusions.push(ex); return { applied: false, exclusion: ex };
     }
 
@@ -60,14 +73,14 @@ export class ImmuneContributionGuard {
       const prevPriority = Number.isFinite(prev.priority) ? prev.priority : 0;
       if (priority > prevPriority) {
         // replace the earlier lower-priority contribution
-        const ex = new ExclusionRecord({ reason: 'replaced_by_higher_priority', excludedContributor: this._key(prev), replacementContributor: key, registryRule: c.registryRule, frameIndex: c.frameIndex });
+        const ex = new ExclusionRecord({ reason: 'replaced_by_higher_priority', excludedContributor: this._key(prev), replacementContributor: key, registryRule: c.registryRule, aggregationTarget: c.targetMetric, frameIndex: c.frameIndex });
         this.exclusions.push(ex);
         this.applied = this.applied.filter((a) => this._key(a) !== key);
         this._record(c, key);
         return { applied: true, replaced: true, exclusion: ex };
       }
       // duplicate of equal/lower priority -> excluded
-      const ex = new ExclusionRecord({ reason: 'duplicate_effect', excludedContributor: key, replacementContributor: this._key(prev), registryRule: c.registryRule, frameIndex: c.frameIndex });
+      const ex = new ExclusionRecord({ reason: 'duplicate_effect', excludedContributor: key, replacementContributor: this._key(prev), registryRule: c.registryRule, aggregationTarget: c.targetMetric, frameIndex: c.frameIndex });
       this.exclusions.push(ex); return { applied: false, exclusion: ex };
     }
 
@@ -82,7 +95,20 @@ export class ImmuneContributionGuard {
     if (this.ledger && typeof this.ledger.add === 'function') this.ledger.add({ targetMetric: c.targetMetric, sourceModule: c.sourceModule, sourceMetric: c.sourceMetric, rawValue: c.value ?? null, applied: true, registryEntryId: c.registryRule || null });
   }
 
-  getExclusions() { return this.exclusions.map((e) => e.toSerializable()); }
+  /**
+   * Serialized exclusions with an explicit duplicate/collision policy (deterministic, order-independent):
+   * identical identity payload -> DEDUPLICATE (one record); same id with a DIFFERENT payload -> integrity
+   * collision (throws). Records are returned sorted by exclusionId so output never depends on push order.
+   */
+  getExclusions() {
+    const seen = new Map(); const out = [];
+    for (const e of this.exclusions) {
+      const status = registerIdentity(seen, e.exclusionId, e.identityPayload());
+      if (status === 'collision') throw new Error(`IMMUNE_IDENTITY_COLLISION: exclusion id ${e.exclusionId} maps to two different payloads`);
+      if (status === 'new') out.push(e.toSerializable());   // 'duplicate' -> dedup (same accounting event)
+    }
+    return out.sort((a, b) => (a.exclusionId < b.exclusionId ? -1 : a.exclusionId > b.exclusionId ? 1 : 0));
+  }
   getApplied() { return this.applied.slice(); }
 }
 

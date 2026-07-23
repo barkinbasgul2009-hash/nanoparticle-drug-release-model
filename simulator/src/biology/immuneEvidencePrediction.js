@@ -15,12 +15,14 @@ export const PREDICTION_CATEGORIES = Object.freeze([
 ]);
 export const PREDICTION_STATUS = Object.freeze({ AVAILABLE: 'AVAILABLE', SUPERSEDED: 'SUPERSEDED', EXPIRED: 'EXPIRED', UNAVAILABLE: 'UNAVAILABLE' });
 
-let _ev = 0; let _pr = 0;
+// Part 2 remediation: default record ids are CONTENT-DERIVED (deterministic), never module counters.
+// Production always supplies explicit static ids; the content-derived fallback keeps the public factory
+// API deterministic when a caller omits an id. Identity excludes lifecycle status + free-form prose.
+import { deterministicId } from './immuneSerialization.js';
 
 /** Structured evidence record - why a calculation is believed. */
 export class ImmuneEvidenceRecord {
   constructor(def = {}) {
-    this.evidenceId = def.evidenceId || `imev_${++_ev}`;
     this.title = def.title || '';
     this.description = def.description || '';
     this.interpretation = def.interpretation || '';
@@ -31,6 +33,8 @@ export class ImmuneEvidenceRecord {
     this.applicability = def.applicability || '';
     this.confidenceModifier = typeof def.confidenceModifier === 'number' ? def.confidenceModifier : 0;
     this.metadata = def.metadata || {};
+    // content-derived default id (identity-bearing fields only; excludes free-form prose title/description)
+    this.evidenceId = def.evidenceId || deterministicId('imev', { recordType: 'evidence', category: this.category, sourceReference: this.sourceReference, strength: this.strength, version: this.version, applicability: this.applicability });
   }
   toSerializable() { return { ...this, metadata: { ...this.metadata } }; }
 }
@@ -38,7 +42,6 @@ export class ImmuneEvidenceRecord {
 /** Structured prediction record - what the model expects (separate from evidence). */
 export class ImmunePredictionRecord {
   constructor(def = {}) {
-    this.predictionId = def.predictionId || `impr_${++_pr}`;
     this.description = def.description || '';
     this.targetMetric = def.targetMetric || null;
     this.category = PREDICTION_CATEGORIES.includes(def.category) ? def.category : 'ExpectedStability';
@@ -51,6 +54,13 @@ export class ImmunePredictionRecord {
     this.status = def.status || PREDICTION_STATUS.AVAILABLE;
     this.createdFrame = Number.isInteger(def.createdFrame) ? def.createdFrame : 0;
     this.metadata = def.metadata || {};
+    // content-derived default id: identity-bearing fields ONLY; excludes lifecycle status/confidence/prose
+    // so a superseded/expired successor of the same prediction keeps a stable identity. Set-like arrays
+    // are sorted so iteration order cannot affect identity.
+    this.predictionId = def.predictionId || deterministicId('impr', {
+      recordType: 'prediction', category: this.category, targetMetric: this.targetMetric, createdFrame: this.createdFrame, version: this.version,
+      supportingEvidenceIds: this.supportingEvidenceIds.slice().sort(), affectedObjects: this.affectedObjects.slice().sort(), dependencies: this.dependencies.slice().sort(),
+    });
   }
   toSerializable() { return { ...this, supportingEvidenceIds: this.supportingEvidenceIds.slice(), affectedObjects: this.affectedObjects.slice(), dependencies: this.dependencies.slice(), metadata: { ...this.metadata } }; }
 }
