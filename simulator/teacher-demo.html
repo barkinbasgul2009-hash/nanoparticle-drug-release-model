@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile-B Simulator — Phase 7C Immune Runtime (Teacher Demo)</title>
+  <style>
+    :root { color-scheme: light dark; --bd: #8884; --mut: .68; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    header { padding: 12px 16px; border-bottom: 1px solid var(--bd); display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; }
+    header h1 { margin: 0; font-size: 16px; }
+    header .meta { font-size: 12px; opacity: var(--mut); }
+    header .meta b { opacity: 1; }
+    main { padding: 12px 16px; max-width: 1180px; margin: 0 auto; }
+    .controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
+    button { font: inherit; padding: 5px 11px; border: 1px solid var(--bd); border-radius: 6px; background: #8881; cursor: pointer; }
+    button:hover { background: #8883; }
+    button:disabled { opacity: .4; cursor: default; }
+    label.tog { font-size: 12px; display: inline-flex; gap: 4px; align-items: center; margin-left: 4px; }
+    input[type=range] { vertical-align: middle; }
+    .grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .card { border: 1px solid var(--bd); border-radius: 8px; padding: 9px 11px; }
+    .card h3 { margin: 0 0 6px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; opacity: var(--mut); }
+    .row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 1px 0; }
+    .row .k { opacity: var(--mut); }
+    .row .v { font-variant-numeric: tabular-nums; text-align: right; }
+    .unavail { color: #b06a00; font-weight: 600; }
+    .pred { display: inline-block; font-size: 10px; padding: 0 5px; border-radius: 4px; background: #6a5acd33; color: #6a5acd; border: 1px solid #6a5acd55; margin-left: 4px; }
+    .evid { display: inline-block; font-size: 10px; padding: 0 5px; border-radius: 4px; background: #2e8b5733; color: #2e8b57; border: 1px solid #2e8b5755; margin-left: 4px; }
+    .chip { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; border: 1px solid #0003; }
+    .comp { display: flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 2px 0; border-bottom: 1px dashed var(--bd); }
+    .comp:last-child { border-bottom: 0; }
+    .comp .nm { flex: 1; }
+    .comp .st { opacity: var(--mut); font-size: 11px; }
+    .banner { padding: 9px 12px; border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 12px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 20px; }
+    .banner b { font-variant-numeric: tabular-nums; }
+    .full { grid-column: 1 / -1; }
+    .warn { color: #b06a00; }
+    .err { color: #c0392b; white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; }
+    footer { padding: 10px 16px; border-top: 1px solid var(--bd); font-size: 11px; opacity: var(--mut); }
+    .legend { font-size: 11px; opacity: var(--mut); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Profile-B Nanoparticle Simulator</h1>
+    <span class="meta">Phase&nbsp;<b>7C</b> — Immune Microenvironment Runtime &nbsp;·&nbsp; branch <b id="branch">…</b> &nbsp;·&nbsp; commit <b id="commit">…</b></span>
+  </header>
+  <main>
+    <div class="controls" id="controls" hidden>
+      <button id="btnRun">Run demo</button>
+      <button id="btnPlay">▶ Play</button>
+      <button id="btnPause" disabled>❚❚ Pause</button>
+      <button id="btnPrev">‹ Step back</button>
+      <button id="btnNext">Step ›</button>
+      <button id="btnRestart">⟲ Restart</button>
+      <input type="range" id="scrub" min="0" max="0" value="0" />
+      <span id="frameLabel" class="meta"></span>
+      <label class="tog"><input type="checkbox" id="togEvid" checked> Evidence</label>
+      <label class="tog"><input type="checkbox" id="togPred" checked> Prediction</label>
+    </div>
+    <div id="status" class="banner">Loading Phase 7C immune runtime…</div>
+    <div id="view" class="grid"></div>
+  </main>
+  <footer>
+    Read-only teacher demo. Consumes the immutable canonical ImmuneFrame published by the production
+    Phase-7C runtime — no biology is recomputed in this page, replay replays stored frames, and
+    unavailable metrics are shown as UNAVAILABLE (never zero). Immune biology is prediction-only
+    (MECHANISTIC_PREDICTION); Section-1 immune biology is a deferred feature and reports UNAVAILABLE.
+  </footer>
+
+  <script type="module">
+    import APP_CONFIG from './src/config/app.config.js';
+    import { JsonLoader } from './src/data/jsonLoader.js';
+    import { ImmuneAdaptiveEngine } from './src/biology/immuneAdaptiveEngine.js';
+    import { ImmuneMicroenvironmentEngine } from './src/biology/immuneMicroenvironmentEngine.js';
+    import { ImmuneRenderer } from './src/render/immuneRenderer.js';
+    import { ImmuneTimeline, ImmuneReplay } from './src/render/immuneTimeline.js';
+    import { buildTransitionView, buildEvidenceView, buildPredictionView, buildWarningView } from './src/render/immuneViews.js';
+    import { buildExtendedImmuneResistanceContext } from './src/biology/immuneResistanceAdapter.js';
+
+    const BRANCH = 'stage2/deep-scientific-evidence-review';
+    const COMMIT = 'b39d920';
+    const SPECIES = 'mouse', TUMOUR = 'B16BL6', N = 8;
+    document.getElementById('branch').textContent = BRANCH;
+    document.getElementById('commit').textContent = COMMIT;
+
+    const $ = (id) => document.getElementById(id);
+    const statusEl = $('status'), viewEl = $('view');
+    const A = (v) => ({ value: v, availability: 'AVAILABLE' });
+    const fmt = (v) => (v == null || Number.isNaN(v)) ? '<span class="unavail">UNAVAILABLE</span>' : (typeof v === 'number' ? v.toFixed(3) : String(v));
+    const metricRow = (k, m) => `<div class="row"><span class="k">${k}</span><span class="v">${m && m.availability === 'UNAVAILABLE' ? '<span class="unavail">UNAVAILABLE</span>' : fmt(m && m.value)}</span></div>`;
+
+    let R, renderer, results = [], frames = [], timeline, replay, cursor = 0, playTimer = null;
+
+    async function boot() {
+      R = {};
+      for (const [k, f] of Object.entries(APP_CONFIG.immuneSources)) R[k] = await new JsonLoader({ basePath: './data/' }).load(f, 'generic');
+      renderer = new ImmuneRenderer(R.render);
+      buildScenario();
+      $('controls').hidden = false;
+      wire();
+      render();
+    }
+
+    // Deterministic biologically-active scenario: real Section-4 engine + Section-1 source frame.
+    // Section-1 immune biology is deferred (UNAVAILABLE), so the immune-recognition inputs are supplied
+    // explicitly (the same input channel Section-1 will one day populate) — nothing is fabricated.
+    function buildScenario() {
+      const base = { tumor_immune_visibility: A(0.6), antigen_availability: A(0.55), immune_accessibility: A(0.6), dendritic_contribution: A(0.6), antigen_presentation_potential: A(0.6), adaptive_priming_potential: A(0.65), innate_immune_readiness: A(0.55), innate_tumor_pressure: A(0.4), nk_contribution: A(0.4), macrophage_contribution: A(0.35), vascular_access: A(0.6), vascular_functionality: A(0.6) };
+      const eng = new ImmuneAdaptiveEngine({ registries: R });
+      const s1 = new ImmuneMicroenvironmentEngine({ registries: R, species: SPECIES });
+      results = [];
+      for (let i = 0; i < N; i++) {
+        const vis = Math.min(0.95, 0.25 + i * 0.09);
+        results.push(eng.evaluate({ immuneFrame: s1.frame(), explicitInputs: { ...base, tumor_immune_visibility: A(vis), antigen_availability: A(vis) }, frameIndex: i }));
+      }
+      frames = results.map((r) => r.frame);
+      timeline = new ImmuneTimeline(frames);
+      replay = new ImmuneReplay(frames);
+      cursor = 0;
+      $('scrub').max = String(N - 1);
+    }
+
+    function wire() {
+      $('btnRun').onclick = () => { buildScenario(); render(); };
+      $('btnRestart').onclick = () => { pause(); cursor = 0; render(); };
+      $('btnNext').onclick = () => { pause(); cursor = Math.min(N - 1, cursor + 1); render(); };
+      $('btnPrev').onclick = () => { pause(); cursor = Math.max(0, cursor - 1); render(); };
+      $('btnPlay').onclick = play; $('btnPause').onclick = pause;
+      $('scrub').oninput = (e) => { pause(); cursor = Number(e.target.value); render(); };
+      $('togEvid').onchange = render; $('togPred').onchange = render;
+    }
+    function play() { if (playTimer) return; $('btnPlay').disabled = true; $('btnPause').disabled = false; playTimer = setInterval(() => { cursor = cursor >= N - 1 ? 0 : cursor + 1; render(); }, 900); }
+    function pause() { if (playTimer) { clearInterval(playTimer); playTimer = null; } $('btnPlay').disabled = false; $('btnPause').disabled = true; }
+
+    function render() {
+      // REPLAY = index into stored frames (no recomputation of biology).
+      const f = timeline.jumpToFrame(cursor); const res = results[cursor];
+      const rf = renderer.renderFrame(f);              // headless render frame -> painted read-only below
+      $('scrub').value = String(cursor);
+      $('frameLabel').textContent = `frame ${cursor + 1}/${N}  ·  t=${f.simulationTime}`;
+
+      const availClass = f.availability === 'AVAILABLE' ? '' : f.availability === 'UNAVAILABLE' ? 'unavail' : 'warn';
+      statusEl.innerHTML = `<span>Phase: <b>7C Immune Microenvironment</b></span><span>Species: <b>${SPECIES}</b></span><span>Model: <b>${TUMOUR}</b></span>`
+        + `<span>Canonical frame: <b>${f.metadata && f.metadata.canonicalSchemaVersion || f.schemaVersion}</b></span>`
+        + `<span>Availability: <b class="${availClass}">${f.availability}</b></span><span>Status: <b>${f.status}</b></span>`
+        + `<span>Confidence: <b>${res.net.confidence ? res.net.confidence.category + ' (' + res.net.confidence.score.toFixed(2) + ')' : 'UNAVAILABLE'}</b></span>`;
+
+      const showEvid = $('togEvid').checked, showPred = $('togPred').checked;
+      const cards = [];
+
+      // Renderer components (dual value + state; availability/confidence never hidden)
+      cards.push(`<div class="card"><h3>Rendered immune components (${rf.components.length})</h3>` + rf.components.map((c) => {
+        const val = c.availability === 'UNAVAILABLE' ? '<span class="unavail">UNAVAILABLE</span>' : fmt(c.value);
+        return `<div class="comp"><span class="chip" style="background:${c.palette === 'unavailable' ? '#bbb' : '#4c9be8'}"></span><span class="nm">${c.title || c.id}</span><span class="v">${val}</span><span class="st">${c.band || c.state || ''}</span></div>`;
+      }).join('') + '</div>');
+
+      // Innate / adaptive / checkpoint / suppression / escape / net domain panels
+      const inn = res.innate, cp = res.checkpoint, sup = res.suppression, esc = res.escape, net = res.net;
+      cards.push(`<div class="card"><h3>Innate immunity</h3>${metricRow('macrophage (opposing)', inn.macrophage)}${metricRow('NK cytotoxic', { value: inn.nk.cytotoxicPotential, availability: inn.nk.availability })}${metricRow('dendritic presentation', { value: inn.dendritic.presentationPotential, availability: inn.dendritic.availability })}${metricRow('readiness', inn.readiness)}${metricRow('adaptive priming', inn.adaptivePrimingPotential)}</div>`);
+      cards.push(`<div class="card"><h3>Adaptive — CD8</h3>${metricRow('priming', res.cd8.priming)}${metricRow('activation', res.cd8.activation)}${metricRow('cytotoxic potential', res.cd8.cytotoxicPotential)}${metricRow('exhaustion', res.cd8.exhaustion)}<div class="row"><span class="k">priming state</span><span class="v">${res.cd8.priming.state || '—'}</span></div></div>`);
+      cards.push(`<div class="card"><h3>Checkpoint</h3>${metricRow('PD-1', cp.pd1)}${metricRow('PD-L1', cp.pdl1)}${metricRow('PD-1/PD-L1 axis', { value: cp.pd_axis_engagement, availability: cp.availability })}${metricRow('CTLA-4', cp.ctla4)}</div>`);
+      cards.push(`<div class="card"><h3>Suppression</h3><div class="row"><span class="k">pressure</span><span class="v">${fmt(sup.pressure)}</span></div><div class="row"><span class="k">state</span><span class="v">${sup.state || '—'}</span></div>${metricRow('persistent', { value: sup.persistent, availability: sup.availability })}</div>`);
+      cards.push(`<div class="card"><h3>Immune escape</h3>${metricRow('overall pressure', esc.overallEscapePressure)}<div class="row"><span class="k">magnitude</span><span class="v">${esc.escapeMagnitudeState || '—'}</span></div><div class="row"><span class="k">persistence</span><span class="v">${esc.escapePersistenceState || '—'}</span></div></div>`);
+      cards.push(`<div class="card"><h3>Net immune effect</h3>${metricRow('tumour-loss potential', net.netImmuneMediatedTumorLossPotential)}<div class="row"><span class="k">control state</span><span class="v">${net.immuneControlState || '—'}</span></div><div class="row"><span class="k">failure state</span><span class="v">${net.immuneFailureState || '—'}</span></div></div>`);
+
+      // Transitions (from shared controllers; renderer never infers)
+      const tv = buildTransitionView([f]);
+      cards.push(`<div class="card"><h3>Transitions this frame (${tv.length})</h3>${tv.length ? tv.map((t) => `<div class="comp"><span class="nm">${t.component}</span><span class="st">${t.previousState} → ${t.newState}</span></div>`).join('') : '<div class="row"><span class="k">no state changes this frame</span></div>'}<div class="legend">first frame seeds controllers with no transition (no false initial transition)</div></div>`);
+
+      // Evidence / prediction (labelled)
+      if (showEvid || showPred) {
+        const ev = buildEvidenceView([f]), pv = buildPredictionView([f]);
+        let body = '';
+        if (showEvid) body += ev.map((e) => `<div class="row"><span class="k">${e.evidenceId || e.id}</span><span class="v"><span class="evid">EVIDENCE</span></span></div>`).join('');
+        if (showPred) body += pv.map((p) => `<div class="row"><span class="k">${p.predictionId || p.id}</span><span class="v"><span class="pred">PREDICTION · ${p.status || 'MECHANISTIC'}</span></span></div>`).join('');
+        cards.push(`<div class="card"><h3>Evidence &amp; prediction refs</h3>${body || '<div class="row"><span class="k">none</span></div>'}<div class="legend">predicted outputs are labelled PREDICTION (prediction-only model)</div></div>`);
+      }
+
+      // Warnings + runtime issues
+      const wv = buildWarningView([f], R.render);
+      cards.push(`<div class="card"><h3>Warnings / runtime issues (${wv.length})</h3>${wv.length ? wv.map((w) => `<div class="row warn"><span class="k">${w.code}</span><span class="v">${w.renderSeverity}</span></div>`).join('') : '<div class="row"><span class="k">none</span></div>'}</div>`);
+
+      // Phase 8A compatibility adapter
+      const ctx8a = buildExtendedImmuneResistanceContext(res.resistanceReadiness);
+      cards.push(`<div class="card"><h3>Phase 8A adapter</h3><div class="row"><span class="k">available</span><span class="v">${ctx8a.available ? 'yes' : '<span class="unavail">UNAVAILABLE</span>'}</span></div><div class="row"><span class="k">causal groups</span><span class="v">${ctx8a.causalGroups ? Object.keys(ctx8a.causalGroups).length : 0}</span></div><div class="legend">read-only; Phase 8A never recalculates Phase 7C biology</div></div>`);
+
+      viewEl.innerHTML = cards.join('');
+    }
+
+    boot().catch((err) => { statusEl.innerHTML = `<span class="err">Failed to start the demo:\n${err && err.stack || err}\n\nServe over HTTP from the simulator/ directory (ES modules + fetch need a server, not file://).</span>`; });
+  </script>
+</body>
+</html>
