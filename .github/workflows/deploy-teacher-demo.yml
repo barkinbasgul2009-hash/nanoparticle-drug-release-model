@@ -22,6 +22,7 @@ on:
       - stage2/deep-scientific-evidence-review
     paths:
       - ".github/workflows/deploy-teacher-demo.yml"
+      - "web/index.html"
       - "simulator/teacher-demo.html"
       - "simulator/src/**"
       - "simulator/data/**"
@@ -53,33 +54,20 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Prepare _site artifact (preserve simulator/ paths the demo imports + fetches)
+      - name: Prepare _site artifact (animated web tool at root + simulator immune demo)
         run: |
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/simulator
-          # the demo imports ./src/** and fetches ./data/** relative to simulator/teacher-demo.html
+          # ROOT = the animated web tool (Nanoparticle Journey + Release comparison +
+          # Tissue penetration + Animated Tissue View). Self-contained single file.
+          cp web/index.html _site/index.html
+          cp web/.nojekyll  _site/.nojekyll 2>/dev/null || touch _site/.nojekyll
+          # Also ship the Phase-7C immune-runtime demo (imports ./src/**, fetches ./data/**),
+          # reachable at /simulator/teacher-demo.html.
           cp -R simulator/src  _site/simulator/src
           cp -R simulator/data _site/simulator/data
           cp    simulator/teacher-demo.html _site/simulator/teacher-demo.html
-          # root entry point -> auto-redirect to the teacher demo (NOT the Phase-1 index)
-          cat > _site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <meta http-equiv="refresh" content="0; url=./simulator/teacher-demo.html" />
-            <title>Profile-B Simulator — Phase 7C Teacher Demo</title>
-          </head>
-          <body style="font:15px/1.6 system-ui,sans-serif;margin:3rem auto;max-width:40rem;padding:0 1rem">
-            <h1>Profile-B Nanoparticle Simulator — Phase 7C</h1>
-            <p>Redirecting to the Phase 7C immune-runtime teacher demo…</p>
-            <p>If you are not redirected automatically, open
-               <a href="./simulator/teacher-demo.html">./simulator/teacher-demo.html</a>.</p>
-          </body>
-          </html>
-          HTML
 
       - name: Verify the artifact dependency graph (fail early on any missing/escaping file)
         run: node simulator/tools/verify-teacher-demo-site.mjs _site

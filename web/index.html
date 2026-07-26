@@ -69,6 +69,24 @@
   .heatlegend{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--muted)}
   .heatbar{height:12px;width:160px;border-radius:3px;
            background:linear-gradient(90deg,#0b1836,#1a4a8f,#2f9e8f,#f0c05a,#d7402a)}
+  /* --- Nanoparticle Journey (Profile-B biological storyboard) --- */
+  .journeywrap{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px}
+  @media(max-width:820px){.journeywrap{grid-template-columns:1fr}}
+  .stagebar{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+  .stagechip{font-size:12px;padding:4px 9px;border:1px solid var(--line);border-radius:16px;
+             cursor:pointer;color:var(--muted);background:var(--panel);white-space:nowrap}
+  .stagechip.active{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .stagechip.done{color:var(--ink);border-color:var(--accent)}
+  .stagechip.na{opacity:.55;font-style:italic}
+  .stagecaption{font-size:13px;color:var(--muted);min-height:40px;margin-top:6px;max-width:820px}
+  .stagecaption b{color:var(--ink)}
+  .grade{font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 7px;border-radius:10px;margin-left:8px}
+  .g-DIRECTLY_OBSERVED{background:#2f9e8f33;color:#2f9e8f;border:1px solid #2f9e8f66}
+  .g-QUANTITATIVELY_SUPPORTED{background:#4da3ff33;color:#4da3ff;border:1px solid #4da3ff66}
+  .g-QUALITATIVELY_SUPPORTED{background:#f0c05a33;color:#b8860b;border:1px solid #f0c05a88}
+  .g-CONTEXTUAL_ANATOMY{background:#b088ff33;color:#8a63d2;border:1px solid #b088ff66}
+  .g-NOT_APPLICABLE{background:#8886;color:var(--muted);border:1px solid var(--line)}
+  #jEvidence li{margin:5px 0}
 </style>
 </head>
 <body>
@@ -124,6 +142,7 @@
       <div class="tab active" data-tab="rel">Release comparison</div>
       <div class="tab" data-tab="tis">Tissue penetration</div>
       <div class="tab" data-tab="anim">Animated Tissue View</div>
+      <div class="tab" data-tab="journey">Nanoparticle Journey</div>
     </div>
 
     <section class="panel active" id="panel-rel">
@@ -212,6 +231,67 @@
             <li>Not a clinical decision tool; does not predict any individual’s
               response.</li>
           </ul>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel" id="panel-journey">
+      <div class="evbanner">
+        <span class="badge illus">ILLUSTRATIVE STORYBOARD</span>
+        <span><b>Profile-B topical celastrol NLC journey.</b> A stage-by-stage biological
+        animation built from the prepared storyboard (<i>docs/profile-b-biological-storyboard.md</i>,
+        scenes S1–S9). Each stage carries its evidence grade; stages the evidence does <b>not</b>
+        support for a topical route (e.g. systemic bloodstream transport) are shown greyed and
+        labelled <b>NOT APPLICABLE</b> — no scientific values are fabricated. The drug-release graph
+        uses the same model core as the other tabs.</span>
+      </div>
+      <div class="ctl" style="max-width:280px">
+        <label>Scene / model</label>
+        <select id="jSpecies">
+          <option value="mouse" selected>Mouse B16BL6 melanoma (topical)</option>
+          <option value="human">Human skin (topical, exploratory)</option>
+        </select>
+      </div>
+      <div class="journeywrap">
+        <div class="journeyleft">
+          <canvas id="jScene" width="820" height="430"></canvas>
+          <div class="stagebar" id="jStages"></div>
+          <div class="stagecaption" id="jCaption">Press ▶ Play to run the topical nanoparticle journey.</div>
+          <div class="controls-row">
+            <button id="jPlay">▶ Play</button>
+            <button id="jPause" class="secondary">❚❚ Pause</button>
+            <button id="jReset" class="secondary">⟲ Reset</button>
+            <label style="font-size:13px;color:var(--muted)">timeline</label>
+            <input id="jScrub" type="range" min="0" max="1000" value="0" step="1"
+                   aria-label="Journey timeline scrubber">
+            <label style="font-size:13px;color:var(--muted)">speed
+              <input id="jSpeed" type="range" min="0.25" max="4" step="0.25" value="1"
+                     aria-label="Journey speed" style="width:80px"></label>
+          </div>
+        </div>
+        <div class="journeyright">
+          <canvas id="jGraph" width="400" height="300"></canvas>
+          <div class="statgrid">
+            <div class="row">Stage <b id="j_stage">–</b></div>
+            <div class="row">Evidence grade <b id="j_grade">–</b></div>
+            <div class="row">Cumulative drug released <b id="j_rel">–</b></div>
+            <div class="row">Nanoparticles in skin <b id="j_part">–</b></div>
+            <div class="row">Free drug molecules diffusing <b id="j_mol">–</b></div>
+          </div>
+        </div>
+      </div>
+      <details class="evidence">
+        <summary>Storyboard stages, evidence grades &amp; exclusions</summary>
+        <div class="body">
+          <p><b>Source:</b> the B1 topical celastrol-NLC storyboard. Grades:
+          DIRECTLY_OBSERVED, QUANTITATIVELY_SUPPORTED, QUALITATIVELY_SUPPORTED,
+          CONTEXTUAL_ANATOMY, NOT_APPLICABLE.</p>
+          <ul id="jEvidence"></ul>
+          <p><b>Excluded (per evidence):</b> systemic bloodstream distribution and IV injection
+          for the topical route; exact tumour-shrinkage %, survival or metastasis claims;
+          endocytosis machinery; hypodermis penetration; a fabricated continuous concentration
+          field for the depth bands. Rat-skin permeation + murine melanoma; single study; no
+          external validation.</p>
         </div>
       </details>
     </section>
@@ -491,6 +571,168 @@ document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>
 }));
 // Respect reduced-motion: never auto-play (default is already paused).
 refresh();
+</script>
+
+<script>
+// ===========================================================================
+// Nanoparticle Journey — Profile-B topical celastrol NLC biological storyboard.
+// A stage-by-stage animation (scenes S1–S9 of docs/profile-b-biological-storyboard.md).
+// Read-only visual: it reuses the existing release() model core for the graph and
+// invents no scientific values; evidence-unsupported stages are labelled NOT_APPLICABLE.
+// Positions are PURE functions of a single progress value P so the timeline scrubs cleanly.
+// ===========================================================================
+const JSTAGES=[
+  {id:"S1",name:"Application-site orientation",grade:"CONTEXTUAL_ANATOMY",t0:0.00,t1:0.08,na:false,
+   cap:s=>`<b>S1 · Application site.</b> ${s==="mouse"?"Mouse (B16BL6 melanoma) skin site":"Human skin site"} with a topical dosage form. Systemic/IV routes are excluded for this topical formulation.`},
+  {id:"S2",name:"Cream on skin surface",grade:"QUALITATIVELY_SUPPORTED",t0:0.08,t1:0.16,na:false,
+   cap:()=>`<b>S2 · Formulation applied.</b> Cream reservoir spreads on the stratum corneum; ~85–90 nm NLC particle class deposited at the surface.`},
+  {id:"S3",name:"Stratum-corneum barrier",grade:"QUANTITATIVELY_SUPPORTED",t0:0.16,t1:0.34,na:false,
+   cap:()=>`<b>S3 · Crossing the stratum corneum.</b> Barrier-limited passage through corneocyte stacks + lipid lamellae (ex-vivo rat-skin permeation). Deep intact-carrier transport not claimed beyond evidence.`},
+  {id:"S4",name:"Depth-layer deposition",grade:"DIRECTLY_OBSERVED",t0:0.34,t1:0.48,na:false,
+   cap:()=>`<b>S4 · Depth deposition.</b> Relative deposition across 0–30 / 30–60 / 60–90 µm bands (ex-vivo rat skin). Shown as discrete bands, not a fabricated continuous field.`},
+  {id:"S5",name:"Bloodstream entry",grade:"NOT_APPLICABLE",t0:0.48,t1:0.56,na:true,
+   cap:()=>`<b>S5 · Systemic entry — NOT APPLICABLE.</b> Bloodstream distribution is <i>not</i> part of the evidenced topical route; the capillary + entering particles are drawn greyed for context only (no systemic PK).`},
+  {id:"S6",name:"Transport toward target",grade:"QUALITATIVELY_SUPPORTED",t0:0.56,t1:0.66,na:false,
+   cap:s=>`<b>S6 · Toward the target tissue.</b> A subset of particles moves to the ${s==="mouse"?"cutaneous B16BL6 melanoma nest":"melanoma context region"} within the skin (local, not systemic).`},
+  {id:"S7",name:"Tissue localization",grade:"QUALITATIVELY_SUPPORTED",t0:0.66,t1:0.74,na:false,
+   cap:()=>`<b>S7 · Localization.</b> Particles accumulate at the melanoma cell nest. Cationic&gt;neutral&gt;anionic uptake is ordinal only (charge <i>and</i> lipid both changed — not a pure charge effect).`},
+  {id:"S8",name:"Drug release",grade:"QUANTITATIVELY_SUPPORTED",t0:0.74,t1:0.86,na:false,
+   cap:()=>`<b>S8 · API release.</b> Celastrol is released from the localized NLCs; cumulative fraction follows the release-kinetics model shown on the right (same model core as the other tabs).`},
+  {id:"S9",name:"Molecular diffusion",grade:"QUANTITATIVELY_SUPPORTED",t0:0.86,t1:1.00,na:false,
+   cap:()=>`<b>S9 · Free-drug diffusion.</b> Individual API molecules diffuse from the release site into surrounding tissue. Efficacy is qualitative only — no exact shrinkage %, survival, or metastasis claims.`},
+];
+const J={P:0,playing:false,raf:0,last:0,speed:1,species:"mouse",seededParts:null,seededMols:null};
+const jrand=(seed)=>{let x=Math.sin(seed*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+function jParts(){
+  if(J.seededParts) return J.seededParts;
+  const P=[];for(let i=0;i<22;i++){const band=i%3;
+    P.push({x0:120+700*jrand(i+1)*(700/700)/1+ (i*26)%660,band,
+            bx:120+((i*34)%640),goTumor:i%3===0,seed:i});}
+  // spread x deterministically
+  P.forEach((p,i)=>{p.bx=110+(i/(P.length-1))*640;});
+  J.seededParts=P;return P;
+}
+const JGEO={scTop:52,scBot:86,epiBot:150,dermTop:150,dermBot:330,mx:590,my:250,capY:288};
+function jStageAt(P){let s=JSTAGES[0];for(const st of JSTAGES){if(P>=st.t0)s=st;}return s;}
+function jParticleY(p,P){
+  const g=JGEO, bandY=[118,168,222][p.band];
+  if(P<0.08) return 34;                                   // gathered at applicator
+  if(P<0.16) return 44;                                   // cream on surface
+  if(P<0.34){const lp=(P-0.16)/0.18; return 44+lp*(g.scBot-44);}   // through SC
+  if(P<0.48){const lp=(P-0.34)/0.14; return g.scBot+lp*(bandY-g.scBot);} // deposition
+  return bandY;
+}
+function jParticlePos(p,P){
+  let x=p.bx, y=jParticleY(p,P);
+  if(p.goTumor && P>=0.56){const lp=Math.min(1,(P-0.56)/0.10); x=p.bx+lp*(JGEO.mx-p.bx); y=(P<0.56?y:[118,168,222][p.band])+lp*(JGEO.my-[118,168,222][p.band]);}
+  return {x,y};
+}
+function jDraw(){
+  const cv=document.getElementById("jScene");if(!cv)return;const ctx=cv.getContext("2d");
+  const W=cv.width,H=cv.height,g=JGEO,css=getComputedStyle(document.documentElement);
+  const ink=css.getPropertyValue('--ink'),mut=css.getPropertyValue('--muted');
+  ctx.clearRect(0,0,W,H);
+  // skin layers
+  const layer=(y0,y1,fill,label)=>{ctx.fillStyle=fill;ctx.fillRect(0,y0,W,y1-y0);
+    ctx.fillStyle=mut;ctx.font="12px system-ui";ctx.fillText(label,10,y0+16);};
+  layer(0,g.scTop,"#141b2b","air / applicator");
+  layer(g.scTop,g.scBot,"#3a2f1e","stratum corneum");
+  layer(g.scBot,g.epiBot,"#243247","epidermis");
+  layer(g.epiBot,g.dermBot,"#1d2c40","dermis");
+  layer(g.dermBot,H,"#0e1524","deeper dermis / hypodermis — penetration excluded");
+  // stratum-corneum brick texture
+  ctx.strokeStyle="#5a4a2e";ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){for(let y=g.scTop+6;y<g.scBot;y+=8){ctx.strokeRect(x+((y%16)?0:20),y,38,7);}}
+  // depth bands (S4+)
+  if(J.P>=0.30){ctx.setLineDash([4,4]);ctx.strokeStyle="#6b7a93";ctx.fillStyle=mut;ctx.font="11px system-ui";
+    [["0–30 µm",118],["30–60 µm",168],["60–90 µm",222]].forEach(([lab,y])=>{
+      ctx.beginPath();ctx.moveTo(0,y+14);ctx.lineTo(W,y+14);ctx.stroke();ctx.fillText(lab,W-72,y+11);});
+    ctx.setLineDash([]);}
+  // capillary (dermis) — greyed unless S5 active
+  const s=jStageAt(J.P), capActive=(s.id==="S5");
+  ctx.strokeStyle=capActive?"#c0556b":"#3a4763";ctx.lineWidth=14;ctx.beginPath();
+  ctx.moveTo(60,g.capY);ctx.bezierCurveTo(300,g.capY-30,520,g.capY+30,W-40,g.capY);ctx.stroke();
+  ctx.fillStyle=capActive?"#c0556b":"#5a6884";ctx.font="12px system-ui";
+  ctx.fillText("capillary — systemic entry NOT APPLICABLE (topical route)",70,g.capY-16);
+  // melanoma nest
+  ctx.save();
+  for(let i=0;i<9;i++){const a=i*0.7,rr=10+ (i%3)*7; const cx=g.mx+Math.cos(a)*rr*1.4, cy=g.my+Math.sin(a)*rr;
+    ctx.beginPath();ctx.arc(cx,cy,9,0,2*Math.PI);ctx.fillStyle="#5b2a4a";ctx.fill();ctx.strokeStyle="#8a3f6f";ctx.stroke();}
+  ctx.restore();
+  ctx.fillStyle="#c98bb3";ctx.font="12px system-ui";
+  ctx.fillText(J.species==="mouse"?"B16BL6 melanoma nest":"melanoma context",g.mx-34,g.my-38);
+  // molecules (S8/S9): free drug diffusing from melanoma
+  let mol=0;
+  if(J.P>=0.74){const rel=1-Math.exp(-3.2*(J.P-0.74)); const M=Math.round(60*rel);mol=M;
+    for(let j=0;j<M;j++){const ang=jrand(j+5)*6.283, spread=(0.35+0.65*jrand(j+9))*90*(0.3+(J.P-0.74)/0.26);
+      const wob=6*Math.sin(J.P*10+j);const mxp=g.mx+Math.cos(ang)*(spread)+wob, myp=g.my+Math.sin(ang)*(spread*0.7)+wob*0.5;
+      ctx.beginPath();ctx.arc(mxp,myp,2.2,0,2*Math.PI);ctx.fillStyle="rgba(77,163,255,0.85)";ctx.fill();}}
+  // systemic (greyed) particles during S5 only — illustrative, NOT APPLICABLE
+  if(capActive){const lp=(J.P-0.48)/0.08;for(let k=0;k<3;k++){const px=120+ (W-200)*((lp+ k*0.3)%1);
+    ctx.beginPath();ctx.arc(px,g.capY,4,0,2*Math.PI);ctx.fillStyle="rgba(150,160,180,0.55)";ctx.fill();}}
+  // nanoparticles
+  const parts=jParts();let inSkin=0;
+  parts.forEach(p=>{const pos=jParticlePos(p,J.P);if(pos.y>g.scBot)inSkin++;
+    ctx.beginPath();ctx.arc(pos.x,pos.y,5.5,0,2*Math.PI);
+    ctx.fillStyle=p.goTumor?"#ffd08a":"#f0c05a";ctx.fill();ctx.strokeStyle="#8a6d1e";ctx.lineWidth=1;ctx.stroke();
+    if(J.P>=0.74 && p.goTumor){ctx.beginPath();ctx.arc(pos.x,pos.y,8.5,0,2*Math.PI);ctx.strokeStyle="rgba(77,163,255,0.5)";ctx.stroke();}});
+  // cream reservoir (S1/S2)
+  if(J.P<0.18){ctx.fillStyle="rgba(240,224,180,0.5)";ctx.fillRect(90,26,W-180,g.scTop-26);
+    ctx.fillStyle=ink;ctx.font="12px system-ui";ctx.fillText("topical cream",W/2-34,20);}
+  // stage marker line on a mini progress bar
+  ctx.fillStyle="#2a3550";ctx.fillRect(0,H-6,W,6);ctx.fillStyle="#4da3ff";ctx.fillRect(0,H-6,W*J.P,6);
+  jStats(inSkin,mol,s);
+}
+function jGraphDraw(){
+  const pc=document.getElementById("jGraph");if(!pc)return;const px=pc.getContext("2d");
+  const p=readParams(); const A=axes(px,pc.width,pc.height,44,0,p.te,0,1,"Time (h)","Fraction released");
+  px.strokeStyle="#ff6b6b";px.lineWidth=2.5;px.beginPath();
+  const N=160;for(let i=0;i<=N;i++){const t=p.te*i/N,f=release("first_order",t,p);const X=A.px(t),Y=A.py(f);i===0?px.moveTo(X,Y):px.lineTo(X,Y);}
+  px.stroke();
+  // playhead mapped from journey progress (release-dominant window 0.34–1.0 -> 0..te)
+  const relP=Math.max(0,Math.min(1,(J.P-0.16)/0.84)); const tHead=relP*p.te;
+  px.setLineDash([5,4]);px.strokeStyle="#4da3ff";px.lineWidth=1.5;px.beginPath();
+  px.moveTo(A.px(tHead),A.py(0));px.lineTo(A.px(tHead),A.py(1));px.stroke();px.setLineDash([]);
+  const f=release("first_order",tHead,p);px.fillStyle="#4da3ff";px.beginPath();px.arc(A.px(tHead),A.py(f),4,0,2*Math.PI);px.fill();
+}
+function jStats(inSkin,mol,s){
+  const S=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  const p=readParams();const relP=Math.max(0,Math.min(1,(J.P-0.16)/0.84));const f=release("first_order",relP*p.te,p);
+  S("j_stage",s.id+" · "+s.name);S("j_grade",s.grade.replace(/_/g," "));
+  S("j_rel",J.P<0.74?"—":(f*100).toFixed(0)+"%");S("j_part",inSkin+" / "+jParts().length);
+  S("j_mol",J.P<0.74?"—":mol);
+  document.getElementById("jScrub").value=Math.round(J.P*1000);
+  document.getElementById("jCaption").innerHTML=s.cap(J.species);
+  // stage chips
+  JSTAGES.forEach(st=>{const c=document.getElementById("chip-"+st.id);if(!c)return;
+    c.classList.toggle("active",st.id===s.id);c.classList.toggle("done",J.P>st.t1);});
+  jGraphDraw();
+}
+function jRender(){jDraw();}
+function jLoop(ts){if(!J.playing)return;if(!J.last)J.last=ts;const dt=(ts-J.last)/1000;J.last=ts;
+  J.P+=dt*0.09*J.speed;if(J.P>=1){J.P=1;J.playing=false;document.getElementById("jPlay").textContent="▶ Play";}
+  jRender();if(J.playing)J.raf=requestAnimationFrame(jLoop);}
+function jPlay(v){J.playing=(v!==undefined)?v:!J.playing;
+  document.getElementById("jPlay").textContent=J.playing?"⏸ Pause":"▶ Play";
+  if(J.playing){if(J.P>=1)J.P=0;J.last=0;J.raf=requestAnimationFrame(jLoop);}else cancelAnimationFrame(J.raf);}
+function jInit(){
+  const chips=document.getElementById("jStages");
+  chips.innerHTML=JSTAGES.map(st=>`<span class="stagechip ${st.na?'na':''}" id="chip-${st.id}" data-t0="${st.t0}">${st.id}<span class="grade g-${st.grade}">${st.grade.split("_")[0]}</span></span>`).join("");
+  document.getElementById("jEvidence").innerHTML=JSTAGES.map(st=>`<li><b>${st.id} ${st.name}</b> — <span class="grade g-${st.grade}">${st.grade.replace(/_/g," ")}</span></li>`).join("");
+  chips.querySelectorAll(".stagechip").forEach(c=>c.addEventListener("click",()=>{jPlay(false);const st=JSTAGES.find(s=>s.id===c.id.slice(5));J.P=(st.t0+st.t1)/2;jRender();}));
+  document.getElementById("jPlay").addEventListener("click",()=>jPlay());
+  document.getElementById("jPause").addEventListener("click",()=>jPlay(false));
+  document.getElementById("jReset").addEventListener("click",()=>{jPlay(false);J.P=0;jRender();});
+  document.getElementById("jScrub").addEventListener("input",e=>{jPlay(false);J.P=(parseInt(e.target.value,10)||0)/1000;jRender();});
+  document.getElementById("jSpeed").addEventListener("input",e=>{J.speed=parseFloat(e.target.value);});
+  document.getElementById("jSpecies").addEventListener("change",e=>{J.species=e.target.value;jRender();});
+  // pause the journey whenever any tab is clicked; (re)draw when the journey tab opens
+  document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+    if(t.dataset.tab==="journey"){setTimeout(jRender,0);} else {jPlay(false);}
+  }));
+  jRender();
+}
+jInit();
 </script>
 </body>
 </html>
