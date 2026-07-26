@@ -13,6 +13,20 @@ name: Deploy Phase 7C Teacher Demo
 # merges PR #3, never pushes to main, and changes no biological code / registries.
 
 on:
+  # Push trigger so the deployment runs automatically on the stage2 branch (a
+  # workflow_dispatch workflow cannot be triggered from the UI unless it also
+  # exists on the default branch; a push trigger works on any branch). Scoped to
+  # the teacher-demo deployment files so ordinary unrelated commits do not redeploy.
+  push:
+    branches:
+      - stage2/deep-scientific-evidence-review
+    paths:
+      - ".github/workflows/deploy-teacher-demo.yml"
+      - "simulator/teacher-demo.html"
+      - "simulator/src/**"
+      - "simulator/data/**"
+      - "simulator/tools/verify-teacher-demo-site.mjs"
+  # Kept for future manual redeploys (e.g. to restore the demo after the main site).
   workflow_dispatch:
 
 permissions:
