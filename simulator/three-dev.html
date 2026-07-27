@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D Runtime Probe (Phase 0) — dev only</title>
+  <style>
+    body{margin:0;font:14px/1.5 system-ui,sans-serif;background:#0f1420;color:#e8ecf4}
+    header{padding:10px 14px;border-bottom:1px solid #2a3550}
+    header h1{font-size:15px;margin:0}
+    header p{margin:2px 0 0;font-size:12px;opacity:.7}
+    #canvasHost{width:100%;height:60vh;position:relative}
+    #status{padding:10px 14px;font-size:13px}
+    .ok{color:#51cf66}.bad{color:#ff6b6b}
+    pre{margin:8px 14px;padding:10px;background:#171e2e;border:1px solid #2a3550;border-radius:6px;font-size:12px;overflow:auto}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>3D Runtime Probe — Phase 0 (development only)</h1>
+    <p>Verifies the vendored Three.js stack, one render loop, SceneDirector shot mapping and clean disposal.
+       This is NOT the final animation and is not part of the public demo.</p>
+  </header>
+  <div id="canvasHost"></div>
+  <div id="status">initialising…</div>
+  <pre id="log"></pre>
+
+  <script type="module">
+    import * as THREE from './vendor/three/three.module.js';
+    import { SceneDirector, shotAt, SHOTS } from './src/three/sceneDirector.js';
+    import { buildVisualState, PROVENANCE, isBiological } from './src/three/visualizationAdapter.js';
+    import { disposeRuntime, disposeObject } from './src/three/disposal.js';
+
+    const statusEl = document.getElementById('status');
+    const logEl = document.getElementById('log');
+    const log = (m) => { logEl.textContent += m + '\n'; };
+
+    try {
+      const host = document.getElementById('canvasHost');
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(host.clientWidth, host.clientHeight);
+      host.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f1420);
+      const camera = new THREE.PerspectiveCamera(50, host.clientWidth / host.clientHeight, 0.1, 100);
+      camera.position.set(0, 0, 4);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dir = new THREE.DirectionalLight(0xffffff, 1.2); dir.position.set(3, 4, 5); scene.add(dir);
+
+      // one placeholder object per future scene — proves scene swapping + disposal, no biology
+      const mk = (color) => new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshStandardMaterial({ color, flatShading: true }));
+      const group = new THREE.Group(); scene.add(group);
+      const director = new SceneDirector();
+      for (const [id, color] of [['human', 0xf0c05a], ['skin', 0xd08a5a], ['bloodstream', 0xc0556b], ['tissue', 0x8a3f6f]]) {
+        let mesh = null;
+        director.register({
+          id,
+          enter: () => { mesh = mk(color); group.add(mesh); log(`scene enter: ${id}`); },
+          update: ({ progress }) => { if (mesh) mesh.rotation.y = progress * Math.PI * 4; },
+          exit: () => { if (mesh) { disposeObject(mesh); mesh = null; } },
+          dispose: () => { if (mesh) { disposeObject(mesh); mesh = null; } },
+        });
+      }
+
+      // ---- ONE render loop; narrative time comes from the (simulated) master timeline ----
+      const clock = new THREE.Clock();          // rendering delta ONLY
+      let masterProgress = 0;                   // stands in for the real timeline in Phase 1
+      function frame() {
+        const delta = clock.getDelta();
+        masterProgress = (masterProgress + delta * 0.05) % 1;         // Phase 1 replaces this with the real timeline
+        const vs = buildVisualState({ progress: masterProgress });
+        const shot = director.update(vs, delta);
+        if (shot) statusEl.innerHTML = `<span class="ok">WebGL running</span> · three r${THREE.REVISION} · shot <b>${shot.id}</b> · scene <b>${shot.scene}</b> · progress ${(masterProgress * 100).toFixed(0)}%`;
+        renderer.render(scene, camera);
+        requestAnimationFrame(frame);
+      }
+      frame();
+
+      // ---- assertions ----
+      log(`three REVISION = ${THREE.REVISION}`);
+      log(`SHOTS defined = ${SHOTS.length} (human->skin->bloodstream->tissue)`);
+      log(`shotAt(0.00)=${shotAt(0).id}  shotAt(0.50)=${shotAt(0.5).id}  shotAt(1.00)=${shotAt(1).id}`);
+      const vs = buildVisualState({ progress: 0.5 });
+      log(`adapter: capillaryEntryFraction -> value=${vs.capillaryEntryFraction.value} provenance=${vs.capillaryEntryFraction.provenance} (must be null / NOT_MODELLED, never 0)`);
+      log(`adapter: visibleParticleCount provenance=${vs.visibleParticleCount.provenance} isBiological=${isBiological(vs.visibleParticleCount)} (must be VISUAL_ONLY / false)`);
+      log(`adapter: releasedFraction (no source) -> value=${vs.releasedFraction.value} provenance=${vs.releasedFraction.provenance}`);
+      window.addEventListener('resize', () => {
+        camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix();
+        renderer.setSize(host.clientWidth, host.clientHeight);
+      });
+      window.__probeDispose = () => disposeRuntime({ renderer, scene });
+    } catch (err) {
+      statusEl.innerHTML = `<span class="bad">3D probe failed:</span> ${err && err.message}`;
+      log(String(err && err.stack || err));
+    }
+  </script>
+</body>
+</html>
