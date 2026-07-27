@@ -25,6 +25,16 @@ export const ASSETS = Object.freeze({
     },
     acceptanceGate: ['orientation Y-up / Z-forward', 'metre scale (~1.7m)', 'origin at feet', 'normals correct', 'textures resolve', 'skeleton binds', 'clips play', 'loads < 3s on broadband', 'disposable without leak'],
     fallbackIfMissing: 'Phase 2 stops and reports the gap — do NOT ship a placeholder dummy as the final human.',
+    acquisitionAttempts: [
+      { source: 'three.js r160 Michelle.glb', result: 'REJECTED as final — stylised cartoon avatar (goggles occlude the eyes, cartoon hair). Retained ONLY as a development rig fixture (13/13 bone roles, 40 finger bones).' },
+      { source: 'three.js r160 Soldier.glb', result: 'REJECTED — fully armoured game character, helmet, no bare forearm (the treatment area).' },
+      { source: 'three.js r160 Xbot.glb', result: 'REJECTED — featureless test dummy (explicitly excluded).' },
+      { source: 'Ready Player Me', result: 'UNAVAILABLE — runtime CDN blocked from this environment; probed repo sample paths 404.' },
+      { source: 'Mixamo', result: 'UNAVAILABLE — requires an authenticated Adobe account (authentication not bypassed).' },
+      { source: 'MakeHuman / MPFB2', result: 'UNAVAILABLE — Blender is not installed in this environment.' },
+      { source: 'Khronos CesiumMan', result: 'REJECTED — very low-fidelity sample figure.' },
+    ],
+    devRig: { path: 'simulator/assets/human/dev-rig/dev-rig-michelle.glb', purpose: 'develop + test the bone-driven animation controller only', publish: false },
   },
   humanAnimations: {
     id: 'human_clips',
@@ -38,7 +48,8 @@ export const ASSETS = Object.freeze({
   capillaryTube:     { id: 'capillary',    status: ASSET_STATUS.PROCEDURAL, note: 'TubeGeometry along a CatmullRom curve; RBCs via InstancedMesh' },
   tissueCells:       { id: 'tissue_cells', status: ASSET_STATUS.PROCEDURAL, note: 'InstancedMesh spheres + ECM fibre lines' },
   drugParticles:     { id: 'particles',    status: ASSET_STATUS.PROCEDURAL, note: 'single InstancedMesh, pooled, count bounded by the render budget' },
-  environmentHDR:    { id: 'studio_env',   status: ASSET_STATUS.MISSING, path: 'simulator/assets/env/studio.hdr', note: 'small (1k) HDR for believable skin shading; a RoomEnvironment fallback is acceptable' },
+  environmentHDR:    { id: 'studio_env',   status: ASSET_STATUS.PROCEDURAL, note: 'RESOLVED: three/addons/environments/RoomEnvironment vendored locally and used via PMREMGenerator — believable skin + readable eyes with NO runtime CDN and no HDR file to licence.' },
+  creamContainer:    { id: 'cream_tube',   status: ASSET_STATUS.PROCEDURAL, note: 'tube + cap/nozzle built from lathe/cylinder geometry with a clean PBR material; cream deposit + spreadable patch as a small mesh/decal; application-site marker anchored to the forearm bone (Phase 2)' },
 });
 
 /** Assets that must exist before a given phase can be completed. */

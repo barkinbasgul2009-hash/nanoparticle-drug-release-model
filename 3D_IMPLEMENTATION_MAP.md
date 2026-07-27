@@ -77,8 +77,13 @@ final human. Required asset (Phase 2 blocker), declared in `src/three/assetManif
 - **Gate** Y-up, metre scale (~1.7 m), origin at feet, correct normals, textures resolve, skeleton binds,
   clips play, < 3 s load, disposes without leak. Loading ≠ approved.
 
-Also missing (non-blocking): small 1k studio **HDR** (`RoomEnvironment` fallback acceptable).
-Skin/capillary/tissue/particles are **procedural** — no assets needed.
+**Environment: RESOLVED.** `RoomEnvironment` is vendored locally and applied through `PMREMGenerator`
+with ACES tone mapping + sRGB output and a soft key/fill/rim rig — believable skin and readable eyes
+with **no runtime CDN and no HDR file to licence**. Skin/capillary/tissue/particles and the cream
+container remain **procedural** — no assets needed.
+
+**Drop-in path:** put any compliant humanoid GLB at `simulator/assets/human/human.glb`. The inspector,
+bone map, preview page and animation controller accept it with **no code changes**.
 
 ## 9–10. Timeline + replay integration
 
@@ -183,10 +188,28 @@ headless WebGL smoke + production diff.
 **2D preserved throughout.** Existing renderers are reclassified as **debug / scientific inspection /
 timeline + replay inspector / validation / fallback**, reachable via a mode switch; no redesign.
 
+## 16b. Predictive visualization (completion patch)
+
+The scientific runtime stops at the dermis, so everything downstream is produced by
+`src/three/predictiveVisualizationModel.js` (read-only, deterministic) with parameters in
+`src/three/predictiveVisualConfig.js` (`pvm-1.0.0`). Outputs: `relativePlasmaConcentration`,
+`bloodstreamParticleDensity`, `systemicArrivalProgress`, `remainingApplicationSiteFraction`,
+`predictedTargetArrival`, `predictedExtravasatedFraction`, `predictedInterstitialConcentration`,
+`predictedPenetrationDepth`, `predictedECMRetention`, `predictedCellularUptake`.
+
+Every output is tagged **PREDICTED_VISUAL** with value / confidence / assumptions / modelVersion /
+inputSources / unavailableReason. Normalized first-order absorption–elimination (analytic ka≈ke limit);
+**no clinical units**; missing inputs stay `null` (a real zero dose is distinct from unavailable). The
+conservation chain is enforced by construction: systemic ≥ arrival ≥ extravasation ≥ interstitial ≥
+{penetration, uptake}. `buildCombinedVisualState()` keeps `simulation` and `prediction` in separate
+branches so scenes can never present a prediction as a measurement. Skin transport represents
+**released API**, not intact carrier — carried in `particleIdentity` and required in labels.
+
 ## 17. Known blockers
 
-1. **Human GLB missing (blocks Phase 2 only).** Needs a licensed, presentation-quality rigged human
-   per §5–8. Phases 1, 3, 4, 5 are unblocked.
+1. **Human GLB missing (blocks Phase 2 only).** Acquisition was attempted and every reachable
+   candidate was rejected on quality or licence/availability grounds (see §5–8). Phases 1, 3, 4, 5
+   are unblocked; a dev rig exists for building the animation controller.
 2. Sandbox egress blocks CDNs (npm registry works) — assets must be vendored into the repo.
 3. Systemic PK is not modelled — the bloodstream scene must stay explicitly labelled.
 

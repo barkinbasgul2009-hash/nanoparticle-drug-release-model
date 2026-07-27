@@ -79,4 +79,44 @@ export function buildVisualState(src = {}) {
 /** True when a visual parameter may be presented as a scientific value. */
 export function isBiological(p) { return !!p && (p.provenance === PROVENANCE.SIMULATION_DERIVED || p.provenance === PROVENANCE.EVIDENCE_BACKED_MAPPING); }
 
+// ---------------------------------------------------------------------------
+// COMBINED STATE (Phase-0 completion patch). Keeps SIMULATION and PREDICTION strictly separate so
+// the Three.js scenes never need to know how predictions are produced — and can never present a
+// prediction as a measurement.
+// ---------------------------------------------------------------------------
+import { predictVisualState, SOURCE_CLASS } from './predictiveVisualizationModel.js';
+
+/**
+ * @param {object} src same inputs as buildVisualState, plus optional
+ *   { absorbedFraction, elapsedHours, tissueAccessibility, vascularAccessibility, predictionParams }
+ */
+export function buildCombinedVisualState(src = {}) {
+  const simulation = buildVisualState(src);
+  const prediction = predictVisualState({
+    releasedFraction: simulation.releasedFraction.value,
+    absorbedFraction: isNum(src.absorbedFraction) ? src.absorbedFraction : null,
+    elapsedHours: isNum(src.elapsedHours) ? src.elapsedHours : null,
+    route: src.route || 'topical',
+    tissueAccessibility: isNum(src.tissueAccessibility) ? src.tissueAccessibility : null,
+    vascularAccessibility: isNum(src.vascularAccessibility) ? src.vascularAccessibility : null,
+    penetrationDepth: simulation.penetrationDepth.value,
+    params: src.predictionParams || {},
+  });
+
+  return Object.freeze({
+    simulation,
+    prediction,
+    provenance: Object.freeze({
+      simulationClasses: [PROVENANCE.SIMULATION_DERIVED, PROVENANCE.EVIDENCE_BACKED_MAPPING, PROVENANCE.UNAVAILABLE, PROVENANCE.NOT_MODELLED],
+      predictionClass: SOURCE_CLASS.PREDICTED_VISUAL,
+      visualOnlyClass: SOURCE_CLASS.VISUAL_ONLY,
+      rule: 'Values under `prediction` are PREDICTED_VISUAL. They are never measured or simulation-derived and must be labelled as predictions wherever displayed.',
+      predictionModelVersion: prediction.modelVersion,
+      particleIdentity: prediction.particleIdentity,
+    }),
+    // convenience for the SceneDirector (progress lives on the simulation side)
+    progress: simulation.progress,
+  });
+}
+
 export default buildVisualState;

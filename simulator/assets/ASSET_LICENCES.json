@@ -1,0 +1,85 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Licence + provenance record for every third-party asset vendored into this repository. No asset may be shipped without an entry here.",
+  "recorded_on": "2026-07-27",
+  "assets": [
+    {
+      "id": "three_js_runtime",
+      "path": "simulator/vendor/three/",
+      "kind": "library",
+      "version": "r160",
+      "source": "https://registry.npmjs.org/three (npm package three@0.160.0)",
+      "author": "three.js authors (mrdoob and contributors)",
+      "licence": "MIT",
+      "licence_file": "simulator/vendor/three/LICENSE",
+      "download_date": "2026-07-27",
+      "attribution_required": true,
+      "modification_rights": "yes (MIT)",
+      "redistribution": "permitted (MIT) — LICENSE file shipped alongside",
+      "modifications_made": "addon bare-specifier imports ('three') rewritten to local relative paths so the ESM loads without an import map or CDN",
+      "status": "ACCEPTED_IN_USE"
+    },
+    {
+      "id": "dev_rig_michelle",
+      "path": "simulator/assets/human/dev-rig/dev-rig-michelle.glb",
+      "kind": "rigged humanoid (DEVELOPMENT FIXTURE ONLY — NOT the final presentation human)",
+      "source": "https://raw.githubusercontent.com/mrdoob/three.js/r160/examples/models/gltf/Michelle.glb",
+      "upstream_origin": "Adobe Mixamo character, redistributed in the three.js example assets",
+      "author": "Adobe (Mixamo) / redistributed by the three.js project",
+      "licence": "three.js repository MIT for redistribution of the example asset; upstream Mixamo characters are licensed by Adobe for use in projects. VERIFY Adobe's current Mixamo terms before any public redistribution of this specific mesh.",
+      "licence_verified_for_public_redistribution": false,
+      "download_date": "2026-07-27",
+      "attribution_required": true,
+      "modification_rights": "assumed for internal development use only",
+      "redistribution": "NOT CLEARED — this file is a local development fixture. It must NOT be published in the public demo artifact.",
+      "quality_gate": "REJECTED as the final human: stylised cartoon avatar (oversized stylised hair, goggles occluding the eyes, game-style proportions). Fails 'believable adult human proportions' and the facial-quality requirements.",
+      "retained_because": "13/13 required bone roles resolve and it carries 40 finger bones, so it is a valid rig to DEVELOP and TEST the bone-driven topical-application animation controller against while the final human is sourced.",
+      "status": "DEV_ONLY_NOT_FOR_PUBLICATION"
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "id": "three_soldier",
+      "source": "three.js r160 examples/models/gltf/Soldier.glb",
+      "reason": "Fully armoured game character with helmet; no bare forearm (the treatment area) and no presentable face. Unsuitable for a topical-application scientific animation.",
+      "inspected": { "triangles": 11376, "bones": 49, "fingerBones": 27, "clips": ["Idle", "Run", "TPose", "Walk"] }
+    },
+    {
+      "id": "three_xbot",
+      "source": "three.js r160 examples/models/gltf/Xbot.glb",
+      "reason": "Featureless test dummy — explicitly excluded by the asset requirements."
+    },
+    {
+      "id": "readyplayerme_samples",
+      "source": "models.readyplayer.me / readyplayerme GitHub sample paths",
+      "reason": "Runtime CDN unreachable from the build environment (connection blocked) and the probed repository sample paths return 404. Not acquirable without an account."
+    },
+    {
+      "id": "mixamo_direct",
+      "source": "https://www.mixamo.com",
+      "reason": "Requires an authenticated Adobe account. Authentication was not bypassed, per instruction."
+    },
+    {
+      "id": "makehuman_mpfb",
+      "source": "MakeHuman / MPFB2 (Blender add-on)",
+      "reason": "Blender is not installed in this environment, so no model can be generated locally."
+    },
+    {
+      "id": "khronos_cesiumman",
+      "source": "KhronosGroup/glTF-Sample-Assets CesiumMan.glb",
+      "reason": "Very low-fidelity sample figure; fails the presentation-quality gate."
+    }
+  ],
+  "outstanding_requirement": {
+    "id": "final_presentation_human",
+    "status": "MISSING — BLOCKS PHASE 2 ONLY",
+    "specification": "See 3D_IMPLEMENTATION_MAP.md sections 5-8 and simulator/src/three/assetManifest.js (ASSETS.human).",
+    "acceptable_sources": [
+      "A CC0 / CC-BY / commercially-licensed realistic rigged human GLB supplied by the project owner",
+      "Ready Player Me avatar exported from the owner's own account (bare forearms outfit)",
+      "A MakeHuman/MPFB-generated model exported to GLB (CC0 base mesh) once Blender is available",
+      "Any clearly licensed rigged humanoid that passes the quality gate and permits redistribution"
+    ],
+    "drop_in_path": "simulator/assets/human/human.glb — the inspector, bone map, preview page and animation controller already accept any humanoid GLB at this path with no code changes."
+  }
+}
