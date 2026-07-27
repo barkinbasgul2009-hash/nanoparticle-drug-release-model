@@ -40,6 +40,7 @@
     import { RoomEnvironment } from './vendor/three/addons/environments/RoomEnvironment.js';
     import { buildBoneMap } from './src/three/boneMap.js';
     import { disposeObject } from './src/three/disposal.js';
+    import { HumanAnimationController } from './src/three/humanAnimationController.js';
 
     const host = document.getElementById('host');
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -74,7 +75,7 @@
     ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 
     let model = null, mixer = null, skelHelper = null, boneMap = null, clips = [], action = null;
-    let wire = false;
+    let wire = false, animCtrl = null, siteMarker = null, handMarker = null;
     const loader = new GLTFLoader();
     const statsEl = document.getElementById('stats'), loadEl = document.getElementById('load');
 
@@ -143,6 +144,14 @@
       });
       scene.add(model);
       boneMap = buildBoneMap(bones);
+      // --- topical-application controller bound to the REAL skeleton (validated bone map only) ---
+      const boneByName = {}; model.traverse((o) => { if (o.isBone) boneByName[o.name] = o; });
+      animCtrl = new HumanAnimationController({ root: model, boneNames: Object.keys(boneByName), lookupBone: (n) => boneByName[n], side: 'R' });
+      // visual debug targets: application site (treated forearm) + applying hand
+      const mk2 = (c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 12), new THREE.MeshBasicMaterial({ color: c, depthTest: false, transparent: true, opacity: 0.9 })); m.renderOrder = 999; return m; };
+      if (siteMarker) disposeObject(siteMarker); if (handMarker) disposeObject(handMarker);
+      siteMarker = mk2(0x2f9e8f); handMarker = mk2(0x1f6feb); scene.add(siteMarker); scene.add(handMarker);
+      window.__markers = { site: siteMarker, hand: handMarker, boneByName };
       const box = robustBounds(model);
       const size = box.getSize(new THREE.Vector3());
       ground.position.y = box.min.y;
@@ -197,6 +206,20 @@
     })();
     addEventListener('resize', () => { camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); });
 
+    /** Apply the topical-application pose at a normalized master-timeline progress (pure). */
+    window.__applyPose = (p) => {
+      if (!animCtrl) return null;
+      const r = animCtrl.apply(p);
+      model.updateMatrixWorld(true);
+      const m = window.__markers;
+      if (m) {
+        const fa = m.boneByName[boneMap.map.forearmL], hd = m.boneByName[boneMap.map.handR];
+        if (fa) m.site.position.copy(fa.getWorldPosition(new THREE.Vector3()));
+        if (hd) m.hand.position.copy(hd.getWorldPosition(new THREE.Vector3()));
+      }
+      loadEl.textContent = `pose @ progress ${p.toFixed(2)} — stage: ${r.stage} · bones driven: ${r.applied.length} · skipped: ${r.skipped.length}`;
+      return r;
+    };
     // screenshot hooks for the automated quality gate
     window.__setView = setView; window.__load = load;
     load(new URLSearchParams(location.search).get('model') || 'Michelle.glb');

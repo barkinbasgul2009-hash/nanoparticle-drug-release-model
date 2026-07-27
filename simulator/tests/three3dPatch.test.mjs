@@ -5,6 +5,7 @@ import { section, ok, eq, REPO_ROOT } from './harness.mjs';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { inspectGlb, resolveBoneRoles } from '../tools/inspect-glb.mjs';
+import { verifyHumanAsset, GATE } from '../tools/verify-human-asset.mjs';
 import { buildBoneMap, clampJoint, REQUIRED_ROLES, JOINT_LIMITS } from '../src/three/boneMap.js';
 import { HumanAnimationController, poseFor, stageAt, APPLICATION_STAGES } from '../src/three/humanAnimationController.js';
 import { predictVisualState, systemicCurve, SOURCE_CLASS } from '../src/three/predictiveVisualizationModel.js';
@@ -41,6 +42,21 @@ export default async function run() {
     ok(roles.fingerBoneCount >= 10, `RIG: finger bones present (${roles.fingerBoneCount})`);
     ok(info.externalReferences.length === 0, 'RIG: no external texture/buffer references');
   }
+
+  // ================= automated human-asset quality gate =================
+  ok(GATE.minTriangles >= 10000 && GATE.minFingerBones >= 5, 'GATE: thresholds reject low-poly mannequins and rig-less models');
+  const missing = verifyHumanAsset(P('assets/human/human.glb'));
+  ok(!missing.ok, 'GATE: the absent final human.glb fails the gate (no placeholder is silently accepted)');
+  if (existsSync(rigPath)) {
+    const g = verifyHumanAsset(rigPath);
+    ok(g.checks.find((c) => c.id === 'self_contained').pass, 'GATE: dev rig passes self-containment');
+    ok(g.checks.find((c) => c.id === 'has_skeleton').pass, 'GATE: dev rig passes the skeleton check');
+    ok(g.checks.find((c) => c.id === 'required_bone_roles').pass, 'GATE: dev rig resolves every required bone role');
+    ok(Array.isArray(g.manualReview) && g.manualReview.length >= 5, 'GATE: automated pass still demands documented human visual review (face/hands/forearm/licence)');
+    ok(g.manualReview.some((m) => /FACE/.test(m)) && g.manualReview.some((m) => /FOREARM/.test(m)), 'GATE: visual review covers face and forearm explicitly');
+  }
+  // a model with real geometry but no textures must fail (the HVGirl class of asset)
+  ok(GATE.minTriangles > 1872, 'GATE: 1,872-triangle models are below the minimum (HVGirl-class rejected)');
 
   // ================= bone map =================
   const bm = buildBoneMap(['mixamorig:Hips', 'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig:Neck', 'mixamorig:Head',

@@ -32,8 +32,12 @@ export const ASSETS = Object.freeze({
       { source: 'Ready Player Me', result: 'UNAVAILABLE — runtime CDN blocked from this environment; probed repo sample paths 404.' },
       { source: 'Mixamo', result: 'UNAVAILABLE — requires an authenticated Adobe account (authentication not bypassed).' },
       { source: 'MakeHuman / MPFB2', result: 'UNAVAILABLE — Blender is not installed in this environment.' },
-      { source: 'Khronos CesiumMan', result: 'REJECTED — very low-fidelity sample figure.' },
+      { source: 'Khronos CesiumMan / RiggedFigure', result: 'REJECTED — very low-fidelity sample figures.' },
+      { source: 'BabylonJS/Assets HVGirl.glb', result: 'REJECTED by the automated gate — 1,872 triangles, 0 textures (low-poly, untextured).' },
+      { source: 'npm avatar packages (@readyplayerme/visage, @pixiv/three-vrm)', result: 'NO GLB ASSETS shipped in the tarballs (types/components only).' },
     ],
+    qualityGate: 'node simulator/tools/verify-human-asset.mjs <file.glb> — automates every machine-checkable gate item; visual review still required.',
+    dropInPath: 'simulator/assets/human/human.glb — inspector, bone map, preview and animation controller accept it with NO code changes.',
     devRig: { path: 'simulator/assets/human/dev-rig/dev-rig-michelle.glb', purpose: 'develop + test the bone-driven animation controller only', publish: false },
   },
   humanAnimations: {

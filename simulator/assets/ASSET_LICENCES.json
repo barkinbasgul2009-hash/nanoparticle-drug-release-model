@@ -15,14 +15,14 @@
       "download_date": "2026-07-27",
       "attribution_required": true,
       "modification_rights": "yes (MIT)",
-      "redistribution": "permitted (MIT) — LICENSE file shipped alongside",
+      "redistribution": "permitted (MIT) \u2014 LICENSE file shipped alongside",
       "modifications_made": "addon bare-specifier imports ('three') rewritten to local relative paths so the ESM loads without an import map or CDN",
       "status": "ACCEPTED_IN_USE"
     },
     {
       "id": "dev_rig_michelle",
       "path": "simulator/assets/human/dev-rig/dev-rig-michelle.glb",
-      "kind": "rigged humanoid (DEVELOPMENT FIXTURE ONLY — NOT the final presentation human)",
+      "kind": "rigged humanoid (DEVELOPMENT FIXTURE ONLY \u2014 NOT the final presentation human)",
       "source": "https://raw.githubusercontent.com/mrdoob/three.js/r160/examples/models/gltf/Michelle.glb",
       "upstream_origin": "Adobe Mixamo character, redistributed in the three.js example assets",
       "author": "Adobe (Mixamo) / redistributed by the three.js project",
@@ -31,7 +31,7 @@
       "download_date": "2026-07-27",
       "attribution_required": true,
       "modification_rights": "assumed for internal development use only",
-      "redistribution": "NOT CLEARED — this file is a local development fixture. It must NOT be published in the public demo artifact.",
+      "redistribution": "NOT CLEARED \u2014 this file is a local development fixture. It must NOT be published in the public demo artifact.",
       "quality_gate": "REJECTED as the final human: stylised cartoon avatar (oversized stylised hair, goggles occluding the eyes, game-style proportions). Fails 'believable adult human proportions' and the facial-quality requirements.",
       "retained_because": "13/13 required bone roles resolve and it carries 40 finger bones, so it is a valid rig to DEVELOP and TEST the bone-driven topical-application animation controller against while the final human is sourced.",
       "status": "DEV_ONLY_NOT_FOR_PUBLICATION"
@@ -42,12 +42,22 @@
       "id": "three_soldier",
       "source": "three.js r160 examples/models/gltf/Soldier.glb",
       "reason": "Fully armoured game character with helmet; no bare forearm (the treatment area) and no presentable face. Unsuitable for a topical-application scientific animation.",
-      "inspected": { "triangles": 11376, "bones": 49, "fingerBones": 27, "clips": ["Idle", "Run", "TPose", "Walk"] }
+      "inspected": {
+        "triangles": 11376,
+        "bones": 49,
+        "fingerBones": 27,
+        "clips": [
+          "Idle",
+          "Run",
+          "TPose",
+          "Walk"
+        ]
+      }
     },
     {
       "id": "three_xbot",
       "source": "three.js r160 examples/models/gltf/Xbot.glb",
-      "reason": "Featureless test dummy — explicitly excluded by the asset requirements."
+      "reason": "Featureless test dummy \u2014 explicitly excluded by the asset requirements."
     },
     {
       "id": "readyplayerme_samples",
@@ -68,11 +78,33 @@
       "id": "khronos_cesiumman",
       "source": "KhronosGroup/glTF-Sample-Assets CesiumMan.glb",
       "reason": "Very low-fidelity sample figure; fails the presentation-quality gate."
+    },
+    {
+      "id": "babylonjs_hvgirl",
+      "source": "https://raw.githubusercontent.com/BabylonJS/Assets/master/meshes/HVGirl.glb",
+      "reason": "REJECTED by the automated quality gate: 1,872 triangles and ZERO textures \u2014 a low-poly untextured stylised model. Fails 'not a low-poly mannequin' and 'web-compatible PBR materials'.",
+      "inspected": {
+        "triangles": 1872,
+        "bones": 49,
+        "fingerBones": 24,
+        "textures": 0,
+        "clips": [
+          "Idle",
+          "Samba",
+          "Walking",
+          "WalkingBack"
+        ]
+      }
+    },
+    {
+      "id": "npm_avatar_packages",
+      "source": "npm: @readyplayerme/visage@6.16.0, @readyplayerme/rpm-react-sdk, @pixiv/three-vrm",
+      "reason": "Inspected package tarballs contain NO .glb/.gltf assets (TypeScript definitions and components only). Ready Player Me avatars are fetched from their CDN at runtime, which is unreachable from this environment."
     }
   ],
   "outstanding_requirement": {
     "id": "final_presentation_human",
-    "status": "MISSING — BLOCKS PHASE 2 ONLY",
+    "status": "MISSING \u2014 BLOCKS PHASE 2 ONLY",
     "specification": "See 3D_IMPLEMENTATION_MAP.md sections 5-8 and simulator/src/three/assetManifest.js (ASSETS.human).",
     "acceptable_sources": [
       "A CC0 / CC-BY / commercially-licensed realistic rigged human GLB supplied by the project owner",
@@ -80,6 +112,37 @@
       "A MakeHuman/MPFB-generated model exported to GLB (CC0 base mesh) once Blender is available",
       "Any clearly licensed rigged humanoid that passes the quality gate and permits redistribution"
     ],
-    "drop_in_path": "simulator/assets/human/human.glb — the inspector, bone map, preview page and animation controller already accept any humanoid GLB at this path with no code changes."
+    "drop_in_path": "simulator/assets/human/human.glb \u2014 the inspector, bone map, preview page and animation controller already accept any humanoid GLB at this path with no code changes."
+  },
+  "acquisition_environment": {
+    "network_allowlist_observed": [
+      "registry.npmjs.org (npm)",
+      "raw.githubusercontent.com (public GitHub raw)"
+    ],
+    "blocked": [
+      "unpkg.com (403)",
+      "models.readyplayer.me (connection blocked)",
+      "GitHub REST API for repo contents (not enabled for this session)"
+    ],
+    "local_tools": {
+      "blender": "NOT INSTALLED \u2014 MakeHuman/MPFB generation impossible"
+    },
+    "conclusion": "Only npm packages and public GitHub raw files are obtainable. Every humanoid reachable through those two channels was downloaded, inspected and visually reviewed; none meets the presentation-quality bar."
+  },
+  "unblock_procedure": {
+    "fastest_path": "Ready Player Me (~2 minutes, free, no code changes)",
+    "steps": [
+      "Open https://readyplayer.me and create an avatar (or use an existing one).",
+      "Choose a SHORT-SLEEVE / bare-arm outfit \u2014 the forearm is the cream-application area and must be bare skin.",
+      "Download / copy the avatar GLB URL and save the file as simulator/assets/human/human.glb",
+      "Run: node simulator/tools/verify-human-asset.mjs simulator/assets/human/human.glb",
+      "If it prints PASS, view it: cd simulator && python3 -m http.server 8080 -> http://localhost:8080/human-preview.html?model=human.glb",
+      "Record the source/licence in this file, then Phase 2 can start with no code changes."
+    ],
+    "alternatives": [
+      "Any CC0/CC-BY rigged human GLB you can legally redistribute",
+      "Install Blender so a MakeHuman/MPFB CC0 model can be generated locally",
+      "Provide a direct licensed download URL on npm or raw.githubusercontent.com"
+    ]
   }
 }
