@@ -1,5 +1,11 @@
 # 3D Implementation Map — Phase 0 (Foundation Lock)
 
+> **Governing policy:** [`POLYGLOT_ARCHITECTURE_LOCK.md`](POLYGLOT_ARCHITECTURE_LOCK.md) is the
+> authoritative architecture and layer-ownership document for this project. Where this map and the
+> lock differ, **the lock governs**. This map is retained as the historical phase-by-phase record and
+> is not superseded. Conflict C-1 in the lock notes that this file's shot table and
+> `applicationChoreography.js`'s shot table both span progress 0.00–1.00.
+
 Locks the existing foundation and maps the Three.js work for Phases 1–7. Verified against the
 repository at commit `a148c1c` (branch `stage2/deep-scientific-evidence-review`). Roadmap stays at
 8 phases; no new phases.

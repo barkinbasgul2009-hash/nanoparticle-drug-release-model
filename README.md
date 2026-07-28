@@ -123,6 +123,12 @@ C falls to 10 % of the surface value).
 
 ## Repository layout
 
+> **Architecture policy:** layer ownership (R / Blender / Three.js / GLSL), asset ownership, the
+> master-timeline invariant and acceptance rules are defined in
+> [`POLYGLOT_ARCHITECTURE_LOCK.md`](POLYGLOT_ARCHITECTURE_LOCK.md). Read it before any broad
+> technical change.
+
+
 ```
 R/
   release_models.R      Module 1: six release models + dispatcher
