@@ -20,9 +20,10 @@ const CDP_PORT = Number(process.argv[3] || 9333);
 
 /** Frames to capture: [label, progress]. Chosen to land inside each authored stage. */
 export const CAPTURES = [
-  ['01-neutral', 0.02], ['02-prepare', 0.20], ['03-approach', 0.33],
-  ['04-contact', 0.41], ['05-stroke1', 0.52], ['06-stroke2', 0.67],
-  ['07-release', 0.80], ['08-hero', 0.94], ['09-final', 1.00],
+  ['01-establish', 0.03], ['02-present', 0.13], ['03-product', 0.23],
+  ['04-prep', 0.33], ['05-dispense', 0.43], ['06-stow', 0.54],
+  ['07-contact', 0.645], ['08-stroke1', 0.70], ['09-stroke2', 0.80],
+  ['10-hero', 0.95], ['11-final', 1.00],
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -103,6 +104,8 @@ export async function run() {
           gapMm: f.contact.gap * 1000, axial: f.contact.axial, palmDot: f.contact.palmDot,
           creamPresent: f.choreography.cream.present, coverage: f.choreography.cream.coverage,
           opacity: f.choreography.cream.opacity,
+          minClear: f.clearance.min * 1000, safe: f.clearance.safe,
+          tube: f.choreography.product.visible, ext: f.choreography.dispense.extrusion,
           elbowTreated: f.ik.treated.elbowAngle * 180 / Math.PI,
           elbowApplying: f.ik.applying.elbowAngle * 180 / Math.PI,
           camDist: f.choreography.camera.dist,
@@ -120,22 +123,22 @@ export async function run() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const rows = await run();
-  console.log('\nlabel        p     stage      shot         contact  gap(mm)  axial  palm  cream  cover  opac  elbowT elbowA  cam');
+  console.log('\nlabel         p     stage           shot               contact  gap(mm)  clear(mm) safe  tube   ext   cream  cover  opac  cam');
   for (const r of rows) {
     console.log(
-      r.label.padEnd(12),
+      r.label.padEnd(13),
       r.progress.toFixed(2).padStart(5),
-      r.stage.padEnd(10),
-      String(r.shot).padEnd(12),
+      r.stage.padEnd(15),
+      String(r.shot).padEnd(18),
       String(r.contactValid).padStart(7),
       r.gapMm.toFixed(1).padStart(8),
-      r.axial.toFixed(3).padStart(6),
-      r.palmDot.toFixed(2).padStart(5),
+      r.minClear.toFixed(0).padStart(9),
+      String(r.safe).padStart(5),
+      String(r.tube).padStart(6),
+      r.ext.toFixed(2).padStart(6),
       String(r.creamPresent).padStart(6),
       r.coverage.toFixed(3).padStart(6),
       r.opacity.toFixed(2).padStart(5),
-      r.elbowTreated.toFixed(0).padStart(6),
-      r.elbowApplying.toFixed(0).padStart(6),
       r.camDist.toFixed(2).padStart(5),
     );
   }

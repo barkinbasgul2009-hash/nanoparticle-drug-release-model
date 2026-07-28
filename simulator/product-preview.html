@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NANODERM product lookdev</title>
+<style>
+  body { margin:0; font:13px ui-sans-serif, system-ui, sans-serif; background:#fff; color:#14181d; }
+  header { padding:8px 14px; border-bottom:1px solid #dde2e8; }
+  #view { width:100%; height:82vh; background:#eef1f5; }
+  #hud { padding:6px 14px; font-family:ui-monospace,monospace; font-size:12px; }
+</style>
+</head>
+<body>
+<header><b>NANODERM product lookdev</b> — tube + carton, isolated (development only)</header>
+<div id="view"></div>
+<div id="hud">loading…</div>
+<script type="module">
+import * as THREE from './vendor/three/three.module.js';
+import { RoomEnvironment } from './vendor/three/addons/environments/RoomEnvironment.js';
+import { buildCreamTube, buildCarton, PRODUCT } from './src/three/creamProduct.js';
+
+const host = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(host.clientWidth, host.clientHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+host.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xeef1f5);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const key = new THREE.DirectionalLight(0xfff4e8, 2.2); key.position.set(0.6, 1.2, 1.4); key.castShadow = true;
+const fill = new THREE.DirectionalLight(0xdce8ff, 0.8); fill.position.set(-1.0, 0.6, 0.8);
+scene.add(key, fill, new THREE.HemisphereLight(0xffffff, 0.4));
+
+const tube = buildCreamTube();
+tube.cap.visible = true;
+scene.add(tube.group);
+const carton = buildCarton();
+carton.mesh.position.set(-0.085, 0, -0.02);
+scene.add(carton.mesh);
+
+// the tube stands beside the carton
+tube.group.position.set(0.035, 0, 0.02);
+
+const camera = new THREE.PerspectiveCamera(32, host.clientWidth / host.clientHeight, 0.01, 10);
+const q = new URLSearchParams(location.search);
+const yaw = Number(q.get('yaw') ?? 0);      // degrees, orbit around the products
+const dist = Number(q.get('dist') ?? 0.42);
+const a = yaw * Math.PI / 180;
+camera.position.set(Math.sin(a) * dist, 0.04, Math.cos(a) * dist);
+camera.lookAt(0, 0, 0);
+
+(function loop() { requestAnimationFrame(loop); renderer.render(scene, camera); })();
+
+document.getElementById('hud').textContent =
+  `brand="${PRODUCT.brand}"  api="${PRODUCT.api}"  ${PRODUCT.form} ${PRODUCT.strength} ${PRODUCT.netContent}` +
+  `   |  yaw=${yaw}deg dist=${dist}m  (?yaw=&dist= to orbit)`;
+window.__ready = true;
+</script>
+</body>
+</html>

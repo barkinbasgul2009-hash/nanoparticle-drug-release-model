@@ -90,8 +90,13 @@ function apply(p) {
       `elbows    treated=${(f.ik.treated.elbowAngle * 180 / Math.PI).toFixed(0)}°  ` +
       `applying=${(f.ik.applying.elbowAngle * 180 / Math.PI).toFixed(0)}°   ` +
       `camera dist=${ch.camera.dist.toFixed(2)}m target=${ch.camera.fromAnchor}->${ch.camera.toAnchor}\n` +
-      `cream mesh ${scene.cream.stats.triangles} tris  radius=${(scene.cream.stats.meanRadius * 1000).toFixed(1)}mm  ` +
-      `garment cleaned: ${scene.presentation.cleanedClothing.join(', ') || 'none'}`;
+      `product   visible=${ch.product.visible} inHand=${ch.product.inHand} raise=${ch.product.raise.toFixed(2)} ` +
+      `aim=${ch.product.aim.toFixed(2)} stow=${ch.product.stow.toFixed(2)}\n` +
+      `dispense  active=${ch.dispense.active} ext=${ch.dispense.extrusion.toFixed(2)} ` +
+      `strand=${(ch.dispense.strandLength * 1000).toFixed(0)}mm bead=${(ch.dispense.beadRadius * 1000).toFixed(1)}mm ` +
+      `strandVisible=${scene.dispenser.strand.visible} beadVisible=${scene.dispenser.bead.visible}\n` +
+      `clearance min=${(f.clearance.min * 1000).toFixed(0)}mm safe=<span class="${f.clearance.safe ? 'ok' : 'no'}">${f.clearance.safe}</span>   ` +
+      `cream mesh ${scene.cream.stats.triangles} tris  thickness=${ch.cream.thickness.toFixed(2)}`;
   }
 }
 

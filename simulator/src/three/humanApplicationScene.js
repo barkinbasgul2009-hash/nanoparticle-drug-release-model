@@ -10,6 +10,8 @@ import * as THREE from '../../vendor/three/three.module.js';
 import { RoomEnvironment } from '../../vendor/three/addons/environments/RoomEnvironment.js';
 import { applyHumanPresentation } from './humanPresentation.js';
 import { buildCreamLayer } from './creamLayer.js';
+import { buildCreamTube, buildCarton, PRODUCT } from './creamProduct.js';
+import { buildCreamDispenser } from './creamDispenser.js';
 import { ApplicationRig } from './applicationRig.js';
 import { buildBoneMap } from './boneMap.js';
 import { disposeObject } from './disposal.js';
@@ -98,11 +100,21 @@ export class HumanApplicationScene {
     });
     this.cream = buildCreamLayer(this.bodyMesh, { forearm: forearmBone, hand: handBone });
 
+    // ---- NANODERM product: tube (held / dispensing) + carton (set dressing for the opening) ----
+    this.tube = buildCreamTube();
+    this.tube.group.visible = false;
+    this.scene.add(this.tube.group);
+    this.product = PRODUCT;
+
+    this.dispenser = buildCreamDispenser();
+    this.scene.add(this.dispenser.group);
+
     this.rig = new ApplicationRig({
       boneNames,
       lookupBone: (n) => boneByName[n] || null,
       applyingSide: this.applyingSide,
       forearmRadius: this.cream.stats.built ? this.cream.stats.meanRadius : undefined,
+      nozzleLocalY: this.tube.nozzleTip.position.y,
     });
 
     // ---- camera ----
@@ -131,9 +143,29 @@ export class HumanApplicationScene {
 
     const frame = this.rig.solve(p);
     if (this.cream.setState) this.cream.setState(frame.choreography.cream);
+    this._updateProduct(frame);
     this._updateCamera(frame);
     this.lastFrame = frame;
     return frame;
+  }
+
+  /** Place the tube and drive the dispensing strand/bead. Pure in the frame state. */
+  _updateProduct(frame) {
+    const ch = frame.choreography;
+    const pose = frame.productPose;
+    const visible = !!(ch.product.visible && pose && !pose.stowed);
+    this.tube.group.visible = visible;
+    if (visible) {
+      this.tube.group.position.copy(pose.position);
+      this.tube.group.quaternion.copy(pose.quaternion);
+      this.tube.cap.visible = !!ch.product.capOn;
+    }
+    this.dispenser.setState(
+      ch.dispense,
+      frame.nozzleWorld,
+      frame.deposit ? frame.deposit.point : null,
+      frame.deposit ? frame.deposit.normal : null,
+    );
   }
 
   _updateCamera(frame) {
@@ -164,6 +196,8 @@ export class HumanApplicationScene {
   dispose() {
     if (this.disposed) return;
     if (this.cream.dispose) this.cream.dispose();
+    if (this.tube) this.tube.dispose();
+    if (this.dispenser) this.dispenser.dispose();
     if (this.rig) this.rig.dispose();
     if (this.lighting) this.lighting.dispose();
     disposeObject(this.ground);

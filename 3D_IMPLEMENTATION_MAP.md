@@ -308,6 +308,35 @@ resets every driven bone to its captured rest transform at the start of each sol
 `solve(p)` a pure function of `p`. Play, pause, seek, reset, replay and **reverse scrubbing** all
 reproduce identical bone matrices.
 
+## 16d. Phase 2 polish — product, dispensing, torso safety, cream readability (DELIVERED)
+
+A polish pass inside Phase 2. Two user-reported defects were reproduced and MEASURED before any
+code changed, and both had concrete causes rather than subjective ones.
+
+| defect reported | measured cause | fix |
+|---|---|---|
+| "the hand looks like it comes through the body" | the applying wrist reached **−36.9 mm inside** the torso capsule at p=0.79; its IK target was lerped along a straight chord from beside the hip to in front of the chest, and that chord passes through the trunk | travel is now a quadratic Bezier bowed away from the body, **plus** a hard `pushOutOfTorso()` clamp on every applying-hand target. Worst clearance over the whole sequence is now **+25 mm**, asserted on 201 samples |
+| "I couldn't really see the cream" | `0xf8f7f5` film alpha-blended over pale skin = near-zero albedo contrast, with no height and no specular of its own | real **geometric thickness** (normal displacement), **clearcoat** so the wet film has a specular the dry skin lacks, a cool albedo lift, plus streaks and an irregular rim |
+
+New files: `creamProduct.js` (NANODERM tube + carton, procedural, canvas labels),
+`creamDispenser.js` (strand + bead), `product-preview.html` (product lookdev).
+
+**Naming.** `data/profile-portfolio.json` → `B_celastrol_nlc_skin` gives a canonical ACTIVE
+INGREDIENT (`celastrol (tripterine)`, NLC, topical) but **no brand name**. NANODERM is therefore used
+as the brand, with the repository's real API printed underneath it, so the prop matches the science.
+
+**Sequence** (11 stages): neutral → present → product_raise → dispense_prep → dispense → stow →
+contact → stroke_1 → stroke_2 → release → hold. Shots: product_establish → dispense_prep → dispense
+→ initial_contact → application → forearm_hero.
+
+**Dispensing is NOT a fluid simulation** and is not claimed to be: a tapered cylinder stretched from
+the nozzle to a descending tip, plus a bead that grows on the skin and is then flattened by the
+arriving palm. Fixed topology, no per-frame geometry rebuild, and a pure function of progress.
+
+**Contact-window correction.** The window used to open at the *start* of the contact stage, which
+asserted a contact the hand had not yet made (measured 197 mm short). It now opens at the end of
+the touchdown reach.
+
 ## 17. Known blockers
 
 1. ~~Human GLB missing (blocks Phase 2 only).~~ **CLEARED 2026-07-28** — the owner supplied
@@ -316,10 +345,11 @@ reproduce identical bone matrices.
    redistribution, and the **MakeHuman watermark** baked into the t-shirt/hair textures.
 2. Sandbox egress blocks CDNs (npm registry works) — assets must be vendored into the repo.
 3. Systemic PK is not modelled — the bloodstream scene must stay explicitly labelled.
-4. Phase-2 residuals (non-blocking, see the Phase-2 report): the skin does not deform under the
+4. Phase-2 residuals (non-blocking, see the Phase-2 reports): the skin does not deform under the
    palm, so contact uses a 5 mm authored overlap instead of soft-tissue compression; the treated
    hand keeps its relaxed bind-pose finger spread; hair remains card-based, which is why no shot
-   frames the head above a medium.
+   frames the head above a medium; the stowed tube is hidden rather than set down on a surface,
+   since the set has no furniture and the camera never returns to that region.
 
 ## 18. Phase 1 readiness
 
