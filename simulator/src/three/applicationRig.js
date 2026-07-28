@@ -24,6 +24,7 @@ import * as THREE from '../../vendor/three/three.module.js';
 import { solveTwoBoneIK, orientHand, measureHandFrame } from './twoBoneIK.js';
 import { choreographyAt, PARAMS, TORSO } from './applicationChoreography.js';
 import { buildBoneMap } from './boneMap.js';
+import { graspPose, relaxedPose, applyGraspPose, gripStateAt } from './graspController.js';
 
 /** Authored offsets, expressed relative to measured anatomy so they survive a re-export. */
 export const RIG_TUNING = Object.freeze({
@@ -86,13 +87,24 @@ export class ApplicationRig {
     };
 
     const suffix = A === 'R' ? '_r' : '_l';
-    this.fingers = [];
-    for (const f of FINGER_ROOTS) {
-      const prox = this.lookupBone(`${f}_01${suffix}`);
-      const mid = this.lookupBone(`${f}_02${suffix}`);
-      const dist = this.lookupBone(`${f}_03${suffix}`);
-      if (prox || mid || dist) this.fingers.push({ name: f, prox, mid, dist });
-    }
+    const otherSuffix = A === 'R' ? '_l' : '_r';
+    const chainsFor = (sfx) => {
+      const out = {};
+      for (const f of FINGER_ROOTS) {
+        const prox = this.lookupBone(`${f}_01${sfx}`);
+        const mid = this.lookupBone(`${f}_02${sfx}`);
+        const dist = this.lookupBone(`${f}_03${sfx}`);
+        if (prox || mid || dist) out[f] = { prox, mid, dist };
+      }
+      return out;
+    };
+    this.applyChains = chainsFor(suffix);
+    this.treatChains = chainsFor(otherSuffix);
+    this.fingers = Object.entries(this.applyChains).map(([name, c]) => ({ name, ...c }));
+    this.treatFingers = Object.entries(this.treatChains).map(([name, c]) => ({ name, ...c }));
+    /** Barrel radius the fingers actually close around — drives per-finger wrap angles. */
+    this.tubeGripRadius = Number.isFinite(opts.tubeGripRadius) ? opts.tubeGripRadius : 0.015;
+    this.gripState = 'OPEN';
 
     this.ready = !!(this.bones.applyUpper && this.bones.applyFore && this.bones.applyHand
       && this.bones.treatUpper && this.bones.treatFore && this.bones.treatHand);
@@ -101,6 +113,7 @@ export class ApplicationRig {
     this.rest = new Map();
     for (const b of Object.values(this.bones)) this._capture(b);
     for (const f of this.fingers) { this._capture(f.prox); this._capture(f.mid); this._capture(f.dist); }
+    for (const f of this.treatFingers) { this._capture(f.prox); this._capture(f.mid); this._capture(f.dist); }
 
     // ---- torso capsule, measured from the skeleton ----
     const pelvis = this.bones.root ? this.bones.root.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3();
@@ -319,20 +332,25 @@ export class ApplicationRig {
 
     const applyIK = solveTwoBoneIK(chain, wristTarget, _pole);
 
-    // ---------- 4. fingers ----------
+    // ---------- 4. hands: object-aware grasp, not a single shared curl scalar ----------
+    // The applying hand grips the TUBE (per-finger wrap derived from its radius); the treated hand
+    // gets a relaxed natural curl so it never shows the bind-pose splay.
     const gripping = ch.mode === 'product';
-    const curlAmt = gripping
+    const gripAmount = gripping
       ? Math.min(1, ch.product.raise * 1.5) * (1 - ch.product.stow)
-      : ch.apply.blend * (ch.apply.expectContact ? 1 : 0.35);
-    const curlSet = gripping ? this.tuning.gripCurl : this.tuning.fingerCurl;
-    if (curlAmt > 1e-4) {
-      for (const f of this.fingers) {
-        const s = f.name === 'thumb' ? 0.45 : 1;
-        if (f.prox) f.prox.rotation.x -= curlSet.prox * curlAmt * s;
-        if (f.mid) f.mid.rotation.x -= curlSet.mid * curlAmt * s;
-        if (f.dist) f.dist.rotation.x -= (curlSet.dist || 0) * curlAmt * s;
-      }
-      this.bones.applyHand.updateMatrixWorld(true);
+      : 0;
+    const squeeze = ch.dispense && ch.dispense.active ? ch.dispense.squeeze || 0 : 0;
+    const grasp = gripping
+      ? graspPose(gripAmount, squeeze, this.tubeGripRadius, { releasing: ch.product.stow > 0.05 })
+      : relaxedPose(0.55 + 0.45 * ch.apply.blend);   // application hand: soft, slightly firmer on contact
+    applyGraspPose(this.applyChains, grasp);
+    this.bones.applyHand.updateMatrixWorld(true);
+    this.gripState = grasp.state;
+
+    // the TREATED hand always rests naturally — it is on screen for the whole hero shot
+    if (this.treatChains) {
+      applyGraspPose(this.treatChains, relaxedPose(1));
+      this.bones.treatHand.updateMatrixWorld(true);
     }
 
     // ---------- 5. product transform (never parented — keeps stowing deterministic) ----------
@@ -379,6 +397,7 @@ export class ApplicationRig {
 
     const frame = Object.freeze({
       progress: ch.progress, stage: ch.stage, mode: ch.mode, choreography: ch,
+      grip: Object.freeze({ state: this.gripState, amount: gripAmount, squeeze }),
       contact: Object.freeze({
         valid, gap, axial: contactAxial, expected: ch.apply.expectContact,
         palmDot: palmWorld.dot(_n.clone().negate()),

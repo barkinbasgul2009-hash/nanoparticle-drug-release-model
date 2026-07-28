@@ -15,6 +15,9 @@
   #view { width: 100%; height: 70vh; background: #eef1f5; }
   #hud { padding: 8px 14px; border-top: 1px solid #dde2e8; font-family: ui-monospace, monospace; font-size: 12px; white-space: pre; }
   .ok { color: #1a7f37; } .no { color: #b42318; }
+  /* clean recording mode: only the render surface, no HUD or controls */
+  body.clean header, body.clean #hud { display: none; }
+  body.clean #view { height: 100vh; }
 </style>
 </head>
 <body>
@@ -157,6 +160,57 @@ addEventListener('resize', () => {
 // ---- automation hooks for the headless screenshot / validation gate ----
 window.__apply = apply;
 window.__frame = () => (scene ? scene.lastFrame : null);
+
+/**
+ * Record the full sequence to WebM from the REAL canvas.
+ *
+ * Frames are stepped deterministically (progress += 1/(fps*seconds)) and pushed with
+ * track.requestFrame(), instead of letting captureStream sample wall-clock. Under SwiftShader a
+ * frame takes far longer than 33 ms, so a wall-clock capture would produce a stuttering, variable
+ * video; this way the encoded result is exactly fps * seconds frames at a steady rate, and it is
+ * reproducible run to run.
+ *
+ * @param {{seconds?:number, fps?:number, hud?:boolean}} opts
+ * @returns {Promise<string>} base64 WebM
+ */
+window.__record = async function record(opts = {}) {
+  const fps = opts.fps || 30;
+  const seconds = opts.seconds || 14;
+  const total = Math.round(fps * seconds);
+  if (!scene) throw new Error('scene not ready');
+
+  document.body.classList.toggle('clean', opts.hud === false);
+
+  const canvas = rend.canvas;
+  const stream = canvas.captureStream(0);          // 0 = we drive every frame ourselves
+  const track = stream.getVideoTracks()[0];
+  const mime = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
+    .find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+  if (!mime) throw new Error('no supported WebM mime type');
+
+  const chunks = [];
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8_000_000 });
+  rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  const done = new Promise((res) => { rec.onstop = res; });
+  rec.start();
+
+  const nextTick = () => new Promise((r) => requestAnimationFrame(() => r()));
+  for (let i = 0; i <= total; i++) {
+    apply(i / total);
+    rend.render(scene.scene, scene.camera);        // draw this exact progress
+    await nextTick();                              // let the compositor settle
+    track.requestFrame();                          // publish exactly one frame
+  }
+  rec.stop();
+  await done;
+  document.body.classList.remove('clean');
+
+  const blob = new Blob(chunks, { type: mime });
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  let bin = '';
+  for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
 </script>
 </body>
 </html>

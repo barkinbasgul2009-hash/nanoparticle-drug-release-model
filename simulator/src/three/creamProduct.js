@@ -206,11 +206,51 @@ export function buildCreamTube(opts = {}) {
   });
 
   // ---- barrel (carries the label) ----
+  // Segmented along its height so the squeeze deformation has vertices to move; a 1-segment
+  // cylinder can only translate its rims and reads as a rigid bottle however hard it is "squeezed".
   const body = new THREE.Mesh(
-    new THREE.CylinderGeometry(t.bodyRadius, t.bodyRadius, t.bodyLength, 56, 1, true), bodyMat,
+    new THREE.CylinderGeometry(t.bodyRadius, t.bodyRadius, t.bodyLength, 56, 24, true), bodyMat,
   );
   body.position.y = 0;
   group.add(body);
+
+  // ---- squeeze deformation -------------------------------------------------------------------
+  // A real tube flattens between finger and thumb and bulges on the free axis; its volume is
+  // roughly preserved. This is a procedural vertex deformation (not a morph target) because it has
+  // to stay a pure function of one uniform for determinism, and because the barrel is the only part
+  // that moves — the crimp, shoulder and neck must stay rigid or the nozzle collapses.
+  const squeezeUniforms = {
+    uSqueeze: { value: 0 },        // 0..1 finger pressure
+    uDeplete: { value: 0 },        // 0..1 how much product has been dispensed
+    uHalfLen: { value: t.bodyLength * 0.5 },
+  };
+  const injectSqueeze = (mat) => {
+    mat.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, squeezeUniforms);
+      shader.vertexShader = `
+        uniform float uSqueeze;
+        uniform float uDeplete;
+        uniform float uHalfLen;
+        ${shader.vertexShader}
+      `.replace('#include <begin_vertex>', `#include <begin_vertex>
+        {
+          // profile: no deformation at the crimp or the shoulder, maximum across the grip zone
+          float yn = clamp(transformed.y / uHalfLen, -1.0, 1.0);
+          float grip = 1.0 - smoothstep(0.0, 0.92, abs(yn - 0.05));
+          float amt = grip * uSqueeze;
+          // flatten across X (between finger pads and thumb), bulge on Z to conserve volume
+          transformed.x *= 1.0 - 0.34 * amt;
+          transformed.z *= 1.0 + 0.20 * amt;
+          // depletion: the tail end collapses first, as an emptying tube does
+          float tail = smoothstep(0.35, -1.0, yn);
+          transformed.x *= 1.0 - 0.26 * uDeplete * tail;
+          transformed.z *= 1.0 - 0.20 * uDeplete * tail;
+        }`);
+    };
+    mat.customProgramCacheKey = () => 'nanoderm-squeeze';
+    return mat;
+  };
+  injectSqueeze(bodyMat);
 
   // ---- shoulder: barrel -> neck ----
   const shoulder = new THREE.Mesh(
@@ -268,6 +308,12 @@ export function buildCreamTube(opts = {}) {
 
   return {
     group, nozzleTip, cap,
+    /** Drive the deformation. Pure in its arguments — same values give the same shape. */
+    setSqueeze(squeeze, deplete = 0) {
+      squeezeUniforms.uSqueeze.value = Number.isFinite(squeeze) ? Math.max(0, Math.min(1, squeeze)) : 0;
+      squeezeUniforms.uDeplete.value = Number.isFinite(deplete) ? Math.max(0, Math.min(1, deplete)) : 0;
+    },
+    squeezeUniforms,
     materials: [bodyMat, blankMat, capMat, orifice.material],
     textures: [labelTex],
     dispose() {

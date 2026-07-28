@@ -17,7 +17,7 @@
 import * as THREE from '../../vendor/three/three.module.js';
 
 export const DISPENSER_DEFAULTS = Object.freeze({
-  colour: 0xfdfcfa,
+  colour: 0xf6ecd9,     // matches creamLayer: strand, bead and film must be one substance
   strandTopRadius: 0.0050,     // at the nozzle
   strandTipRadius: 0.0072,     // fatter at the falling tip — surface-tension read, and legible at
                                // the shot distance the dispense beat actually uses

@@ -30,8 +30,11 @@ import * as THREE from '../../vendor/three/three.module.js';
 export const CREAM_DEFAULTS = Object.freeze({
   weightThreshold: 0.35,   // min forearm-bone weight for a vertex to join the patch
   surfaceOffset: 0.0012,   // base lift off the skin (m) — clears z-fighting
-  maxThickness: 0.0032,    // additional displacement at full thickness (m)
-  colour: 0xfdfcfa,        // bright, very slightly cool off-white
+  maxThickness: 0.0046,    // additional displacement at full thickness (m)
+  // WARM ivory. The previous cool white sat within a few percent of both the pale skin and the
+  // bright background, so it read as a specular highlight. A warm off-white separates from skin by
+  // hue as well as value, which survives at small viewing sizes.
+  colour: 0xf6ecd9,
   baseRoughness: 0.46,
   wetRoughness: 0.13,
 });
@@ -252,7 +255,10 @@ export function buildCreamLayer(bodyMesh, boneNames, opts = {}) {
        // thicker in the middle of the band: lifts the body of the film
        float body = smoothstep( 0.0, 0.55, m );
        diffuseColor.rgb *= texture_;
-       diffuseColor.rgb += vec3( 0.05, 0.06, 0.075 ) * body * uThickness;   // cool lift vs warm skin
+       // edge accumulation: material piles up at the rim of the smear, as spread cream does
+       float rim = smoothstep( 0.30, 0.03, abs( m - 0.42 ) );
+       diffuseColor.rgb += vec3( 0.055, 0.048, 0.030 ) * body * uThickness;
+       diffuseColor.rgb += vec3( 0.05, 0.045, 0.032 ) * rim * uThickness;
 
        diffuseColor.a *= clamp( m, 0.0, 1.0 ) * uOpacity;
        if ( diffuseColor.a < 0.015 ) discard;`

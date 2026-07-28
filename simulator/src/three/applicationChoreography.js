@@ -110,8 +110,15 @@ export const SHOTS = Object.freeze([
 export const clamp01 = (x) => (Number.isFinite(x) ? Math.max(0, Math.min(1, x)) : 0);
 /** Smoothstep — C1-continuous, so camera and limbs never visibly "kick" at a keyframe. */
 export const ease = (x) => { const t = clamp01(x); return t * t * (3 - 2 * t); };
-/** Smootherstep — C2-continuous; used where a limb starts and stops. */
-export const easeSoft = (x) => { const t = clamp01(x); return t * t * t * (t * (t * 6 - 15) + 10); };
+/**
+ * MINIMUM-JERK profile: s(t) = 10t^3 - 15t^4 + 6t^5.
+ * Zero velocity AND zero acceleration at both ends, which is the standard model of human
+ * point-to-point reaching — this is what stops limb motion reading as a rig snapping between keys.
+ * (Algebraically identical to smootherstep; named for what it is doing here.)
+ */
+export const minJerk = (x) => { const t = clamp01(x); return t * t * t * (t * (t * 6 - 15) + 10); };
+/** @deprecated alias kept so existing call sites keep working */
+export const easeSoft = minJerk;
 const lerp = (a, b, t) => a + (b - a) * t;
 
 export function stageAt(progress) {
@@ -144,7 +151,7 @@ export function cameraAt(progress) {
     if (CAMERA_KEYS[i].t <= p) { a = CAMERA_KEYS[i]; b = CAMERA_KEYS[Math.min(i + 1, CAMERA_KEYS.length - 1)]; }
   }
   const span = b.t - a.t;
-  const k = span > 1e-9 ? ease((p - a.t) / span) : 0;
+  const k = span > 1e-9 ? minJerk((p - a.t) / span) : 0;   // no acceleration step at a key
   return Object.freeze({
     shotId: shotAt(p).id,
     fromAnchor: a.anchor, toAnchor: b.anchor, mix: k,
@@ -181,7 +188,21 @@ export function creamCoverage(progress) {
 }
 
 /** How much cream has left the tube, 0..1. Drives the strand and the bead. */
-export function extrusion(progress) { return easeSoft(stageProgress('dispense', clamp01(progress))); }
+export function extrusion(progress) { return minJerk(stageProgress('dispense', clamp01(progress))); }
+
+/**
+ * Finger pressure on the tube, 0..1. Rises just BEFORE extrusion begins and eases off at the end,
+ * so the causal chain reads: squeeze -> tube deforms -> cream emerges.
+ */
+export function squeezeAt(progress) {
+  const p = clamp01(progress);
+  const pre = minJerk(stageProgress('dispense_prep', p));          // pressure starts during the aim
+  const during = stageProgress('dispense', p);
+  if (during <= 0) return pre * 0.35;
+  // hold pressure through the pour, release over the last fifth
+  const rel = minJerk(Math.max(0, (during - 0.8) / 0.2));
+  return (0.35 + 0.65 * minJerk(Math.min(1, during / 0.35))) * (1 - 0.85 * rel);
+}
 
 /** Full choreography state at a progress value. Pure. */
 export function choreographyAt(progress) {
@@ -252,6 +273,9 @@ export function choreographyAt(progress) {
     dispense: Object.freeze({
       active: p >= DISPENSE_WINDOW.t0 && p <= DISPENSE_WINDOW.t1,
       extrusion: ext,
+      // Finger pressure LEADS the extrusion — the tube is squeezed, then cream comes out. Ramping
+      // both together would read as coincidence rather than cause.
+      squeeze: squeezeAt(p),
       strandLength: ext < 0.55 ? PARAMS.strandMaxLength * ease(ext / 0.55) : PARAMS.strandMaxLength * (1 - ease((ext - 0.55) / 0.45)),
       // The bead grows as it is extruded, then is FLATTENED by the arriving palm — without this
       // fade an un-rubbed blob is still sitting on the arm in the hero shot, after the cream has
