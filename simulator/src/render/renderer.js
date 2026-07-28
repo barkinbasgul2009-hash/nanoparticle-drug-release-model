@@ -47,6 +47,9 @@ export function createRenderer(opts = {}) {
     // Lazy import keeps the null path free of the anatomy layout engine.
     return import('./canvasRenderer.js').then((m) => new m.CanvasRenderer(opts));
   }
+  // Phase 2 adds the WebGL path. Also lazily imported, so the null and canvas paths never pull in
+  // Three.js and the 2D scientific tools stay dependency-free.
+  if (kind === 'three') return import('./threeRenderer.js').then((m) => new m.ThreeRenderer(opts));
   throw new Error(`unknown renderer kind: ${kind}`);
 }
 

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phase 2 — topical application sequence</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; font: 13px/1.45 ui-sans-serif, system-ui, sans-serif; background: #fff; color: #14181d; }
+  header { padding: 10px 14px; border-bottom: 1px solid #dde2e8; }
+  h1 { font-size: 14px; margin: 0 0 8px; }
+  #bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button { font: inherit; padding: 4px 12px; border: 1px solid #c6ccd4; background: #fff; border-radius: 5px; cursor: pointer; }
+  button.on { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+  input[type=range] { width: 340px; }
+  #view { width: 100%; height: 70vh; background: #eef1f5; }
+  #hud { padding: 8px 14px; border-top: 1px solid #dde2e8; font-family: ui-monospace, monospace; font-size: 12px; white-space: pre; }
+  .ok { color: #1a7f37; } .no { color: #b42318; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Phase 2 — human applies cream to the opposite forearm (development preview)</h1>
+  <div id="bar">
+    <button id="play">Play</button>
+    <button id="restart">Restart</button>
+    <input id="scrub" type="range" min="0" max="1000" value="0">
+    <span id="pval">0.000</span>
+    <button data-jump="0.00">neutral</button>
+    <button data-jump="0.20">prepare</button>
+    <button data-jump="0.33">approach</button>
+    <button data-jump="0.41">contact</button>
+    <button data-jump="0.52">stroke 1</button>
+    <button data-jump="0.67">stroke 2</button>
+    <button data-jump="0.80">release</button>
+    <button data-jump="0.94">hero</button>
+  </div>
+</header>
+<div id="view"></div>
+<div id="hud">loading…</div>
+
+<script>
+// classic (non-module) trap so module EVALUATION errors surface on the page instead of only in a
+// console the headless capture never shows
+window.addEventListener('error', (e) => {
+  const h = document.getElementById('hud');
+  if (h) h.textContent = 'PAGE ERROR: ' + (e.message || '') + '\n' + (e.filename || '') + ':' + (e.lineno || '');
+});
+window.addEventListener('unhandledrejection', (e) => {
+  const h = document.getElementById('hud');
+  if (h) h.textContent = 'PROMISE REJECTION: ' + ((e.reason && (e.reason.stack || e.reason.message)) || e.reason);
+});
+</script>
+
+<script type="module">
+import * as THREE from './vendor/three/three.module.js';
+import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
+import { ThreeRenderer } from './src/render/threeRenderer.js';
+import { HumanApplicationScene } from './src/three/humanApplicationScene.js';
+
+const host = document.getElementById('view');
+const hud = document.getElementById('hud');
+const scrub = document.getElementById('scrub');
+const pval = document.getElementById('pval');
+
+// preserveDrawingBuffer so the headless screenshot gate captures real frames
+const rend = new ThreeRenderer({ preserveDrawingBuffer: true });
+rend.mount(host);
+
+// ---- ONE narrative clock. `progress` is the master timeline; THREE.Clock is never consulted for
+// narrative time, only to advance the playhead at a chosen rate while playing.
+const DURATION_S = 14;
+let progress = 0;
+let playing = false;
+let scene = null;
+
+function apply(p) {
+  if (!scene) return;
+  progress = Math.max(0, Math.min(1, p));
+  const f = scene.update({ progress });
+  scrub.value = String(Math.round(progress * 1000));
+  pval.textContent = progress.toFixed(3);
+  if (f) {
+    const c = f.contact, ch = f.choreography;
+    hud.innerHTML =
+      `progress ${f.progress.toFixed(3)}   stage ${f.stage.padEnd(9)}   shot ${ch.camera.shotId}\n` +
+      `contact   expected=${c.expected}  valid=<span class="${c.valid ? 'ok' : 'no'}">${c.valid}</span>` +
+      `  gap=${(c.gap * 1000).toFixed(1)}mm  axial=${c.axial.toFixed(3)}  palmDot=${c.palmDot.toFixed(3)}\n` +
+      `cream     present=${ch.cream.present}  coverage=${ch.cream.coverage.toFixed(3)}` +
+      `  opacity=${ch.cream.opacity.toFixed(3)}  gloss=${ch.cream.gloss.toFixed(3)}\n` +
+      `elbows    treated=${(f.ik.treated.elbowAngle * 180 / Math.PI).toFixed(0)}°  ` +
+      `applying=${(f.ik.applying.elbowAngle * 180 / Math.PI).toFixed(0)}°   ` +
+      `camera dist=${ch.camera.dist.toFixed(2)}m target=${ch.camera.fromAnchor}->${ch.camera.toAnchor}\n` +
+      `cream mesh ${scene.cream.stats.triangles} tris  radius=${(scene.cream.stats.meanRadius * 1000).toFixed(1)}mm  ` +
+      `garment cleaned: ${scene.presentation.cleanedClothing.join(', ') || 'none'}`;
+  }
+}
+
+// The render loop starts IMMEDIATELY, before the model resolves. Two reasons: the page shows its
+// background instead of a white flash, and the loop keeps the document busy so a headless capture
+// under --virtual-time-budget cannot race past the 18 MB load (a top-level `await` here does stall).
+const bootScene = new THREE.Scene();
+bootScene.background = new THREE.Color(0xeef1f5);
+const bootCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
+bootCamera.position.z = 2;
+
+const clock = new THREE.Clock();
+(function loop() {
+  requestAnimationFrame(loop);
+  const dt = clock.getDelta();                    // rendering mechanics only
+  if (playing && scene) {
+    const next = progress + dt / DURATION_S;
+    apply(next >= 1 ? (playing = false, 1) : next);
+  }
+  // ALWAYS draw something. If the loop idles while the 18 MB model parses, a headless capture's
+  // virtual clock races to the end of its budget and screenshots the loading state.
+  rend.render(scene ? scene.scene : bootScene, scene ? scene.camera : bootCamera);
+})();
+
+const q = new URLSearchParams(location.search);
+new GLTFLoader().load('./assets/human/human.glb', (gltf) => {
+  try {
+    scene = new HumanApplicationScene({
+      gltf, renderer: rend.renderer, applyingSide: 'R',
+      aspect: host.clientWidth / host.clientHeight,
+    });
+    rend.setCamera({ camera: scene.camera });
+    window.__scene = scene;
+    apply(q.has('p') ? Number(q.get('p')) : 0);
+    if (q.get('play') === '1') playing = true;
+    window.__ready = true;
+  } catch (err) {
+    hud.textContent = 'SCENE ERROR: ' + (err && (err.stack || err.message || err));
+  }
+}, null, (e) => { hud.textContent = 'LOAD ERROR: ' + (e && (e.message || e.type || e)); });
+
+document.getElementById('play').addEventListener('click', (e) => {
+  playing = !playing;
+  if (playing && progress >= 1) apply(0);
+  e.target.classList.toggle('on', playing);
+  e.target.textContent = playing ? 'Pause' : 'Play';
+});
+document.getElementById('restart').addEventListener('click', () => { apply(0); });
+scrub.addEventListener('input', () => { playing = false; apply(Number(scrub.value) / 1000); });
+document.querySelectorAll('[data-jump]').forEach((b) =>
+  b.addEventListener('click', () => { playing = false; apply(Number(b.dataset.jump)); }));
+
+addEventListener('resize', () => {
+  rend.setSize(host.clientWidth, host.clientHeight);
+  scene.setAspect(host.clientWidth / host.clientHeight);
+});
+
+// ---- automation hooks for the headless screenshot / validation gate ----
+window.__apply = apply;
+window.__frame = () => (scene ? scene.lastFrame : null);
+</script>
+</body>
+</html>

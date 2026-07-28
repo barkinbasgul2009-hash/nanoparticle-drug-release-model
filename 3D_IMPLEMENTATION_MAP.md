@@ -272,6 +272,42 @@ conservation chain is enforced by construction: systemic ≥ arrival ≥ extrava
 branches so scenes can never present a prediction as a measurement. Skin transport represents
 **released API**, not intact carrier — carried in `particleIdentity` and required in labels.
 
+## 16c. Phase 2 — human contact, cream application, forearm hero shot (DELIVERED)
+
+The first convincing 3D application sequence. Additive: the Phase-0 modules, the master clock, the
+2D scientific tools and every existing test are untouched.
+
+| file | role |
+|---|---|
+| `src/three/applicationChoreography.js` | **pure** authored sequence — 8 stages, contact window, stroke path, cream state, camera keys. No Three.js, no clock. |
+| `src/three/twoBoneIK.js` | closed-form two-bone IK + hand orientation + bind-pose palm/finger axis measurement |
+| `src/three/applicationRig.js` | poses the real skeleton from the choreography and **measures** the contact gap |
+| `src/three/creamLayer.js` | skinned cream patch cut from the forearm geometry; coverage driven by uniforms |
+| `src/three/humanApplicationScene.js` | scene assembly + studio lighting + camera; `SceneDirector` scene contract |
+| `src/render/threeRenderer.js` | minimal WebGL renderer behind the existing `Renderer` interface (`kind: 'three'`) |
+| `application-preview.html` | dev preview: play / pause / scrub / stage jumps, live contact + cream readout |
+| `tools/capture-application.mjs` | CDP-driven headless capture + in-browser assertion harness |
+
+**Contact.** Measured on the rig, the applying shoulder is 0.662 m from the treated forearm while
+the whole arm is 0.518 m — contact is impossible until the treated arm comes across the torso. So
+both arms are IK-driven: the treated arm is carried to a chest-relative target (elbow folds to
+~100°), and the applying arm's target is then derived **from the posed forearm**, which makes
+contact structural rather than hand-tuned. The wrist is placed so the PALM PATCH lands on the skin
+(`wrist = skinPoint − axis·palmForward + n·palmDepth`); targeting the wrist directly leaves the palm
+one hand-thickness in the air, which was the actual bug behind the original 47 mm hover.
+Measured result: **−2.5 mm at touchdown, −5.0 mm through both strokes, palm·normal = 1.000**, hand
+clear by 33 mm during the approach, elbows 70–137° throughout.
+
+**Cream.** A thin skinned patch (505 triangles) cut from the forearm's own vertices, bound to the
+same skeleton, so it deforms with the arm and cannot slide off. Coverage is a forearm-local axial
+band driven by uniforms; the mask has an irregular edge and fades on the underside, and roughness
+drops with the wetness term. Coverage is **monotonic non-decreasing** by construction.
+
+**Determinism.** IK reads a bone's current rotation, so it is incremental by nature. `restorePose()`
+resets every driven bone to its captured rest transform at the start of each solve, making
+`solve(p)` a pure function of `p`. Play, pause, seek, reset, replay and **reverse scrubbing** all
+reproduce identical bone matrices.
+
 ## 17. Known blockers
 
 1. ~~Human GLB missing (blocks Phase 2 only).~~ **CLEARED 2026-07-28** — the owner supplied
@@ -280,6 +316,10 @@ branches so scenes can never present a prediction as a measurement. Skin transpo
    redistribution, and the **MakeHuman watermark** baked into the t-shirt/hair textures.
 2. Sandbox egress blocks CDNs (npm registry works) — assets must be vendored into the repo.
 3. Systemic PK is not modelled — the bloodstream scene must stay explicitly labelled.
+4. Phase-2 residuals (non-blocking, see the Phase-2 report): the skin does not deform under the
+   palm, so contact uses a 5 mm authored overlap instead of soft-tissue compression; the treated
+   hand keeps its relaxed bind-pose finger spread; hair remains card-based, which is why no shot
+   frames the head above a medium.
 
 ## 18. Phase 1 readiness
 

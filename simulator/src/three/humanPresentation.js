@@ -93,16 +93,31 @@ export function roleForMaterial(name = '') {
 const materialsOf = (o) => (Array.isArray(o.material) ? o.material : [o.material]).filter(Boolean);
 
 /**
+ * Clean clinical tones used when a source texture is rejected (see `cleanClothing`).
+ * The MakeHuman "casualsuit" is a SINGLE material covering both the top and the trousers, so the
+ * garment cannot be re-coloured piecewise — it becomes one neutral clinical tone. Footwear is a
+ * separate material and is kept dark, otherwise the figure reads as an undifferentiated white mass.
+ */
+export const CLEAN_GARMENT_COLOURS = Object.freeze({ cloth: 0xe9ebee, shoes: 0x4a4f57 });
+/** @deprecated kept for callers that referenced the single-colour constant */
+export const CLINICAL_GARMENT_COLOUR = CLEAN_GARMENT_COLOURS.cloth;
+
+/**
  * Apply the presentation pass to a loaded human GLB scene.
  * Idempotent and side-effect-free outside three.js material state.
  *
  * @param {THREE.Object3D} root gltf.scene
- * @param {{ shadows?:boolean, colorSpace?:boolean }} [opts]
- * @returns {{ materials:number, byRole:Record<string,string[]>, cutouts:string[], opaque:string[] }}
+ * @param {{ shadows?:boolean, colorSpace?:boolean, cleanClothing?:boolean }} [opts]
+ *   `cleanClothing` drops the garment's base-colour texture and substitutes a flat clinical tone.
+ *   The MakeHuman t-shirt diffuse has the project's logo watermark baked into it, which is legible
+ *   in medium shots; the NORMAL map is kept, so the fabric still creases and catches light. Off by
+ *   default so Phase-0 behaviour is unchanged.
+ * @returns {{ materials:number, byRole:Record<string,string[]>, cutouts:string[], opaque:string[],
+ *             cleanedClothing:string[] }}
  */
 export function applyHumanPresentation(root, opts = {}) {
-  const { shadows = true, colorSpace = true } = opts;
-  const byRole = {}; const cutouts = []; const opaque = []; const seen = new Set();
+  const { shadows = true, colorSpace = true, cleanClothing = false } = opts;
+  const byRole = {}; const cutouts = []; const opaque = []; const cleanedClothing = []; const seen = new Set();
 
   root.traverse((o) => {
     if (!o.isMesh && !o.isSkinnedMesh) return;
@@ -148,11 +163,20 @@ export function applyHumanPresentation(root, opts = {}) {
         m.metalness = s.metalness;
         m.envMapIntensity = s.envMapIntensity;
       }
+      // --- watermark mitigation on garments (opt-in) ---
+      if (cleanClothing && (role === 'cloth' || role === 'shoes')) {
+        if (m.map) { m.map = null; }                   // the watermarked diffuse
+        const hex = CLEAN_GARMENT_COLOURS[role] ?? CLEAN_GARMENT_COLOURS.cloth;
+        if (m.color && m.color.setHex) m.color.setHex(hex);
+        // keep m.normalMap — surface detail survives, only the printed artwork is gone
+        cleanedClothing.push(m.name || '(unnamed)');
+      }
+
       m.needsUpdate = true;
     }
   });
 
-  return { materials: seen.size, byRole, cutouts, opaque };
+  return { materials: seen.size, byRole, cutouts, opaque, cleanedClothing };
 }
 
 export default applyHumanPresentation;
