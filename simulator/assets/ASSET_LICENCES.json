@@ -20,6 +20,42 @@
       "status": "ACCEPTED_IN_USE"
     },
     {
+      "id": "final_presentation_human",
+      "path": "simulator/assets/human/human.glb",
+      "kind": "rigged humanoid (THE final presentation human for Phase 2)",
+      "source": "Supplied directly by the project owner; exported from Blender on 2026-07-28.",
+      "generator": "Khronos glTF Blender I/O v4.5.51",
+      "upstream_origin": "MakeHuman / MPFB. Evidenced by the file itself: material names (Human.body, Human.high-poly, Human.afro01.001, Human.eyebrow001, Human.eyelashes02, Human.male_casualsuit06, Human.shoes06, Human.teeth_base, Human.tongue01), texture names (middleage_lightskinned_male_diffuse, brown_eye, afro_diffuse) and a visible 'www.makehuman.org' watermark baked into the afro and t-shirt textures.",
+      "author": "MakeHuman project (base mesh + bundled assets), configured and exported by the project owner",
+      "licence": "NOT INDEPENDENTLY VERIFIED. The MakeHuman base mesh is released CC0, and MakeHuman's bundled system assets are generally CC0/CC-BY, but the specific licence of each bundled asset used here (afro01 hair, male_casualsuit06, shoes06, eyebrow001, eyelashes02) was NOT confirmed from within this environment.",
+      "licence_verified_for_public_redistribution": false,
+      "action_required_before_public_release": "The project owner must confirm the licence of the MakeHuman assets used and add the required attribution. The baked 'www.makehuman.org' watermark on the t-shirt and hair textures should also be reviewed: it is visible in medium and close shots.",
+      "download_date": "2026-07-28",
+      "attribution_required": true,
+      "modification_rights": "asset NOT modified — every correction was made renderer-side in simulator/src/three/humanPresentation.js",
+      "redistribution": "held pending the licence confirmation above",
+      "inspected": {
+        "triangles": 39848,
+        "meshes": 9,
+        "materials": 9,
+        "textures": 10,
+        "images_embedded": 10,
+        "bones": 53,
+        "fingerBones": 30,
+        "skins": 1,
+        "skinnedMeshNodes": 9,
+        "animationClips": 0,
+        "morphTargets": 0,
+        "fileSizeMB": 17.98,
+        "externalReferences": 0,
+        "requiredExtensions": []
+      },
+      "quality_gate": "PASS — all 11 automated checks of simulator/tools/verify-human-asset.mjs.",
+      "visual_review": "PASSED with non-blocking limitations. Clean: face, eyes (brown irises correctly placed), closed mouth, ears, all ten fingers separated, wrists, and a fully bare forearm application site. Limitations: the card-based afro hair shows shell banding at face-close range, and the MakeHuman watermark is printed on the t-shirt.",
+      "renderer_side_corrections": "The export declares alphaMode:BLEND on ALL 9 materials (a Blender exporter default) even though the skin, suit and tongue textures have no alpha channel at all. Left uncorrected, three.js disables depth writing and the face stops occluding the teeth/tongue while the hair and eyelash cards paint black slabs over the eyes. simulator/src/three/humanPresentation.js restores opaque surfaces, alpha-TESTS the genuine cut-out cards (hair/brows/lashes) and the two-layer eye, and sets skin/eye/hair surface response. The GLB is untouched.",
+      "status": "ACCEPTED_IN_USE_LICENCE_PENDING"
+    },
+    {
       "id": "dev_rig_michelle",
       "path": "simulator/assets/human/dev-rig/dev-rig-michelle.glb",
       "kind": "rigged humanoid (DEVELOPMENT FIXTURE ONLY \u2014 NOT the final presentation human)",
@@ -104,7 +140,8 @@
   ],
   "outstanding_requirement": {
     "id": "final_presentation_human",
-    "status": "MISSING \u2014 BLOCKS PHASE 2 ONLY",
+    "status": "RESOLVED on 2026-07-28 \u2014 the project owner supplied simulator/assets/human/human.glb (see the assets entry above). The record below is retained as the specification the supplied model was judged against. One item remains open: licence confirmation for public redistribution.",
+    "historic_status": "MISSING \u2014 BLOCKED PHASE 2 ONLY",
     "specification": "See 3D_IMPLEMENTATION_MAP.md sections 5-8 and simulator/src/three/assetManifest.js (ASSETS.human).",
     "acceptable_sources": [
       "A CC0 / CC-BY / commercially-licensed realistic rigged human GLB supplied by the project owner",

@@ -6,6 +6,7 @@
 
 import { readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { buildBoneMap } from '../src/three/boneMap.js';
 
 const GLB_MAGIC = 0x46546c67;                 // 'glTF'
 const CHUNK_JSON = 0x4e4f534a;                // 'JSON'
@@ -87,29 +88,13 @@ export function inspectGlb(filePath) {
 }
 
 /** Match the model's bones against the roles the topical-application animation needs. */
+/**
+ * Resolve role -> bone name. Delegates to simulator/src/three/boneMap.js so the tool and the
+ * runtime can never disagree about which skeletons are supported (they previously carried
+ * separate pattern tables, which let the CLI reject a rig the runtime would have accepted).
+ */
 export function resolveBoneRoles(boneNames) {
-  const need = {
-    root: [/^hips$/i, /mixamorig:?Hips/i, /root/i],
-    spine: [/^spine$/i, /mixamorig:?Spine$/i],
-    chest: [/chest/i, /mixamorig:?Spine[12]/i],
-    neck: [/^neck$/i, /mixamorig:?Neck/i],
-    head: [/^head$/i, /mixamorig:?Head$/i],
-    shoulderL: [/left.*shoulder/i, /mixamorig:?LeftShoulder/i],
-    shoulderR: [/right.*shoulder/i, /mixamorig:?RightShoulder/i],
-    upperArmL: [/left.*(upperarm|arm$)/i, /mixamorig:?LeftArm$/i],
-    upperArmR: [/right.*(upperarm|arm$)/i, /mixamorig:?RightArm$/i],
-    forearmL: [/left.*(forearm|lowerarm)/i, /mixamorig:?LeftForeArm/i],
-    forearmR: [/right.*(forearm|lowerarm)/i, /mixamorig:?RightForeArm/i],
-    handL: [/left.*hand$/i, /mixamorig:?LeftHand$/i],
-    handR: [/right.*hand$/i, /mixamorig:?RightHand$/i],
-  };
-  const map = {}; const missing = [];
-  for (const [role, pats] of Object.entries(need)) {
-    const hit = boneNames.find((b) => pats.some((p) => p.test(b)));
-    if (hit) map[role] = hit; else missing.push(role);
-  }
-  const fingers = boneNames.filter((b) => /(thumb|index|middle|ring|pinky|finger)/i.test(b));
-  return { map, missing, fingerBones: fingers, fingerBoneCount: fingers.length };
+  return buildBoneMap(boneNames);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

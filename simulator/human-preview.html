@@ -41,6 +41,7 @@
     import { buildBoneMap } from './src/three/boneMap.js';
     import { disposeObject } from './src/three/disposal.js';
     import { HumanAnimationController } from './src/three/humanAnimationController.js';
+    import { applyHumanPresentation } from './src/three/humanPresentation.js';
 
     const host = document.getElementById('host');
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -113,12 +114,14 @@
       };
     }
     let views = null;
-    function setView(name) {
+    /** @param {string} name  @param {number} [dist] multiplier on the framing distance (1 = default) */
+    function setView(name, dist = 1) {
       if (!views) return;
       const v = views[name]; if (!v) return;
+      const d = v.d * (Number(dist) > 0 ? Number(dist) : 1);
       controls.target.copy(v.t);
-      camera.position.set(v.t.x + v.d * 0.55, v.t.y + v.d * 0.10, v.t.z + v.d * 0.95);
-      camera.near = Math.max(0.005, v.d / 200); camera.far = v.d * 40; camera.updateProjectionMatrix();
+      camera.position.set(v.t.x + d * 0.55, v.t.y + d * 0.10, v.t.z + d * 0.95);
+      camera.near = Math.max(0.005, d / 200); camera.far = d * 40; camera.updateProjectionMatrix();
       controls.update();
     }
 
@@ -131,17 +134,18 @@
       let tris = 0, meshes = 0, mats = new Set(), texs = new Set(), bones = [];
       model.traverse((o) => {
         if (o.isMesh || o.isSkinnedMesh) {
-          o.castShadow = true; o.receiveShadow = true; meshes += 1;
+          meshes += 1;
           const g = o.geometry; if (g && g.index) tris += g.index.count / 3; else if (g && g.attributes.position) tris += g.attributes.position.count / 3;
           for (const m of (Array.isArray(o.material) ? o.material : [o.material])) {
             if (!m) continue; mats.add(m.uuid);
-            // FACE QUALITY: keep the imported PBR maps; only tame plastic-looking skin
-            if (m.isMeshStandardMaterial) { if (m.roughness < 0.45) m.roughness = 0.62; m.envMapIntensity = 0.9; }
             for (const k of Object.keys(m)) if (m[k] && m[k].isTexture) texs.add(m[k].uuid);
           }
         }
         if (o.isBone) bones.push(o.name);
       });
+      // RENDERER-SIDE presentation pass (fixes the exporter's blanket alphaMode:BLEND, sets skin /
+      // eye / hair surface response and shadow flags). Does not modify the asset.
+      const pres = applyHumanPresentation(model);
       scene.add(model);
       boneMap = buildBoneMap(bones);
       // --- topical-application controller bound to the REAL skeleton (validated bone map only) ---
@@ -173,6 +177,8 @@
         `boneMap ok      ${boneMap.ok}   missingRequired: ${boneMap.missingRequired.join(', ') || 'none'}\n` +
         `roles           ${Object.entries(boneMap.map).map(([k, v]) => k + '=' + v).join('\n                ')}\n` +
         `clips           ${clips.map((c) => c.name + ' ' + c.duration.toFixed(2) + 's').join(', ') || '(none)'}\n` +
+        `presentation    ${pres.materials} materials · alphaTest cut-outs: ${pres.cutouts.join(', ') || 'none'}\n` +
+        `                roles ${Object.entries(pres.byRole).map(([k, v]) => k + '(' + v.length + ')').join(' ')}\n` +
         `morphTargets    ${(() => { let n = 0; model.traverse((o) => { if (o.morphTargetInfluences) n += o.morphTargetInfluences.length; }); return n; })()}`;
       loadEl.textContent = `loaded ${name}`;
       window.__ready = true;
@@ -222,7 +228,31 @@
     };
     // screenshot hooks for the automated quality gate
     window.__setView = setView; window.__load = load;
-    load(new URLSearchParams(location.search).get('model') || 'Michelle.glb');
+    /** Toggle the SkeletonHelper programmatically (same code path as the button). */
+    window.__setSkeleton = (on) => {
+      if (on && !skelHelper) { skelHelper = new THREE.SkeletonHelper(model); scene.add(skelHelper); document.getElementById('skel').classList.add('on'); }
+      else if (!on && skelHelper) { scene.remove(skelHelper); skelHelper = null; document.getElementById('skel').classList.remove('on'); }
+      return !!skelHelper;
+    };
+    /** Orbit the camera around the current view target (degrees), for front/side captures. */
+    window.__orbit = (deg, lift = 0.10) => {
+      const t = controls.target.clone();
+      const d = camera.position.distanceTo(t), a = (deg * Math.PI) / 180;
+      camera.position.set(t.x + Math.sin(a) * d, t.y + d * lift, t.z + Math.cos(a) * d);
+      camera.lookAt(t); controls.update();
+    };
+
+    // Deterministic URL-driven state so the headless screenshot gate can capture any view without
+    // a scripting bridge:  ?model=human.glb&view=face&pose=0.70&skel=1&wire=0&orbit=0
+    const q = new URLSearchParams(location.search);
+    load(q.get('model') || 'Michelle.glb').then(() => {
+      if (q.get('view')) setView(q.get('view'), Number(q.get('dist')) || 1);
+      if (q.get('pose') !== null) window.__applyPose(Number(q.get('pose')) || 0);
+      if (q.get('skel') === '1') window.__setSkeleton(true);
+      if (q.get('wire') === '1') document.getElementById('wire').click();
+      if (q.get('orbit') !== null) window.__orbit(Number(q.get('orbit')) || 0);
+      window.__captureReady = true;
+    });
   </script>
 </body>
 </html>

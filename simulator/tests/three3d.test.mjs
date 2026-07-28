@@ -63,9 +63,10 @@ export default async function run() {
   eq(d.update(buildVisualState({})), null, 'DIRECTOR: unavailable progress produces no shot (no invented time)');
   d.dispose(); ok(d.disposed && d.scenes.size === 0, 'DIRECTOR: dispose clears every scene');
 
-  // ---- asset manifest: the human is honestly reported missing ----
-  eq(ASSETS.human.status, ASSET_STATUS.MISSING, 'ASSETS: no 3D human exists in the repository (reported MISSING, not faked)');
-  ok(missingFor(2).includes('human'), 'ASSETS: Phase 2 is gated on the human asset');
+  // ---- asset manifest: the human has been supplied and accepted ----
+  eq(ASSETS.human.status, ASSET_STATUS.PRESENT, 'ASSETS: the 3D human exists in the repository');
+  eq(missingFor(2).length, 0, 'ASSETS: Phase 2 is no longer gated — its assets are all present or procedural');
   eq(missingFor(1).length, 0, 'ASSETS: Phase 1 (runtime shell) needs no assets — can start now');
+  eq(missingFor(6).length, 0, 'ASSETS: Phase 6 human prerequisite satisfied');
   ok(/placeholder/i.test(ASSETS.human.fallbackIfMissing), 'ASSETS: placeholder dummy is explicitly rejected as the final human');
 }

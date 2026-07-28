@@ -24,11 +24,23 @@ export default async function run() {
   const lic = JSON.parse(readFileSync(licPath, 'utf8'));
   ok(lic.assets.some((a) => a.id === 'three_js_runtime' && a.licence === 'MIT'), 'ASSETS: vendored Three.js licence recorded (MIT)');
   ok(lic.rejected_candidates.length >= 3, 'ASSETS: rejected candidates recorded with reasons');
-  ok(lic.outstanding_requirement.status.startsWith('MISSING'), 'ASSETS: final presentation human honestly recorded as MISSING');
+  ok(lic.outstanding_requirement.status.startsWith('RESOLVED'), 'ASSETS: the final presentation human is recorded as supplied');
+  const finalHumanLic = lic.assets.find((a) => a.id === 'final_presentation_human');
+  ok(finalHumanLic, 'ASSETS: the supplied human has a provenance entry');
+  eq(finalHumanLic.path, 'simulator/assets/human/human.glb', 'ASSETS: provenance points at the real asset path');
+  // the licence was NOT verifiable from this environment — that must never be silently asserted
+  eq(finalHumanLic.licence_verified_for_public_redistribution, false, 'ASSETS: unverified licence is reported as unverified, not assumed');
+  ok(/NOT INDEPENDENTLY VERIFIED/.test(finalHumanLic.licence), 'ASSETS: licence text states plainly that it is unverified');
+  ok(/watermark/i.test(finalHumanLic.action_required_before_public_release), 'ASSETS: the baked MakeHuman watermark is flagged for the owner');
+  ok(/asset NOT modified/.test(finalHumanLic.modification_rights), 'ASSETS: records that the GLB itself was never edited');
   const devRig = lic.assets.find((a) => a.id === 'dev_rig_michelle');
   ok(devRig && devRig.status === 'DEV_ONLY_NOT_FOR_PUBLICATION', 'ASSETS: dev rig is flagged NOT for publication');
   ok(devRig && /REJECTED as the final human/.test(devRig.quality_gate), 'ASSETS: dev rig is explicitly rejected as the final human');
-  eq(ASSETS.human.status, ASSET_STATUS.MISSING, 'ASSETS: manifest still reports the human as MISSING (no placeholder accepted)');
+  eq(ASSETS.human.status, ASSET_STATUS.PRESENT, 'ASSETS: manifest reports the supplied human as PRESENT');
+  ok(ASSETS.human.accepted && /^PASS\b/.test(ASSETS.human.accepted.gate), 'ASSETS: acceptance record states the gate passed');
+  ok(/limitation/i.test(ASSETS.human.accepted.visualReview), 'ASSETS: acceptance record states the visual limitations honestly');
+  eq(ASSETS.humanAnimations.status, ASSET_STATUS.PROCEDURAL, 'ASSETS: no baked clips shipped — motion is procedural from the timeline');
+  eq(ASSETS.humanAnimations.packagedClips, 0, 'ASSETS: the GLB carries zero animation clips');
 
   // the dev rig itself: local, self-contained, riggable
   const rigPath = P('assets/human/dev-rig/dev-rig-michelle.glb');
@@ -45,8 +57,12 @@ export default async function run() {
 
   // ================= automated human-asset quality gate =================
   ok(GATE.minTriangles >= 10000 && GATE.minFingerBones >= 5, 'GATE: thresholds reject low-poly mannequins and rig-less models');
-  const missing = verifyHumanAsset(P('assets/human/human.glb'));
-  ok(!missing.ok, 'GATE: the absent final human.glb fails the gate (no placeholder is silently accepted)');
+  // The final human has now been supplied (Blender/MakeHuman export). It must PASS the same gate
+  // that previously rejected every stand-in — see simulator/tests/humanAsset.test.mjs for the full
+  // asset assertions. The gate is never bypassed: a missing file still fails.
+  const finalHuman = verifyHumanAsset(P('assets/human/human.glb'));
+  ok(finalHuman.ok, 'GATE: the supplied final human.glb passes every automated check');
+  ok(!verifyHumanAsset(P('assets/human/__no_such_model__.glb')).ok, 'GATE: an absent model still fails (no placeholder is silently accepted)');
   if (existsSync(rigPath)) {
     const g = verifyHumanAsset(rigPath);
     ok(g.checks.find((c) => c.id === 'self_contained').pass, 'GATE: dev rig passes self-containment');

@@ -59,31 +59,98 @@ inside a 2-day deadline. Vanilla Three.js: zero build change, loads exactly like
 deploys through the existing Pages workflow, and drops straight into the reserved `Renderer`
 interface. Verified: real WebGL renders headless (canvas `data-engine="three.js r160"`).
 
-## 5–8. Human asset assessment · face/hand/forearm quality · missing spec
+## 5–8. Human asset assessment · face/hand/forearm quality · licence
 
-**No human model exists** — nothing to assess for face, eyes, teeth, hair, hands, forearm topology,
-UVs, skeleton, clips, morph targets or licence. No placeholder mannequin will be shipped as the
-final human. Required asset (Phase 2 blocker), declared in `src/three/assetManifest.js`:
+**RESOLVED — the final human is present at `simulator/assets/human/human.glb`** (supplied by the
+project owner, exported from Blender on 2026-07-28). It replaces nothing: every earlier candidate was
+rejected and no placeholder was ever shipped. Full provenance in `assets/ASSET_LICENCES.json`;
+acceptance record in `src/three/assetManifest.js` (`ASSETS.human.accepted`).
 
-- **Format** GLB (glTF 2.0, Draco/Meshopt), **80k–150k tris**, PBR 2048² albedo/normal/roughness.
-- **Rig** humanoid, Mixamo-compatible (`mixamorig:*` or `Hips/Spine/Shoulder/UpperArm/ForeArm/Hand`),
-  separate thumb + 4 finger bones.
-- **Face** believable proportions, correct eye placement, natural eyelids, no distorted mouth, no
-  broken teeth, no empty sockets, no seams, no uncanny frozen expression, stable in close + medium shots.
-- **Forearm** clean quad topology + even UVs (close-up + cream decal target).
-- **Clips** idle · arm_raise/forearm_present · cream_application (hand rub) · neutral_reset. If absent:
-  blend idle + procedural shoulder/elbow/wrist bone animation or a short two-bone IK reach (no full IK system).
-- **Licence** redistribution-permitting attribution file.
-- **Gate** Y-up, metre scale (~1.7 m), origin at feet, correct normals, textures resolve, skeleton binds,
-  clips play, < 3 s load, disposes without leak. Loading ≠ approved.
+### Measured statistics (from the real file)
+
+| | |
+|---|---|
+| generator | Khronos glTF Blender I/O v4.5.51 (glTF 2.0, uncompressed) |
+| geometry | **39,848 triangles**, 9 meshes, 9 materials |
+| textures | 10 textures / 10 images, **all embedded** (2048² skin + hair + suit, 1024² eye/shoes/tongue, 512² brows/lashes) |
+| skeleton | 1 skin, **53 bones**, all 9 meshes skinned, **30 finger bones** (5 digits × 3 joints × 2 hands) |
+| clips | **0** — motion is procedural (see below) |
+| morph targets | 0 |
+| size | 17.98 MB, **0 external references**, no required extensions |
+| bounds | Y-up, **≈1.78 m**, origin at the feet, centred on X |
+
+### Skeleton naming — bone map extended
+
+The rig uses **Unreal/MakeHuman naming**, not Mixamo. `src/three/boneMap.js` was extended so all
+13 roles resolve; the Mixamo dev rig still resolves 13/13 (no regression):
+
+`Root · pelvis · spine_01..03 · clavicle_l/r · upperarm_l/r · lowerarm_l/r · hand_l/r · {index,middle,ring,pinky,thumb}_0{1,2,3}_{l,r} · neck_01 · head · thigh/calf/foot/ball_l/r`
+
+| role | bone | role | bone |
+|---|---|---|---|
+| root | `Root` | upperArmL/R | `upperarm_l` / `upperarm_r` |
+| spine | `spine_01` | forearmL/R | `lowerarm_l` / `lowerarm_r` |
+| chest | `spine_02` | handL/R | `hand_l` / `hand_r` |
+| neck | `neck_01` | shoulderL/R | `clavicle_l` / `clavicle_r` |
+| head | `head` | | |
+
+`tools/inspect-glb.mjs` previously carried a **duplicate** copy of the pattern table and rejected this
+rig while the runtime would have accepted it. It now imports `buildBoneMap` from `boneMap.js`, so the
+CLI gate and the runtime can never disagree again.
+
+### Visual review (7 rendered views, headless WebGL, inspected)
+
+Full-body front · medium upper body · face + eyes · hand + fingers · bare forearm · skeleton debug ·
+cream-application pose @ 0.70.
+
+**Clean:** face proportions, eyes (brown irises correctly placed, natural lids, no empty sockets),
+closed undistorted mouth, ears, no facial texture seams, matte non-plastic skin, **all ten fingers
+separate** with believable proportions, undeformed wrists, connected clothing with no clipping,
+correct skeleton deformation at shoulders/elbows, correct scale and orientation.
+
+**Treatment site:** the figure wears a **short-sleeve t-shirt**, so the forearm is continuous bare
+skin from the sleeve hem through elbow, wrist and hand — exactly what the topical application needs.
+
+**Limitations (non-blocking, recorded honestly):**
+1. The afro hair is **card-based** and shows shell banding plus a lighter fringe band at face-close
+   range. It never occludes the face or the treatment area.
+2. The MakeHuman **watermark is baked into the t-shirt and hair textures** and is legible in medium
+   shots. Cosmetic; flagged for the owner before public release.
+3. **Licence not independently verified** — see `ASSET_LICENCES.json`; redistribution is held pending
+   the owner's confirmation.
+
+### Renderer-side correction (the asset itself is untouched)
+
+The export declares **`alphaMode: BLEND` on all 9 materials** — a Blender exporter default — even
+though the skin, suit and tongue textures have **no alpha channel at all** (plain RGB). In three.js
+that sets `transparent = true`, which disables depth writing, so:
+
+* the face stopped occluding the teeth/tongue → the head rendered as a **gaping mouth full of teeth**;
+* the hair/brow/lash cards drew as unsorted **black slabs across the eyes and forehead**;
+* forcing the eye fully opaque hid the iris behind MakeHuman's transparent **cornea shell**.
+
+`src/three/humanPresentation.js` fixes this purely in the renderer: genuine cut-outs (hair, brows,
+lashes, eyes) become **alpha-TESTED** (glTF `MASK`) and everything else becomes properly **opaque**,
+plus sRGB/linear map tagging and skin/eye/hair surface response. No geometry, UV, skeleton, biology,
+timeline or replay code was touched.
+
+### Animation
+
+The GLB ships **zero clips**, so `ASSETS.humanAnimations` is `PROCEDURAL`:
+`HumanAnimationController.apply(progress)` drives 8 bones (both arms' shoulder / upperArm / forearm /
+hand) as a **pure function of master-timeline progress** — verified at 0.70 with **8 driven, 0 skipped**
+on this skeleton, and bit-identical across play / pause / seek / reset / replay.
+
+Known gap for Phase 2: flexion is driven about X only, so the applying hand does not yet **contact**
+the opposite forearm. Closing that is scene work (reach offset or two-bone IK), not an asset gap.
 
 **Environment: RESOLVED.** `RoomEnvironment` is vendored locally and applied through `PMREMGenerator`
 with ACES tone mapping + sRGB output and a soft key/fill/rim rig — believable skin and readable eyes
 with **no runtime CDN and no HDR file to licence**. Skin/capillary/tissue/particles and the cream
 container remain **procedural** — no assets needed.
 
-**Drop-in path:** put any compliant humanoid GLB at `simulator/assets/human/human.glb`. The inspector,
-bone map, preview page and animation controller accept it with **no code changes**.
+**Drop-in path preserved:** any compliant humanoid GLB at `simulator/assets/human/human.glb` still
+loads with no code changes; `node simulator/tools/verify-human-asset.mjs <file>` gates it.
 
 ## 9–10. Timeline + replay integration
 
@@ -207,14 +274,20 @@ branches so scenes can never present a prediction as a measurement. Skin transpo
 
 ## 17. Known blockers
 
-1. **Human GLB missing (blocks Phase 2 only).** Acquisition was attempted and every reachable
-   candidate was rejected on quality or licence/availability grounds (see §5–8). Phases 1, 3, 4, 5
-   are unblocked; a dev rig exists for building the animation controller.
+1. ~~Human GLB missing (blocks Phase 2 only).~~ **CLEARED 2026-07-28** — the owner supplied
+   `simulator/assets/human/human.glb`; it passes the automated gate and the visual review (§5–8).
+   Two follow-ups remain, neither blocking Phase 1: **licence confirmation** before public
+   redistribution, and the **MakeHuman watermark** baked into the t-shirt/hair textures.
 2. Sandbox egress blocks CDNs (npm registry works) — assets must be vendored into the repo.
 3. Systemic PK is not modelled — the bloodstream scene must stay explicitly labelled.
 
 ## 18. Phase 1 readiness
 
-**READY.** Three.js r160 vendored + WebGL verified; SceneDirector, adapter, disposal, asset manifest
-in place with 31 passing contract tests; the `Renderer` interface, camera system, scale ladder and
-master clock are identified and unmodified. Phase 1 starts at `src/render/threeRenderer.js`.
+**READY.** Three.js r160 vendored + WebGL verified; SceneDirector, adapter, disposal and the asset
+manifest are in place; the `Renderer` interface, camera system, scale ladder and master clock are
+identified and unmodified. The final human is present, gated and animation-controller-compatible, so
+**Phase 2 is no longer asset-blocked either** (`missingFor(2)` is now empty).
+
+Test coverage at Phase-0 close: **3,976** simulator assertions pass (including 110 asserted directly
+against the real `human.glb`), plus 99 production-JS and 31 R assertions, with `tsc --noEmit` clean.
+Phase 1 starts at `src/render/threeRenderer.js`.

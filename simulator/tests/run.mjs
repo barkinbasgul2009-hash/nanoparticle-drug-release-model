@@ -42,10 +42,11 @@ import immuneRegistryBiology from './immuneRegistryBiology.test.mjs';
 import immuneAggregationTargets from './immuneAggregationTargets.test.mjs';
 import three3d from './three3d.test.mjs';
 import three3dPatch from './three3dPatch.test.mjs';
+import humanAsset from './humanAsset.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity, immuneRegistryBiology, immuneAggregationTargets, three3d, three3dPatch,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity, immuneRegistryBiology, immuneAggregationTargets, three3d, three3dPatch, humanAsset,
 ];
 
 for (const suite of suites) {

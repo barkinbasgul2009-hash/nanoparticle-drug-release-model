@@ -8,9 +8,20 @@ export const ASSETS = Object.freeze({
   // ---------------------------------------------------------------- Phase 2 (human)
   human: {
     id: 'human_topical_subject',
-    status: ASSET_STATUS.MISSING,                 // repository contains NO 3D human asset
-    path: 'simulator/assets/human/human.glb',     // target location once supplied
-    format: 'GLB (glTF 2.0, Draco or Meshopt compressed)',
+    status: ASSET_STATUS.PRESENT,                 // supplied by the project owner (Blender export)
+    path: 'simulator/assets/human/human.glb',
+    format: 'GLB (glTF 2.0, uncompressed, all textures embedded)',
+    accepted: {
+      on: '2026-07-28',
+      generator: 'Khronos glTF Blender I/O v4.5.51',
+      origin: 'MakeHuman/MPFB figure exported from Blender by the project owner',
+      stats: { triangles: 39848, meshes: 9, materials: 9, textures: 10, bones: 53, fingerBones: 30, fileSizeMB: 17.98, clips: 0 },
+      skeleton: 'Unreal/MakeHuman naming (pelvis, spine_01..03, clavicle_l/r, upperarm_l/r, lowerarm_l/r, hand_l/r, neck_01, head) — 13/13 roles resolve via src/three/boneMap.js',
+      bounds: 'Y-up, ~1.78 m, origin at the feet, roughly centred on X',
+      gate: 'PASS — all 11 automated checks in tools/verify-human-asset.mjs',
+      visualReview: 'PASSED with limitations: card-based afro hair shows shell banding at close range; the MakeHuman logo is printed on the t-shirt texture. Face, eyes, hands, fingers, wrists and the bare treatment forearm are all clean.',
+      presentationFix: 'src/three/humanPresentation.js — the export declares alphaMode:BLEND on ALL 9 materials (a Blender exporter default); renderer-side correction restores opaque surfaces and alpha-TESTS the genuine cut-out cards. Without it the face does not occlude the teeth and the hair renders as black slabs over the eyes.',
+    },
     spec: {
       budget: { triangles: '80k–150k total', textures: '2048² albedo/normal/roughness (1024² for minor maps)' },
       rig: 'humanoid skeleton, Mixamo-compatible naming (mixamorig:* or standard Hips/Spine/Arm chain)',
@@ -25,6 +36,8 @@ export const ASSETS = Object.freeze({
     },
     acceptanceGate: ['orientation Y-up / Z-forward', 'metre scale (~1.7m)', 'origin at feet', 'normals correct', 'textures resolve', 'skeleton binds', 'clips play', 'loads < 3s on broadband', 'disposable without leak'],
     fallbackIfMissing: 'Phase 2 stops and reports the gap — do NOT ship a placeholder dummy as the final human.',
+    // Retained as the record of why no autonomously-sourced model was accepted before the owner
+    // supplied one. Every entry below was downloaded, inspected and rejected.
     acquisitionAttempts: [
       { source: 'three.js r160 Michelle.glb', result: 'REJECTED as final — stylised cartoon avatar (goggles occlude the eyes, cartoon hair). Retained ONLY as a development rig fixture (13/13 bone roles, 40 finger bones).' },
       { source: 'three.js r160 Soldier.glb', result: 'REJECTED — fully armoured game character, helmet, no bare forearm (the treatment area).' },
@@ -42,10 +55,14 @@ export const ASSETS = Object.freeze({
   },
   humanAnimations: {
     id: 'human_clips',
-    status: ASSET_STATUS.MISSING,
-    needed: ['idle', 'arm_raise / forearm_present', 'cream_application (hand rub)', 'neutral_reset'],
-    strategy: 'Prefer packaged clips; otherwise blend idle + procedural bone animation (shoulder/elbow/wrist) or a short two-bone IK reach. A full IK solver is NOT required.',
-    bones: ['Hips', 'Spine', 'Shoulder.L/R', 'UpperArm.L/R', 'ForeArm.L/R', 'Hand.L/R', 'Hand*.Index/Thumb.*'],
+    // The supplied GLB carries NO animation clips, so the topical-application motion is generated
+    // procedurally from the master timeline instead of being played back from baked tracks.
+    status: ASSET_STATUS.PROCEDURAL,
+    packagedClips: 0,
+    stages: ['idle', 'present_forearm', 'reach', 'apply_cream', 'return_neutral'],
+    strategy: 'src/three/humanAnimationController.js drives shoulder/upperArm/forearm/hand flexion as a PURE function of timeline progress (8 bones, 0 skipped on this skeleton). Clip playback is still supported via bindClip() should baked clips be added later. A full IK solver is NOT required.',
+    bones: ['clavicle_l/r', 'upperarm_l/r', 'lowerarm_l/r', 'hand_l/r'],
+    limitation: 'Flexion is driven about X only, so the applying hand does not yet make contact with the opposite forearm — closing that gap is Phase-2 scene work (reach offset / two-bone IK), not an asset gap.',
   },
   // ---------------------------------------------------------------- Phases 3–5 (procedural)
   skinCrossSection:  { id: 'skin_layers',  status: ASSET_STATUS.PROCEDURAL, note: 'layer slabs + corneocyte instancing built in code; depths from transport registry (no new biology)' },

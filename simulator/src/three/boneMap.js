@@ -2,21 +2,31 @@
 // ('forearmL', 'handR', …) and this module resolves it against the loaded skeleton. Prevents
 // animating guessed/unsupported bones.
 
-/** Role -> ordered name patterns (first match wins). Covers Mixamo + common Blender rigs. */
+/**
+ * Role -> ordered name patterns. Covers three rig naming conventions:
+ *   - Mixamo            (mixamorig:LeftForeArm)
+ *   - generic Blender   (Left forearm / forearm.L)
+ *   - Unreal / MakeHuman-MPFB  (lowerarm_l, clavicle_r, spine_01)  <- simulator/assets/human/human.glb
+ *
+ * NOTE ON RESOLUTION ORDER: buildBoneMap scans the SKELETON in bone order and accepts the first
+ * bone matching any pattern for the role — so pattern order inside an array is not a priority.
+ * Where a role could match several bones (e.g. `chest` vs spine_02/spine_03) the skeleton's own
+ * hierarchical order decides, which is what we want (nearest-to-root wins).
+ */
 export const BONE_PATTERNS = Object.freeze({
-  root:       [/^hips$/i, /mixamorig:?Hips/i, /^root$/i],
-  spine:      [/^spine$/i, /mixamorig:?Spine$/i],
-  chest:      [/chest/i, /mixamorig:?Spine[12]$/i],
-  neck:       [/^neck$/i, /mixamorig:?Neck/i],
+  root:       [/^hips$/i, /mixamorig:?Hips/i, /^root$/i, /^pelvis$/i],
+  spine:      [/^spine$/i, /mixamorig:?Spine$/i, /^spine_0?1$/i],
+  chest:      [/chest/i, /mixamorig:?Spine[12]$/i, /^spine_0?[23]$/i],
+  neck:       [/^neck$/i, /mixamorig:?Neck/i, /^neck_0?\d$/i],
   head:       [/^head$/i, /mixamorig:?Head$/i],
-  shoulderL:  [/left.*shoulder/i, /mixamorig:?LeftShoulder/i],
-  shoulderR:  [/right.*shoulder/i, /mixamorig:?RightShoulder/i],
-  upperArmL:  [/mixamorig:?LeftArm$/i, /left.*(upperarm|arm)$/i],
-  upperArmR:  [/mixamorig:?RightArm$/i, /right.*(upperarm|arm)$/i],
-  forearmL:   [/mixamorig:?LeftForeArm$/i, /left.*(forearm|lowerarm)/i],
-  forearmR:   [/mixamorig:?RightForeArm$/i, /right.*(forearm|lowerarm)/i],
-  handL:      [/mixamorig:?LeftHand$/i, /left.*hand$/i],
-  handR:      [/mixamorig:?RightHand$/i, /right.*hand$/i],
+  shoulderL:  [/left.*shoulder/i, /mixamorig:?LeftShoulder/i, /^shoulder[._]l$/i, /^clavicle[._]l$/i],
+  shoulderR:  [/right.*shoulder/i, /mixamorig:?RightShoulder/i, /^shoulder[._]r$/i, /^clavicle[._]r$/i],
+  upperArmL:  [/mixamorig:?LeftArm$/i, /left.*(upperarm|arm)$/i, /^upper[_.]?arm[._]l$/i],
+  upperArmR:  [/mixamorig:?RightArm$/i, /right.*(upperarm|arm)$/i, /^upper[_.]?arm[._]r$/i],
+  forearmL:   [/mixamorig:?LeftForeArm$/i, /left.*(forearm|lowerarm)/i, /^(fore|lower)[_.]?arm[._]l$/i],
+  forearmR:   [/mixamorig:?RightForeArm$/i, /right.*(forearm|lowerarm)/i, /^(fore|lower)[_.]?arm[._]r$/i],
+  handL:      [/mixamorig:?LeftHand$/i, /left.*hand$/i, /^hand[._]l$/i],
+  handR:      [/mixamorig:?RightHand$/i, /right.*hand$/i, /^hand[._]r$/i],
 });
 
 /** Roles the topical-application animation cannot run without. */
