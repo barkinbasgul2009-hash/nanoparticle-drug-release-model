@@ -1101,6 +1101,36 @@ def animate_morphs(tube: bpy.types.Object, strand: bpy.types.Object, film: bpy.t
                   [(F0, 0.0), (E["releaseStart"], 0.0), (E["releaseStart"] + 8, 1.0),
                    (E["releaseEnd"] + 10, 0.0), (F1, 0.0)])
 
+    # -- hand correctives: driven by what the hand is DOING, which is what makes them corrective ---
+    #
+    # The applying (right) hand closes on the tube, holds it through the pour, opens to set it down,
+    # then closes again -- softer, open-palmed -- to spread the cream. Its knuckles, roots, web,
+    # arch and joint creases follow that, so they are strongest at the grip and the press and relax
+    # in between. The treated (left) hand only ever hangs relaxed, so its correctives sit at a low
+    # constant: enough to keep four separate fingers in the silhouette, not enough to read as effort.
+    A = R.APPLYING.upper()
+    grip_curve = [
+        (F0, 0.0), (E["gripPreparation"], 0.06), (E["productGripEstablished"], 1.0),
+        (E["creamContact"], 1.0), (E["dispenseEnd"], 0.92), (E["productRetreatEnd"], 0.20),
+        (E["handApproach"], 0.16), (E["skinContact"], 0.55), (E["strokeTwo"], 0.62),
+        (E["releaseStart"], 0.50), (E["releaseEnd"], 0.14), (F1, 0.10),
+    ]
+    scale = {"KNUCKLES": 1.00, "FINGER_ROOTS": 0.90, "ARCH": 1.00, "JOINT_CREASE": 0.95}
+    for suffix, k in scale.items():
+        key_shape(body, f"HAND_{A}_{suffix}" if suffix != "ARCH" else f"PALM_{A}_ARCH",
+                  [(f, round(v * k, 4)) for f, v in grip_curve])
+    # the web bunches with THUMB opposition, which outlasts the fingers' closure by a beat
+    key_shape(body, f"THUMB_{A}_WEB", [
+        (F0, 0.0), (E["gripPreparation"], 0.10), (E["productGripEstablished"], 1.0),
+        (E["dispenseEnd"], 0.95), (E["productRetreatEnd"], 0.28), (E["skinContact"], 0.34),
+        (E["releaseEnd"], 0.12), (F1, 0.10)])
+
+    T = R.TREATED.upper()
+    for name, level in ((f"HAND_{T}_KNUCKLES", 0.30), (f"HAND_{T}_FINGER_ROOTS", 0.55),
+                        (f"THUMB_{T}_WEB", 0.18), (f"PALM_{T}_ARCH", 0.26),
+                        (f"HAND_{T}_JOINT_CREASE", 0.34)):
+        key_shape(body, name, [(F0, level), (F1, level)])
+
 
 def animate_strand_transform(strand: bpy.types.Object, tube: bpy.types.Object,
                              armature: bpy.types.Object, geo: dict) -> dict:
@@ -1425,8 +1455,16 @@ def main() -> int:
     # depth exceeds the deepest authored press (4.0 mm) so the skin genuinely swallows the palm
     body_indent = G.add_skin_indent_shape_keys(body, film_info, radius=0.046, depth=0.0070)
     film_indent = G.add_skin_indent_shape_keys(film, film_info, radius=0.046, depth=0.0070)
+
+    # pose-dependent hand correctives (ss8) — the volume changes skinning cannot make
+    frame_apply = R.hand_frame(armature, R.APPLYING)
+    frame_treat = R.hand_frame(armature, R.TREATED)
+    corrective = G.add_hand_corrective_shape_keys(
+        body, armature, R.APPLYING, frame_apply, finger_flesh(body, armature, R.APPLYING))
+    corrective += G.add_hand_corrective_shape_keys(
+        body, armature, R.TREATED, frame_treat, finger_flesh(body, armature, R.TREATED))
     log(f"morphs: tube {len(tube_morphs)}, strand {len(strand_morphs)}, film {len(film_morphs)}, "
-        f"skin {len(body_indent)}")
+        f"skin {len(body_indent)}, hand correctives {len(corrective)}")
 
     # ---- markers -----------------------------------------------------------------------------
     for name, frame in R.EVENTS.items():

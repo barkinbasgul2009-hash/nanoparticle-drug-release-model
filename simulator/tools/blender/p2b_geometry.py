@@ -11,8 +11,8 @@ Coordinate conventions (Blender, Z-up, the imported human faces -Y):
   strand local +Y  nozzle (y=0) -> tip (y=-1), i.e. a unit strand scaled per frame
   cream film        a patch cut from the treated forearm, keeping its armature weights
 
-Units are metres throughout. A real 30 g pharmacy tube is ~110 mm tall over a ~30 x 23 mm oval body,
-and those are the numbers used below.
+Units are metres throughout. A real 30 g pharmacy tube is ~150 mm tall over a ~30 x 23 mm oval
+body, and those are the numbers used below.
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ TUBE = {
     "cap_length": 0.0232,
     "segments": 32,
 }
-"""Nozzle tip sits at local y = 0.0778; overall tube height is 138 mm, a plausible 30 g tube."""
+"""Nozzle tip sits at local y = 0.0778; overall tube height is 152 mm, a plausible 30 g tube."""
 
 TUBE_NOZZLE_LOCAL = Vector((0.0, TUBE["nozzle_top"] + 0.0015, 0.0))
 
@@ -885,3 +885,129 @@ def add_skin_indent_shape_keys(target: bpy.types.Object, info: dict, radius=0.05
     names.append(add_shape_key(target, f"{prefix}_RELEASE", relax).name)
     _ = axis
     return names
+
+
+# --------------------------------------------------------------------------------------------
+# pose-dependent hand correctives (ss8)
+# --------------------------------------------------------------------------------------------
+
+def add_hand_corrective_shape_keys(body: bpy.types.Object, armature: bpy.types.Object,
+                                   side: str, frame: dict, flesh: dict) -> list[str]:
+    """The hand deformations linear-blend skinning cannot produce, authored as shape keys.
+
+    Skinning moves skin with bones. It has no notion of a knuckle riding up under the skin as a
+    finger closes, of the clefts between finger roots deepening, of the thumb web bunching, or of the
+    palm cupping around what it holds. Their absence is exactly the "mitten / inflated silhouette,
+    finger roots and joints poorly defined" the completion review reported: the pose can be perfectly
+    correct and the hand still read as one soft volume, because every feature that tells the eye
+    "these are five separate fingers on an arched palm" is a volume change, not a rotation.
+
+    Every centre and radius below is read off the rest skeleton and the measured soft tissue, so the
+    correctives land on this hand rather than on a generic one. All five are pure bumps that fall to
+    zero at their own edges, which is what lets them be blended and summed without stacking.
+
+    Driven from the grip closure by `animate_morphs`, so they appear as the hand closes and relax as
+    it opens -- pose-dependent, which is the whole point of a corrective.
+    """
+    bones = armature.data.bones
+    normals = _vertex_normals(body)
+    palmar, radial, distal = frame["palmar"], frame["radial"], frame["distal"]
+    fingers = ("index", "middle", "ring", "pinky")
+    mcp = {f: Vector(bones[f"{f}_01_{side}"].head_local) for f in fingers}
+
+    # Only vertices this hand actually owns; without this the maths reaches into the other hand's
+    # geometry wherever the two happen to pass close in rest space.
+    own = set()
+    groups = {f"hand_{side}"} | {f"{n}_{s}_{side}" for n in fingers + ("thumb",)
+                                 for s in ("01", "02", "03")}
+    indices = {body.vertex_groups[g].index for g in groups if g in body.vertex_groups}
+    for v in body.data.vertices:
+        if sum(g.weight for g in v.groups if g.group in indices) > 0.5:
+            own.add(v.index)
+
+    def bump(centres, direction, amount, radius, facing_min=0.15, sign=1.0):
+        """Displace `own` vertices near any centre, along `direction`, if they face that way."""
+        def fn(i, co):
+            if i not in own:
+                return None
+            n = normals[i]
+            if n.length_squared < 1e-9:
+                return None
+            d = direction(co) if callable(direction) else direction
+            facing = n.normalized().dot(d)
+            if facing <= facing_min:
+                return None
+            best = None
+            for c in centres:
+                dist = (Vector(co) - c).length
+                if best is None or dist < best:
+                    best = dist
+            if best is None or best > radius:
+                return None
+            w = smooth_falloff(best / radius) * smooth_falloff(max(0.0, (0.5 - facing) / 0.5))
+            return Vector(co) + n * (sign * amount * w)
+        return fn
+
+    names = []
+
+    # ---- knuckles ------------------------------------------------------------------------------
+    # The MCP heads ride up under the dorsal skin as the hand closes. Centres are the measured head
+    # positions pushed out to the skin along the dorsal normal.
+    knuckle_centres = [m - palmar * (flesh[f"{f}_01_{side}"]["mid"] * 0.45)
+                       for f, m in mcp.items()]
+    names.append(add_shape_key(
+        body, f"HAND_{side.upper()}_KNUCKLES",
+        bump(knuckle_centres, -palmar, 0.0052, 0.019)).name)
+
+    # ---- finger roots --------------------------------------------------------------------------
+    # Deepen the cleft between each adjacent pair of finger roots. This is the single strongest cue
+    # against a mitten silhouette: without it the four roots share one continuous surface.
+    order = list(fingers)
+    clefts = []
+    for a, b in zip(order, order[1:]):
+        mid = (mcp[a] + mcp[b]) * 0.5 + distal * 0.010
+        clefts.append(mid - palmar * 0.004)
+        clefts.append(mid + palmar * 0.004)
+    names.append(add_shape_key(
+        body, f"HAND_{side.upper()}_FINGER_ROOTS",
+        bump(clefts, lambda co: (Vector(co) - _nearest(clefts, co)).normalized()
+             if (Vector(co) - _nearest(clefts, co)).length > 1e-6 else palmar,
+             -0.0044, 0.015, facing_min=-1.0)).name)
+
+    # ---- thumb web -----------------------------------------------------------------------------
+    # The first web space bunches when the thumb opposes; the thenar eminence firms up beside it.
+    web = (Vector(bones[f"thumb_01_{side}"].tail_local) + mcp["index"]) * 0.5
+    thenar = (Vector(bones[f"thumb_01_{side}"].head_local)
+              + Vector(bones[f"thumb_01_{side}"].tail_local)) * 0.5 + palmar * 0.012
+    names.append(add_shape_key(
+        body, f"THUMB_{side.upper()}_WEB",
+        bump([web, thenar], palmar, 0.0044, 0.024, facing_min=0.0)).name)
+
+    # ---- palm arch -----------------------------------------------------------------------------
+    # A gripping palm cups: the transverse arch deepens across the middle of the hand and the
+    # hypothenar rolls in towards the thumb.
+    wrist = Vector(bones[f"hand_{side}"].head_local)
+    arch = [wrist * 0.45 + (sum(mcp.values(), Vector()) / 4.0) * 0.55 + palmar * 0.014]
+    names.append(add_shape_key(
+        body, f"PALM_{side.upper()}_ARCH",
+        bump(arch, palmar, -0.0046, 0.032, facing_min=0.0)).name)
+
+    # ---- joint creases -------------------------------------------------------------------------
+    # Palmar creases at every PIP and DIP. Skinning smooths straight through a closing joint; a real
+    # finger folds into a crease there, and at close range its absence is what makes a finger read as
+    # a bent cylinder rather than a jointed digit.
+    creases = []
+    for f in fingers:
+        for seg in ("01", "02"):
+            b = bones[f"{f}_{seg}_{side}"]
+            creases.append(Vector(b.tail_local) + palmar * flesh[f"{f}_{seg}_{side}"]["mid"] * 0.6)
+    names.append(add_shape_key(
+        body, f"HAND_{side.upper()}_JOINT_CREASE",
+        bump(creases, palmar, -0.0027, 0.010, facing_min=0.0)).name)
+
+    return names
+
+
+def _nearest(points, co) -> Vector:
+    p = Vector(co)
+    return min(points, key=lambda c: (p - c).length_squared)

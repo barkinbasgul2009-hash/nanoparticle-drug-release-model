@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "blenderVersion": "4.5.12 LTS",
-  "buildSeconds": 218.6,
+  "buildSeconds": 201.6,
   "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
   "originalChecksumUnchanged": true,
   "outputs": {
@@ -338,7 +338,7 @@
     "schemaVersion": 1,
     "assetVersion": "2b.1.0+6114fceafe6c",
     "asset": "human_application_baked.glb",
-    "generatedAtUtc": "2026-07-29T12:15:07Z",
+    "generatedAtUtc": "2026-07-29T12:25:59Z",
     "clip": {
       "name": "phase2_application",
       "fps": 30,
@@ -482,7 +482,7 @@
       ]
     },
     "statistics": {
-      "fileSizeBytes": 20218708,
+      "fileSizeBytes": 20253680,
       "meshCount": 15,
       "triangleCount": 45680,
       "materialCount": 17,
@@ -499,7 +499,7 @@
     "[phase2b] imported 10 objects, armature 'Human_rig' with 53 bones",
     "[phase2b] body/skin mesh: Human (9416 verts)",
     "[phase2b] cream film: 933 verts / 1728 tris, axial 0.031..0.249 m, radius 0.0348 m",
-    "[phase2b] morphs: tube 5, strand 5, film 5, skin 4",
+    "[phase2b] morphs: tube 5, strand 5, film 5, skin 4, hand correctives 10",
     "[phase2b] pole calibration error: L 3.51 mm, R 3.51 mm",
     "[phase2b] palm contact point (hand-local): [-0.0105, 0.0442, 0.0239]",
     "[phase2b] finger soft tissue (pad radius, mm): index=7.5, middle=6.5, ring=6.8, pinky=5.3, thumb=7.7",
@@ -513,9 +513,9 @@
     "[phase2b]   worst -1.5 mm, largest hover +520.5 mm",
     "[phase2b] baked pose: 53 bones, 531 fcurves, 223551 keys, range [1.0, 421.0]",
     "[phase2b] strand span 64.5..622.1 mm",
-    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20462643 bytes)",
+    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20475127 bytes)",
     "[phase2b] purged 9 non-export objects: CTRL_hand_l, CTRL_hand_r, CTRL_pole_l, CTRL_pole_r, LIGHT_fill, LIGHT_key, LIGHT_rake, LIGHT_rim, PREVIEW_camera",
-    "[phase2b] exported simulator/assets/human/human_application_baked.glb (20218708 bytes) from 18 objects",
+    "[phase2b] exported simulator/assets/human/human_application_baked.glb (20253680 bytes) from 18 objects",
     "[phase2b] wrote simulator/assets/human/human_application_manifest.json"
   ]
 }
