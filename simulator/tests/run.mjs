@@ -45,10 +45,11 @@ import three3dPatch from './three3dPatch.test.mjs';
 import humanAsset from './humanAsset.test.mjs';
 import applicationPhase2 from './applicationPhase2.test.mjs';
 import graspAndDeformation from './graspAndDeformation.test.mjs';
+import phase2bBaked from './phase2bBaked.test.mjs';
 
 const suites = [
   configLoading, jsonValidation, preset, sceneRegistration,
-  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity, immuneRegistryBiology, immuneAggregationTargets, three3d, three3dPatch, humanAsset, applicationPhase2, graspAndDeformation,
+  stateTransitions, cameraInit, bootstrap, anatomy, transport, release, uptake, endocytosis, intracellular, targetEngagement, signalGraph, signalPropagation, transcription, translation, proteinFunction, apoptosis, population, tumor, microenvironment, vascular, immune, immuneRuntime, immuneAdaptive, immuneRender, immuneAudit, immuneWiring, immuneBioValidation, immuneMetamorphic, immunePredictionDeterminism, immuneRegression, immuneCertification, immuneIdentity, immuneRegistryBiology, immuneAggregationTargets, three3d, three3dPatch, humanAsset, applicationPhase2, graspAndDeformation, phase2bBaked,
 ];
 
 for (const suite of suites) {

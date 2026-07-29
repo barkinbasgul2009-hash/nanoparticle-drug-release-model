@@ -53,3 +53,7 @@ rsconnect/
 
 # Generated example figures (produced by examples/run_example.R)
 examples/*.png
+
+# Blender writes a .blend1 backup beside every save; the authoring source is versioned, its
+# backup is not.
+*.blend1

@@ -343,6 +343,105 @@ arriving palm. Fixed topology, no per-frame geometry rebuild, and a pure functio
 asserted a contact the hand had not yet made (measured 197 mm short). It now opens at the end of
 the touchdown reach.
 
+## 16e. Phase 2B — Blender-authored realism migration (DELIVERED)
+
+The Phase-2 procedural animation is now a **fallback**, not the quality reference. The presentation
+sequence is authored in Blender 4.5 LTS, baked onto the original deform skeleton, exported as a
+runtime GLB, and played back in Three.js from the same `masterProgress` the procedural path uses.
+
+| layer | owns |
+|---|---|
+| Blender + Blender Python | character animation, control rig, IK/constraints, tube model, grip, squeeze, cream extrusion + deposit geometry, skin indentation, shape keys, baking, the editable `.blend`, the generated GLB, the preview render |
+| JavaScript + Three.js | loading the GLB, validating the manifest, selecting the presentation mode, master-progress → clip-time, camera, visibility orchestration, play/pause/seek/reset/replay, loading + failure states, A/B preview, capture tooling, disposal |
+| GLSL / material layer | bounded VISUAL_ONLY surface polish only (cream albedo, roughness, clearcoat, sheen, polygon offset) |
+| R | untouched — no scientific, biological, prediction, evidence or PK code is involved |
+
+### Files
+
+| path | role |
+|---|---|
+| `simulator/assets/human/human.glb` | **immutable input**, never written; sha256 recorded in the manifest and re-checked after every build |
+| `simulator/assets/blender/phase2_application_source.blend` | editable authoring source (control rig, helpers, lights, preview camera, markers) |
+| `simulator/assets/human/human_application_baked.glb` | generated runtime asset |
+| `simulator/assets/human/human_application_manifest.json` | authoritative manifest, fully generated |
+| `simulator/assets/human/human_application_manifest.schema.json` | published contract for that manifest |
+| `simulator/tools/blender/build_phase2_realism.py` | the build (deterministic, idempotent) |
+| `simulator/tools/blender/p2b_geometry.py` | tube, cap, tray, strand, cream film, morph maths |
+| `simulator/tools/blender/p2b_rig.py` | control rig, finger articulation, torso FK, bake |
+| `simulator/tools/blender/run_phase2_blender_build.bat` | Windows one-command build + gates |
+| `simulator/tools/blender/encode_video.py` | frame sequence → playable video (Blender's bundled FFmpeg) |
+| `simulator/tools/blender/compose_sheets.py` | A/B still and contact sheet |
+| `simulator/tools/verify-baked-asset.mjs` | generated-asset gate |
+| `simulator/tools/capture-frames.mjs` | deterministic browser frame capture |
+| `simulator/src/three/applicationManifest.js` | executable manifest contract |
+| `simulator/src/three/presentationMode.js` | the two mutually exclusive modes + ownership table |
+| `simulator/src/three/bakedApplicationScene.js` | baked presentation scene |
+| `simulator/src/three/applicationCameraDirector.js` | event-anchored Three.js camera |
+| `simulator/phase2b-preview.html` | A/B preview, capture surface, dev diagnostics |
+| `simulator/tests/phase2bBaked.test.mjs` | asset / manifest / timeline / flag / visual-state / resource tests |
+
+### Build command
+
+```
+# Windows, one command (resolves Blender, logs, and runs every gate)
+simulator\tools\blender\run_phase2_blender_build.bat
+
+# any platform
+blender --background --python-exit-code 1 \
+  --python simulator/tools/blender/build_phase2_realism.py -- --repo . [--preview]
+```
+
+### Master-timeline mapping
+
+`clipTime = clamp(masterProgress, 0, 1) * clipDuration`, applied as
+`action.paused = true; action.time = clipTime; mixer.update(0)`. `mixer.update(delta)` is never a
+playback source, and the baked scene contains no Clock, interval or accumulator. Event timings are
+never written into JavaScript: they are generated from `EVT_*` Blender timeline markers into the
+manifest, and the camera shot list is keyed to those event names.
+
+### Feature flag and fallback
+
+`presentationMode` is `blender-baked` or `procedural-fallback`, and the two are mutually exclusive —
+`presentationMode.js` publishes an ownership table per channel and `assertExclusive()` rejects any
+state where both systems drive one channel or nobody does. A baked-asset load or validation failure
+does not crash and does not silently pretend baked mode is active: it falls back to procedural and
+reports the reason in the dev diagnostics.
+
+### Measured, not asserted
+
+Three things that would normally be tuned by eye are solved against the real geometry at build time,
+and the numbers land in `simulator/artifacts/phase2b/build-report.json`:
+
+* **grip** — each finger's flexion is scanned against the exported tube surface until its pad sits on
+  it, reported as `rn` (1.0 = exactly on the surface). The seating of the barrel in the palm is
+  itself searched over a grid, scored on contact error plus whole-finger penetration.
+* **pole angle** — the IK pole for each arm is calibrated by sweeping it and keeping the angle that
+  reproduces the rest elbow, rather than guessing an offset.
+* **palm contact point** — measured from the actual hand vertices, not estimated from the wrist bone.
+
+### Known limitations carried forward
+
+* The little finger cannot reach a 30 mm barrel from this rig's hand; it is posed on the natural
+  cascade of its neighbours rather than clenched onto nothing. This is reported by the build, not
+  hidden.
+* Hair remains card-based and the garment texture still carries the MakeHuman watermark, so no shot
+  frames the head above a medium. Unchanged from Phase 0.
+* The Blender preview render (ss31) cannot be produced in this container at all: EEVEE Next needs a
+  GPU/EGL context, Mesa `llvmpipe` renders corrupted geometry at 90 s/frame, `softpipe` aborts, and
+  the `bpy` distribution ships no Cycles kernel. The code path exists behind `--preview` and works on
+  a machine with a GPU. The browser render is the authoritative look either way (ss18), and it exists
+  at full length in four videos plus 421 captured frames per mode.
+* A residual hand-edge contact crease of up to 1.5 mm remains where the applying hand meets the
+  forearm, against a 7 mm skin indentation. Classified NON-BLOCKING with reasoning in
+  `simulator/artifacts/phase2b/visual-qa.md`.
+
+### Rollback
+
+Set `DEFAULT_PRESENTATION_MODE` in `simulator/src/three/presentationMode.js` to
+`PRESENTATION_MODES.PROCEDURAL` (or pass `?presentationMode=procedural-fallback`). Nothing else has
+to change: the procedural path still loads `human.glb`, the baked asset simply is not loaded, and no
+scientific code is involved in either direction.
+
 ## 17. Known blockers
 
 1. ~~Human GLB missing (blocks Phase 2 only).~~ **CLEARED 2026-07-28** — the owner supplied

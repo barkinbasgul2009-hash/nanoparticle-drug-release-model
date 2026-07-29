@@ -45,13 +45,18 @@
 // classic (non-module) trap so module EVALUATION errors surface on the page instead of only in a
 // console the headless capture never shows
 window.addEventListener('error', (e) => {
+  window.__error = 'PAGE ERROR: ' + (e.message || '') + ' @' + (e.filename || '') + ':' + (e.lineno || '');
   const h = document.getElementById('hud');
-  if (h) h.textContent = 'PAGE ERROR: ' + (e.message || '') + '\n' + (e.filename || '') + ':' + (e.lineno || '');
+  if (h) h.textContent = window.__error;
 });
 window.addEventListener('unhandledrejection', (e) => {
+  window.__error = 'PROMISE REJECTION: ' + ((e.reason && (e.reason.stack || e.reason.message)) || e.reason);
   const h = document.getElementById('hud');
-  if (h) h.textContent = 'PROMISE REJECTION: ' + ((e.reason && (e.reason.stack || e.reason.message)) || e.reason);
+  if (h) h.textContent = window.__error;
 });
+// `?clean=1` strips the UI so the viewport IS the render surface. Applied before the module runs so
+// the renderer mounts at the final size and no resize happens mid-capture.
+if (new URLSearchParams(location.search).get('clean') === '1') document.body.classList.add('clean');
 </script>
 
 <script type="module">
@@ -115,6 +120,9 @@ const clock = new THREE.Clock();
 (function loop() {
   requestAnimationFrame(loop);
   const dt = clock.getDelta();                    // rendering mechanics only
+  // In capture mode the harness owns every draw (see tools/capture-frames.mjs). Letting the idle
+  // loop also render would triple the SwiftShader cost of each captured frame for no benefit.
+  if (window.__captureMode) return;
   if (playing && scene) {
     const next = progress + dt / DURATION_S;
     apply(next >= 1 ? (playing = false, 1) : next);
@@ -154,12 +162,30 @@ document.querySelectorAll('[data-jump]').forEach((b) =>
 
 addEventListener('resize', () => {
   rend.setSize(host.clientWidth, host.clientHeight);
-  scene.setAspect(host.clientWidth / host.clientHeight);
+  if (scene) scene.setAspect(host.clientWidth / host.clientHeight);   // resize can fire pre-load
 });
 
 // ---- automation hooks for the headless screenshot / validation gate ----
 window.__apply = apply;
+window.__setProgress = apply;                    // capture-frames.mjs contract
 window.__frame = () => (scene ? scene.lastFrame : null);
+/** Draw the CURRENT progress immediately, so a capture never races the rAF loop. */
+window.__drawNow = () => { if (scene) rend.render(scene.scene, scene.camera); };
+/** Compact per-frame state, recorded alongside every captured PNG. */
+window.__diag = () => {
+  const f = scene && scene.lastFrame;
+  if (!f) return null;
+  return {
+    progress: f.progress, stage: f.stage, mode: 'procedural-fallback',
+    contactValid: f.contact.valid, gapMm: +(f.contact.gap * 1000).toFixed(2),
+    clearanceMm: +(f.clearance.min * 1000).toFixed(1),
+    creamCoverage: +f.choreography.cream.coverage.toFixed(3),
+    squeeze: +f.choreography.dispense.squeeze.toFixed(3),
+    extrusion: +f.choreography.dispense.extrusion.toFixed(3),
+    beadMm: +(f.choreography.dispense.beadRadius * 1000).toFixed(2),
+    press: +f.choreography.apply.press.toFixed(5),
+  };
+};
 
 /**
  * Record the full sequence to WebM from the REAL canvas.
