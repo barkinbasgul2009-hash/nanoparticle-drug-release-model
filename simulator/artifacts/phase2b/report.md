@@ -150,12 +150,19 @@ Stated without softening, because these are the reasons for the verdict.
    isolated snaps, and one run of 3 consecutive elevated pairs peaking at **x9.04** at the post-release
    retreat — higher than the x7.9 the previous build reported for the same move. Frame-difference
    metrics are not visual acceptance and are not offered as such.
-2. **The cream (defect E) is a code change with no visual evidence.** No capture in this pack frames
-   the cream at a distance where edge accumulation or stroke detail could be judged. The claim that it
-   no longer reads as a painted patch is not made.
-3. **The application-contact close-up (defect B) is mis-framed.** It shows skin without a clear read
-   on the boundary between the two surfaces, so whether the contact still reads as two overlaid meshes
-   is unanswered by this evidence.
+2. **The cream (defect E) is a code change, and the re-framed captures show no cream at all.** The
+   treated forearm during and after both strokes carries no visible film
+   (`hand-review/application/07-contact.png` .. `11-hero.png`). Whether the film fails to render, sits
+   off the visible forearm, or never has its weights raised is not established. The edge-accumulation
+   and thickness code is in and sound in principle; it is not reaching the screen.
+3. **Two further blocking defects were found once the contact close-up was re-framed** (defect B, now
+   worse than reported). The applying hand's index and middle fingertips pass *through* the treated
+   wrist during the strokes, and the retreated applying hand is buried in the shirt mesh at the hero
+   moment. The build's palm-contact measurement reports -1.5 mm worst and misses both, because it
+   tracks the palm's contact point and says nothing about the fingers or the torso. The first Phase 2B
+   visual QA asserted "No frame shows the hand inside the shirt silhouette"; that was wrong, and
+   `hand-review/application/14-wide-hero.png` is the counter-example. The applying hand is also curled
+   rather than open-palmed, which is not how cream is spread.
 4. **The tube squeeze (defect F, second half) was not re-tuned** for the 102 mm barrel and is not
    verified visually.
 5. **The skin indentation improvement (defect D) is not visually confirmed** — only measured.
@@ -176,7 +183,16 @@ already on the procedural fallback and stays there until visual acceptance passe
 
 **PHASE 2B REMAINS BLOCKED.**
 
-Defects A and F are fixed and measured. D is improved. B and G are partly closed. **C was not
-addressed and E has no visual evidence**, and both were listed as blocking with an explicit
-instruction not to reclassify them because technical tests pass. Independently, ss27 forbids an
-unconditional pass without a physical device, and no device was accessed.
+Defects A and F are fixed and measured, and the fixes are substantial: a single 39.5-degree error in
+the hand's assumed frame was found, corrected and verified, and the grip now measures a genuine
+five-digit hold with zero penetration. D is improved. G is partly closed, and the Blender preview
+route the first report declared impossible turns out to work.
+
+But **C was not addressed at all**, **E has no cream visible on screen**, and **B is worse than
+reported** -- re-framing its close-up exposed fingers passing through the treated wrist and a hand
+buried in the shirt. All three were listed as blocking with an explicit instruction not to reclassify
+them because technical tests pass. Independently, ss27 forbids an unconditional pass without a
+physical device, and no device was accessed.
+
+The honest summary is that the hands and the product grip are convincingly improved and the
+application is not.

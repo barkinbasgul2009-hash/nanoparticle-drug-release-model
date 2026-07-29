@@ -59,14 +59,31 @@ with the old hinges — a hand that never closes — and to 38-46 mm with the me
 the authored correctives, so at the 0.30 m review distance the digits read as clean rather than
 detailed. That is asset surface detail, not pose.
 
-### B. Application hand — **partly fixed, not fully evidenced**
+### B. Application hand — **NOT FIXED. Two further blocking defects found.**
 
-The same corrective keys apply to both hands, and the treated hand holds a low constant so four
-separate fingers stay in its silhouette. The mitten silhouette is reduced.
+The corrective keys apply to both hands and the mitten silhouette is reduced, so the *silhouette*
+part of the report is improved. But re-framing the contact close-up — the first framing was too tight
+to judge anything — surfaced two defects that no measurement in this build was looking for, and both
+are worse than the one originally reported.
 
-**Not closed:** the close-up of the hand-on-forearm contact (`hand-review/contact/`) frames skin
-without a clear read on the boundary between the two surfaces, so *"does the contact still read as
-two meshes overlaid"* is **not answered by this evidence**. The framing needs redoing.
+**B1. The applying hand interpenetrates the treated forearm at the strokes.**
+`hand-review/application/09-stroke2.png` shows the applying hand curled into a loose fist with its
+index and middle fingertips passing *through* the treated wrist. This is exactly the "reads as two
+meshes overlaid" failure, and it is now visible rather than marginal. The build's own palm-contact
+measurement reports -1.5 mm worst across the application keys, so **the measurement and the render
+disagree** — the measurement tracks the palm's contact point against the forearm surface and says
+nothing about the fingers, which are what is intersecting.
+
+Also visible: the applying hand is *curled*, not open-palmed. Cream is spread with a flat palm; this
+hand is pressing knuckles into the arm.
+
+**B2. The applying hand passes through the torso at the hero moment.**
+`hand-review/application/14-wide-hero.png` shows the retreated applying hand buried in the shirt
+mesh. The first Phase 2B visual QA asserted "Does the hand avoid the torso? **Yes.** ... No frame
+shows the hand inside the shirt silhouette." That assertion was wrong, and this frame is the
+counter-example.
+
+Neither of these is reclassified. Both are blocking.
 
 ### C. Arm and wrist motion — **NOT ADDRESSED**
 
@@ -93,7 +110,7 @@ Measured contact across the application keys: **-1.5 mm worst** (negative = comp
 **Not closed:** no close-up confirms the stepping is gone, for the framing reason under B, and the
 1.5 mm hand-edge crease has not been re-measured against the new grip.
 
-### E. Cream — **code changed, NOT visually verified**
+### E. Cream — **code changed, and the re-framed captures show NO CREAM AT ALL**
 
 `band()` gained edge accumulation (cream pushed to the sides of the wipe and heaped where the stroke
 stopped) and local thickness variation at two incommensurate frequencies in both directions, on top
@@ -101,9 +118,13 @@ of the existing directional stroke lines. All three are multiplied by the band's
 so they still fall to zero at the film's border and cannot lift a hard rim off the skin — the failure
 that once produced a 17 mm ragged shell.
 
-**Not closed:** no capture in this pack shows the cream at a distance where edge accumulation or
-stroke detail could be judged. The claim *"no longer reads as a painted patch"* is **not supported by
-evidence here and is not made**.
+**Worse than not closed.** The re-framed application captures
+(`hand-review/application/07-contact.png` through `11-hero.png`) show the treated forearm during and
+after both strokes with **no visible cream film on it**. Whether the film is failing to render, is
+positioned off the visible forearm, or has weights that never rise, is not established here -- but
+"cream dispensing and skin deformation are convincingly improved" cannot be claimed when the cream is
+not visible in the shot that is supposed to show it. The edge-accumulation and thickness code is in
+and is sound in principle; it is evidently not reaching the screen.
 
 ### F. Tube — **fixed, derived from the rig**
 
@@ -140,9 +161,9 @@ Nothing below is classified as cosmetic on the grounds that a test passes.
 | defect | status |
 |---|---|
 | A. product-grip hand | **FIXED** for cage, penetration, thumb, little finger and knuckles; asset-level surface detail remains |
-| B. application hand | **PARTLY FIXED**; contact read not evidenced |
+| B. application hand | **NOT FIXED.** Two further blocking defects found: fingers through the treated forearm at the strokes, and the hand through the shirt at the hero |
 | C. arm and wrist motion | **NOT ADDRESSED** |
 | D. skin indentation | **IMPROVED** (3 -> 7 stations); not visually verified |
-| E. cream | **CODE CHANGED**; not visually verified |
+| E. cream | **NOT FIXED.** Code changed, but no cream is visible on the forearm in the re-framed captures |
 | F. tube | **FIXED**; squeeze not re-verified |
 | G. visual QA | **PARTLY CLOSED**; Blender preview route working, no physical device |
