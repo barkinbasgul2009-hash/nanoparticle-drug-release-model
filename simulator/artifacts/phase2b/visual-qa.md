@@ -110,7 +110,7 @@ Measured contact across the application keys: **-1.5 mm worst** (negative = comp
 **Not closed:** no close-up confirms the stepping is gone, for the framing reason under B, and the
 1.5 mm hand-edge crease has not been re-measured against the new grip.
 
-### E. Cream — **code changed, and the re-framed captures show NO CREAM AT ALL**
+### E. Cream — **NOT FIXED: the film renders correctly and still does not read**
 
 `band()` gained edge accumulation (cream pushed to the sides of the wipe and heaped where the stroke
 stopped) and local thickness variation at two incommensurate frequencies in both directions, on top
@@ -118,13 +118,24 @@ of the existing directional stroke lines. All three are multiplied by the band's
 so they still fall to zero at the film's border and cannot lift a hard rim off the skin — the failure
 that once produced a 17 mm ragged shell.
 
-**Worse than not closed.** The re-framed application captures
+**Not closed, and now diagnosed.** The re-framed application captures
 (`hand-review/application/07-contact.png` through `11-hero.png`) show the treated forearm during and
-after both strokes with **no visible cream film on it**. Whether the film is failing to render, is
-positioned off the visible forearm, or has weights that never rise, is not established here -- but
-"cream dispensing and skin deformation are convincingly improved" cannot be claimed when the cream is
-not visible in the shot that is supposed to show it. The edge-accumulation and thickness code is in
-and is sound in principle; it is evidently not reaching the screen.
+after both strokes with no cream a viewer would identify as cream.
+
+Probing the live scene at the second stroke rules out the obvious explanations. `CREAM_film` is
+present, `visible: true`, opaque, 1,728 triangles, and its morphs are driven correctly --
+`CREAM_SPREAD_PRIMARY` 0.997, `CREAM_SPREAD_SECONDARY` 0.412, `CREAM_FINAL_FILM` 0.133. Nothing in
+the pipeline is broken.
+
+The film simply does not read: a 1.3-2.2 mm layer of warm ivory (0.960, 0.925, 0.855) on light skin
+under this lighting has almost no luminance separation from the skin beneath it, and at that
+thickness casts no shading of its own to compensate. Edge accumulation and local thickness cannot
+help, because the problem is contrast rather than form -- which is why adding them, as this pass did,
+did not change what is on screen.
+
+Closing this needs the film's material and thickness reconsidered against the skin it sits on, not
+more geometry detail. That work was not done, so the claim *"no longer reads as a painted patch"* is
+not supported and is not made.
 
 ### F. Tube — **fixed, derived from the rig**
 
@@ -164,6 +175,6 @@ Nothing below is classified as cosmetic on the grounds that a test passes.
 | B. application hand | **NOT FIXED.** Two further blocking defects found: fingers through the treated forearm at the strokes, and the hand through the shirt at the hero |
 | C. arm and wrist motion | **NOT ADDRESSED** |
 | D. skin indentation | **IMPROVED** (3 -> 7 stations); not visually verified |
-| E. cream | **NOT FIXED.** Code changed, but no cream is visible on the forearm in the re-framed captures |
+| E. cream | **NOT FIXED.** The film renders with correct morph weights but has too little contrast against skin to read at 1.3-2.2 mm |
 | F. tube | **FIXED**; squeeze not re-verified |
 | G. visual QA | **PARTLY CLOSED**; Blender preview route working, no physical device |

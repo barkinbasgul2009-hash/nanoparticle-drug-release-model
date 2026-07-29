@@ -105,8 +105,8 @@ letting the surface relax between them. Measured palm-to-skin contact across the
 
 `band()` gained edge accumulation and local thickness variation at two incommensurate frequencies in
 both directions, on top of the existing stroke lines, all multiplied by the band's own shape function
-so nothing can lift a hard rim off the skin. **This is a code change that has not been visually
-verified** — see ss11.
+so nothing can lift a hard rim off the skin. **The film renders and is driven correctly, and still
+does not read on screen** — see ss11.
 
 ## 9. Blender-authored preview video (ss23)
 
@@ -150,11 +150,14 @@ Stated without softening, because these are the reasons for the verdict.
    isolated snaps, and one run of 3 consecutive elevated pairs peaking at **x9.04** at the post-release
    retreat — higher than the x7.9 the previous build reported for the same move. Frame-difference
    metrics are not visual acceptance and are not offered as such.
-2. **The cream (defect E) is a code change, and the re-framed captures show no cream at all.** The
-   treated forearm during and after both strokes carries no visible film
-   (`hand-review/application/07-contact.png` .. `11-hero.png`). Whether the film fails to render, sits
-   off the visible forearm, or never has its weights raised is not established. The edge-accumulation
-   and thickness code is in and sound in principle; it is not reaching the screen.
+2. **The cream (defect E) renders correctly and still does not read.** Probing the live scene at the
+   second stroke shows `CREAM_film` present, visible, opaque and driven -- `CREAM_SPREAD_PRIMARY`
+   0.997, `CREAM_SPREAD_SECONDARY` 0.412, `CREAM_FINAL_FILM` 0.133 -- so nothing in the pipeline is
+   broken. A 1.3-2.2 mm layer of warm ivory on light skin under this lighting simply has almost no
+   luminance separation from the skin beneath it and casts no shading of its own at that thickness.
+   The problem is contrast, not form, which is why adding edge accumulation and local thickness
+   variation did not change what is on screen. Closing this needs the film's material and thickness
+   reconsidered against the skin it sits on.
 3. **Two further blocking defects were found once the contact close-up was re-framed** (defect B, now
    worse than reported). The applying hand's index and middle fingertips pass *through* the treated
    wrist during the strokes, and the retreated applying hand is buried in the shirt mesh at the hero
@@ -188,7 +191,7 @@ the hand's assumed frame was found, corrected and verified, and the grip now mea
 five-digit hold with zero penetration. D is improved. G is partly closed, and the Blender preview
 route the first report declared impossible turns out to work.
 
-But **C was not addressed at all**, **E has no cream visible on screen**, and **B is worse than
+But **C was not addressed at all**, **E still does not read on screen**, and **B is worse than
 reported** -- re-framing its close-up exposed fingers passing through the treated wrist and a hand
 buried in the shirt. All three were listed as blocking with an explicit instruction not to reclassify
 them because technical tests pass. Independently, ss27 forbids an unconditional pass without a
