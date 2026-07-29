@@ -8,14 +8,17 @@ input to the build.
 | `build-report.json` | `simulator/tools/blender/build_phase2_realism.py` — the Blender build's own record: version, grip solution, pole calibration, baked action statistics, exported/excluded objects |
 | `report.json` | `simulator/tools/phase2b-report.mjs` — asset gate, manifest summary, browser performance, determinism probe, disposal counters, device-verification status |
 | `report.md` | the human-readable Phase 2B report |
-| `visual-qa.md` | the normal-speed and half-speed visual reviews, with every ss33/ss34 question answered |
+| `visual-qa.md` | the completion-pass visual review: what each reported defect's status now is, and what the evidence does and does not settle |
 | `browser-baked-normal.webm` | 421 deterministic frames of `presentationMode=blender-baked`, 1280x720 @ 30 fps |
 | `browser-baked-half-speed.webm` | the same 421 frames at 15 fps — the same animation states, twice the display duration |
 | `browser-procedural-normal.webm` | the procedural fallback over the same master progress |
+| `browser-procedural-half-speed.webm` | the same, at 15 fps |
 | `browser-ab-comparison.webm` | procedural and baked side by side, frame-matched |
-| `blender-preview-normal.mp4` | the Blender-authored preview render (EEVEE) |
+| `blender-preview-normal.mp4` | the Blender-authored preview render — **Cycles CPU**, 960x540, every 4th frame, AgX. EEVEE Next needs a GPU/EGL context this container does not have |
 | `ab-contact-sheet.png` | the matched progress points, procedural left / baked right |
 | `frames/` | the 17 required named frame captures (ss35), straight from the browser |
+| `hand-review/` | the hand-specific close-up pack: `palmar/`, `dorsal/`, `radial/` and `contact/` at five grip moments, plus `application/` at five application moments in two framings |
+| `baseline/` | the grip close-ups captured BEFORE this pass, for before/after comparison |
 
 ## Reproducing
 
