@@ -679,12 +679,21 @@ def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.typ
     return sol, grip, trials
 
 
-def _lerp_pose(a: Matrix, b: Matrix, t: float) -> Matrix:
-    """Blend two hand poses: linear on position, slerp on rotation, plus a small outward bow so the
-    arm swings away rather than sliding along a straight chord."""
+def _lerp_pose(a: Matrix, b: Matrix, t: float,
+               bow_dir: Vector | None = None, bow_scale: float = 0.18) -> Matrix:
+    """Blend two hand poses: linear on position, slerp on rotation, plus a bow so the arm swings
+    away rather than sliding along a straight chord.
+
+    `bow_dir` matters when the chord passes through something. The default bows towards the camera,
+    which is right for a retreat across open space and wrong for the approach to the treated forearm:
+    measured, the default arc put the thumb 25.8 mm inside that forearm at frame 273. Aiming the bow
+    over and outside the limb being reached for turns a path that cuts through the arm into one that
+    arrives at it from outside.
+    """
     pos = a.translation.lerp(b.translation, t)
-    bow = (b.translation - a.translation).length * 0.18
-    pos += Vector((0.0, -1.0, 0.0)) * bow * math.sin(math.pi * t)
+    bow = (b.translation - a.translation).length * bow_scale
+    direction = bow_dir.normalized() if bow_dir is not None else Vector((0.0, -1.0, 0.0))
+    pos += direction * bow * math.sin(math.pi * t)
     rot = a.to_quaternion().slerp(b.to_quaternion(), t)
     return Matrix.Translation(pos) @ rot.to_matrix().to_4x4()
 
@@ -733,6 +742,7 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
     """Pose-to-pose keys for both arms, the torso and every finger, plus the tube's parenting."""
     scene = bpy.context.scene
     E = R.EVENTS
+    R.reset_quaternion_continuity()
     frame_r = R.hand_frame(armature, R.APPLYING)
     frame_l = R.hand_frame(armature, R.TREATED)
     axes_r = R.finger_axes(armature, R.APPLYING, frame_r)
@@ -922,8 +932,34 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
 
     stroke_lo = a_lo + 0.16 * (a_hi - a_lo)
     stroke_hi = a_lo + 0.82 * (a_hi - a_lo)
-    application = [
-        (E["handApproach"], palm_pose(deposit_axial, 0.0, 0.085, 0.10), 0.28),
+
+    # ---- the approach is a TRAVELLED ARC, not a cut ------------------------------------------
+    #
+    # The hand used to leave the tray at frame 262 and be at the forearm by 266. Four frames for
+    # 0.55 m is 5.8 m/s at the peak, and the motion analysis found it as a 147x speed spike with a
+    # 148-degree forearm twist in a single frame -- comfortably the largest discontinuity in the
+    # clip and the one thing most responsible for the action reading as machine motion.
+    #
+    # The travel now occupies frames 262-278: the tube is still set down at `productRetreatEnd`, the
+    # hand still touches skin at `skinContact`, and no published event moves. `handApproach` keeps
+    # its meaning -- it is where the approach BEGINS rather than where it has already finished.
+    #
+    # Waypoints are placed at minimum-jerk positions along the path rather than at even fractions of
+    # it, so the hand accelerates out of the tray, crosses fastest in the middle and settles into the
+    # hover. `_lerp_pose` bows the path outward from the torso, so the arm swings around the body
+    # instead of sliding along the straight chord between two points, which is the other half of
+    # what makes a reach look mechanical.
+    hover = palm_pose(deposit_axial, 0.0, 0.085, 0.10)
+    travel_start = E["productRetreatEnd"] + 6
+    travel_end = E["skinContact"] - 8
+    travel_span = float(travel_end - travel_start)
+    approach_bow = (fa["outward"] * 0.55 + fa["up"] * 0.85).normalized()
+    travel = [(f, _lerp_pose(tray_hand, hover, R.minimum_jerk((f - travel_start) / travel_span),
+                             bow_dir=approach_bow, bow_scale=0.22), 0.26)
+              for f in range(travel_start + 3, travel_end - 2, 4)]
+
+    application = travel + [
+        (travel_end, hover, 0.28),
         # `press` is now barely more than skin contact. The compression read comes from the
         # SKIN_INDENT morphs, which recede 7 mm under the palm; driving the palm itself several
         # millimetres into the arm only guaranteed a hard intersection wherever the hand sat between

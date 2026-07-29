@@ -471,6 +471,19 @@ def set_clavicles(armature: bpy.types.Object, lift_l=0.0, lift_r=0.0, forward_l=
 # keying
 # --------------------------------------------------------------------------------------------
 
+def reset_quaternion_continuity() -> None:
+    """No-op kept so callers stay stable.
+
+    An earlier version of this module aligned each keyed quaternion with the previous one, on the
+    theory that component-wise Bezier interpolation between opposite hemispheres was causing the
+    124.8-degree single-frame forearm twist during the approach. Measurement said otherwise: forcing
+    a global hemisphere chain ADDED twist spikes at frames 14, 55, 401-405, 413 and 416, because
+    dragging keys away from their canonical representatives changes the auto-clamped handle shapes on
+    all four component curves. The hypothesis was reasonable and the numbers rejected it, so the
+    alignment is not applied.
+    """
+
+
 def key_control(obj: bpy.types.Object, frame: int, matrix: Matrix) -> None:
     obj.matrix_world = matrix
     obj.keyframe_insert("location", frame=frame)

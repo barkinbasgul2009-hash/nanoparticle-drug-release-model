@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "blenderVersion": "4.5.12 LTS",
-  "buildSeconds": 217.4,
+  "buildSeconds": 210.6,
   "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
   "originalChecksumUnchanged": true,
   "outputs": {
@@ -278,9 +278,24 @@
   "palmContact": {
     "perKey": [
       {
-        "frame": 266,
-        "axialMm": 97.9,
-        "gapMm": 88.18
+        "frame": 265,
+        "axialMm": 254.5,
+        "gapMm": 347.77
+      },
+      {
+        "frame": 269,
+        "axialMm": 205.7,
+        "gapMm": 166.66
+      },
+      {
+        "frame": 273,
+        "axialMm": 125.9,
+        "gapMm": 45.82
+      },
+      {
+        "frame": 278,
+        "axialMm": 96.5,
+        "gapMm": 85.77
       },
       {
         "frame": 286,
@@ -340,7 +355,7 @@
     "schemaVersion": 1,
     "assetVersion": "2b.1.0+6114fceafe6c",
     "asset": "human_application_baked.glb",
-    "generatedAtUtc": "2026-07-29T19:07:44Z",
+    "generatedAtUtc": "2026-07-29T20:03:04Z",
     "clip": {
       "name": "phase2_application",
       "fps": 30,
@@ -519,12 +534,12 @@
     "[phase2b] finger wrap (pip/dip gap vs dip want, mm): index=+17.9/+7.8/9.2, middle=+21.0/+6.1/8.8, ring=+19.9/+5.9/7.7, pinky=+12.6/+3.2/5.6",
     "[phase2b]   finger totals (deg): index=142, middle=164, ring=151, pinky=120  thumb oppose=14 flex=6",
     "[phase2b] deposit point (world): [0.1644, -0.1863, 1.2068]  forearm radius 0.0439 (mean 0.0348, profile 0.0497..0.0267)",
-    "[phase2b] palm-to-skin gap across the application keys: f266=+88.2mm, f286=-1.0mm, f296=-1.4mm, f316=-1.5mm, f334=-1.3mm, f346=-1.4mm, f376=+0.4mm, f391=+77.0mm, f404=+173.1mm, f421=+520.5mm",
+    "[phase2b] palm-to-skin gap across the application keys: f265=+347.8mm, f269=+166.7mm, f273=+45.8mm, f278=+85.8mm, f286=-1.0mm, f296=-1.4mm, f316=-1.5mm, f334=-1.3mm, f346=-1.4mm, f376=+0.4mm, f391=+77.0mm, f404=+173.1mm, f421=+520.5mm",
     "[phase2b]   worst -1.5 mm, largest hover +520.5 mm",
     "[phase2b] collision resolution: NOT APPLIED (see --resolve-collisions and collision-report.md)",
     "[phase2b] baked pose: 53 bones, 531 fcurves, 223551 keys, range [1.0, 421.0]",
     "[phase2b] strand span 64.5..622.1 mm",
-    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20556998 bytes)",
+    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20566921 bytes)",
     "[phase2b] purged 9 non-export objects: CTRL_hand_l, CTRL_hand_r, CTRL_pole_l, CTRL_pole_r, LIGHT_fill, LIGHT_key, LIGHT_rake, LIGHT_rim, PREVIEW_camera",
     "[phase2b] exported simulator/assets/human/human_application_baked.glb (20302740 bytes) from 18 objects",
     "[phase2b] wrote simulator/assets/human/human_application_manifest.json"
