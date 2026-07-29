@@ -74,6 +74,11 @@ def _reset_scene(fps: int, width: int, height: int, out: str, codec: str, contai
     scene.render.ffmpeg.constant_rate_factor = "HIGH"
     scene.render.ffmpeg.ffmpeg_preset = "GOOD"
     scene.render.ffmpeg.audio_codec = "NONE"
+    # Blender otherwise writes `<out><start>-<end>.<ext>` -- e.g. "browser-baked-normal.webm0001-0421.mp4"
+    # -- and leaves the requested path untouched. The existence check at the end of main() then finds
+    # whatever was at that path BEFORE the run and reports it as freshly encoded, which is how a set
+    # of stale videos from an earlier build survived a regeneration while claiming to be current.
+    scene.render.use_file_extension = False
     scene.render.filepath = out
     scene.sequence_editor_create()
     return scene

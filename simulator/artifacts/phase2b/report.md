@@ -1,189 +1,182 @@
-# Phase 2B — Blender-authored realism migration
+# Phase 2B completion and visual-realism remediation
 
 **Blender 4.5.12 LTS** (`blender-v4.5-release`) · clip `phase2_application` · 14.000 s @ 30 fps ·
 original `human.glb` sha256 `6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e`
-**unchanged**.
+**unchanged** · production default: **`procedural-fallback`**.
+
+This is not a new phase. It completes the locked Phase 2B roadmap item after the completion review
+rejected the visual result. The verdict is at the bottom, and it is **PHASE 2B REMAINS BLOCKED** —
+not because nothing was achieved, but because three of the seven reported defects are not closed and
+one of those was not touched at all.
 
 ---
 
-## 1. What was built
+## 1. The safety action, first
 
-The Phase-2 presentation is now authored in Blender and baked onto the original deform skeleton. The
-procedural implementation is preserved and still works; it is now the explicit fallback rather than
-the default, a change made only after all twelve ss38 gates passed.
+`DEFAULT_PRESENTATION_MODE` was restored to `PRESENTATION_MODES.PROCEDURAL` before any other edit,
+and it stays there. `blender-baked` remains fully built, fully tested and one query parameter away
+(`?presentationMode=blender-baked`). Nothing about the baked implementation has been weakened, and
+the rollback path is still a single constant in `simulator/src/three/presentationMode.js`.
 
-```
-simulator/assets/human/human.glb                              IMMUTABLE INPUT (never written)
-simulator/assets/blender/phase2_application_source.blend      editable authoring source
-simulator/assets/human/human_application_baked.glb            generated runtime asset
-simulator/assets/human/human_application_manifest.json        generated authoritative manifest
-simulator/assets/human/human_application_manifest.schema.json published contract
-```
+## 2. One cause behind three reported defects
 
-## 2. Build
+The completion review listed the grip cage, the cylindrical fingers and the unconvincing thumb as
+separate problems. They have a single measurable cause.
 
-```
-simulator\tools\blender\run_phase2_blender_build.bat            # Windows, one command
+**The deform rig's `hand_*` bone basis is not anatomically aligned.** On this skeleton its local +Z
+sits **39.5 degrees** away from the true palmar normal. Both the finger flexion hinges
+(`u x palm_normal`) and the product grip were derived from that basis, so both inherited the error:
+flexion was largely twist, and the barrel hung 14-23 mm clear of the palm, tilted out of its plane,
+with the fingers reaching *out* to it. A hand closed around something it is not touching is a cage.
 
-blender --background --python-exit-code 1 \                    # any platform
-  --python simulator/tools/blender/build_phase2_realism.py -- --repo . [--preview]
-```
+`p2b_rig.hand_frame()` now measures the frame from landmarks that mean something anatomically — the
+hand bone's own direction, the index-to-little knuckle line, and a palmar sign voted on by all four
+fingers' resting flexion (all four agree, -13.3 mm to -5.1 mm, so the vote is not marginal).
 
-The build is deterministic and idempotent: it always starts from an empty scene, imports the
-original GLB, and rebuilds every authored object from code. It refuses to write `human.glb`, refuses
-a Blender outside 4.5.x, and re-checks the original's checksum after the export.
+The check that proved it rather than assuming it, on the rest skeleton:
 
-Build time on this container: **21.5 s** (excluding the optional preview render).
-
-## 3. Measured, not guessed
-
-Three quantities that would normally be tuned by eye are solved against the real geometry at build
-time and published in `build-report.json`.
-
-| quantity | method | result |
+| total flexion | old hinges | measured hinges |
 |---|---|---|
-| finger grip | scan each finger's flexion against the exported tube surface; `rn` = distance from the tube axis in cross-section radii, so 1.00 is exactly on the surface | index **1.01**, middle **0.96**, ring **1.10**, thumb **1.03**; whole-finger penetration **0.000** |
-| tube seating in the palm | grid search over the barrel's position in hand space, scored on contact error + penetration + unreachable fingers | offset `(-30, 80, 41.5) mm` in hand-local space |
-| IK pole angle | sweep 72 angles per arm, keep the one reproducing the rest elbow | residual **3.5 mm** both arms |
-| palm-to-skin contact | evaluate the posed hand against the posed forearm at every application key | **−1.5 mm** worst (negative = compression) |
-| forearm radius | 12-bin upper-quartile profile from the actual skin vertices | **49.7 mm** at the elbow → **26.7 mm** at the wrist |
+| 160 deg | 57-62 mm fingertip-to-palm-centre — a hand that never closes | **38-46 mm** |
+| 200 deg | — | **8-29 mm** — a real fist |
+| lateral drift | — | **< 1.2 mm**, i.e. a true planar hinge |
 
-The forearm radius profile is the one that mattered most. An earlier version used a single mean
-radius (34.8 mm) for the deposit point, the palm targets and the indentation centres; because the
-forearm tapers by nearly half, that drove the hand ~10 mm into the arm at one end of the stroke and
-left it ~10 mm off the skin at the other. That was a genuine blocking defect, found by looking at
-captured frames and fixed by measuring instead of averaging.
+## 3. Everything else that was measured rather than judged by eye
 
-## 4. Animation
+| finding | measurement |
+|---|---|
+| Hand topology is dense enough | 1.0-2.3 mm per edge loop, **12-24 loops per phalanx**, 248 verts across the palm, 1,839 verts per hand |
+| Joint shares were backwards | MCP-dominant (0.45/0.35/0.20) keeps the outer two-thirds of a finger straight; a closing hand bends hardest at the PIP |
+| The thumb is not a finger | the finger hinge formula lands **110.5 deg** off the thumb's own chain plane; and the sign was inverted (`u x a` instead of `a x u`), so "flexion" extended it |
+| Contact was scored at the bone | a fingertip driven to the barrel surface buries **5-8 mm** of pad inside it; every acceptance test is now millimetres of clearance against soft tissue measured from the skinned vertices |
+| The barrel was too short | the digits contact it over **108 mm**; it was 88 mm, so the thumb had nothing at its own end |
+| The barrel's angle matters | the thumb's flexion plane runs nearly parallel to a barrel laid straight across the palm, so its pad sweeps *alongside* and stalls ~23 mm out; the searched angle is **18 degrees** |
+| The thumb IP needs its own freedom | on a shared total the thumb contacts with its **middle** phalanx and leaves the pad 25 mm out, because the distal phalanx is 40 mm against a 23-30 mm cross-section |
+| The seat search ignored the thumb | it optimised four fingers, then handed the thumb an unreachable target; it now scores all five digits and the palm gap |
+| The video encoder was reporting stale files | `use_file_extension` was never disabled, so Blender wrote `*.webm0001-0421.mp4` and the existence check found the *previous build's* file at the requested path |
+| Cycles is available after all | `_cycles` is compiled into the `bpy` wheel; the engine registers as soon as `addon_utils.enable("cycles")` is called. The first Phase 2B report was wrong to say otherwise |
 
-Pose-to-pose on a conventional authoring rig — two-bone IK per arm with a keyed pole, world-space
-Copy Rotation for each wrist, FK on the spine chain and clavicles, per-joint finger keys — then
-`nla.bake` with `visual_keying` onto the original deform bones and `clear_constraints`. The exported
-GLB contains **53 bones, 531 curves, 223,551 keyframes** over frames 1–421, and no constraint,
-control empty, light or camera.
+## 4. The hand-topology decision (ss6)
 
-Storyboard events are Blender timeline markers (`EVT_*`). The build converts marker frames into
-normalized progress in the manifest; **no event timing is written by hand in JavaScript**, and the
-Three.js camera shot list is keyed to event *names*, so re-timing the animation re-times the camera.
+**A. CURRENT HAND TOPOLOGY IS SUFFICIENT WITH CORRECTIVES.**
 
-## 5. Product, cream and skin
+Chosen on measurement, not to avoid work. Each phalanx carries 12-24 edge loops at 1.0-2.3 mm
+spacing and the palm carries 248 vertices; that is enough resolution to bend and to hold a knuckle.
+The mitten appearance was fully explained by the 39.5-degree hinge error and a barrel the fingers
+could not reach, both of which are now fixed and visibly so. What linear-blend skinning genuinely
+cannot do — knuckle bulge, thumb-web bunching, palm arch, joint creases — is exactly the class of
+deformation corrective shape keys exist for, and ten of them (five per hand) now do it.
 
-* **NANODERM tube** — 138 mm overall over a 30.4 x 23 mm oval barrel, crimped tail, tapered shoulder,
-  narrow neck, and a real recessed bore so the nozzle reads as open. The label is Blender-native
-  typography converted to mesh and wrapped analytically onto the oval, then joined into the tube so
-  the squeeze morphs carry it. The barrel is 88 mm — deliberately longer than this rig's 72 mm finger
-  span, because a shorter barrel is entirely covered by the fist and the brand is never readable.
-* **Cap** — separate, removed, resting on the tray beside the tube for the whole clip.
-* **Tube morphs** — `TUBE_GRIP_COMPRESSION`, `TUBE_SQUEEZE`, `TUBE_DEPLETION`, `TUBE_CREASE`,
-  `TUBE_RECOVERY`. Only the barrel moves; the nozzle, neck and crimp stay rigid.
-* **Cream strand** — a unit-length mesh riding the nozzle, scaled per frame to the actual
-  nozzle-to-deposit distance, with five morphs covering nozzle bead → short → extended → thinning →
-  separated. Not a fluid simulation, and not described as one.
-* **Cream film** — a patch cut from the treated forearm's own vertices, so it inherits the body's
-  armature weights and cannot drift from the arm. Five morphs from contact bead to final film. Each
-  is a pure bump that falls to zero at its own edges over a basis tucked 1.6 mm under the skin, which
-  is what gives the film a soft organic border and lets crossfading keys sum without stacking.
-* **Skin indentation** — `SKIN_INDENT_CONTACT_A/B/C` + `SKIN_INDENT_RELEASE` on both the body mesh
-  and the cream film with identical maths, restricted to the surface facing the palm.
+Had the loops been sparse, or had the correctives failed to produce visible knuckles, the answer
+would have been B.
 
-## 6. Runtime
+## 5. Measured grip result
 
-One narrative clock. `clipTime = clamp(masterProgress, 0, 1) * clipDuration`, applied as
-`action.paused = true; action.time = clipTime; mixer.update(0)`. No Clock, no interval, no
-accumulator, no second timer; `mixer.update(delta)` is never a playback source.
+Pad clearance from the barrel surface, achieved against what each digit's own soft tissue asks for:
 
-`presentationMode` is `blender-baked` or `procedural-fallback`. `presentationMode.js` publishes an
-ownership table per channel and `assertExclusive()` rejects any state where both systems drive a
-channel or nobody does. A baked-asset load or validation failure falls back to procedural and reports
-the reason; it never silently pretends baked mode is active.
+| digit | achieved | wanted | flexion |
+|---|---|---|---|
+| index | 4.9 mm | 5.5 mm | 142 deg |
+| middle | 4.3 mm | 4.5 mm | 164 deg |
+| ring | 4.3 mm | 4.8 mm | 151 deg |
+| little | **3.2 mm** | 3.3 mm | 120 deg |
+| thumb | 5.0 mm | 5.7 mm | oppose 14 / flex 6 / IP 69 deg |
 
-## 7. Gates
+Whole-finger wrap error **0.00 mm**; penetration **0.00 mm**; barrel pressed **2.5 mm into** the palm
+skin; barrel angle **18 deg**. The little finger reaches on its own solved flexion — it is not a copy
+of a neighbour's rotation.
+
+## 6. Corrective shape keys (ss8)
+
+`HAND_*_KNUCKLES`, `HAND_*_FINGER_ROOTS`, `THUMB_*_WEB`, `PALM_*_ARCH`, `HAND_*_JOINT_CREASE`, per
+hand. Every centre and radius is read off the rest skeleton and the measured soft tissue. They are
+driven by what the hand is doing — the applying hand's follow its closure, hold, release and press;
+the treated hand holds a low constant — which is what makes them corrective rather than decorative.
+Each is a pure bump falling to zero at its own edges, so crossfading sums only where profiles overlap.
+
+## 7. Skin indentation (ss18)
+
+Three discrete stations became **seven**, generated from the stroke's own start and end. Handovers
+now fall every ~18 mm against a 46 mm dent radius, so consecutive dents overlap heavily instead of
+letting the surface relax between them. Measured palm-to-skin contact across the application keys is
+**-1.5 mm worst** (negative = compression) against a 7.0 mm authored depression.
+
+## 8. Cream (ss17/ss20)
+
+`band()` gained edge accumulation and local thickness variation at two incommensurate frequencies in
+both directions, on top of the existing stroke lines, all multiplied by the band's own shape function
+so nothing can lift a hard rim off the skin. **This is a code change that has not been visually
+verified** — see ss11.
+
+## 9. Blender-authored preview video (ss23)
+
+The routes were attempted in the order the brief specifies. Route 2 works.
+
+| route | result |
+|---|---|
+| Official Windows Blender 4.5.12 executable | not applicable; this is a headless Linux container |
+| **Cycles CPU** | **WORKS.** ~27 s/frame at 960x540, 24 adaptive samples, OpenImageDenoise, rendering the real scene — lights, preview camera, baked animation |
+| Low-sample Cycles CPU with denoise | this is the configuration used |
+| Workbench / other offline route | not needed |
+| EEVEE Next | still unusable: no GPU/EGL. llvmpipe tears geometry at 90 s/frame; softpipe aborts |
+
+`render_preview()` now enables the add-on, selects Cycles CPU and tone-maps with AgX — a Cycles
+render is scene-referred and blows out to white under the Standard transform used when *encoding*
+already display-referred browser captures. The preview camera is also pulled back 2.1x, because the
+Three.js shot distances put the offline lens so close that whole shots resolve to a patch of forearm.
+
+## 10. Gates
 
 | gate | result |
 |---|---|
-| generated-asset verification (`verify-baked-asset.mjs`) | **PASS** — 33 checks including bone-for-bone skeleton comparison against the original, finite/unit-quaternion animation values, morph-weight range, no leaked helpers, embedded textures, metric scale, origin at the feet |
-| manifest validation | **PASS**, and 16 deliberately malformed manifests are rejected rather than defaulted |
-| simulator test suite | **6,195 passed, 0 failed** |
+| generated-asset verification | **PASS** — 32 checks including bone-for-bone skeleton comparison, unit quaternions, morph-weight range, no leaked helpers, metric scale, origin at the feet |
+| manifest validation | **PASS** |
+| simulator test suite | **44 files, 0 failed** |
 | production JavaScript tests | **99 passed, 0 failed** |
 | R validation suite | **31 passed, 0 failed** |
 | `tsc --noEmit` | clean |
-| original `human.glb` | byte-identical; checksum re-verified by the build, the gate and the test suite |
-| in-browser determinism (`phase2b-report.mjs`) | **18/18** — seek vs continuous playback at 5 progress points, reverse jump 0.95->0.20, forward jump 0.20->0.95, 3x replay, reset to frame zero, in **both** modes, comparing real bone matrices, morph weights and camera transform |
-| disposal | geometries 63 -> 33, textures 32 -> 16 after disposing the baked scene; `disposed` set, `update()` returns null afterwards. The remainder belongs to the other mode's cached scene and the shared vendored environment, which disposal must not touch |
+| original `human.glb` | byte-identical, re-verified by the build and the gate |
+| production diff (`web`, `R`, `app`, `tests`, `.github`, `package.json`) | **empty** |
 
-### Performance (headless Chromium, SwiftShader software WebGL)
+Asset: 45,680 tris · 15 meshes · 53 bones · **18 morph slots** · 1 clip · 168 channels · 19.36 MB.
+Baked action: 53 bones, 531 curves, 223,551 keyframes over frames 1-421.
 
-| | blender-baked | procedural-fallback |
-|---|---|---|
-| median frame | **471 ms** | 608 ms |
-| p90 frame | **541 ms** | 740 ms |
-| draw calls | 18 | 11 |
-| triangles | 45,108 | 40,355 |
-| geometries / textures | 31 / 19 | 62 / 32 |
-| JS heap after load | 52.2 MB | 15.3 MB |
+## 11. What is NOT done
 
-Baked mode is ~22% cheaper per frame despite ~5k more triangles, because the procedural path
-recomputes IK, the grasp, the tube deformation and the cream state on the CPU every frame while the
-baked path samples pre-baked curves. Its higher heap is the 20 MB asset held resident.
+Stated without softening, because these are the reasons for the verdict.
 
-First load of the baked asset: **5.3 s** (19.3 MB GLB over localhost, software decode).
-Tablet-like viewport (1024x768 @2x = 2048x1536 backing store, Chromium device-metrics override,
-**not** physical hardware): 1,153 ms/frame — 4.5x the pixels at 2.4x the cost, which scales as
-expected for a fill-bound software rasteriser.
+1. **Arm and wrist motion (defect C) was not addressed at all.** No trajectory was re-authored and no
+   human review of the full arm motion was performed. The frame-difference pass reports 0 flickers, 0
+   isolated snaps, and one run of 3 consecutive elevated pairs peaking at **x9.04** at the post-release
+   retreat — higher than the x7.9 the previous build reported for the same move. Frame-difference
+   metrics are not visual acceptance and are not offered as such.
+2. **The cream (defect E) is a code change with no visual evidence.** No capture in this pack frames
+   the cream at a distance where edge accumulation or stroke detail could be judged. The claim that it
+   no longer reads as a painted patch is not made.
+3. **The application-contact close-up (defect B) is mis-framed.** It shows skin without a clear read
+   on the boundary between the two surfaces, so whether the contact still reads as two overlaid meshes
+   is unanswered by this evidence.
+4. **The tube squeeze (defect F, second half) was not re-tuned** for the 102 mm barrel and is not
+   verified visually.
+5. **The skin indentation improvement (defect D) is not visually confirmed** — only measured.
+6. **No physical iPad or WebKit device was accessed.** Every browser number here comes from headless
+   Chromium on SwiftShader software WebGL, which bounds correctness, not real-world frame rate.
+7. Asset-level limitations from Phase 0 are unchanged: card hair, MakeHuman watermark in the garment
+   texture, no fingernail geometry, no skin pore detail.
 
-These numbers bound CORRECTNESS, not real-world frame rate. There is no GPU in this container.
+## 12. Rollback
 
-## 8. The Blender preview render could not be produced in this container
+Unchanged and untouched: set `DEFAULT_PRESENTATION_MODE` in
+`simulator/src/three/presentationMode.js`, or pass `?presentationMode=procedural-fallback`. It is
+already on the procedural fallback and stays there until visual acceptance passes.
 
-ss31 asks for a Blender-authored preview video. It is **not present**, and the reason is the
-environment, not the animation.
+---
 
-EEVEE Next requires a working GPU/EGL context. This container has none, so Blender falls back to
-Mesa software EGL, and the result is unusable:
+## Verdict
 
-* `llvmpipe` — renders, but the output is geometrically corrupted: torn surfaces, missing depth
-  sorting, whole limbs shredded into overlapping shells. 89.9 s per frame at 1280x720 / 8 samples,
-  with `EGL_BAD_MATCH` warnings on every context creation. A 105-frame preview would take ~2.6 h and
-  be worthless.
-* `softpipe` — aborts outright:
-  `epoxy_get_proc_address: Assertion '0 && "Couldn't find current GLX or EGL context."' failed`.
-* Cycles is not available: the `bpy` distribution ships the addon's Python but not its compiled
-  kernel, so `CYCLES` never registers as a render engine.
+**PHASE 2B REMAINS BLOCKED.**
 
-What this does **not** mean: the animation was not reviewed. ss18 makes the browser result
-authoritative, and the browser result exists at full length in four videos, 421 captured frames per
-mode, and 17 named stills. The Blender preview would have been a lower-fidelity preview of the same
-data.
-
-To produce it, run the build with `--preview` on a machine with a GPU:
-
-```
-blender --background --python-exit-code 1 \
-  --python simulator/tools/blender/build_phase2_realism.py -- --repo . --preview
-```
-
-The code path is implemented and wired to the `.bat`'s `--preview` flag; only the hardware is
-missing.
-
-## 9. Limitations carried forward
-
-* **Little finger.** It cannot reach a 30 mm barrel from this rig's hand (closest approach 2.6 radii).
-  It is posed on the natural cascade of its neighbours rather than clenched onto nothing, and the
-  build reports this rather than hiding it.
-* **Hand-edge contact crease.** Up to 1.5 mm of overlap where the hand's ulnar edge meets the
-  forearm, against a 7.0 mm indentation. Classified NON-BLOCKING in `visual-qa.md`, with the reasoning
-  and the three genuinely-blocking predecessors that were fixed.
-* **Skin indentation is three discrete morphs**, so its centre migrates in steps along the stroke
-  rather than continuously.
-* **Asset-level limitations from Phase 0 are unchanged**: card-based hair, MakeHuman watermark in the
-  garment texture. No shot frames the head above a medium.
-* **Software rendering.** Every browser number here comes from headless Chromium on SwiftShader.
-  They bound correctness, not real-world frame rate.
-
-## 10. Rollback
-
-Set `DEFAULT_PRESENTATION_MODE` in `simulator/src/three/presentationMode.js` to
-`PRESENTATION_MODES.PROCEDURAL`, or pass `?presentationMode=procedural-fallback`. Nothing else
-changes: the procedural path still loads `human.glb`, the baked asset is simply not loaded, and no
-scientific code is involved either way. Generated assets do not need deleting and no revert of R or
-biology code is required.
+Defects A and F are fixed and measured. D is improved. B and G are partly closed. **C was not
+addressed and E has no visual evidence**, and both were listed as blocking with an explicit
+instruction not to reclassify them because technical tests pass. Independently, ss27 forbids an
+unconditional pass without a physical device, and no device was accessed.

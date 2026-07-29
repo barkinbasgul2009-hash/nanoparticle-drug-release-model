@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "assetVersion": "2b.1.0+6114fceafe6c",
   "asset": "human_application_baked.glb",
-  "generatedAtUtc": "2026-07-29T12:25:59Z",
+  "generatedAtUtc": "2026-07-29T12:49:23Z",
   "clip": {
     "name": "phase2_application",
     "fps": 30,
@@ -58,6 +58,10 @@
         "SKIN_INDENT_CONTACT_A",
         "SKIN_INDENT_CONTACT_B",
         "SKIN_INDENT_CONTACT_C",
+        "SKIN_INDENT_CONTACT_D",
+        "SKIN_INDENT_CONTACT_E",
+        "SKIN_INDENT_CONTACT_F",
+        "SKIN_INDENT_CONTACT_G",
         "SKIN_INDENT_RELEASE"
       ]
     },
@@ -97,6 +101,10 @@
         "SKIN_INDENT_CONTACT_A",
         "SKIN_INDENT_CONTACT_B",
         "SKIN_INDENT_CONTACT_C",
+        "SKIN_INDENT_CONTACT_D",
+        "SKIN_INDENT_CONTACT_E",
+        "SKIN_INDENT_CONTACT_F",
+        "SKIN_INDENT_CONTACT_G",
         "SKIN_INDENT_RELEASE"
       ]
     }
@@ -147,13 +155,13 @@
     ]
   },
   "statistics": {
-    "fileSizeBytes": 20253680,
+    "fileSizeBytes": 20302740,
     "meshCount": 15,
     "triangleCount": 45680,
     "materialCount": 17,
     "textureCount": 10,
     "animationTrackCount": 531,
     "animationKeyframeCount": 223551,
-    "morphTargetCount": 23
+    "morphTargetCount": 31
   }
 }

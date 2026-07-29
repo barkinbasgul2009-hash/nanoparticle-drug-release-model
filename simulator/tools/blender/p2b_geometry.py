@@ -770,12 +770,29 @@ def add_cream_film_shape_keys(obj: bpy.types.Object, info: dict) -> list[str]:
             return span * g if g > 0.02 else 0.0
         return f
 
-    def band(lo, hi, peak, ridge=0.0, across_deg=48.0, feather=0.026):
+    def band(lo, hi, peak, ridge=0.0, across_deg=48.0, feather=0.026, rim=0.0, patch=0.0):
+        """A wiped band of cream.
+
+        `ridge`, `patch` and `rim` are what stop it reading as a painted patch (ss17/ss20), which is
+        how the completion review described it. A uniform layer of constant thickness is exactly what
+        paint looks like; spread cream is none of those things:
+
+        * `ridge` -- stroke lines along the direction of the wipe.
+        * `patch` -- local thickness variation, at two incommensurate frequencies in BOTH directions
+          so the film varies in patches rather than in stripes, which is what a single sine gives.
+        * `rim`   -- edge accumulation. A hand wiping cream pushes it to the sides of its path and
+          heaps it where the stroke stopped, so the film is thickest just inside its own border.
+
+        All three are multiplied by `shape`, so they still fall to zero at the film's own edge and
+        cannot lift a hard rim off the skin -- the failure that produced a 17 mm ragged shell before.
+        """
         span = SINK + peak
+        side_c = math.radians(across_deg) * 0.72
+        side_w = math.radians(across_deg * 0.26)
         def f(t, ang):
             if t < lo or t > hi:
                 return 0.0
-            # taper to nothing at both ends and at the sides: no rim, no hard edge
+            # taper to nothing at both ends and at the sides: no hard edge
             along = smooth_falloff(max(0.0, (lo + feather - t) / feather)) \
                 * smooth_falloff(max(0.0, (t - (hi - feather)) / feather))
             across = smooth_falloff(abs(ang) / math.radians(across_deg))
@@ -786,6 +803,14 @@ def add_cream_film_shape_keys(obj: bpy.types.Object, info: dict) -> list[str]:
             if ridge:
                 # directional stroke lines: thickness varies along the wipe, never below zero
                 h += ridge * (0.5 + 0.5 * math.sin(t * 195.0)) * shape
+            if patch:
+                h += patch * shape \
+                    * (0.5 + 0.5 * math.sin(t * 118.0 + 1.7) * math.cos(ang * 5.3 + 0.4)) \
+                    * (0.62 + 0.38 * math.sin(t * 61.0 - 0.9))
+            if rim:
+                e_side = math.exp(-((abs(ang) - side_c) / side_w) ** 2)
+                e_end = math.exp(-((t - (hi - feather * 1.25)) / (feather * 0.85)) ** 2)
+                h += rim * shape * (0.85 * e_side + e_end)
             return h
         return f
 
@@ -795,11 +820,14 @@ def add_cream_film_shape_keys(obj: bpy.types.Object, info: dict) -> list[str]:
     names.append(add_shape_key(obj, "CREAM_COMPRESSED_BEAD",
                                lift(bead(deposit_a, 0.030, math.radians(44.0), 0.0026))).name)
     names.append(add_shape_key(obj, "CREAM_SPREAD_PRIMARY",
-                               lift(band(a_lo + 0.022, deposit_a + 0.056, 0.0022, 0.00030, 44.0))).name)
+                               lift(band(a_lo + 0.022, deposit_a + 0.056, 0.0022, 0.00030, 44.0,
+                                          rim=0.00085, patch=0.00055))).name)
     names.append(add_shape_key(obj, "CREAM_SPREAD_SECONDARY",
-                               lift(band(a_lo + 0.016, a_hi - 0.034, 0.0018, 0.00034, 48.0))).name)
+                               lift(band(a_lo + 0.016, a_hi - 0.034, 0.0018, 0.00034, 48.0,
+                                          rim=0.00070, patch=0.00048))).name)
     names.append(add_shape_key(obj, "CREAM_FINAL_FILM",
-                               lift(band(a_lo + 0.014, a_hi - 0.030, 0.0013, 0.00038, 50.0))).name)
+                               lift(band(a_lo + 0.014, a_hi - 0.030, 0.0013, 0.00038, 50.0,
+                                          rim=0.00058, patch=0.00040))).name)
     return names
 
 
@@ -826,16 +854,28 @@ def indent_positions(info: dict, count: int = 3) -> list[Vector]:
     return out
 
 
+#: How many contact stations the palm's depression is authored at along the stroke.
+#:
+#: The first Phase 2B build used three. With three, the depression is only exactly under the palm at
+#: three points on the whole stroke, and between them the palm rides a partially-relaxed surface --
+#: which the completion review saw as the indentation migrating in visible steps rather than
+#: travelling with the hand. Seven stations put a station every ~18 mm of a ~110 mm stroke, which is
+#: well inside the 46 mm dent radius, so consecutive dents overlap heavily and their crossfade reads
+#: as one depression moving continuously.
+SKIN_INDENT_STATIONS = 7
+
+
 def add_skin_indent_shape_keys(target: bpy.types.Object, info: dict, radius=0.052,
                                depth=0.0068, ridge=0.26, prefix="SKIN_INDENT",
-                               restrict: set | None = None) -> list[str]:
+                               restrict: set | None = None,
+                               stations: int = SKIN_INDENT_STATIONS) -> list[str]:
     """Palm-sized dents plus a compensating ridge of displaced tissue (ss16).
 
     Applied to both the body mesh and the cream film with identical maths, so the film sits in the
     dent instead of floating over it.
     """
     normals = _vertex_normals(target)
-    centres = indent_positions(info, 3)
+    centres = indent_positions(info, stations)
     axis = info["axis"]
     side = info["side"]
     names = []
@@ -865,7 +905,8 @@ def add_skin_indent_shape_keys(target: bpy.types.Object, info: dict, radius=0.05
         return fn
 
     for i, c in enumerate(centres):
-        names.append(add_shape_key(target, f"{prefix}_CONTACT_{'ABC'[i]}", dent(c)).name)
+        names.append(add_shape_key(
+            target, f"{prefix}_CONTACT_{chr(ord('A') + i)}", dent(c)).name)
 
     # release: a much shallower residual impression that relaxes to nothing
     def relax(i, co):

@@ -1087,15 +1087,29 @@ def animate_morphs(tube: bpy.types.Object, strand: bpy.types.Object, film: bpy.t
         (E["heroStart"], 1.0), (F1, 1.0)])
 
     # -- skin indentation: only while the palm is on the arm, and it resets exactly ---------------
-    windows = [
-        ("A", E["skinContact"] - 4, E["skinContact"] + 4, E["strokeOne"] - 10, E["strokeOne"]),
-        ("B", E["spreadStart"], E["strokeOne"], E["strokeOne"] + 22, E["strokeTwo"] - 6),
-        ("C", E["strokeOne"] + 14, E["strokeTwo"], E["strokeTwo"] + 16, E["releaseStart"]),
-    ]
-    for letter, rise0, rise1, fall0, fall1 in windows:
+    # The stations' windows are GENERATED from the stroke's own start and end rather than written
+    # out, so the count is a single constant (`G.SKIN_INDENT_STATIONS`) and the crossfade stays even
+    # however many there are. Each station peaks as the palm passes it and hands over to the next
+    # before it has fallen far, which is what makes the depression travel instead of stepping: with
+    # the first build's three stations the handovers were ~55 mm apart against a 46 mm dent radius,
+    # so the surface partly relaxed between them.
+    n = G.SKIN_INDENT_STATIONS
+    stroke0, stroke1 = E["skinContact"], E["releaseStart"]
+    span = (stroke1 - stroke0) / max(1, n - 1)
+    for i in range(n):
+        peak = stroke0 + span * i
+        key_shape_frames = [
+            (F0, 0.0),
+            (max(F0, round(peak - span * 1.35)), 0.0),
+            (round(peak), 1.0),
+            (min(F1, round(peak + span * 1.35)), 0.0),
+            (F1, 0.0),
+        ]
+        # keep the frames strictly increasing after rounding at the ends of the stroke
+        key_shape_frames = [kv for j, kv in enumerate(key_shape_frames)
+                            if j == 0 or kv[0] > key_shape_frames[j - 1][0]]
         for target in (body, film):
-            key_shape(target, f"SKIN_INDENT_CONTACT_{letter}",
-                      [(F0, 0.0), (rise0, 0.0), (rise1, 1.0), (fall0, 1.0), (fall1, 0.0), (F1, 0.0)])
+            key_shape(target, f"SKIN_INDENT_CONTACT_{chr(ord('A') + i)}", key_shape_frames)
     for target in (body, film):
         key_shape(target, "SKIN_INDENT_RELEASE",
                   [(F0, 0.0), (E["releaseStart"], 0.0), (E["releaseStart"] + 8, 1.0),
@@ -1336,14 +1350,44 @@ def build_manifest(repo: str, original_checksum: str, glb_path: str, blender_ver
     }
 
 
-def render_preview(repo: str, every: int = 2, width=1280, height=720, samples=12) -> dict | None:
-    """EEVEE preview of the whole sequence (ss31). Slow under software GL, so it is opt-in."""
+def render_preview(repo: str, every: int = 4, width=960, height=540, samples=24,
+                   engine: str = "CYCLES") -> dict | None:
+    """Blender-authored preview of the whole sequence, rendered offline (ss23).
+
+    CYCLES ON THE CPU IS THE WORKING ROUTE IN THIS CONTAINER, and the first Phase 2B report was
+    wrong to say Cycles was unavailable. `_cycles` is compiled into the `bpy` wheel; the engine
+    simply does not register until the add-on is explicitly enabled, which nothing in a background
+    `bpy` session does for you. With `addon_utils.enable("cycles")` the engine appears and renders
+    the real scene -- lights, camera, baked animation and all -- at roughly 27 s per frame at
+    960x540, 24 adaptive samples with OpenImageDenoise.
+
+    EEVEE Next remains unusable here: it needs a GPU/EGL context, and the Mesa software fallbacks
+    either produce torn geometry (llvmpipe, 90 s/frame) or abort outright (softpipe). Passing
+    `engine="BLENDER_EEVEE_NEXT"` keeps that path available on a machine with a GPU.
+
+    The view transform is AgX rather than the Standard used when ENCODING browser captures. Those
+    frames are already display-referred and must not be re-mapped; a Cycles render is scene-referred
+    and has to be tone-mapped or the set blows out to white.
+    """
     scene = bpy.context.scene
     out = os.path.join(repo, PREVIEW_REL)
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    scene.render.engine = "BLENDER_EEVEE_NEXT"
-    scene.eevee.taa_render_samples = samples
-    scene.eevee.use_raytracing = False
+    if engine == "CYCLES":
+        import addon_utils
+        addon_utils.enable("cycles", default_set=True)
+        scene.render.engine = "CYCLES"
+        scene.cycles.device = "CPU"
+        scene.cycles.samples = samples
+        scene.cycles.use_denoising = True
+        scene.cycles.use_adaptive_sampling = True
+        scene.cycles.adaptive_threshold = 0.05
+        scene.cycles.max_bounces = 4
+        scene.view_settings.view_transform = "AgX"
+        scene.view_settings.look = "AgX - Base Contrast"
+    else:
+        scene.render.engine = "BLENDER_EEVEE_NEXT"
+        scene.eevee.taa_render_samples = samples
+        scene.eevee.use_raytracing = False
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.film_transparent = False
@@ -1385,7 +1429,13 @@ def animate_preview_camera(cam: bpy.types.Object, armature: bpy.types.Object, ge
         (E["heroStart"], 0.27, math.radians(7.0), 1.20, None),
         (R.FRAME_END, 0.26, math.radians(6.0), 1.20, None),
     ]
+    # The distances above frame the Three.js shot list, which is a 720p viewport with the browser's
+    # own field of view. The Blender preview camera renders the SAME scene through a different lens,
+    # and at these distances the offline render sits so close that whole shots resolve to a patch of
+    # forearm. The preview is a composition guide for a human to watch, so it is pulled back.
+    PREVIEW_PULLBACK = 2.1
     for frame, dist, elev, _z, override in shots:
+        dist *= PREVIEW_PULLBACK
         scene.frame_set(frame)
         fa = forearm_axes_at(armature, geo["outward_local"])
         target = override if override is not None else (
