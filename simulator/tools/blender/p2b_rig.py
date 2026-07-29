@@ -68,7 +68,29 @@ FINGER_TUNING = {
     "ring":   {"reach": 0.97, "lead": 0.11, "spread": -0.030},
     "pinky":  {"reach": 0.84, "lead": 0.18, "spread": -0.075},
 }
-JOINT_SHARE = {"01": 0.45, "02": 0.35, "03": 0.20}
+# How a finger's total flexion is divided between MCP / PIP / DIP.
+#
+# The first Phase 2B build used a single share for every finger with the MCP dominant
+# (0.45 / 0.35 / 0.20). That is backwards for a power grip and is the second reason the fingers read
+# as cylinders: with the strongest bend at the root, the outer two-thirds of the finger stay
+# straight and the whole thing swings inward as one rigid tube. A hand closing on an object bends
+# hardest at the PIP -- roughly MCP 80 deg, PIP 105 deg, DIP 60 deg -- so the PIP share must lead.
+#
+# The four fingers also differ from each other: the index rolls more at the PIP, the little finger
+# carries more of its closure at the MCP. Identical shares across fingers are exactly the "circular
+# cage" ss10 forbids.
+JOINT_SHARE_BY_FINGER = {
+    "index":  {"01": 0.30, "02": 0.44, "03": 0.26},
+    "middle": {"01": 0.31, "02": 0.45, "03": 0.24},
+    "ring":   {"01": 0.33, "02": 0.43, "03": 0.24},
+    "pinky":  {"01": 0.36, "02": 0.41, "03": 0.23},
+}
+#: Fallback for callers that are not per-finger (the thumb has its own split).
+JOINT_SHARE = {"01": 0.32, "02": 0.44, "03": 0.24}
+
+
+def joint_share(finger: str) -> dict:
+    return JOINT_SHARE_BY_FINGER.get(finger, JOINT_SHARE)
 
 
 # --------------------------------------------------------------------------------------------
@@ -186,16 +208,101 @@ def _calibrate_pole_angle(armature: bpy.types.Object, side: str, ctrl: dict) -> 
 # finger articulation
 # --------------------------------------------------------------------------------------------
 
-def finger_axes(armature: bpy.types.Object, side: str) -> dict:
-    """Per-bone local flexion axes, derived from the rest geometry rather than assumed.
+def hand_frame(armature: bpy.types.Object, side: str) -> dict:
+    """The hand's ANATOMICAL frame, measured off the rest skeleton.
+
+    This exists because the deform rig's `hand_*` bone basis is NOT anatomically aligned: on this
+    skeleton its local +Z sits **39.5 degrees** away from the true palmar normal. Everything that
+    was derived from that basis inherited the error -- the finger flexion hinges, so fingers twisted
+    instead of curling and read as cylinders; and the product grip, so the tube hung off the palm
+    inside a cage of fingers instead of resting in it. One wrong assumption, three visible defects.
+
+    The frame is therefore built from landmarks that mean something anatomically:
+
+    * `distal`  wrist -> knuckles, the hand bone's own direction (unambiguous, it is the bone).
+    * `radial`  index side positive, from the knuckle line (index MCP -> little MCP).
+    * `palmar`  their cross product; the SIGN is voted on by the four fingers, because a rest hand
+                already carries a slight resting flexion, so every fingertip lies on the palmar side
+                of the ray continuing its own proximal phalanx. All four agree here (-13.3 mm for
+                the index down to -5.1 mm for the little finger), so the vote is not marginal.
+
+    Returned vectors are unit, orthonormal and expressed in ARMATURE space; `to_frame` maps an
+    armature-space point into hand-anatomical millimetres with the wrist at the origin.
+    """
+    bones = armature.data.bones
+    hand = bones[f"hand_{side}"]
+    wrist = Vector(hand.head_local)
+    mcp = {f: Vector(bones[f"{f}_01_{side}"].head_local) for f in FINGERS}
+
+    distal = (Vector(hand.tail_local) - wrist).normalized()
+    knuckle = (mcp["pinky"] - mcp["index"]).normalized()
+    palmar = knuckle.cross(distal).normalized()
+
+    vote = 0.0
+    for f in FINGERS:
+        head = mcp[f]
+        prox = (Vector(bones[f"{f}_01_{side}"].tail_local) - head).normalized()
+        off = Vector(bones[f"{f}_03_{side}"].tail_local) - head
+        off -= prox * off.dot(prox)          # the part of the resting flexion across the phalanx
+        vote += off.dot(palmar)
+    if vote < 0.0:
+        palmar = -palmar
+
+    radial = distal.cross(palmar).normalized()     # little-finger side -> index side
+    distal = palmar.cross(radial).normalized()     # re-orthogonalise
+
+    def to_frame(point) -> Vector:
+        d = Vector(point) - wrist
+        return Vector((d.dot(radial), d.dot(distal), d.dot(palmar)))
+
+    return {
+        "origin": wrist, "radial": radial, "distal": distal, "palmar": palmar,
+        "ulnar": -radial, "knuckle": knuckle, "mcp": mcp, "to_frame": to_frame,
+    }
+
+
+def finger_axes(armature: bpy.types.Object, side: str, frame: dict | None = None) -> dict:
+    """Per-bone local flexion axes, derived from the measured anatomical frame.
 
     Rotating a bone by theta about world axis `a` moves its tip by theta * (a x bone_vector). For
     flexion the tip must travel along the palmar normal `n`, so `a = u x n` where `u` is the bone
     direction; expressed in the bone's own rest space that axis is a fixed anatomical constant.
+
+    The formula is unchanged from the first Phase 2B build. What changed is `n`: it is now the
+    measured palmar normal from `hand_frame` rather than the hand bone's local +Z. Verified against
+    the rest skeleton, that single substitution takes the fingertip-to-palm-centre distance under a
+    160 degree fist from 57-62 mm (a hand that never closes) to 38-46 mm, and at 200 degrees to
+    8-29 mm -- a real fist -- while keeping every fingertip within 1.2 mm of its own flexion plane.
     """
-    hand_basis = rest_basis(armature, f"hand_{side}")
-    palm_normal = Vector(hand_basis.col[2]).normalized()
-    ulnar = -Vector(hand_basis.col[0]).normalized()      # index -> little finger, across the palm
+    frame = frame or hand_frame(armature, side)
+    palm_normal = frame["palmar"]
+    ulnar = frame["ulnar"]
+
+    # THE THUMB DOES NOT FLEX LIKE A FINGER. A finger's flexion plane is perpendicular to the palm,
+    # so `u x palm_normal` is its hinge. The thumb's flexion plane is its OWN plane -- it is an
+    # opposable digit, rotated out of the palm at the carpometacarpal joint -- and on this rest
+    # skeleton the finger formula lands 110.5 degrees away from it, which is why the thumb used to
+    # arrive edge-on and interleave with the tube surface instead of pressing a pad onto it.
+    #
+    # The thumb's chain plane can be fitted here where a finger's cannot: its metacarpal and distal
+    # phalanx differ by 34.2 degrees at rest, so the cross product is well conditioned, whereas a
+    # near-straight finger's is numerically meaningless.
+    tb = armature.data.bones
+    thumb_meta = (Vector(tb[f"thumb_01_{side}"].tail_local)
+                  - Vector(tb[f"thumb_01_{side}"].head_local)).normalized()
+    thumb_tip = (Vector(tb[f"thumb_03_{side}"].tail_local)
+                 - Vector(tb[f"thumb_03_{side}"].head_local)).normalized()
+    thumb_hinge = thumb_meta.cross(thumb_tip)
+    if thumb_hinge.length < 1e-4:
+        thumb_hinge = frame["radial"]          # degenerate rest thumb; fall back to something sane
+    thumb_hinge.normalize()
+    # Sign: flexing must carry the thumb tip ACROSS the palm, toward the little finger. Rotating a
+    # vector `u` about an axis `a` moves its tip along `a x u`, NOT `u x a` -- getting that backwards
+    # turns the thumb's flexion into extension, which is what drove the pad radially away from the
+    # barrel and made every non-zero flex value score worse than none.
+    if thumb_hinge.cross(thumb_meta).dot(ulnar) < 0.0:
+        thumb_hinge = -thumb_hinge
+
     axes = {}
     for name in FINGERS + ("thumb",):
         for seg in ("01", "02", "03"):
@@ -203,17 +310,27 @@ def finger_axes(armature: bpy.types.Object, side: str) -> dict:
             bone = armature.data.bones[bone_name]
             u = (Vector(bone.tail_local) - Vector(bone.head_local)).normalized()
             rest = bone.matrix_local.to_3x3().inverted()
-            flex_world = u.cross(palm_normal)
+            flex_world = thumb_hinge if name == "thumb" else u.cross(palm_normal)
             if flex_world.length < 1e-6:
-                flex_world = Vector(hand_basis.col[0])
+                flex_world = frame["radial"]
             axes[bone_name] = {
                 "flex": (rest @ flex_world.normalized()).normalized(),
                 "abduct": (rest @ palm_normal).normalized(),
                 "oppose": (rest @ u.cross(ulnar).normalized()).normalized(),
+                "twist": (rest @ u).normalized(),      # axial roll along the bone (thumb pronation)
             }
     axes["_palm_normal"] = palm_normal
     axes["_ulnar"] = ulnar
+    axes["_frame"] = frame
     return axes
+
+
+#: Thumb opposition is three joints doing three different things (ss11), not one curl scaled up.
+#: CMC carries the abduction, the axial pronation that turns the pad to face the fingers, and a
+#: little flexion; MCP and IP then flex to close the pad onto the object.
+THUMB_FLEX_SHARE = {"01": 0.18, "02": 0.46, "03": 0.36}
+THUMB_PRONATION = 0.62      # radians of axial roll at the CMC per unit opposition
+THUMB_CMC_FLEX = 0.30       # radians of CMC flexion per unit opposition
 
 
 def set_finger_totals(armature: bpy.types.Object, side: str, axes: dict,
@@ -221,12 +338,12 @@ def set_finger_totals(armature: bpy.types.Object, side: str, axes: dict,
                       thumb_oppose: float = 0.0, thumb_flex: float = 0.0) -> None:
     """Pose one hand from EXPLICIT per-finger total flexion angles (radians).
 
-    Total flexion is split across MCP/PIP/DIP by JOINT_SHARE, which is why PIP always exceeds DIP
-    and no two fingers describe the same arc.
+    Total flexion is split across MCP/PIP/DIP by that finger's own share, so the PIP leads, the DIP
+    trails, and no two fingers describe the same arc.
     """
     for name in FINGERS:
         total = max(0.0, totals.get(name, 0.0))
-        for seg, share in JOINT_SHARE.items():
+        for seg, share in joint_share(name).items():
             pb = armature.pose.bones[f"{name}_{seg}_{side}"]
             pb.rotation_mode = "QUATERNION"
             q = Quaternion(axes[f"{name}_{seg}_{side}"]["flex"], total * share)
@@ -235,14 +352,20 @@ def set_finger_totals(armature: bpy.types.Object, side: str, axes: dict,
                                    FINGER_TUNING[name]["spread"] * spread_scale)
             pb.rotation_quaternion = q
 
-    # the thumb opposes across the palm — a distinct motion, not another curl (ss12)
-    for seg, flex_share in (("01", 0.22), ("02", 0.44), ("03", 0.34)):
+    # ---- thumb: abduct + pronate + flex at the CMC, then flex the MCP and IP (ss11) -------------
+    for seg, flex_share in THUMB_FLEX_SHARE.items():
         pb = armature.pose.bones[f"thumb_{seg}_{side}"]
         pb.rotation_mode = "QUATERNION"
         ax = axes[f"thumb_{seg}_{side}"]
         q = Quaternion(ax["flex"], thumb_flex * flex_share)
         if seg == "01":
-            q = Quaternion(ax["oppose"], thumb_oppose) @ q
+            # Order matters: swing the thumb across the palm, roll it so the pad faces the fingers,
+            # then bend it. Without the roll the thumb arrives edge-on and has to be pushed through
+            # the object to look like it is touching it.
+            q = (Quaternion(ax["oppose"], thumb_oppose)
+                 @ Quaternion(ax["twist"], THUMB_PRONATION * thumb_oppose)
+                 @ Quaternion(ax["flex"], THUMB_CMC_FLEX * thumb_oppose)
+                 @ q)
         pb.rotation_quaternion = q
 
 
@@ -283,7 +406,7 @@ def relaxed_hand(armature: bpy.types.Object, side: str, axes: dict, amount: floa
     cascade = {"index": 0.26, "middle": 0.31, "ring": 0.36, "pinky": 0.42}
     for name in FINGERS:
         total = cascade[name] * amount
-        for seg, share in JOINT_SHARE.items():
+        for seg, share in joint_share(name).items():
             pb = armature.pose.bones[f"{name}_{seg}_{side}"]
             pb.rotation_mode = "QUATERNION"
             q = Quaternion(axes[f"{name}_{seg}_{side}"]["flex"], total * share * 3.0)

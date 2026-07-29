@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "assetVersion": "2b.1.0+6114fceafe6c",
   "asset": "human_application_baked.glb",
-  "generatedAtUtc": "2026-07-29T07:03:27Z",
+  "generatedAtUtc": "2026-07-29T11:53:34Z",
   "clip": {
     "name": "phase2_application",
     "fps": 30,
@@ -147,7 +147,7 @@
     ]
   },
   "statistics": {
-    "fileSizeBytes": 20222384,
+    "fileSizeBytes": 20218708,
     "meshCount": 15,
     "triangleCount": 45680,
     "materialCount": 17,

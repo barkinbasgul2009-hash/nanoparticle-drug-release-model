@@ -285,54 +285,151 @@ def _aim(obj: bpy.types.Object, target: Vector) -> None:
 # measurement helpers
 # ==============================================================================================
 
-def palm_contact_local(body: bpy.types.Object, armature: bpy.types.Object, side: str) -> Vector:
-    """The point on the palm surface that should touch the skin, in hand-bone local space."""
+def palm_surface(body: bpy.types.Object, armature: bpy.types.Object, side: str,
+                 frame: dict, band=(0.035, 0.100), across=(-0.055, 0.028)) -> dict:
+    """Measure the PALMAR SKIN in the anatomical hand frame (ss9).
+
+    Every distance the grip depends on -- how high the barrel must sit, how far the fingers have to
+    travel, where the palm actually touches -- is read off the real vertices here rather than typed
+    in. `band` is the wrist->knuckle span and `across` the index->little span, both in metres.
+    """
     gi = body.vertex_groups[f"hand_{side}"].index
-    inv = armature.data.bones[f"hand_{side}"].matrix_local.inverted()
+    to_frame = frame["to_frame"]
     pts = []
     for v in body.data.vertices:
         if not any(g.group == gi and g.weight > 0.5 for g in v.groups):
             continue
-        p = inv @ Vector(v.co)
-        if 0.030 <= p.y <= 0.095 and abs(p.x) < 0.032 and p.z > 0.0:
+        p = to_frame(v.co)
+        if band[0] <= p.y <= band[1] and across[0] <= p.x <= across[1] and p.z > 0.0:
             pts.append(p)
     if not pts:
         raise SystemExit("BLOCKED: could not measure the palm surface")
-    pts.sort(key=lambda p: -p.z)
+    heights = sorted(p.z for p in pts)
+    return {
+        "points": pts,
+        "medianZ": heights[len(heights) // 2],
+        "p75Z": heights[int(len(heights) * 0.75)],
+        "maxZ": heights[-1],
+        "count": len(pts),
+    }
+
+
+def palm_contact_local(body: bpy.types.Object, armature: bpy.types.Object, side: str,
+                       frame: dict) -> Vector:
+    """The point on the palm surface that should touch the skin, in hand-bone local space."""
+    surf = palm_surface(body, armature, side, frame, band=(0.030, 0.095), across=(-0.032, 0.032))
+    pts = sorted(surf["points"], key=lambda p: -p.z)
     top = pts[: max(3, len(pts) // 6)]
-    return Vector((sum(p.x for p in top) / len(top),
+    mean = Vector((sum(p.x for p in top) / len(top),
                    sum(p.y for p in top) / len(top),
                    sum(p.z for p in top) / len(top)))
+    return frame_to_hand_local(armature, side, frame, mean)
 
 
-GRIP_OFFSET = Vector((-0.030, 0.082, 0.0455))
-"""Tube origin in hand-local metres.
-
-x  slides the barrel along the palm so the finger span (index at hand x~0, little finger at -0.072)
-   lands on the barrel and the labelled top clears the index side.
-y  places the barrel just distal of the MCP row, where the fingers actually close around it.
-z  palm surface (measured at 0.0316) + the tube's half-thickness on that axis + 2 mm of soft tissue.
-"""
+def frame_to_hand_local(armature: bpy.types.Object, side: str, frame: dict, p) -> Vector:
+    """Anatomical-frame metres -> hand-bone local metres."""
+    hand = armature.data.bones[f"hand_{side}"]
+    world = (frame["origin"] + frame["radial"] * p[0]
+             + frame["distal"] * p[1] + frame["palmar"] * p[2])
+    return hand.matrix_local.inverted() @ world
 
 
-def grip_matrix(offset: Vector | None = None) -> Matrix:
-    """Tube pose expressed in hand-bone local space.
+def grip_seat(frame: dict, surf: dict) -> Vector:
+    """Where the barrel's axis must sit, in ANATOMICAL frame metres, from the measured palm.
+
+    The first Phase 2B build hard-coded this in the hand bone's own basis, which is 39.5 degrees off
+    the palm. The consequence was geometric and is exactly what the completion review saw: the barrel
+    hung 14-23 mm clear of the palm skin and tilted out of the palm plane, so the fingers could only
+    reach *out* to it. A hand closed around something it is not touching is a cage.
+
+    Seated properly the axis sits one half-thickness above the skin, less a couple of millimetres of
+    soft-tissue compression, and the barrel is genuinely resting in the hand. `y` slides the barrel
+    along the palm so the finger row wraps the body rather than the shoulder.
+    """
+    return Vector((
+        0.000,                                              # barrel end reaches the thumb's own side
+        0.078,                                              # just distal of the MCP row
+        surf["p75Z"] + G.TUBE["radius_z"] - 0.0025,         # skin + half-thickness - compression
+    ))
+
+
+def grip_matrix(armature: bpy.types.Object, side: str, frame: dict, seat: Vector) -> Matrix:
+    """Tube pose expressed in hand-bone local space, built from the ANATOMICAL frame.
 
     A flat oval tube is held with its FLAT face against the palm: the thin axis (which is also the
-    label normal) runs along the palm normal, the wide axis lies in the palm plane, and the barrel
-    crosses the palm so the fingers close around its cross-section. The tail sits in the fist and the
-    labelled upper barrel, shoulder and nozzle project past the index side, which is how a tube is
-    actually held to dispense and what keeps the brand readable (ss12).
+    label normal) runs along the palmar normal, the wide axis lies in the palm plane along the hand's
+    length, and the barrel crosses the palm so the fingers close around its cross-section. The tail
+    sits in the fist and the labelled upper barrel, shoulder and nozzle project past the index side,
+    which is how a tube is actually held to dispense and what keeps the brand readable (ss12).
+
+    Two things about this were wrong in the first Phase 2B build and are fixed here.
+
+    The basis is now built from the MEASURED anatomical frame instead of the hand bone's own axes,
+    which are 39.5 degrees off the palm; that tilt is what left the barrel hanging clear of the palm
+    skin with the fingers reaching out to it.
+
+    The barrel is also long enough for the thumb to have something to press on. Held across a palm,
+    the thumb reaches the tube from ITS OWN end -- it does not swing across the palm to meet the
+    fingers. Measured on the rest skeleton, every thumb pose whose pad reaches a barrel short enough
+    to end mid-palm puts the thumb's IP joint 6-11 mm INSIDE the barrel, because the crossing arc
+    passes through the volume the tube occupies. Sizing the body to the digits' actual 108 mm contact
+    span (`p2b_geometry.TUBE`) removes the crossing entirely.
     """
+    hand_inv3 = armature.data.bones[f"hand_{side}"].matrix_local.to_3x3().inverted()
     m = Matrix.Identity(3)
-    m.col[0] = Vector((0.0, -1.0, 0.0))      # tube +X (wide oval axis) -> hand -Y, in the palm plane
-    m.col[1] = Vector((1.0, 0.0, 0.0))       # tube +Y (tail -> nozzle) -> hand +X (radial)
-    m.col[2] = Vector((0.0, 0.0, 1.0))       # tube +Z (label face)     -> hand +Z (palm normal)
-    return Matrix.Translation(offset if offset is not None else GRIP_OFFSET) @ m.to_4x4()
+    m.col[0] = hand_inv3 @ (-frame["distal"])    # tube +X (wide oval axis) lies along the palm
+    m.col[1] = hand_inv3 @ frame["radial"]       # tube +Y (tail -> nozzle) exits past the index side
+    m.col[2] = hand_inv3 @ frame["palmar"]       # tube +Z (label face)     faces the palm
+    return Matrix.Translation(frame_to_hand_local(armature, side, frame, seat)) @ m.to_4x4()
+
+
+def finger_flesh(body: bpy.types.Object, armature: bpy.types.Object, side: str) -> dict:
+    """Soft-tissue radius around each phalanx, in metres, measured from the skinned vertices.
+
+    Without this the grip solve is wrong in a way that is invisible to it. `rn` is measured at the
+    BONE, so driving a fingertip to rn = 1.0 puts the bone exactly on the barrel surface and
+    therefore buries 5-8 mm of finger pad inside it. The completion review saw the result as pads
+    sunk into the tube and the tube showing through the fingers.
+
+    Two numbers per bone: `pad` over the distal half (what actually touches) and `mid` over the whole
+    bone (what has to clear the surface when the phalanx lies along it).
+    """
+    out = {}
+    for name in R.FINGERS + ("thumb",):
+        for seg in ("01", "02", "03"):
+            bone_name = f"{name}_{seg}_{side}"
+            gi = body.vertex_groups[bone_name].index
+            bone = armature.data.bones[bone_name]
+            head = Vector(bone.head_local)
+            axis = (Vector(bone.tail_local) - head).normalized()
+            length = (Vector(bone.tail_local) - head).length
+            radii, pad = [], []
+            for v in body.data.vertices:
+                if not any(g.group == gi and g.weight > 0.5 for g in v.groups):
+                    continue
+                d = Vector(v.co) - head
+                t = d.dot(axis)
+                r = (d - axis * t).length
+                radii.append(r)
+                if 0.45 * length <= t <= 0.95 * length:
+                    pad.append(r)
+            if not radii:
+                continue
+            out[bone_name] = {
+                "mid": sum(radii) / len(radii),
+                "pad": (sum(pad) / len(pad)) if pad else (sum(radii) / len(radii)),
+            }
+    return out
+
+
+#: How much the pad is allowed to compress into the barrel before it counts as penetration (metres).
+#: Fingers holding a squeezable tube really do flatten; 2 mm reads as grip, 8 mm reads as a bug.
+PAD_COMPRESSION = 0.0020
+PENETRATION_TOLERANCE = 0.0030
 
 
 def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.types.Object,
-                  target_rn: float = 1.04) -> dict:
+                  flesh: dict, target_rn: float = 1.04) -> dict:
     """Measure, per finger, the flexion that puts the pad ON the tube surface.
 
     ss12 forbids both a circular finger cage and gross tube penetration. Rather than tuning magic
@@ -353,10 +450,16 @@ def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.t
         for bone_name in bone_names:
             local = inv @ (ao.matrix_world @ ao.pose.bones[bone_name].tail)
             rx, rz = G.tube_radius_at(local.y)
-            out.append((math.hypot(local.x / rx, local.z / rz), local.y))
+            rn = math.hypot(local.x / rx, local.z / rz)
+            # Clearance in METRES from the barrel surface along the same radial direction. rn alone
+            # cannot be compared against a flesh thickness -- it is a ratio, and the barrel's radius
+            # changes along its length -- so every acceptance test below is written in millimetres.
+            radial = math.hypot(local.x, local.z)
+            surface = radial / rn if rn > 1e-9 else min(rx, rz)
+            out.append((rn, local.y, radial - surface))
         return out
 
-    def rn_of(bone_name: str) -> tuple[float, float]:
+    def rn_of(bone_name: str) -> tuple[float, float, float]:
         return sample([bone_name])[0]
 
     solution = {"fingers": {}, "thumb": {}, "contact": {}}
@@ -371,21 +474,35 @@ def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.t
     unreachable = []
     for name in R.FINGERS:
         joints = [f"{name}_01_{side}", f"{name}_02_{side}", f"{name}_03_{side}"]
-        best, best_err, best_rn, best_min = 0.0, float("inf"), float("inf"), 1.0
+        # What "touching" means for THIS finger, in metres, from its own measured soft tissue.
+        want_tip = flesh[f"{name}_03_{side}"]["pad"] - PAD_COMPRESSION
+        want_dip = flesh[f"{name}_02_{side}"]["mid"] - PAD_COMPRESSION
+        want_pip = flesh[f"{name}_01_{side}"]["mid"] - PAD_COMPRESSION
+        best, best_err, best_gap, best_pen = 0.0, float("inf"), float("inf"), 0.0
         for i in range(SAMPLES + 1):
             angle = 3.10 * i / SAMPLES
             totals[name] = angle
             R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35)
-            rns = [r for r, _y in sample(joints)]
-            tip = rns[-1]
-            deepest = min(rns)
-            # contact at the pad, no phalanx driven through the barrel, least clenched wins ties
-            err = abs(tip - target_rn) + 6.0 * max(0.0, 0.94 - deepest) + angle * 1e-3
+            s = sample(joints)
+            pip, dip, tip = (v[2] for v in s)
+            # Contact at the pad, the MIDDLE PHALANX lying along the barrel, and no phalanx driven
+            # through it. The middle term is the one that matters for ss10: scoring the fingertip
+            # alone is satisfied by a straight finger poking the surface, which is precisely the cage
+            # the completion review rejected. Requiring the DIP to stay near the barrel too forces
+            # the finger to fold over it instead of bridging it.
+            pen = (max(0.0, want_tip - PENETRATION_TOLERANCE - tip)
+                   + max(0.0, want_dip - PENETRATION_TOLERANCE - dip)
+                   + max(0.0, want_pip - PENETRATION_TOLERANCE - pip))
+            err = (abs(tip - want_tip)
+                   + 0.75 * max(0.0, dip - want_dip - 0.006)
+                   + 0.30 * max(0.0, pip - want_pip - 0.016)
+                   + 6.0 * pen
+                   + angle * 1e-5)
             if err < best_err:
-                best, best_err, best_rn, best_min = angle, err, tip, deepest
-        if best_rn > 1.45:
+                best, best_err, best_gap, best_pen = angle, err, tip, pen
+        if abs(best_gap - want_tip) > 0.008:
             unreachable.append(name)
-        penetration += max(0.0, 0.94 - best_min)
+        penetration += best_pen
         totals[name] = best
         solution["fingers"][name] = best
     # A finger too short to reach the barrel must still look like part of the same hand: give it the
@@ -403,31 +520,75 @@ def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.t
     # thumb: opposition brings the pad to the far side of the barrel from the finger pads
     R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35)
     best_oppose, best_flex, best_err = 0.0, 0.0, float("inf")
-    for oppose in [i * 0.06 for i in range(4, 24)]:
-        for flex in [i * 0.12 for i in range(0, 12)]:
+    want_thumb = flesh[f"thumb_03_{side}"]["pad"] - PAD_COMPRESSION
+    want_thumb_ip = flesh[f"thumb_02_{side}"]["mid"] - PAD_COMPRESSION
+    # The thumb belongs on the RADIAL half of the barrel, not merely somewhere on it. Allowing the
+    # whole body lets the solver park the thumb at the ulnar tail, alongside the little finger, which
+    # scores well and looks absurd -- a thumb on the far side of a tube held across the palm has, by
+    # definition, crossed the palm and gone through the tube to get there.
+    lo_y, hi_y = -0.010, G.TUBE["body_top"]
+    envelope = []
+    # A wider sweep than the first build's, because opposition is now three coupled motions at the
+    # CMC (swing, pronation, flexion) rather than one, so the same pad position is reached at a
+    # different pair of values. A sweep that is too narrow silently returns its own boundary, which
+    # is what left the thumb 3.7 radii off the barrel with zero flexion.
+    for oppose in [i * 0.05 for i in range(0, 30)]:
+        for flex in [i * 0.10 for i in range(0, 18)]:
             R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35,
                                 thumb_oppose=oppose, thumb_flex=flex)
-            rn, y = rn_of(f"thumb_03_{side}")
-            lo_y, hi_y = G.TUBE["body_bottom"], G.TUBE["body_top"]
+            _rn, y, gap = rn_of(f"thumb_03_{side}")
+            _rn2, _y2, gap2 = rn_of(f"thumb_02_{side}")
             # the thumb must be on the BARREL, not floating past either end
             axial_penalty = max(0.0, lo_y - y) + max(0.0, y - hi_y)
-            err = abs(rn - target_rn) + axial_penalty * 24.0
+            err = (abs(gap - want_thumb)
+                   + 0.45 * max(0.0, gap2 - want_thumb_ip - 0.008)
+                   + 8.0 * max(0.0, want_thumb - PENETRATION_TOLERANCE - gap)
+                   + 8.0 * max(0.0, want_thumb_ip - PENETRATION_TOLERANCE - gap2)
+                   + axial_penalty * 12.0)
+            envelope.append((gap, oppose, flex, y))
             if err < best_err:
                 best_oppose, best_flex, best_err = oppose, flex, err
     solution["thumb"] = {"oppose": best_oppose, "flex": best_flex}
     solution["thumbError"] = best_err
+    # What the thumb could actually reach, regardless of the axial window. If the closest approach
+    # over the whole sweep is still far from the barrel, the problem is the tube's placement or its
+    # dimensions -- not the thumb's angles -- and the report has to say which (ss9).
+    envelope.sort(key=lambda e: e[0])
+    solution["thumbEnvelope"] = [
+        {"gapMm": round(g * 1000, 1), "opposeDeg": round(math.degrees(o), 1),
+         "flexDeg": round(math.degrees(f), 1), "axialMm": round(y * 1000, 1)}
+        for g, o, f, y in envelope[:5]]
 
     # record the achieved contact so the build report carries evidence, not a claim
     R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35,
                         thumb_oppose=best_oppose, thumb_flex=best_flex)
+    wrap = 0.0
     for name in R.FINGERS + ("thumb",):
-        rn, y = rn_of(f"{name}_03_{side}")
-        solution["contact"][name] = {"rn": round(rn, 4), "axialMm": round(y * 1000, 1)}
+        rn, y, gap = rn_of(f"{name}_03_{side}")
+        want = flesh[f"{name}_03_{side}"]["pad"] - PAD_COMPRESSION
+        entry = {"rn": round(rn, 4), "axialMm": round(y * 1000, 1),
+                 "padGapMm": round(gap * 1000, 2), "wantGapMm": round(want * 1000, 2)}
+        if name != "thumb":
+            # The whole finger, not just the pad: how far the PIP and DIP joints sit from the barrel
+            # surface, measured against how far their OWN soft tissue says they should. A cage scores
+            # badly here even when every fingertip scores perfectly, so this is the number that has
+            # to be reported alongside the contact (ss10).
+            _p, _py, pip_gap = rn_of(f"{name}_01_{side}")
+            _d, _dy, dip_gap = rn_of(f"{name}_02_{side}")
+            want_dip = flesh[f"{name}_02_{side}"]["mid"] - PAD_COMPRESSION
+            want_pip = flesh[f"{name}_01_{side}"]["mid"] - PAD_COMPRESSION
+            entry["pipGapMm"] = round(pip_gap * 1000, 2)
+            entry["dipGapMm"] = round(dip_gap * 1000, 2)
+            entry["dipWantMm"] = round(want_dip * 1000, 2)
+            wrap += max(0.0, dip_gap - want_dip - 0.006) + 0.4 * max(0.0, pip_gap - want_pip - 0.016)
+        solution["contact"][name] = entry
+    solution["wrapError"] = wrap
     return solution
 
 
 def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.types.Object,
-                tray_tube: Matrix, hand_ctrl) -> tuple[dict, Matrix, list]:
+                tray_tube: Matrix, hand_ctrl, frame: dict, seat: Vector,
+                flesh: dict, surf: dict) -> tuple[dict, Matrix, list]:
     """Search the tube's seating in the palm, then solve the fingers against it.
 
     Where the barrel sits decides whether the fingers can reach it at all and whether the proximal
@@ -435,30 +596,55 @@ def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.typ
     the short fingers miss, too far back and the knuckles are inside the barrel. Rather than picking
     a number and hoping, this evaluates a small grid against the real geometry and keeps the seating
     with the best measured contact.
+
+    The grid is now centred on the MEASURED palm seat and searched in the anatomical frame, so a
+    displacement of "4 mm palmward" moves the barrel 4 mm away from the palm skin rather than 4 mm
+    along an axis that happens to be 39.5 degrees off it.
     """
     trials = []
     best = None
-    for dy in (-0.014, -0.008, -0.002, 0.004, 0.010):
-        for dz in (-0.004, 0.0, 0.004, 0.008):
-            offset = GRIP_OFFSET + Vector((0.0, dy, dz))
-            grip = grip_matrix(offset)
-            hand_ctrl.matrix_world = tray_tube @ grip.inverted()
-            bpy.context.view_layer.update()
-            sol = solve_grip_at(armature, side, axes, tube)
-            tips = [v["rn"] for k, v in sol["contact"].items() if k != "thumb"]
-            contact_err = sum(abs(rn - 1.04) for rn in tips) / len(tips)
-            score = contact_err + 3.0 * sol["penetration"] + 0.8 * len(sol["unreachable"])
-            trials.append({"offset": [round(c, 4) for c in offset], "score": round(score, 4),
-                           "contactErr": round(contact_err, 4),
-                           "penetration": round(sol["penetration"], 4),
-                           "unreachable": sol["unreachable"]})
-            if best is None or score < best[0]:
-                best = (score, offset, grip, sol)
+    for dx in (-0.014, 0.0, 0.014):
+        for dy in (-0.014, 0.0, 0.014, 0.028, 0.042):
+            for dz in (-0.004, 0.0, 0.004, 0.008):
+                offset = seat + Vector((dx, dy, dz))
+                grip = grip_matrix(armature, side, frame, offset)
+                hand_ctrl.matrix_world = tray_tube @ grip.inverted()
+                bpy.context.view_layer.update()
+                sol = solve_grip_at(armature, side, axes, tube, flesh)
+                gaps = [v["padGapMm"] - v["wantGapMm"] for k, v in sol["contact"].items()
+                        if k != "thumb"]
+                contact_err = sum(abs(g) for g in gaps) / len(gaps) / 1000.0
+                # THE THUMB IS PART OF THE GRIP, not an afterthought scored separately. The first
+                # version of this search averaged the four fingers only, so it happily chose a
+                # seating the fingers loved and the thumb could not reach at all -- and then the
+                # thumb solve, given an impossible target, returned its least-bad miss. A seating
+                # that strands a digit is not a good seating.
+                tv = sol["contact"]["thumb"]
+                thumb_err = abs(tv["padGapMm"] - tv["wantGapMm"]) / 1000.0
+                # The barrel must REST in the palm. Without this the search happily lifts the tube
+                # out of the hand, because fingers wrap a floating cylinder more easily than one
+                # pressed into the palm -- and a tube held by fingertips alone is the cage again.
+                palm_gap = (offset.z - G.TUBE["radius_z"]) - surf["p75Z"]
+                palm_penalty = abs(palm_gap) if palm_gap > 0 else 2.0 * abs(palm_gap)
+                score = (contact_err + 0.8 * thumb_err
+                         + 3.0 * sol["penetration"] + 0.02 * len(sol["unreachable"])
+                         + 1.2 * sol["wrapError"] + 0.9 * palm_penalty)
+                trials.append({"offset": [round(c, 4) for c in offset], "score": round(score, 5),
+                               "contactErrMm": round(contact_err * 1000, 2),
+                               "thumbErrMm": round(thumb_err * 1000, 2),
+                               "wrapErrorMm": round(sol["wrapError"] * 1000, 2),
+                               "palmGapMm": round(palm_gap * 1000, 2),
+                               "penetrationMm": round(sol["penetration"] * 1000, 2),
+                               "unreachable": sol["unreachable"]})
+                if best is None or score < best[0]:
+                    best = (score, offset, grip, sol)
     _score, offset, grip, sol = best
     hand_ctrl.matrix_world = tray_tube @ grip.inverted()
     bpy.context.view_layer.update()
-    sol = solve_grip_at(armature, side, axes, tube)
+    sol = solve_grip_at(armature, side, axes, tube, flesh)
     sol["offset"] = [round(c, 4) for c in offset]
+    sol["palmGapMm"] = round(((offset.z - G.TUBE["radius_z"]) - surf["p75Z"]) * 1000, 2)
+    sol["seatMeasuredMm"] = [round(c * 1000, 2) for c in seat]
     sol["trials"] = sorted(trials, key=lambda t: t["score"])[:6]
     return sol, grip, trials
 
@@ -517,15 +703,27 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
     """Pose-to-pose keys for both arms, the torso and every finger, plus the tube's parenting."""
     scene = bpy.context.scene
     E = R.EVENTS
-    axes_r = R.finger_axes(armature, R.APPLYING)
-    axes_l = R.finger_axes(armature, R.TREATED)
-    palm_local = palm_contact_local(body, armature, R.APPLYING)
+    frame_r = R.hand_frame(armature, R.APPLYING)
+    frame_l = R.hand_frame(armature, R.TREATED)
+    axes_r = R.finger_axes(armature, R.APPLYING, frame_r)
+    axes_l = R.finger_axes(armature, R.TREATED, frame_l)
+    palm_local = palm_contact_local(body, armature, R.APPLYING, frame_r)
     log(f"palm contact point (hand-local): {[round(c, 4) for c in palm_local]}")
+
+    surf_r = palm_surface(body, armature, R.APPLYING, frame_r)
+    flesh_r = finger_flesh(body, armature, R.APPLYING)
+    seat = grip_seat(frame_r, surf_r)
+    log("finger soft tissue (pad radius, mm): " + ", ".join(
+        f"{n}={flesh_r[f'{n}_03_{R.APPLYING}']['pad']*1000:.1f}"
+        for n in R.FINGERS + ("thumb",)))
+    log(f"palm surface ({surf_r['count']} verts): median {surf_r['medianZ']*1000:.1f} mm  "
+        f"p75 {surf_r['p75Z']*1000:.1f} mm  max {surf_r['maxZ']*1000:.1f} mm  "
+        f"-> barrel axis seated at {seat.z*1000:.1f} mm")
 
     rest_inv = armature.data.bones[f"lowerarm_{R.TREATED}"].matrix_local.to_3x3().inverted()
     outward_local = (rest_inv @ film_info["side"]).normalized()
 
-    grip = grip_matrix()
+    grip = grip_matrix(armature, R.APPLYING, frame_r, seat)
     grip_inv = grip.inverted()
     _ = grip_inv
 
@@ -543,12 +741,20 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
     # geometry before any keyframe is written.
     tube.matrix_world = tray_tube
     grip_solution, grip, _trials = search_grip(armature, R.APPLYING, axes_r, tube, tray_tube,
-                                               controls[R.APPLYING]["hand"])
+                                               controls[R.APPLYING]["hand"], frame_r, seat,
+                                               flesh_r, surf_r)
     grip_inv = grip.inverted()
     log(f"grip seating: offset={grip_solution['offset']}  "
-        f"penetration={grip_solution['penetration']:.3f}  unreachable={grip_solution['unreachable']}")
-    log("grip solution: " + ", ".join(
-        f"{k}={v['rn']:.2f}rn@{v['axialMm']:+.0f}mm" for k, v in grip_solution["contact"].items()))
+        f"palmGap={grip_solution['palmGapMm']:+.1f}mm  "
+        f"penetration={grip_solution['penetration']*1000:.2f}mm  "
+        f"wrapError={grip_solution['wrapError']*1000:.2f}mm  "
+        f"unreachable={grip_solution['unreachable']}")
+    log("pad contact (achieved vs wanted, mm from the barrel surface): " + ", ".join(
+        f"{k}={v['padGapMm']:+.1f}/{v['wantGapMm']:.1f}@{v['axialMm']:+.0f}mm"
+        for k, v in grip_solution["contact"].items()))
+    log("finger wrap (pip/dip gap vs dip want, mm): " + ", ".join(
+        f"{k}={v['pipGapMm']:+.1f}/{v['dipGapMm']:+.1f}/{v['dipWantMm']:.1f}"
+        for k, v in grip_solution["contact"].items() if "pipGapMm" in v))
     log(f"  finger totals (deg): " + ", ".join(
         f"{k}={math.degrees(v):.0f}" for k, v in grip_solution["fingers"].items())
         + f"  thumb oppose={math.degrees(grip_solution['thumb']['oppose']):.0f}"

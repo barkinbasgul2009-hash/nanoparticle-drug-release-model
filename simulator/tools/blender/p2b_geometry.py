@@ -30,10 +30,19 @@ from mathutils import Matrix, Vector
 TUBE = {
     "radius_x": 0.0152,        # 30.4 mm across the wide axis of the oval
     "radius_z": 0.0115,        # 23 mm across the label face -> reads as a squeezable tube
-    # The barrel is 88 mm. It has to be LONGER than the hand is wide (the finger span measures
-    # 72 mm on this rig) or the fist covers the whole label and the brand is never readable, which
-    # ss12 treats as a failure.
-    "body_bottom": -0.0480,
+    # The barrel is 102 mm, DERIVED FROM THE RIG rather than chosen (ss9).
+    #
+    # The digits of this hand, solved against the barrel, contact it over 108 mm: the little finger's
+    # pad lands 58 mm to the ulnar side of the palm centre and the thumb's 50 mm to the radial side.
+    # The first Phase 2B build used an 88 mm barrel, which is shorter than that span, and the
+    # consequence was not cosmetic -- the thumb had nothing to press on at its own end and solved to
+    # a pose 30 mm off the tube, while the little finger fell off the tail. 102 mm of body plus the
+    # shoulder, neck and nozzle gives a 152 mm tube, which is the ordinary size of a 30 g laminate
+    # cream tube, so measuring the hand moved this TOWARDS the real product, not away from it.
+    #
+    # It also has to be longer than the hand is wide (the finger span measures 72 mm here) or the
+    # fist covers the whole label and the brand is never readable, which ss12 treats as a failure.
+    "body_bottom": -0.0620,
     "body_top": 0.0400,
     "shoulder_top": 0.0570,
     "neck_bottom": 0.0610,
@@ -42,8 +51,8 @@ TUBE = {
     "nozzle_top": 0.0778,
     "bore_radius": 0.0026,
     "bore_depth": 0.0055,
-    "crimp_top": -0.0520,
-    "crimp_bottom": -0.0602,
+    "crimp_top": -0.0660,
+    "crimp_bottom": -0.0742,
     "crimp_half_width": 0.0163,
     "cap_radius": 0.0092,
     "cap_length": 0.0232,
