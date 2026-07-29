@@ -435,12 +435,17 @@ and the numbers land in `simulator/artifacts/phase2b/build-report.json`:
   forearm, against a 7 mm skin indentation. Classified NON-BLOCKING with reasoning in
   `simulator/artifacts/phase2b/visual-qa.md`.
 
-### Rollback
+### Default mode and rollback
 
-Set `DEFAULT_PRESENTATION_MODE` in `simulator/src/three/presentationMode.js` to
-`PRESENTATION_MODES.PROCEDURAL` (or pass `?presentationMode=procedural-fallback`). Nothing else has
-to change: the procedural path still loads `human.glb`, the baked asset simply is not loaded, and no
-scientific code is involved in either direction.
+The default is now `blender-baked`, changed from `procedural-fallback` only after all twelve ss38
+gates passed — including 18/18 in-browser determinism checks and a measured frame cost *lower* than
+the procedural path (471 ms vs 608 ms median under software WebGL).
+
+Rollback is one value: set `DEFAULT_PRESENTATION_MODE` in
+`simulator/src/three/presentationMode.js` back to `PRESENTATION_MODES.PROCEDURAL`, or pass
+`?presentationMode=procedural-fallback`. Nothing else has to change: the procedural path still loads
+`human.glb`, the baked asset simply is not loaded, and no scientific code is involved in either
+direction. A baked-asset load or validation failure also falls back automatically and reports why.
 
 ## 17. Known blockers
 

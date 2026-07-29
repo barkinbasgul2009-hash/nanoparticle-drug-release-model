@@ -5,8 +5,9 @@
 // A channel owned by both would be caught here rather than showing up as a fight between the mixer
 // and the procedural rig on the same bone.
 //
-// The safe default is the procedural fallback (ss38). It only changes once every acceptance gate
-// has passed, and the flag stays available either way so rollback is a one-value change (ss39).
+// The default is `blender-baked` as of Phase 2B, changed from the procedural fallback only after
+// every ss38 acceptance gate passed (see DEFAULT_PRESENTATION_MODE). The flag stays available either
+// way, so rollback is a one-value change (ss39).
 
 export const PRESENTATION_MODES = Object.freeze({
   BAKED: 'blender-baked',
@@ -18,12 +19,19 @@ export const ALL_MODES = Object.freeze([PRESENTATION_MODES.BAKED, PRESENTATION_M
 /**
  * The default the application boots with.
  *
- * ss38 makes the procedural fallback the safe default, and only allows this to become
- * 'blender-baked' once every acceptance gate has passed. Rolling back is therefore a one-value
- * change here (ss39); the other mode always stays selectable via `?presentationMode=`, and a
- * baked-asset load failure falls back automatically regardless of this setting.
+ * ss38 makes the procedural fallback the safe default and only allows this to become
+ * 'blender-baked' once EVERY acceptance gate has passed. Phase 2B flipped it after all twelve did:
+ * the generated asset passes its gate, the manifest validates, the skeleton compares bone-for-bone
+ * against the original, the browser loads it in 5.3 s, all 18 in-browser determinism checks pass in
+ * both modes, the normal- and half-speed videos and the A/B comparison exist and were reviewed,
+ * disposal releases what the scene owns, and baked mode is measurably CHEAPER than procedural
+ * (471 ms vs 608 ms median frame under software WebGL, 18 draw calls vs 11 but half the geometries).
+ *
+ * ROLLBACK (ss39) is this one value: set it back to PRESENTATION_MODES.PROCEDURAL. The other mode
+ * always stays selectable via `?presentationMode=`, and a baked-asset load or validation failure
+ * falls back automatically regardless of this setting.
  */
-export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.PROCEDURAL;
+export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.BAKED;
 
 /** Channels that exactly one system must own at any moment. */
 export const CHANNELS = Object.freeze([

@@ -1,0 +1,619 @@
+{
+  "phase": "2B",
+  "generatedAtUtc": "2026-07-29T07:25:09.722Z",
+  "assetGate": {
+    "ok": true,
+    "stats": {
+      "triangles": 45680,
+      "meshes": 15,
+      "materials": 17,
+      "textures": 10,
+      "bones": 53,
+      "morphTargets": 9,
+      "animations": 1,
+      "fileSizeMB": 19.29,
+      "channels": 168
+    },
+    "checks": [
+      {
+        "id": "baked_glb_exists",
+        "pass": true,
+        "detail": "simulator/assets/human/human_application_baked.glb",
+        "fatal": true
+      },
+      {
+        "id": "manifest_exists",
+        "pass": true,
+        "detail": "simulator/assets/human/human_application_manifest.json",
+        "fatal": true
+      },
+      {
+        "id": "original_exists",
+        "pass": true,
+        "detail": "simulator/assets/human/human.glb",
+        "fatal": true
+      },
+      {
+        "id": "manifest_parses",
+        "pass": true,
+        "detail": "schemaVersion 1, assetVersion 2b.1.0+6114fceafe6c",
+        "fatal": true
+      },
+      {
+        "id": "manifest_valid",
+        "pass": true,
+        "detail": "all manifest rules pass",
+        "fatal": true
+      },
+      {
+        "id": "original_checksum_unchanged",
+        "pass": true,
+        "detail": "sha256 6114fceafe6c4840… matches the manifest",
+        "fatal": true
+      },
+      {
+        "id": "baked_parses",
+        "pass": true,
+        "detail": "glTF 2.0, 19.29 MB, generator Khronos glTF Blender I/O v4.5.51",
+        "fatal": true
+      },
+      {
+        "id": "self_contained",
+        "pass": true,
+        "detail": "no remote or missing local dependency",
+        "fatal": true
+      },
+      {
+        "id": "textures_embedded",
+        "pass": true,
+        "detail": "10 image(s), all in the binary chunk",
+        "fatal": true
+      },
+      {
+        "id": "skeleton_bone_count",
+        "pass": true,
+        "detail": "53 bones (original 53)",
+        "fatal": true
+      },
+      {
+        "id": "skeleton_no_removed_bones",
+        "pass": true,
+        "detail": "none removed",
+        "fatal": true
+      },
+      {
+        "id": "skeleton_no_renamed_bones",
+        "pass": true,
+        "detail": "no unexpected bones",
+        "fatal": true
+      },
+      {
+        "id": "skeleton_hierarchy_unchanged",
+        "pass": true,
+        "detail": "every bone keeps its parent",
+        "fatal": true
+      },
+      {
+        "id": "bone_roles_resolve",
+        "pass": true,
+        "detail": "13 roles resolve",
+        "fatal": true
+      },
+      {
+        "id": "finger_chains_present",
+        "pass": true,
+        "detail": "30 finger bones",
+        "fatal": true
+      },
+      {
+        "id": "skinning_present",
+        "pass": true,
+        "detail": "1 skin(s) over 10 skinned mesh node(s)",
+        "fatal": true
+      },
+      {
+        "id": "clip_present",
+        "pass": true,
+        "detail": "clips: phase2_application (manifest wants \"phase2_application\")",
+        "fatal": true
+      },
+      {
+        "id": "single_clip",
+        "pass": true,
+        "detail": "1 animation(s) — one self-contained clip is required",
+        "fatal": true
+      },
+      {
+        "id": "animation_targets_valid",
+        "pass": true,
+        "detail": "168 channels, 0 bad target(s)",
+        "fatal": true
+      },
+      {
+        "id": "animation_values_finite",
+        "pass": true,
+        "detail": "336 sampler accessors are finite",
+        "fatal": true
+      },
+      {
+        "id": "quaternions_normalised",
+        "pass": true,
+        "detail": "all rotation samples are unit quaternions",
+        "fatal": true
+      },
+      {
+        "id": "morph_weights_in_range",
+        "pass": true,
+        "detail": "all morph weights are within 0..1",
+        "fatal": true
+      },
+      {
+        "id": "manifest_matches_asset",
+        "pass": true,
+        "detail": "7 morph semantics and every named object resolve",
+        "fatal": true
+      },
+      {
+        "id": "no_helper_objects_exported",
+        "pass": true,
+        "detail": "no control rig, light, camera or scratch object in the asset",
+        "fatal": true
+      },
+      {
+        "id": "no_preview_camera",
+        "pass": true,
+        "detail": "0 camera(s)",
+        "fatal": true
+      },
+      {
+        "id": "no_lights",
+        "pass": true,
+        "detail": "no punctual lights exported",
+        "fatal": true
+      },
+      {
+        "id": "scale_is_metres",
+        "pass": true,
+        "detail": "figure height 1.775 m (expected 1.4–2.2)",
+        "fatal": true
+      },
+      {
+        "id": "orientation_y_up",
+        "pass": true,
+        "detail": "figure bbox 1.13 x 1.78 x 0.49 m — tallest axis is Y",
+        "fatal": true
+      },
+      {
+        "id": "origin_at_feet",
+        "pass": true,
+        "detail": "figure bbox min Y = -0.017 m",
+        "fatal": true
+      },
+      {
+        "id": "bounding_box_plausible",
+        "pass": true,
+        "detail": "whole-scene bbox 1.13 x 1.78 x 0.49 m",
+        "fatal": true
+      },
+      {
+        "id": "statistics_file_size",
+        "pass": true,
+        "detail": "manifest 20222384 vs actual 20222384",
+        "fatal": false
+      },
+      {
+        "id": "statistics_triangles",
+        "pass": true,
+        "detail": "manifest 45680 vs actual 45680",
+        "fatal": false
+      }
+    ]
+  },
+  "manifest": {
+    "assetVersion": "2b.1.0+6114fceafe6c",
+    "clip": {
+      "name": "phase2_application",
+      "fps": 30,
+      "durationSeconds": 14,
+      "frameStart": 1,
+      "frameEnd": 421
+    },
+    "statistics": {
+      "fileSizeBytes": 20222384,
+      "meshCount": 15,
+      "triangleCount": 45680,
+      "materialCount": 17,
+      "textureCount": 10,
+      "animationTrackCount": 531,
+      "animationKeyframeCount": 223551,
+      "morphTargetCount": 23
+    },
+    "events": {
+      "neutral": 0,
+      "productEstablishStart": 0.071429,
+      "gripPreparation": 0.142857,
+      "productGripEstablished": 0.214286,
+      "dispensePreparation": 0.285714,
+      "dispenseStart": 0.357143,
+      "creamContact": 0.428571,
+      "dispenseEnd": 0.5,
+      "productRetreatStart": 0.52381,
+      "productRetreatEnd": 0.607143,
+      "handApproach": 0.630952,
+      "skinContact": 0.678571,
+      "spreadStart": 0.702381,
+      "strokeOne": 0.75,
+      "strokeTwo": 0.821429,
+      "releaseStart": 0.892857,
+      "releaseEnd": 0.928571,
+      "heroStart": 0.940476,
+      "heroHold": 0.964286,
+      "sequenceEnd": 1
+    },
+    "ownership": {
+      "bones": "blender-baked",
+      "morphTargets": "blender-baked",
+      "camera": "threejs",
+      "timeline": "master-progress",
+      "surfaceShader": "threejs-glsl"
+    },
+    "provenance": {
+      "humanMotion": "VISUAL_ONLY",
+      "productMotion": "VISUAL_ONLY",
+      "tubeSqueeze": "VISUAL_ONLY",
+      "creamExtrusion": "VISUAL_ONLY",
+      "skinIndentation": "VISUAL_ONLY",
+      "camera": "VISUAL_ONLY"
+    }
+  },
+  "build": {
+    "blenderVersion": "4.5.12 LTS",
+    "buildSeconds": 29.6,
+    "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
+    "originalChecksumUnchanged": true,
+    "action": {
+      "bones": 53,
+      "fcurves": 531,
+      "keyframes": 223551,
+      "frameRange": [
+        1,
+        421
+      ]
+    },
+    "gripSolution": {
+      "fingers": {
+        "index": 2.79,
+        "middle": 2.945,
+        "ring": 2.79,
+        "pinky": 2.443833333333333
+      },
+      "thumb": {
+        "oppose": 1.02,
+        "flex": 0.12
+      },
+      "contact": {
+        "index": {
+          "rn": 1.0075,
+          "axialMm": 47.7
+        },
+        "middle": {
+          "rn": 0.9611,
+          "axialMm": 40.8
+        },
+        "ring": {
+          "rn": 1.1002,
+          "axialMm": 23.4
+        },
+        "pinky": {
+          "rn": 2.5751,
+          "axialMm": -2
+        },
+        "thumb": {
+          "rn": 1.0321,
+          "axialMm": -47
+        }
+      },
+      "penetration": 0,
+      "unreachable": [
+        "pinky"
+      ],
+      "thumbError": 0.007949513298022959,
+      "offset": [
+        -0.03,
+        0.08,
+        0.0415
+      ],
+      "trials": [
+        {
+          "offset": [
+            -0.03,
+            0.08,
+            0.0415
+          ],
+          "score": 1.2267,
+          "contactErr": 0.4267,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        },
+        {
+          "offset": [
+            -0.03,
+            0.086,
+            0.0415
+          ],
+          "score": 1.2369,
+          "contactErr": 0.4369,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        },
+        {
+          "offset": [
+            -0.03,
+            0.074,
+            0.0415
+          ],
+          "score": 1.2418,
+          "contactErr": 0.4418,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        },
+        {
+          "offset": [
+            -0.03,
+            0.086,
+            0.0455
+          ],
+          "score": 1.255,
+          "contactErr": 0.455,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        },
+        {
+          "offset": [
+            -0.03,
+            0.08,
+            0.0455
+          ],
+          "score": 1.2577,
+          "contactErr": 0.4577,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        },
+        {
+          "offset": [
+            -0.03,
+            0.068,
+            0.0415
+          ],
+          "score": 1.2618,
+          "contactErr": 0.4618,
+          "penetration": 0,
+          "unreachable": [
+            "pinky"
+          ]
+        }
+      ]
+    },
+    "poleCalibrationErrorMm": {
+      "l": 3.512,
+      "r": 3.512
+    },
+    "exportedObjects": [
+      "ANCHOR_deposit",
+      "ANCHOR_nozzle",
+      "CREAM_film",
+      "CREAM_strand",
+      "Human",
+      "Human_afro01",
+      "Human_eyebrow001",
+      "Human_eyelashes02",
+      "Human_high-poly",
+      "Human_male_casualsuit06",
+      "Human_rig",
+      "Human_shoes06",
+      "Human_teeth_base",
+      "Human_tongue01",
+      "NANODERM_cap",
+      "NANODERM_tube",
+      "PRODUCT_tray",
+      "PRODUCT_tray_stand"
+    ],
+    "excludedObjects": [
+      "CTRL_hand_l",
+      "CTRL_hand_r",
+      "CTRL_pole_l",
+      "CTRL_pole_r",
+      "LIGHT_fill",
+      "LIGHT_key",
+      "LIGHT_rake",
+      "LIGHT_rim",
+      "PREVIEW_camera"
+    ]
+  },
+  "browser": {
+    "firstLoadMs": 5337,
+    "baked": {
+      "mode": "blender-baked",
+      "perf": {
+        "frameMsMedian": 471,
+        "frameMsP90": 541.1,
+        "memoryMB": 52.2,
+        "draw": [],
+        "info": null
+      },
+      "gl": {
+        "drawCalls": 18,
+        "triangles": 45108,
+        "geometries": 31,
+        "textures": 19,
+        "programs": 27,
+        "canvas": [
+          1280,
+          720
+        ]
+      },
+      "determinism": [
+        {
+          "id": "seek_vs_play@0",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.25",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.5",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.7857",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@1",
+          "pass": true
+        },
+        {
+          "id": "reverse_jump",
+          "pass": true
+        },
+        {
+          "id": "forward_jump",
+          "pass": true
+        },
+        {
+          "id": "replay_deterministic",
+          "pass": true
+        },
+        {
+          "id": "reset_reconstructs_frame_zero",
+          "pass": true
+        }
+      ]
+    },
+    "procedural": {
+      "mode": "procedural-fallback",
+      "perf": {
+        "frameMsMedian": 608.3,
+        "frameMsP90": 740.4,
+        "memoryMB": 15.3,
+        "draw": [],
+        "info": null
+      },
+      "gl": {
+        "drawCalls": 11,
+        "triangles": 40355,
+        "geometries": 62,
+        "textures": 32,
+        "programs": 32,
+        "canvas": [
+          1280,
+          720
+        ]
+      },
+      "determinism": [
+        {
+          "id": "seek_vs_play@0",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.25",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.5",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@0.7857",
+          "pass": true
+        },
+        {
+          "id": "seek_vs_play@1",
+          "pass": true
+        },
+        {
+          "id": "reverse_jump",
+          "pass": true
+        },
+        {
+          "id": "forward_jump",
+          "pass": true
+        },
+        {
+          "id": "replay_deterministic",
+          "pass": true
+        },
+        {
+          "id": "reset_reconstructs_frame_zero",
+          "pass": true
+        }
+      ]
+    },
+    "loadDiag": {
+      "mode": {
+        "mode": "procedural-fallback",
+        "requested": "procedural-fallback",
+        "fellBack": false,
+        "reason": null
+      }
+    },
+    "disposal": {
+      "before": {
+        "geometries": 63,
+        "textures": 32
+      },
+      "loaded": {
+        "geometries": 63,
+        "textures": 32
+      },
+      "after": {
+        "geometries": 33,
+        "textures": 16
+      },
+      "disposedFlag": true,
+      "updateAfterDispose": null
+    },
+    "tablet": {
+      "frameMs": 1153.24,
+      "canvas": [
+        2048,
+        1536
+      ],
+      "loaded": true
+    }
+  },
+  "artifacts": {
+    "simulator/artifacts/phase2b/browser-baked-normal.webm": 3238413,
+    "simulator/artifacts/phase2b/browser-baked-half-speed.webm": 3238413,
+    "simulator/artifacts/phase2b/browser-procedural-normal.webm": 2755324,
+    "simulator/artifacts/phase2b/browser-ab-comparison.webm": 6220253,
+    "simulator/artifacts/phase2b/blender-preview-normal.mp4": null,
+    "simulator/artifacts/phase2b/ab-contact-sheet.png": 1495434,
+    "simulator/assets/human/human_application_baked.glb": 20222384,
+    "simulator/assets/blender/phase2_application_source.blend": 20464708
+  },
+  "deviceVerification": {
+    "physicalDeviceVerified": [],
+    "browserEmulated": [
+      "1280x720 desktop viewport",
+      "1024x768 @2x tablet-like viewport (Chromium device metrics override)"
+    ],
+    "notVerified": [
+      "physical iPad or other tablet hardware",
+      "discrete-GPU desktop",
+      "Safari/WebKit"
+    ],
+    "note": "All browser numbers come from headless Chromium on SwiftShader (software WebGL). They bound correctness, not real-world frame rate."
+  }
+}

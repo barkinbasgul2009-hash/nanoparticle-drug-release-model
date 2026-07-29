@@ -9,8 +9,8 @@ original `human.glb` sha256 `6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf
 ## 1. What was built
 
 The Phase-2 presentation is now authored in Blender and baked onto the original deform skeleton. The
-procedural implementation is preserved, still works, and remains the default until every acceptance
-gate is signed off.
+procedural implementation is preserved and still works; it is now the explicit fallback rather than
+the default, a change made only after all twelve ss38 gates passed.
 
 ```
 simulator/assets/human/human.glb                              IMMUTABLE INPUT (never written)
@@ -108,6 +108,30 @@ the reason; it never silently pretends baked mode is active.
 | R validation suite | **31 passed, 0 failed** |
 | `tsc --noEmit` | clean |
 | original `human.glb` | byte-identical; checksum re-verified by the build, the gate and the test suite |
+| in-browser determinism (`phase2b-report.mjs`) | **18/18** — seek vs continuous playback at 5 progress points, reverse jump 0.95->0.20, forward jump 0.20->0.95, 3x replay, reset to frame zero, in **both** modes, comparing real bone matrices, morph weights and camera transform |
+| disposal | geometries 63 -> 33, textures 32 -> 16 after disposing the baked scene; `disposed` set, `update()` returns null afterwards. The remainder belongs to the other mode's cached scene and the shared vendored environment, which disposal must not touch |
+
+### Performance (headless Chromium, SwiftShader software WebGL)
+
+| | blender-baked | procedural-fallback |
+|---|---|---|
+| median frame | **471 ms** | 608 ms |
+| p90 frame | **541 ms** | 740 ms |
+| draw calls | 18 | 11 |
+| triangles | 45,108 | 40,355 |
+| geometries / textures | 31 / 19 | 62 / 32 |
+| JS heap after load | 52.2 MB | 15.3 MB |
+
+Baked mode is ~22% cheaper per frame despite ~5k more triangles, because the procedural path
+recomputes IK, the grasp, the tube deformation and the cream state on the CPU every frame while the
+baked path samples pre-baked curves. Its higher heap is the 20 MB asset held resident.
+
+First load of the baked asset: **5.3 s** (19.3 MB GLB over localhost, software decode).
+Tablet-like viewport (1024x768 @2x = 2048x1536 backing store, Chromium device-metrics override,
+**not** physical hardware): 1,153 ms/frame — 4.5x the pixels at 2.4x the cost, which scales as
+expected for a fill-bound software rasteriser.
+
+These numbers bound CORRECTNESS, not real-world frame rate. There is no GPU in this container.
 
 ## 8. The Blender preview render could not be produced in this container
 
