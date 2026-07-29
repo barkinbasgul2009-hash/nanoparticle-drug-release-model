@@ -5,9 +5,10 @@
 // A channel owned by both would be caught here rather than showing up as a fight between the mixer
 // and the procedural rig on the same bone.
 //
-// The default is `blender-baked` as of Phase 2B, changed from the procedural fallback only after
-// every ss38 acceptance gate passed (see DEFAULT_PRESENTATION_MODE). The flag stays available either
-// way, so rollback is a one-value change (ss39).
+// The default is the PROCEDURAL FALLBACK. It was briefly `blender-baked` after the Phase 2B
+// technical gates passed, and has been restored because the Phase 2B completion review found the
+// baked hands, grip and contact are not yet visually accepted. Technical gates passing is not the
+// same as visual acceptance, and the production default follows the stricter of the two.
 
 export const PRESENTATION_MODES = Object.freeze({
   BAKED: 'blender-baked',
@@ -19,19 +20,20 @@ export const ALL_MODES = Object.freeze([PRESENTATION_MODES.BAKED, PRESENTATION_M
 /**
  * The default the application boots with.
  *
- * ss38 makes the procedural fallback the safe default and only allows this to become
- * 'blender-baked' once EVERY acceptance gate has passed. Phase 2B flipped it after all twelve did:
- * the generated asset passes its gate, the manifest validates, the skeleton compares bone-for-bone
- * against the original, the browser loads it in 5.3 s, all 18 in-browser determinism checks pass in
- * both modes, the normal- and half-speed videos and the A/B comparison exist and were reviewed,
- * disposal releases what the scene owns, and baked mode is measurably CHEAPER than procedural
- * (471 ms vs 608 ms median frame under software WebGL, 18 draw calls vs 11 but half the geometries).
+ * RESTORED TO THE PROCEDURAL FALLBACK for the Phase 2B completion pass.
  *
- * ROLLBACK (ss39) is this one value: set it back to PRESENTATION_MODES.PROCEDURAL. The other mode
- * always stays selectable via `?presentationMode=`, and a baked-asset load or validation failure
- * falls back automatically regardless of this setting.
+ * The technical gates all pass — asset verification, manifest validation, bone-for-bone skeleton
+ * comparison, 18/18 in-browser determinism checks, disposal, and a frame cost below the procedural
+ * path. Those were enough to flip the default once, and that was wrong: the completion review
+ * identified blocking VISUAL defects in the baked hands, product grip, application contact and skin
+ * deformation. A default is a claim about what is good enough to show, so it follows the stricter
+ * standard, not the one that happens to be measurable.
+ *
+ * `blender-baked` remains fully built, fully tested and one query parameter away
+ * (`?presentationMode=blender-baked`). Nothing about the baked implementation has been weakened.
+ * This flips back only when the visual acceptance in ss33 passes.
  */
-export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.BAKED;
+export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.PROCEDURAL;
 
 /** Channels that exactly one system must own at any moment. */
 export const CHANNELS = Object.freeze([
