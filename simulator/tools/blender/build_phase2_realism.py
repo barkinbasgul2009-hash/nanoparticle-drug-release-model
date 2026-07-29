@@ -39,6 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import p2b_geometry as G           # noqa: E402
 import p2b_rig as R                # noqa: E402
+import p2b_collision as C          # noqa: E402
 
 MIN_BLENDER = (4, 5, 0)
 MAX_BLENDER = (5, 0, 0)
@@ -1462,9 +1463,12 @@ def main() -> int:
     ap.add_argument("--preview", action="store_true", help="also render the Blender preview video")
     ap.add_argument("--preview-step", type=int, default=2)
     ap.add_argument("--preview-samples", type=int, default=12)
+    ap.add_argument("--resolve-collisions", action="store_true",
+                    help="run the contact/collision resolution pass (see collision-report.md)")
     a = ap.parse_args(argv)
     repo = os.path.abspath(a.repo)
 
+    resolve_collisions = a.resolve_collisions
     t_start = time.time()
     version = check_blender_version()
     log(f"Blender {version} ({bpy.app.build_branch})")
@@ -1528,6 +1532,27 @@ def main() -> int:
     anchors = build_runtime_anchors(tube, armature, collections, geo["deposit_bone_local"])
     animate_morphs(tube, strand, film, body)
     animate_preview_camera(preview["camera"], armature, geo)
+
+    # ---- contact and collision resolution ----------------------------------------------------
+    # Runs on the AUTHORED animation, before the bake, so the correction becomes part of the baked
+    # curves rather than something the runtime has to reapply. It reads each control's own animated
+    # value per frame and adds a smoothed outward offset, so the authored arcs survive.
+    garment = next((o for o in bpy.data.objects
+                    if o.type == "MESH" and "casualsuit" in o.name), None)
+    if garment is None:
+        raise SystemExit("BLOCKED: garment mesh not found; cannot validate clothing clearance")
+    # OFF BY DEFAULT, and the reason is measured rather than cautious. Every configuration of the
+    # translation solver that improves one clearance makes the other worse: the treated arm sits
+    # between the shirt it must stay out of and the applying hand it must be touched by, so pushing
+    # it clear of the cloth pushes it into the hand. Garment-only takes clothing from -72.1 mm to
+    # -11.5 mm but drives hand contact from -24.2 mm to -29.5 mm. Shipping that would trade a defect
+    # for a worse one, so the pass runs only when explicitly asked for and its findings are reported
+    # instead. See simulator/artifacts/phase2b/collision-report.md.
+    collision = None
+    if resolve_collisions:
+        collision = C.resolve(armature, body, garment, controls, log)
+    else:
+        log("collision resolution: NOT APPLIED (see --resolve-collisions and collision-report.md)")
 
     # ---- bake --------------------------------------------------------------------------------
     R.bake_pose(armature, R.FRAME_START, R.FRAME_END)
@@ -1616,6 +1641,8 @@ def main() -> int:
         "strand": {k: round(v, 5) for k, v in strand_stats.items()},
         "poleCalibrationErrorMm": {k: round((v or 0) * 1000, 3) for k, v in geo["pole_error"].items()},
         "gripSolution": geo["grip_solution"],
+        "collisionResolution": collision,
+        "collisionResolutionApplied": bool(collision),
         "palmContact": {"perKey": geo["contact_report"],
                         "worstGapMm": geo["contact_worst_mm"],
                         "largestHoverMm": geo["contact_hover_mm"]},

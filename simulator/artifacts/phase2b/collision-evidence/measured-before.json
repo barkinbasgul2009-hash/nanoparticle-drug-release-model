@@ -1,0 +1,8916 @@
+{
+ "glb": "simulator/assets/human/human_application_baked.glb",
+ "glbBytes": 20302740,
+ "sampledFrames": 106,
+ "step": 4,
+ "frameRange": [
+  1,
+  421
+ ],
+ "regionVertexCounts": {
+  "index_tip": 43,
+  "index_pad": 28,
+  "index_side": 205,
+  "middle_tip": 24,
+  "middle_pad": 25,
+  "middle_side": 191,
+  "ring_tip": 42,
+  "ring_pad": 25,
+  "ring_side": 199,
+  "pinky_tip": 57,
+  "pinky_pad": 15,
+  "pinky_side": 189,
+  "thumb": 216,
+  "palm_heel": 46,
+  "palm_centre": 82,
+  "applying_wrist": 97,
+  "treated_hand": 1811,
+  "treated_wrist": 108,
+  "treated_forearm": 273,
+  "_coveredAtBind": 456
+ },
+ "seconds": 4.6,
+ "frames": [
+  {
+   "frame": 1,
+   "contact": {
+    "index_tip": {
+     "minMm": 351.183,
+     "medianMm": 357.316
+    },
+    "index_pad": {
+     "minMm": 350.47,
+     "medianMm": 355.478
+    },
+    "index_side": {
+     "minMm": 354.765,
+     "medianMm": 366.705
+    },
+    "middle_tip": {
+     "minMm": 373.618,
+     "medianMm": 381.871
+    },
+    "middle_pad": {
+     "minMm": 371.375,
+     "medianMm": 376.012
+    },
+    "middle_side": {
+     "minMm": 369.966,
+     "medianMm": 383.906
+    },
+    "ring_tip": {
+     "minMm": 386.423,
+     "medianMm": 393.448
+    },
+    "ring_pad": {
+     "minMm": 384.73,
+     "medianMm": 389.244
+    },
+    "ring_side": {
+     "minMm": 384.072,
+     "medianMm": 396.381
+    },
+    "pinky_tip": {
+     "minMm": 387.451,
+     "medianMm": 394.571
+    },
+    "pinky_pad": {
+     "minMm": 388.905,
+     "medianMm": 392.246
+    },
+    "pinky_side": {
+     "minMm": 391.852,
+     "medianMm": 399.977
+    },
+    "thumb": {
+     "minMm": 307.403,
+     "medianMm": 322.702
+    },
+    "palm_heel": {
+     "minMm": 348.643,
+     "medianMm": 364.23
+    },
+    "palm_centre": {
+     "minMm": 343.59,
+     "medianMm": 368.2
+    },
+    "applying_wrist": {
+     "minMm": 357.243,
+     "medianMm": 383.555
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.736,
+     "medianMm": 30.506
+    },
+    "treated_wrist": {
+     "minMm": 18.097,
+     "medianMm": 42.301
+    },
+    "treated_forearm": {
+     "minMm": 18.097,
+     "medianMm": 60.794
+    }
+   }
+  },
+  {
+   "frame": 5,
+   "contact": {
+    "index_tip": {
+     "minMm": 343.027,
+     "medianMm": 349.382
+    },
+    "index_pad": {
+     "minMm": 342.598,
+     "medianMm": 347.561
+    },
+    "index_side": {
+     "minMm": 347.289,
+     "medianMm": 360.687
+    },
+    "middle_tip": {
+     "minMm": 366.395,
+     "medianMm": 374.64
+    },
+    "middle_pad": {
+     "minMm": 364.415,
+     "medianMm": 369.035
+    },
+    "middle_side": {
+     "minMm": 365.15,
+     "medianMm": 378.068
+    },
+    "ring_tip": {
+     "minMm": 380.94,
+     "medianMm": 387.879
+    },
+    "ring_pad": {
+     "minMm": 379.44,
+     "medianMm": 384.265
+    },
+    "ring_side": {
+     "minMm": 380.216,
+     "medianMm": 392.081
+    },
+    "pinky_tip": {
+     "minMm": 384.074,
+     "medianMm": 391.474
+    },
+    "pinky_pad": {
+     "minMm": 385.629,
+     "medianMm": 389.252
+    },
+    "pinky_side": {
+     "minMm": 389.13,
+     "medianMm": 396.96
+    },
+    "thumb": {
+     "minMm": 301.199,
+     "medianMm": 318.009
+    },
+    "palm_heel": {
+     "minMm": 347.715,
+     "medianMm": 363.697
+    },
+    "palm_centre": {
+     "minMm": 339.901,
+     "medianMm": 364.736
+    },
+    "applying_wrist": {
+     "minMm": 357.826,
+     "medianMm": 383.412
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.729,
+     "medianMm": 30.51
+    },
+    "treated_wrist": {
+     "minMm": 18.101,
+     "medianMm": 42.312
+    },
+    "treated_forearm": {
+     "minMm": 18.101,
+     "medianMm": 60.735
+    }
+   }
+  },
+  {
+   "frame": 9,
+   "contact": {
+    "index_tip": {
+     "minMm": 320.601,
+     "medianMm": 327.097
+    },
+    "index_pad": {
+     "minMm": 321.027,
+     "medianMm": 325.843
+    },
+    "index_side": {
+     "minMm": 326.211,
+     "medianMm": 342.114
+    },
+    "middle_tip": {
+     "minMm": 349.284,
+     "medianMm": 357.452
+    },
+    "middle_pad": {
+     "minMm": 348.086,
+     "medianMm": 351.764
+    },
+    "middle_side": {
+     "minMm": 351.366,
+     "medianMm": 363.823
+    },
+    "ring_tip": {
+     "minMm": 370.178,
+     "medianMm": 377.377
+    },
+    "ring_pad": {
+     "minMm": 369.494,
+     "medianMm": 373.726
+    },
+    "ring_side": {
+     "minMm": 371.923,
+     "medianMm": 383.329
+    },
+    "pinky_tip": {
+     "minMm": 380.714,
+     "medianMm": 387.154
+    },
+    "pinky_pad": {
+     "minMm": 382.044,
+     "medianMm": 384.693
+    },
+    "pinky_side": {
+     "minMm": 384.917,
+     "medianMm": 393.584
+    },
+    "thumb": {
+     "minMm": 284.854,
+     "medianMm": 304.382
+    },
+    "palm_heel": {
+     "minMm": 347.041,
+     "medianMm": 365.391
+    },
+    "palm_centre": {
+     "minMm": 330.571,
+     "medianMm": 357.642
+    },
+    "applying_wrist": {
+     "minMm": 361.521,
+     "medianMm": 385.763
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.717,
+     "medianMm": 30.521
+    },
+    "treated_wrist": {
+     "minMm": 18.112,
+     "medianMm": 42.344
+    },
+    "treated_forearm": {
+     "minMm": 18.112,
+     "medianMm": 60.639
+    }
+   }
+  },
+  {
+   "frame": 13,
+   "contact": {
+    "index_tip": {
+     "minMm": 319.221,
+     "medianMm": 326.07
+    },
+    "index_pad": {
+     "minMm": 319.248,
+     "medianMm": 322.415
+    },
+    "index_side": {
+     "minMm": 321.9,
+     "medianMm": 336.824
+    },
+    "middle_tip": {
+     "minMm": 360.67,
+     "medianMm": 368.153
+    },
+    "middle_pad": {
+     "minMm": 358.065,
+     "medianMm": 359.874
+    },
+    "middle_side": {
+     "minMm": 355.846,
+     "medianMm": 368.239
+    },
+    "ring_tip": {
+     "minMm": 388.89,
+     "medianMm": 397.268
+    },
+    "ring_pad": {
+     "minMm": 385.982,
+     "medianMm": 392.025
+    },
+    "ring_side": {
+     "minMm": 379.778,
+     "medianMm": 393.558
+    },
+    "pinky_tip": {
+     "minMm": 404.598,
+     "medianMm": 412.64
+    },
+    "pinky_pad": {
+     "minMm": 403.905,
+     "medianMm": 406.123
+    },
+    "pinky_side": {
+     "minMm": 399.774,
+     "medianMm": 410.45
+    },
+    "thumb": {
+     "minMm": 288.526,
+     "medianMm": 305.216
+    },
+    "palm_heel": {
+     "minMm": 356.874,
+     "medianMm": 378.113
+    },
+    "palm_centre": {
+     "minMm": 331.286,
+     "medianMm": 365.159
+    },
+    "applying_wrist": {
+     "minMm": 372.963,
+     "medianMm": 396.232
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.717,
+     "medianMm": 30.538
+    },
+    "treated_wrist": {
+     "minMm": 18.128,
+     "medianMm": 42.393
+    },
+    "treated_forearm": {
+     "minMm": 18.128,
+     "medianMm": 60.67
+    }
+   }
+  },
+  {
+   "frame": 17,
+   "contact": {
+    "index_tip": {
+     "minMm": 428.349,
+     "medianMm": 436.548
+    },
+    "index_pad": {
+     "minMm": 421.707,
+     "medianMm": 428.217
+    },
+    "index_side": {
+     "minMm": 406.167,
+     "medianMm": 421.981
+    },
+    "middle_tip": {
+     "minMm": 475.892,
+     "medianMm": 481.995
+    },
+    "middle_pad": {
+     "minMm": 465.13,
+     "medianMm": 472.739
+    },
+    "middle_side": {
+     "minMm": 432.369,
+     "medianMm": 455.56
+    },
+    "ring_tip": {
+     "minMm": 498.146,
+     "medianMm": 506.651
+    },
+    "ring_pad": {
+     "minMm": 488.138,
+     "medianMm": 496.048
+    },
+    "ring_side": {
+     "minMm": 453.163,
+     "medianMm": 475.757
+    },
+    "pinky_tip": {
+     "minMm": 501.392,
+     "medianMm": 510.318
+    },
+    "pinky_pad": {
+     "minMm": 497.195,
+     "medianMm": 500.054
+    },
+    "pinky_side": {
+     "minMm": 471.591,
+     "medianMm": 488.119
+    },
+    "thumb": {
+     "minMm": 377.416,
+     "medianMm": 392.477
+    },
+    "palm_heel": {
+     "minMm": 385.853,
+     "medianMm": 418.93
+    },
+    "palm_centre": {
+     "minMm": 394.109,
+     "medianMm": 436.479
+    },
+    "applying_wrist": {
+     "minMm": 390.782,
+     "medianMm": 409.364
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.74,
+     "medianMm": 30.56
+    },
+    "treated_wrist": {
+     "minMm": 18.15,
+     "medianMm": 42.457
+    },
+    "treated_forearm": {
+     "minMm": 18.15,
+     "medianMm": 60.711
+    }
+   }
+  },
+  {
+   "frame": 21,
+   "contact": {
+    "index_tip": {
+     "minMm": 569.654,
+     "medianMm": 577.93
+    },
+    "index_pad": {
+     "minMm": 556.525,
+     "medianMm": 564.001
+    },
+    "index_side": {
+     "minMm": 503.546,
+     "medianMm": 534.88
+    },
+    "middle_tip": {
+     "minMm": 603.866,
+     "medianMm": 606.834
+    },
+    "middle_pad": {
+     "minMm": 585.822,
+     "medianMm": 592.39
+    },
+    "middle_side": {
+     "minMm": 520.331,
+     "medianMm": 555.393
+    },
+    "ring_tip": {
+     "minMm": 601.846,
+     "medianMm": 607.079
+    },
+    "ring_pad": {
+     "minMm": 586.851,
+     "medianMm": 593.514
+    },
+    "ring_side": {
+     "minMm": 524.434,
+     "medianMm": 553.542
+    },
+    "pinky_tip": {
+     "minMm": 573.847,
+     "medianMm": 580.356
+    },
+    "pinky_pad": {
+     "minMm": 568.12,
+     "medianMm": 569.26
+    },
+    "pinky_side": {
+     "minMm": 525.198,
+     "medianMm": 546.657
+    },
+    "thumb": {
+     "minMm": 463.922,
+     "medianMm": 503.944
+    },
+    "palm_heel": {
+     "minMm": 424.203,
+     "medianMm": 456.391
+    },
+    "palm_centre": {
+     "minMm": 478.225,
+     "medianMm": 507.11
+    },
+    "applying_wrist": {
+     "minMm": 408.676,
+     "medianMm": 428.147
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.802,
+     "medianMm": 30.596
+    },
+    "treated_wrist": {
+     "minMm": 18.176,
+     "medianMm": 42.519
+    },
+    "treated_forearm": {
+     "minMm": 18.176,
+     "medianMm": 60.395
+    }
+   }
+  },
+  {
+   "frame": 25,
+   "contact": {
+    "index_tip": {
+     "minMm": 626.715,
+     "medianMm": 634.085
+    },
+    "index_pad": {
+     "minMm": 611.321,
+     "medianMm": 618.417
+    },
+    "index_side": {
+     "minMm": 552.763,
+     "medianMm": 585.578
+    },
+    "middle_tip": {
+     "minMm": 644.094,
+     "medianMm": 647.213
+    },
+    "middle_pad": {
+     "minMm": 623.763,
+     "medianMm": 634.05
+    },
+    "middle_side": {
+     "minMm": 559.361,
+     "medianMm": 593.804
+    },
+    "ring_tip": {
+     "minMm": 627.025,
+     "medianMm": 633.332
+    },
+    "ring_pad": {
+     "minMm": 613.221,
+     "medianMm": 620.065
+    },
+    "ring_side": {
+     "minMm": 553.224,
+     "medianMm": 581.449
+    },
+    "pinky_tip": {
+     "minMm": 589.062,
+     "medianMm": 595.945
+    },
+    "pinky_pad": {
+     "minMm": 583.198,
+     "medianMm": 586.896
+    },
+    "pinky_side": {
+     "minMm": 542.893,
+     "medianMm": 564.81
+    },
+    "thumb": {
+     "minMm": 509.141,
+     "medianMm": 552.35
+    },
+    "palm_heel": {
+     "minMm": 444.883,
+     "medianMm": 472.916
+    },
+    "palm_centre": {
+     "minMm": 501.817,
+     "medianMm": 539.238
+    },
+    "applying_wrist": {
+     "minMm": 426.671,
+     "medianMm": 447.752
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -3.916,
+     "medianMm": 30.593
+    },
+    "treated_wrist": {
+     "minMm": 18.206,
+     "medianMm": 42.567
+    },
+    "treated_forearm": {
+     "minMm": 18.206,
+     "medianMm": 60.201
+    }
+   }
+  },
+  {
+   "frame": 29,
+   "contact": {
+    "index_tip": {
+     "minMm": 645.953,
+     "medianMm": 654.68
+    },
+    "index_pad": {
+     "minMm": 631.883,
+     "medianMm": 638.49
+    },
+    "index_side": {
+     "minMm": 574.893,
+     "medianMm": 606.573
+    },
+    "middle_tip": {
+     "minMm": 657.074,
+     "medianMm": 661.018
+    },
+    "middle_pad": {
+     "minMm": 637.563,
+     "medianMm": 647.122
+    },
+    "middle_side": {
+     "minMm": 576.011,
+     "medianMm": 609.261
+    },
+    "ring_tip": {
+     "minMm": 636.852,
+     "medianMm": 643.642
+    },
+    "ring_pad": {
+     "minMm": 623.39,
+     "medianMm": 630.028
+    },
+    "ring_side": {
+     "minMm": 566.305,
+     "medianMm": 593.719
+    },
+    "pinky_tip": {
+     "minMm": 596.61,
+     "medianMm": 604.427
+    },
+    "pinky_pad": {
+     "minMm": 590.996,
+     "medianMm": 596.026
+    },
+    "pinky_side": {
+     "minMm": 552.636,
+     "medianMm": 574.907
+    },
+    "thumb": {
+     "minMm": 530.074,
+     "medianMm": 573.123
+    },
+    "palm_heel": {
+     "minMm": 459.209,
+     "medianMm": 486.6
+    },
+    "palm_centre": {
+     "minMm": 515.166,
+     "medianMm": 554.744
+    },
+    "applying_wrist": {
+     "minMm": 440.322,
+     "medianMm": 462.822
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -4.097,
+     "medianMm": 30.57
+    },
+    "treated_wrist": {
+     "minMm": 18.237,
+     "medianMm": 42.617
+    },
+    "treated_forearm": {
+     "minMm": 18.237,
+     "medianMm": 60.052
+    }
+   }
+  },
+  {
+   "frame": 33,
+   "contact": {
+    "index_tip": {
+     "minMm": 648.223,
+     "medianMm": 657.254
+    },
+    "index_pad": {
+     "minMm": 634.233,
+     "medianMm": 641.393
+    },
+    "index_side": {
+     "minMm": 578.178,
+     "medianMm": 609.031
+    },
+    "middle_tip": {
+     "minMm": 659.521,
+     "medianMm": 663.502
+    },
+    "middle_pad": {
+     "minMm": 640.063,
+     "medianMm": 649.538
+    },
+    "middle_side": {
+     "minMm": 578.643,
+     "medianMm": 611.758
+    },
+    "ring_tip": {
+     "minMm": 639.445,
+     "medianMm": 646.176
+    },
+    "ring_pad": {
+     "minMm": 625.888,
+     "medianMm": 632.547
+    },
+    "ring_side": {
+     "minMm": 568.714,
+     "medianMm": 596.07
+    },
+    "pinky_tip": {
+     "minMm": 598.969,
+     "medianMm": 606.889
+    },
+    "pinky_pad": {
+     "minMm": 593.373,
+     "medianMm": 598.331
+    },
+    "pinky_side": {
+     "minMm": 554.776,
+     "medianMm": 577.004
+    },
+    "thumb": {
+     "minMm": 532.87,
+     "medianMm": 575.781
+    },
+    "palm_heel": {
+     "minMm": 461.429,
+     "medianMm": 488.472
+    },
+    "palm_centre": {
+     "minMm": 517.172,
+     "medianMm": 557.309
+    },
+    "applying_wrist": {
+     "minMm": 442.387,
+     "medianMm": 465.049
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -6.138,
+     "medianMm": 29.489
+    },
+    "treated_wrist": {
+     "minMm": 17.873,
+     "medianMm": 43.112
+    },
+    "treated_forearm": {
+     "minMm": 17.873,
+     "medianMm": 59.645
+    }
+   }
+  },
+  {
+   "frame": 37,
+   "contact": {
+    "index_tip": {
+     "minMm": 629.269,
+     "medianMm": 637.862
+    },
+    "index_pad": {
+     "minMm": 614.993,
+     "medianMm": 622.08
+    },
+    "index_side": {
+     "minMm": 559.875,
+     "medianMm": 590.138
+    },
+    "middle_tip": {
+     "minMm": 642.807,
+     "medianMm": 646.565
+    },
+    "middle_pad": {
+     "minMm": 623.092,
+     "medianMm": 632.931
+    },
+    "middle_side": {
+     "minMm": 561.217,
+     "medianMm": 594.268
+    },
+    "ring_tip": {
+     "minMm": 624.305,
+     "medianMm": 630.789
+    },
+    "ring_pad": {
+     "minMm": 610.678,
+     "medianMm": 617.405
+    },
+    "ring_side": {
+     "minMm": 552.802,
+     "medianMm": 580.168
+    },
+    "pinky_tip": {
+     "minMm": 583.714,
+     "medianMm": 591.634
+    },
+    "pinky_pad": {
+     "minMm": 578.245,
+     "medianMm": 583.023
+    },
+    "pinky_side": {
+     "minMm": 539.51,
+     "medianMm": 561.657
+    },
+    "thumb": {
+     "minMm": 513.975,
+     "medianMm": 556.422
+    },
+    "palm_heel": {
+     "minMm": 443.001,
+     "medianMm": 471.046
+    },
+    "palm_centre": {
+     "minMm": 499.556,
+     "medianMm": 538.487
+    },
+    "applying_wrist": {
+     "minMm": 424.1,
+     "medianMm": 446.614
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -20.469,
+     "medianMm": 20.291
+    },
+    "treated_wrist": {
+     "minMm": 16.364,
+     "medianMm": 42.317
+    },
+    "treated_forearm": {
+     "minMm": 16.364,
+     "medianMm": 59.138
+    }
+   }
+  },
+  {
+   "frame": 41,
+   "contact": {
+    "index_tip": {
+     "minMm": 592.559,
+     "medianMm": 601.339
+    },
+    "index_pad": {
+     "minMm": 578.221,
+     "medianMm": 585.204
+    },
+    "index_side": {
+     "minMm": 523.641,
+     "medianMm": 553.964
+    },
+    "middle_tip": {
+     "minMm": 606.247,
+     "medianMm": 610.295
+    },
+    "middle_pad": {
+     "minMm": 586.751,
+     "medianMm": 596.389
+    },
+    "middle_side": {
+     "minMm": 526.068,
+     "medianMm": 558.833
+    },
+    "ring_tip": {
+     "minMm": 587.674,
+     "medianMm": 594.277
+    },
+    "ring_pad": {
+     "minMm": 574.014,
+     "medianMm": 580.731
+    },
+    "ring_side": {
+     "minMm": 516.283,
+     "medianMm": 543.939
+    },
+    "pinky_tip": {
+     "minMm": 547.63,
+     "medianMm": 555.264
+    },
+    "pinky_pad": {
+     "minMm": 541.958,
+     "medianMm": 546.785
+    },
+    "pinky_side": {
+     "minMm": 502.609,
+     "medianMm": 524.901
+    },
+    "thumb": {
+     "minMm": 476.718,
+     "medianMm": 518.626
+    },
+    "palm_heel": {
+     "minMm": 407.299,
+     "medianMm": 434.092
+    },
+    "palm_centre": {
+     "minMm": 463.041,
+     "medianMm": 501.441
+    },
+    "applying_wrist": {
+     "minMm": 389.786,
+     "medianMm": 411.19
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -56.297,
+     "medianMm": 2.766
+    },
+    "treated_wrist": {
+     "minMm": 23.53,
+     "medianMm": 45.104
+    },
+    "treated_forearm": {
+     "minMm": 20.858,
+     "medianMm": 60.809
+    }
+   }
+  },
+  {
+   "frame": 45,
+   "contact": {
+    "index_tip": {
+     "minMm": 535.837,
+     "medianMm": 545.125
+    },
+    "index_pad": {
+     "minMm": 521.832,
+     "medianMm": 529.428
+    },
+    "index_side": {
+     "minMm": 469.89,
+     "medianMm": 499.294
+    },
+    "middle_tip": {
+     "minMm": 552.492,
+     "medianMm": 556.055
+    },
+    "middle_pad": {
+     "minMm": 532.357,
+     "medianMm": 542.996
+    },
+    "middle_side": {
+     "minMm": 472.233,
+     "medianMm": 504.82
+    },
+    "ring_tip": {
+     "minMm": 537.836,
+     "medianMm": 544.213
+    },
+    "ring_pad": {
+     "minMm": 524.221,
+     "medianMm": 531.046
+    },
+    "ring_side": {
+     "minMm": 464.774,
+     "medianMm": 492.691
+    },
+    "pinky_tip": {
+     "minMm": 500.01,
+     "medianMm": 506.677
+    },
+    "pinky_pad": {
+     "minMm": 494.076,
+     "medianMm": 497.464
+    },
+    "pinky_side": {
+     "minMm": 453.812,
+     "medianMm": 475.553
+    },
+    "thumb": {
+     "minMm": 420.992,
+     "medianMm": 460.977
+    },
+    "palm_heel": {
+     "minMm": 351.646,
+     "medianMm": 377.238
+    },
+    "palm_centre": {
+     "minMm": 408.091,
+     "medianMm": 448.271
+    },
+    "applying_wrist": {
+     "minMm": 339.231,
+     "medianMm": 358.358
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -72.133,
+     "medianMm": -14.077
+    },
+    "treated_wrist": {
+     "minMm": 21.699,
+     "medianMm": 53.346
+    },
+    "treated_forearm": {
+     "minMm": 9.579,
+     "medianMm": 61.088
+    }
+   }
+  },
+  {
+   "frame": 49,
+   "contact": {
+    "index_tip": {
+     "minMm": 454.277,
+     "medianMm": 463.303
+    },
+    "index_pad": {
+     "minMm": 439.89,
+     "medianMm": 447.524
+    },
+    "index_side": {
+     "minMm": 387.302,
+     "medianMm": 417.227
+    },
+    "middle_tip": {
+     "minMm": 477.161,
+     "medianMm": 480.064
+    },
+    "middle_pad": {
+     "minMm": 456.19,
+     "medianMm": 467.171
+    },
+    "middle_side": {
+     "minMm": 396.638,
+     "medianMm": 428.042
+    },
+    "ring_tip": {
+     "minMm": 467.958,
+     "medianMm": 472.937
+    },
+    "ring_pad": {
+     "minMm": 453.66,
+     "medianMm": 460.504
+    },
+    "ring_side": {
+     "minMm": 393.18,
+     "medianMm": 420.364
+    },
+    "pinky_tip": {
+     "minMm": 433.743,
+     "medianMm": 439.914
+    },
+    "pinky_pad": {
+     "minMm": 427.24,
+     "medianMm": 428.811
+    },
+    "pinky_side": {
+     "minMm": 385.837,
+     "medianMm": 406.86
+    },
+    "thumb": {
+     "minMm": 337.982,
+     "medianMm": 379.079
+    },
+    "palm_heel": {
+     "minMm": 276.85,
+     "medianMm": 305.32
+    },
+    "palm_centre": {
+     "minMm": 332.462,
+     "medianMm": 373.382
+    },
+    "applying_wrist": {
+     "minMm": 260.476,
+     "medianMm": 284.421
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": -41.427,
+     "medianMm": -2.229
+    },
+    "treated_wrist": {
+     "minMm": 24.749,
+     "medianMm": 66.266
+    },
+    "treated_forearm": {
+     "minMm": 0.145,
+     "medianMm": 64.362
+    }
+   }
+  },
+  {
+   "frame": 53,
+   "contact": {
+    "index_tip": {
+     "minMm": 394.99,
+     "medianMm": 404.277
+    },
+    "index_pad": {
+     "minMm": 382.122,
+     "medianMm": 390.704
+    },
+    "index_side": {
+     "minMm": 339.217,
+     "medianMm": 365.577
+    },
+    "middle_tip": {
+     "minMm": 426.133,
+     "medianMm": 430.855
+    },
+    "middle_pad": {
+     "minMm": 407.609,
+     "medianMm": 416.868
+    },
+    "middle_side": {
+     "minMm": 351.702,
+     "medianMm": 383.947
+    },
+    "ring_tip": {
+     "minMm": 426.616,
+     "medianMm": 433.568
+    },
+    "ring_pad": {
+     "minMm": 413.134,
+     "medianMm": 419.283
+    },
+    "ring_side": {
+     "minMm": 358.656,
+     "medianMm": 383.757
+    },
+    "pinky_tip": {
+     "minMm": 399.851,
+     "medianMm": 407.408
+    },
+    "pinky_pad": {
+     "minMm": 394.344,
+     "medianMm": 397.046
+    },
+    "pinky_side": {
+     "minMm": 355.743,
+     "medianMm": 376.417
+    },
+    "thumb": {
+     "minMm": 283.491,
+     "medianMm": 321.879
+    },
+    "palm_heel": {
+     "minMm": 240.224,
+     "medianMm": 274.72
+    },
+    "palm_centre": {
+     "minMm": 290.839,
+     "medianMm": 332.025
+    },
+    "applying_wrist": {
+     "minMm": 230.915,
+     "medianMm": 259.181
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 37.385,
+     "medianMm": 74.511
+    },
+    "treated_wrist": {
+     "minMm": 35.964,
+     "medianMm": 82.831
+    },
+    "treated_forearm": {
+     "minMm": -10.454,
+     "medianMm": 68.011
+    }
+   }
+  },
+  {
+   "frame": 57,
+   "contact": {
+    "index_tip": {
+     "minMm": 385.568,
+     "medianMm": 394.343
+    },
+    "index_pad": {
+     "minMm": 375.138,
+     "medianMm": 382.273
+    },
+    "index_side": {
+     "minMm": 342.003,
+     "medianMm": 364.938
+    },
+    "middle_tip": {
+     "minMm": 422.294,
+     "medianMm": 429.182
+    },
+    "middle_pad": {
+     "minMm": 407.081,
+     "medianMm": 415.482
+    },
+    "middle_side": {
+     "minMm": 358.147,
+     "medianMm": 389.319
+    },
+    "ring_tip": {
+     "minMm": 430.756,
+     "medianMm": 438.587
+    },
+    "ring_pad": {
+     "minMm": 418.521,
+     "medianMm": 425.176
+    },
+    "ring_side": {
+     "minMm": 371.945,
+     "medianMm": 396.166
+    },
+    "pinky_tip": {
+     "minMm": 412.485,
+     "medianMm": 420.912
+    },
+    "pinky_pad": {
+     "minMm": 407.749,
+     "medianMm": 411.981
+    },
+    "pinky_side": {
+     "minMm": 375.636,
+     "medianMm": 394.944
+    },
+    "thumb": {
+     "minMm": 289.648,
+     "medianMm": 322.396
+    },
+    "palm_heel": {
+     "minMm": 272.578,
+     "medianMm": 298.627
+    },
+    "palm_centre": {
+     "minMm": 308.169,
+     "medianMm": 344.06
+    },
+    "applying_wrist": {
+     "minMm": 268.325,
+     "medianMm": 300.704
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 89.457,
+     "medianMm": 154.78
+    },
+    "treated_wrist": {
+     "minMm": 53.607,
+     "medianMm": 96.999
+    },
+    "treated_forearm": {
+     "minMm": -14.576,
+     "medianMm": 66.36
+    }
+   }
+  },
+  {
+   "frame": 61,
+   "contact": {
+    "index_tip": {
+     "minMm": 401.628,
+     "medianMm": 410.943
+    },
+    "index_pad": {
+     "minMm": 394.081,
+     "medianMm": 399.746
+    },
+    "index_side": {
+     "minMm": 369.309,
+     "medianMm": 390.158
+    },
+    "middle_tip": {
+     "minMm": 440.84,
+     "medianMm": 448.351
+    },
+    "middle_pad": {
+     "minMm": 428.317,
+     "medianMm": 435.051
+    },
+    "middle_side": {
+     "minMm": 386.605,
+     "medianMm": 415.044
+    },
+    "ring_tip": {
+     "minMm": 453.406,
+     "medianMm": 461.715
+    },
+    "ring_pad": {
+     "minMm": 442.536,
+     "medianMm": 449.982
+    },
+    "ring_side": {
+     "minMm": 402.649,
+     "medianMm": 425.482
+    },
+    "pinky_tip": {
+     "minMm": 440.026,
+     "medianMm": 449.044
+    },
+    "pinky_pad": {
+     "minMm": 435.877,
+     "medianMm": 439.91
+    },
+    "pinky_side": {
+     "minMm": 408.494,
+     "medianMm": 426.715
+    },
+    "thumb": {
+     "minMm": 321.237,
+     "medianMm": 348.556
+    },
+    "palm_heel": {
+     "minMm": 313.448,
+     "medianMm": 337.384
+    },
+    "palm_centre": {
+     "minMm": 343.442,
+     "medianMm": 374.5
+    },
+    "applying_wrist": {
+     "minMm": 310.485,
+     "medianMm": 342.216
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 115.822,
+     "medianMm": 210.234
+    },
+    "treated_wrist": {
+     "minMm": 70.352,
+     "medianMm": 114.834
+    },
+    "treated_forearm": {
+     "minMm": -15.789,
+     "medianMm": 67.552
+    }
+   }
+  },
+  {
+   "frame": 65,
+   "contact": {
+    "index_tip": {
+     "minMm": 410.508,
+     "medianMm": 419.574
+    },
+    "index_pad": {
+     "minMm": 405.651,
+     "medianMm": 410.059
+    },
+    "index_side": {
+     "minMm": 385.546,
+     "medianMm": 404.526
+    },
+    "middle_tip": {
+     "minMm": 448.359,
+     "medianMm": 456.426
+    },
+    "middle_pad": {
+     "minMm": 438.546,
+     "medianMm": 444.693
+    },
+    "middle_side": {
+     "minMm": 401.885,
+     "medianMm": 428.993
+    },
+    "ring_tip": {
+     "minMm": 462.774,
+     "medianMm": 470.986
+    },
+    "ring_pad": {
+     "minMm": 453.13,
+     "medianMm": 459.969
+    },
+    "ring_side": {
+     "minMm": 417.662,
+     "medianMm": 440.47
+    },
+    "pinky_tip": {
+     "minMm": 452.227,
+     "medianMm": 461.281
+    },
+    "pinky_pad": {
+     "minMm": 448.508,
+     "medianMm": 452.506
+    },
+    "pinky_side": {
+     "minMm": 423.837,
+     "medianMm": 441.269
+    },
+    "thumb": {
+     "minMm": 337.104,
+     "medianMm": 363.893
+    },
+    "palm_heel": {
+     "minMm": 329.805,
+     "medianMm": 354.876
+    },
+    "palm_centre": {
+     "minMm": 360.007,
+     "medianMm": 390.465
+    },
+    "applying_wrist": {
+     "minMm": 326.945,
+     "medianMm": 361.176
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 132.375,
+     "medianMm": 245.617
+    },
+    "treated_wrist": {
+     "minMm": 85.063,
+     "medianMm": 130.955
+    },
+    "treated_forearm": {
+     "minMm": -14.259,
+     "medianMm": 77.979
+    }
+   }
+  },
+  {
+   "frame": 69,
+   "contact": {
+    "index_tip": {
+     "minMm": 403.685,
+     "medianMm": 412.203
+    },
+    "index_pad": {
+     "minMm": 401.185,
+     "medianMm": 404.165
+    },
+    "index_side": {
+     "minMm": 389.956,
+     "medianMm": 406.711
+    },
+    "middle_tip": {
+     "minMm": 435.986,
+     "medianMm": 444.674
+    },
+    "middle_pad": {
+     "minMm": 430.346,
+     "medianMm": 435.353
+    },
+    "middle_side": {
+     "minMm": 405.949,
+     "medianMm": 429.469
+    },
+    "ring_tip": {
+     "minMm": 452.342,
+     "medianMm": 461.349
+    },
+    "ring_pad": {
+     "minMm": 446.032,
+     "medianMm": 452.041
+    },
+    "ring_side": {
+     "minMm": 421.732,
+     "medianMm": 442.231
+    },
+    "pinky_tip": {
+     "minMm": 448.899,
+     "medianMm": 458.076
+    },
+    "pinky_pad": {
+     "minMm": 446.618,
+     "medianMm": 450.619
+    },
+    "pinky_side": {
+     "minMm": 429.015,
+     "medianMm": 444.75
+    },
+    "thumb": {
+     "minMm": 341.927,
+     "medianMm": 368.981
+    },
+    "palm_heel": {
+     "minMm": 335.574,
+     "medianMm": 361.573
+    },
+    "palm_centre": {
+     "minMm": 364.802,
+     "medianMm": 395.606
+    },
+    "applying_wrist": {
+     "minMm": 333.748,
+     "medianMm": 363.649
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 139.395,
+     "medianMm": 257.533
+    },
+    "treated_wrist": {
+     "minMm": 91.264,
+     "medianMm": 137.325
+    },
+    "treated_forearm": {
+     "minMm": -13.661,
+     "medianMm": 83.077
+    }
+   }
+  },
+  {
+   "frame": 73,
+   "contact": {
+    "index_tip": {
+     "minMm": 389.03,
+     "medianMm": 395.926
+    },
+    "index_pad": {
+     "minMm": 388.981,
+     "medianMm": 393.001
+    },
+    "index_side": {
+     "minMm": 389.474,
+     "medianMm": 403.116
+    },
+    "middle_tip": {
+     "minMm": 412.525,
+     "medianMm": 420.522
+    },
+    "middle_pad": {
+     "minMm": 411.528,
+     "medianMm": 416.487
+    },
+    "middle_side": {
+     "minMm": 404.721,
+     "medianMm": 423.043
+    },
+    "ring_tip": {
+     "minMm": 431.103,
+     "medianMm": 438.075
+    },
+    "ring_pad": {
+     "minMm": 429.546,
+     "medianMm": 434.425
+    },
+    "ring_side": {
+     "minMm": 419.89,
+     "medianMm": 436.889
+    },
+    "pinky_tip": {
+     "minMm": 436.972,
+     "medianMm": 445.007
+    },
+    "pinky_pad": {
+     "minMm": 436.887,
+     "medianMm": 440.264
+    },
+    "pinky_side": {
+     "minMm": 427.981,
+     "medianMm": 441.385
+    },
+    "thumb": {
+     "minMm": 341.365,
+     "medianMm": 368.972
+    },
+    "palm_heel": {
+     "minMm": 335.6,
+     "medianMm": 361.571
+    },
+    "palm_centre": {
+     "minMm": 364.795,
+     "medianMm": 395.81
+    },
+    "applying_wrist": {
+     "minMm": 333.787,
+     "medianMm": 363.691
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 139.536,
+     "medianMm": 257.613
+    },
+    "treated_wrist": {
+     "minMm": 91.402,
+     "medianMm": 137.445
+    },
+    "treated_forearm": {
+     "minMm": -13.68,
+     "medianMm": 83.232
+    }
+   }
+  },
+  {
+   "frame": 77,
+   "contact": {
+    "index_tip": {
+     "minMm": 375.123,
+     "medianMm": 379.632
+    },
+    "index_pad": {
+     "minMm": 377.548,
+     "medianMm": 383.567
+    },
+    "index_side": {
+     "minMm": 385.071,
+     "medianMm": 398.854
+    },
+    "middle_tip": {
+     "minMm": 390.055,
+     "medianMm": 395.714
+    },
+    "middle_pad": {
+     "minMm": 391.057,
+     "medianMm": 399.726
+    },
+    "middle_side": {
+     "minMm": 403.048,
+     "medianMm": 416.939
+    },
+    "ring_tip": {
+     "minMm": 408.7,
+     "medianMm": 413.579
+    },
+    "ring_pad": {
+     "minMm": 410.66,
+     "medianMm": 416.354
+    },
+    "ring_side": {
+     "minMm": 418.078,
+     "medianMm": 431.515
+    },
+    "pinky_tip": {
+     "minMm": 424.546,
+     "medianMm": 430.571
+    },
+    "pinky_pad": {
+     "minMm": 426.999,
+     "medianMm": 430.103
+    },
+    "pinky_side": {
+     "minMm": 426.897,
+     "medianMm": 438.094
+    },
+    "thumb": {
+     "minMm": 340.733,
+     "medianMm": 368.438
+    },
+    "palm_heel": {
+     "minMm": 335.628,
+     "medianMm": 361.565
+    },
+    "palm_centre": {
+     "minMm": 364.782,
+     "medianMm": 396.032
+    },
+    "applying_wrist": {
+     "minMm": 333.818,
+     "medianMm": 363.729
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 139.729,
+     "medianMm": 257.761
+    },
+    "treated_wrist": {
+     "minMm": 91.593,
+     "medianMm": 137.614
+    },
+    "treated_forearm": {
+     "minMm": -13.671,
+     "medianMm": 83.435
+    }
+   }
+  },
+  {
+   "frame": 81,
+   "contact": {
+    "index_tip": {
+     "minMm": 365.769,
+     "medianMm": 369.92
+    },
+    "index_pad": {
+     "minMm": 369.793,
+     "medianMm": 376.683
+    },
+    "index_side": {
+     "minMm": 379.703,
+     "medianMm": 395.014
+    },
+    "middle_tip": {
+     "minMm": 376.84,
+     "medianMm": 379.419
+    },
+    "middle_pad": {
+     "minMm": 377.868,
+     "medianMm": 388.598
+    },
+    "middle_side": {
+     "minMm": 393.802,
+     "medianMm": 411.382
+    },
+    "ring_tip": {
+     "minMm": 391.745,
+     "medianMm": 395.352
+    },
+    "ring_pad": {
+     "minMm": 395.451,
+     "medianMm": 404.476
+    },
+    "ring_side": {
+     "minMm": 410.744,
+     "medianMm": 425.737
+    },
+    "pinky_tip": {
+     "minMm": 413.035,
+     "medianMm": 418.149
+    },
+    "pinky_pad": {
+     "minMm": 419.186,
+     "medianMm": 421.836
+    },
+    "pinky_side": {
+     "minMm": 426.026,
+     "medianMm": 434.128
+    },
+    "thumb": {
+     "minMm": 340.123,
+     "medianMm": 367.723
+    },
+    "palm_heel": {
+     "minMm": 335.658,
+     "medianMm": 361.558
+    },
+    "palm_centre": {
+     "minMm": 364.768,
+     "medianMm": 396.246
+    },
+    "applying_wrist": {
+     "minMm": 333.842,
+     "medianMm": 363.766
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 139.963,
+     "medianMm": 257.971
+    },
+    "treated_wrist": {
+     "minMm": 91.829,
+     "medianMm": 137.821
+    },
+    "treated_forearm": {
+     "minMm": -13.639,
+     "medianMm": 83.677
+    }
+   }
+  },
+  {
+   "frame": 85,
+   "contact": {
+    "index_tip": {
+     "minMm": 361.761,
+     "medianMm": 365.718
+    },
+    "index_pad": {
+     "minMm": 366.623,
+     "medianMm": 374.633
+    },
+    "index_side": {
+     "minMm": 377.018,
+     "medianMm": 392.908
+    },
+    "middle_tip": {
+     "minMm": 371.877,
+     "medianMm": 374.594
+    },
+    "middle_pad": {
+     "minMm": 374.33,
+     "medianMm": 383.867
+    },
+    "middle_side": {
+     "minMm": 388.587,
+     "medianMm": 408.066
+    },
+    "ring_tip": {
+     "minMm": 383.897,
+     "medianMm": 387.424
+    },
+    "ring_pad": {
+     "minMm": 388.511,
+     "medianMm": 398.6
+    },
+    "ring_side": {
+     "minMm": 404.936,
+     "medianMm": 422.935
+    },
+    "pinky_tip": {
+     "minMm": 406.176,
+     "medianMm": 410.484
+    },
+    "pinky_pad": {
+     "minMm": 412.618,
+     "medianMm": 416.523
+    },
+    "pinky_side": {
+     "minMm": 422.213,
+     "medianMm": 431.539
+    },
+    "thumb": {
+     "minMm": 339.627,
+     "medianMm": 366.511
+    },
+    "palm_heel": {
+     "minMm": 335.685,
+     "medianMm": 361.551
+    },
+    "palm_centre": {
+     "minMm": 364.756,
+     "medianMm": 396.42
+    },
+    "applying_wrist": {
+     "minMm": 333.858,
+     "medianMm": 363.8
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.226,
+     "medianMm": 258.22
+    },
+    "treated_wrist": {
+     "minMm": 92.095,
+     "medianMm": 138.055
+    },
+    "treated_forearm": {
+     "minMm": -13.589,
+     "medianMm": 83.867
+    }
+   }
+  },
+  {
+   "frame": 89,
+   "contact": {
+    "index_tip": {
+     "minMm": 361.248,
+     "medianMm": 364.913
+    },
+    "index_pad": {
+     "minMm": 366.154,
+     "medianMm": 374.792
+    },
+    "index_side": {
+     "minMm": 376.11,
+     "medianMm": 391.899
+    },
+    "middle_tip": {
+     "minMm": 372.057,
+     "medianMm": 375.113
+    },
+    "middle_pad": {
+     "minMm": 375.065,
+     "medianMm": 384.419
+    },
+    "middle_side": {
+     "minMm": 386.615,
+     "medianMm": 406.261
+    },
+    "ring_tip": {
+     "minMm": 382.028,
+     "medianMm": 385.276
+    },
+    "ring_pad": {
+     "minMm": 386.954,
+     "medianMm": 396.89
+    },
+    "ring_side": {
+     "minMm": 402.516,
+     "medianMm": 421.353
+    },
+    "pinky_tip": {
+     "minMm": 403.326,
+     "medianMm": 407.483
+    },
+    "pinky_pad": {
+     "minMm": 409.521,
+     "medianMm": 414.101
+    },
+    "pinky_side": {
+     "minMm": 420.33,
+     "medianMm": 429.965
+    },
+    "thumb": {
+     "minMm": 339.337,
+     "medianMm": 365.929
+    },
+    "palm_heel": {
+     "minMm": 335.703,
+     "medianMm": 361.544
+    },
+    "palm_centre": {
+     "minMm": 364.748,
+     "medianMm": 396.522
+    },
+    "applying_wrist": {
+     "minMm": 333.867,
+     "medianMm": 363.829
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.507,
+     "medianMm": 258.484
+    },
+    "treated_wrist": {
+     "minMm": 92.379,
+     "medianMm": 138.306
+    },
+    "treated_forearm": {
+     "minMm": -13.528,
+     "medianMm": 83.973
+    }
+   }
+  },
+  {
+   "frame": 93,
+   "contact": {
+    "index_tip": {
+     "minMm": 355.312,
+     "medianMm": 359.052
+    },
+    "index_pad": {
+     "minMm": 360.444,
+     "medianMm": 369.16
+    },
+    "index_side": {
+     "minMm": 370.572,
+     "medianMm": 386.55
+    },
+    "middle_tip": {
+     "minMm": 365.658,
+     "medianMm": 368.597
+    },
+    "middle_pad": {
+     "minMm": 368.833,
+     "medianMm": 378.259
+    },
+    "middle_side": {
+     "minMm": 380.375,
+     "medianMm": 400.335
+    },
+    "ring_tip": {
+     "minMm": 375.049,
+     "medianMm": 378.335
+    },
+    "ring_pad": {
+     "minMm": 380.159,
+     "medianMm": 390.01
+    },
+    "ring_side": {
+     "minMm": 395.817,
+     "medianMm": 414.886
+    },
+    "pinky_tip": {
+     "minMm": 395.827,
+     "medianMm": 399.927
+    },
+    "pinky_pad": {
+     "minMm": 402.198,
+     "medianMm": 406.908
+    },
+    "pinky_side": {
+     "minMm": 413.188,
+     "medianMm": 422.791
+    },
+    "thumb": {
+     "minMm": 333.095,
+     "medianMm": 360.016
+    },
+    "palm_heel": {
+     "minMm": 328.044,
+     "medianMm": 352.964
+    },
+    "palm_centre": {
+     "minMm": 357.575,
+     "medianMm": 389.549
+    },
+    "applying_wrist": {
+     "minMm": 326.549,
+     "medianMm": 356.319
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.795,
+     "medianMm": 258.743
+    },
+    "treated_wrist": {
+     "minMm": 92.67,
+     "medianMm": 138.563
+    },
+    "treated_forearm": {
+     "minMm": -13.46,
+     "medianMm": 84.089
+    }
+   }
+  },
+  {
+   "frame": 97,
+   "contact": {
+    "index_tip": {
+     "minMm": 313.832,
+     "medianMm": 317.735
+    },
+    "index_pad": {
+     "minMm": 320.744,
+     "medianMm": 329.345
+    },
+    "index_side": {
+     "minMm": 332.636,
+     "medianMm": 349.515
+    },
+    "middle_tip": {
+     "minMm": 319.373,
+     "medianMm": 321.508
+    },
+    "middle_pad": {
+     "minMm": 323.164,
+     "medianMm": 332.983
+    },
+    "middle_side": {
+     "minMm": 337.949,
+     "medianMm": 359.051
+    },
+    "ring_tip": {
+     "minMm": 325.779,
+     "medianMm": 328.462
+    },
+    "ring_pad": {
+     "minMm": 332.237,
+     "medianMm": 342.107
+    },
+    "ring_side": {
+     "minMm": 349.83,
+     "medianMm": 368.872
+    },
+    "pinky_tip": {
+     "minMm": 344.587,
+     "medianMm": 348.128
+    },
+    "pinky_pad": {
+     "minMm": 352.066,
+     "medianMm": 356.321
+    },
+    "pinky_side": {
+     "minMm": 363.195,
+     "medianMm": 372.177
+    },
+    "thumb": {
+     "minMm": 290.694,
+     "medianMm": 320.116
+    },
+    "palm_heel": {
+     "minMm": 270.644,
+     "medianMm": 295.849
+    },
+    "palm_centre": {
+     "minMm": 306.874,
+     "medianMm": 344.786
+    },
+    "applying_wrist": {
+     "minMm": 270.061,
+     "medianMm": 302.133
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.078,
+     "medianMm": 259.0
+    },
+    "treated_wrist": {
+     "minMm": 92.956,
+     "medianMm": 138.815
+    },
+    "treated_forearm": {
+     "minMm": -13.366,
+     "medianMm": 84.208
+    }
+   }
+  },
+  {
+   "frame": 101,
+   "contact": {
+    "index_tip": {
+     "minMm": 243.953,
+     "medianMm": 247.119
+    },
+    "index_pad": {
+     "minMm": 254.141,
+     "medianMm": 261.918
+    },
+    "index_side": {
+     "minMm": 267.665,
+     "medianMm": 283.863
+    },
+    "middle_tip": {
+     "minMm": 239.103,
+     "medianMm": 240.634
+    },
+    "middle_pad": {
+     "minMm": 245.222,
+     "medianMm": 253.49
+    },
+    "middle_side": {
+     "minMm": 263.31,
+     "medianMm": 282.745
+    },
+    "ring_tip": {
+     "minMm": 239.35,
+     "medianMm": 242.437
+    },
+    "ring_pad": {
+     "minMm": 247.758,
+     "medianMm": 254.539
+    },
+    "ring_side": {
+     "minMm": 264.818,
+     "medianMm": 282.742
+    },
+    "pinky_tip": {
+     "minMm": 251.52,
+     "medianMm": 255.352
+    },
+    "pinky_pad": {
+     "minMm": 261.416,
+     "medianMm": 262.846
+    },
+    "pinky_side": {
+     "minMm": 268.873,
+     "medianMm": 277.978
+    },
+    "thumb": {
+     "minMm": 222.434,
+     "medianMm": 253.818
+    },
+    "palm_heel": {
+     "minMm": 179.257,
+     "medianMm": 199.145
+    },
+    "palm_centre": {
+     "minMm": 221.533,
+     "medianMm": 262.654
+    },
+    "applying_wrist": {
+     "minMm": 178.618,
+     "medianMm": 200.257
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.346,
+     "medianMm": 259.228
+    },
+    "treated_wrist": {
+     "minMm": 93.227,
+     "medianMm": 139.054
+    },
+    "treated_forearm": {
+     "minMm": -13.275,
+     "medianMm": 84.32
+    }
+   }
+  },
+  {
+   "frame": 105,
+   "contact": {
+    "index_tip": {
+     "minMm": 141.215,
+     "medianMm": 144.4
+    },
+    "index_pad": {
+     "minMm": 149.421,
+     "medianMm": 158.198
+    },
+    "index_side": {
+     "minMm": 160.935,
+     "medianMm": 176.468
+    },
+    "middle_tip": {
+     "minMm": 122.531,
+     "medianMm": 124.659
+    },
+    "middle_pad": {
+     "minMm": 124.957,
+     "medianMm": 137.49
+    },
+    "middle_side": {
+     "minMm": 142.21,
+     "medianMm": 162.152
+    },
+    "ring_tip": {
+     "minMm": 113.662,
+     "medianMm": 117.404
+    },
+    "ring_pad": {
+     "minMm": 118.254,
+     "medianMm": 128.217
+    },
+    "ring_side": {
+     "minMm": 133.19,
+     "medianMm": 152.448
+    },
+    "pinky_tip": {
+     "minMm": 115.455,
+     "medianMm": 120.367
+    },
+    "pinky_pad": {
+     "minMm": 122.425,
+     "medianMm": 127.9
+    },
+    "pinky_side": {
+     "minMm": 129.107,
+     "medianMm": 139.371
+    },
+    "thumb": {
+     "minMm": 129.104,
+     "medianMm": 155.897
+    },
+    "palm_heel": {
+     "minMm": 69.389,
+     "medianMm": 86.764
+    },
+    "palm_centre": {
+     "minMm": 98.181,
+     "medianMm": 141.129
+    },
+    "applying_wrist": {
+     "minMm": 72.898,
+     "medianMm": 95.722
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.587,
+     "medianMm": 259.446
+    },
+    "treated_wrist": {
+     "minMm": 93.472,
+     "medianMm": 139.268
+    },
+    "treated_forearm": {
+     "minMm": -13.195,
+     "medianMm": 84.418
+    }
+   }
+  },
+  {
+   "frame": 109,
+   "contact": {
+    "index_tip": {
+     "minMm": 12.975,
+     "medianMm": 17.64
+    },
+    "index_pad": {
+     "minMm": 18.409,
+     "medianMm": 29.504
+    },
+    "index_side": {
+     "minMm": 25.708,
+     "medianMm": 38.175
+    },
+    "middle_tip": {
+     "minMm": 2.231,
+     "medianMm": 7.084
+    },
+    "middle_pad": {
+     "minMm": 2.081,
+     "medianMm": 12.9
+    },
+    "middle_side": {
+     "minMm": 1.796,
+     "medianMm": 14.447
+    },
+    "ring_tip": {
+     "minMm": -9.83,
+     "medianMm": -5.185
+    },
+    "ring_pad": {
+     "minMm": -6.905,
+     "medianMm": -0.942
+    },
+    "ring_side": {
+     "minMm": -18.102,
+     "medianMm": -4.823
+    },
+    "pinky_tip": {
+     "minMm": -5.783,
+     "medianMm": -0.528
+    },
+    "pinky_pad": {
+     "minMm": -6.875,
+     "medianMm": -4.745
+    },
+    "pinky_side": {
+     "minMm": -13.48,
+     "medianMm": -2.177
+    },
+    "thumb": {
+     "minMm": 17.279,
+     "medianMm": 31.09
+    },
+    "palm_heel": {
+     "minMm": 28.901,
+     "medianMm": 53.312
+    },
+    "palm_centre": {
+     "minMm": -6.73,
+     "medianMm": 27.283
+    },
+    "applying_wrist": {
+     "minMm": 51.659,
+     "medianMm": 71.992
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.792,
+     "medianMm": 259.607
+    },
+    "treated_wrist": {
+     "minMm": 93.68,
+     "medianMm": 139.449
+    },
+    "treated_forearm": {
+     "minMm": -13.128,
+     "medianMm": 84.495
+    }
+   }
+  },
+  {
+   "frame": 113,
+   "contact": {
+    "index_tip": {
+     "minMm": 73.753,
+     "medianMm": 77.617
+    },
+    "index_pad": {
+     "minMm": 74.642,
+     "medianMm": 84.346
+    },
+    "index_side": {
+     "minMm": 76.804,
+     "medianMm": 90.495
+    },
+    "middle_tip": {
+     "minMm": 93.627,
+     "medianMm": 98.103
+    },
+    "middle_pad": {
+     "minMm": 92.954,
+     "medianMm": 101.724
+    },
+    "middle_side": {
+     "minMm": 94.473,
+     "medianMm": 112.522
+    },
+    "ring_tip": {
+     "minMm": 106.351,
+     "medianMm": 111.129
+    },
+    "ring_pad": {
+     "minMm": 107.871,
+     "medianMm": 118.683
+    },
+    "ring_side": {
+     "minMm": 113.795,
+     "medianMm": 132.246
+    },
+    "pinky_tip": {
+     "minMm": 127.677,
+     "medianMm": 132.148
+    },
+    "pinky_pad": {
+     "minMm": 130.2,
+     "medianMm": 134.306
+    },
+    "pinky_side": {
+     "minMm": 137.502,
+     "medianMm": 149.313
+    },
+    "thumb": {
+     "minMm": 59.444,
+     "medianMm": 77.655
+    },
+    "palm_heel": {
+     "minMm": 110.73,
+     "medianMm": 145.743
+    },
+    "palm_centre": {
+     "minMm": 88.382,
+     "medianMm": 119.113
+    },
+    "applying_wrist": {
+     "minMm": 113.175,
+     "medianMm": 152.209
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.949,
+     "medianMm": 259.73
+    },
+    "treated_wrist": {
+     "minMm": 93.84,
+     "medianMm": 139.586
+    },
+    "treated_forearm": {
+     "minMm": -13.079,
+     "medianMm": 84.541
+    }
+   }
+  },
+  {
+   "frame": 117,
+   "contact": {
+    "index_tip": {
+     "minMm": 179.601,
+     "medianMm": 183.757
+    },
+    "index_pad": {
+     "minMm": 181.214,
+     "medianMm": 189.369
+    },
+    "index_side": {
+     "minMm": 185.559,
+     "medianMm": 201.873
+    },
+    "middle_tip": {
+     "minMm": 198.122,
+     "medianMm": 202.113
+    },
+    "middle_pad": {
+     "minMm": 198.838,
+     "medianMm": 207.92
+    },
+    "middle_side": {
+     "minMm": 203.279,
+     "medianMm": 220.836
+    },
+    "ring_tip": {
+     "minMm": 211.261,
+     "medianMm": 215.467
+    },
+    "ring_pad": {
+     "minMm": 213.585,
+     "medianMm": 224.809
+    },
+    "ring_side": {
+     "minMm": 223.094,
+     "medianMm": 241.039
+    },
+    "pinky_tip": {
+     "minMm": 233.075,
+     "medianMm": 236.882
+    },
+    "pinky_pad": {
+     "minMm": 236.909,
+     "medianMm": 241.227
+    },
+    "pinky_side": {
+     "minMm": 245.777,
+     "medianMm": 256.989
+    },
+    "thumb": {
+     "minMm": 164.041,
+     "medianMm": 181.932
+    },
+    "palm_heel": {
+     "minMm": 197.09,
+     "medianMm": 221.175
+    },
+    "palm_centre": {
+     "minMm": 187.605,
+     "medianMm": 220.335
+    },
+    "applying_wrist": {
+     "minMm": 186.96,
+     "medianMm": 223.94
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.049,
+     "medianMm": 259.806
+    },
+    "treated_wrist": {
+     "minMm": 93.941,
+     "medianMm": 139.67
+    },
+    "treated_forearm": {
+     "minMm": -13.052,
+     "medianMm": 84.55
+    }
+   }
+  },
+  {
+   "frame": 121,
+   "contact": {
+    "index_tip": {
+     "minMm": 220.574,
+     "medianMm": 224.389
+    },
+    "index_pad": {
+     "minMm": 222.727,
+     "medianMm": 230.757
+    },
+    "index_side": {
+     "minMm": 227.724,
+     "medianMm": 243.803
+    },
+    "middle_tip": {
+     "minMm": 237.635,
+     "medianMm": 241.475
+    },
+    "middle_pad": {
+     "minMm": 238.917,
+     "medianMm": 248.627
+    },
+    "middle_side": {
+     "minMm": 244.72,
+     "medianMm": 262.783
+    },
+    "ring_tip": {
+     "minMm": 250.391,
+     "medianMm": 254.125
+    },
+    "ring_pad": {
+     "minMm": 253.203,
+     "medianMm": 264.268
+    },
+    "ring_side": {
+     "minMm": 263.952,
+     "medianMm": 281.953
+    },
+    "pinky_tip": {
+     "minMm": 272.27,
+     "medianMm": 275.802
+    },
+    "pinky_pad": {
+     "minMm": 276.505,
+     "medianMm": 281.123
+    },
+    "pinky_side": {
+     "minMm": 285.954,
+     "medianMm": 296.966
+    },
+    "thumb": {
+     "minMm": 205.088,
+     "medianMm": 223.181
+    },
+    "palm_heel": {
+     "minMm": 230.125,
+     "medianMm": 253.041
+    },
+    "palm_centre": {
+     "minMm": 227.186,
+     "medianMm": 260.22
+    },
+    "applying_wrist": {
+     "minMm": 214.948,
+     "medianMm": 253.688
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.08,
+     "medianMm": 259.827
+    },
+    "treated_wrist": {
+     "minMm": 93.972,
+     "medianMm": 139.692
+    },
+    "treated_forearm": {
+     "minMm": -13.051,
+     "medianMm": 84.512
+    }
+   }
+  },
+  {
+   "frame": 125,
+   "contact": {
+    "index_tip": {
+     "minMm": 214.9,
+     "medianMm": 218.698
+    },
+    "index_pad": {
+     "minMm": 217.163,
+     "medianMm": 225.332
+    },
+    "index_side": {
+     "minMm": 222.536,
+     "medianMm": 238.911
+    },
+    "middle_tip": {
+     "minMm": 231.797,
+     "medianMm": 235.635
+    },
+    "middle_pad": {
+     "minMm": 233.136,
+     "medianMm": 242.905
+    },
+    "middle_side": {
+     "minMm": 239.113,
+     "medianMm": 257.412
+    },
+    "ring_tip": {
+     "minMm": 244.539,
+     "medianMm": 248.197
+    },
+    "ring_pad": {
+     "minMm": 247.301,
+     "medianMm": 258.309
+    },
+    "ring_side": {
+     "minMm": 258.236,
+     "medianMm": 276.25
+    },
+    "pinky_tip": {
+     "minMm": 266.228,
+     "medianMm": 269.923
+    },
+    "pinky_pad": {
+     "minMm": 270.576,
+     "medianMm": 275.292
+    },
+    "pinky_side": {
+     "minMm": 280.176,
+     "medianMm": 291.074
+    },
+    "thumb": {
+     "minMm": 199.508,
+     "medianMm": 217.504
+    },
+    "palm_heel": {
+     "minMm": 225.04,
+     "medianMm": 247.749
+    },
+    "palm_centre": {
+     "minMm": 221.578,
+     "medianMm": 254.774
+    },
+    "applying_wrist": {
+     "minMm": 210.493,
+     "medianMm": 248.719
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.06,
+     "medianMm": 259.804
+    },
+    "treated_wrist": {
+     "minMm": 93.951,
+     "medianMm": 139.665
+    },
+    "treated_forearm": {
+     "minMm": -13.07,
+     "medianMm": 84.439
+    }
+   }
+  },
+  {
+   "frame": 129,
+   "contact": {
+    "index_tip": {
+     "minMm": 200.713,
+     "medianMm": 204.555
+    },
+    "index_pad": {
+     "minMm": 203.609,
+     "medianMm": 212.137
+    },
+    "index_side": {
+     "minMm": 209.742,
+     "medianMm": 224.601
+    },
+    "middle_tip": {
+     "minMm": 216.821,
+     "medianMm": 220.69
+    },
+    "middle_pad": {
+     "minMm": 218.368,
+     "medianMm": 228.47
+    },
+    "middle_side": {
+     "minMm": 224.933,
+     "medianMm": 243.904
+    },
+    "ring_tip": {
+     "minMm": 229.348,
+     "medianMm": 232.965
+    },
+    "ring_pad": {
+     "minMm": 232.307,
+     "medianMm": 243.064
+    },
+    "ring_side": {
+     "minMm": 243.711,
+     "medianMm": 261.969
+    },
+    "pinky_tip": {
+     "minMm": 250.986,
+     "medianMm": 254.453
+    },
+    "pinky_pad": {
+     "minMm": 255.5,
+     "medianMm": 260.314
+    },
+    "pinky_side": {
+     "minMm": 265.262,
+     "medianMm": 275.998
+    },
+    "thumb": {
+     "minMm": 185.623,
+     "medianMm": 203.973
+    },
+    "palm_heel": {
+     "minMm": 210.764,
+     "medianMm": 234.675
+    },
+    "palm_centre": {
+     "minMm": 207.835,
+     "medianMm": 241.39
+    },
+    "applying_wrist": {
+     "minMm": 197.028,
+     "medianMm": 235.679
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.014,
+     "medianMm": 259.76
+    },
+    "treated_wrist": {
+     "minMm": 93.903,
+     "medianMm": 139.615
+    },
+    "treated_forearm": {
+     "minMm": -13.101,
+     "medianMm": 84.346
+    }
+   }
+  },
+  {
+   "frame": 133,
+   "contact": {
+    "index_tip": {
+     "minMm": 183.318,
+     "medianMm": 187.226
+    },
+    "index_pad": {
+     "minMm": 187.184,
+     "medianMm": 194.878
+    },
+    "index_side": {
+     "minMm": 188.721,
+     "medianMm": 203.369
+    },
+    "middle_tip": {
+     "minMm": 197.566,
+     "medianMm": 201.336
+    },
+    "middle_pad": {
+     "minMm": 199.838,
+     "medianMm": 209.784
+    },
+    "middle_side": {
+     "minMm": 206.966,
+     "medianMm": 223.934
+    },
+    "ring_tip": {
+     "minMm": 209.058,
+     "medianMm": 212.723
+    },
+    "ring_pad": {
+     "minMm": 212.502,
+     "medianMm": 222.631
+    },
+    "ring_side": {
+     "minMm": 224.633,
+     "medianMm": 243.631
+    },
+    "pinky_tip": {
+     "minMm": 230.467,
+     "medianMm": 233.899
+    },
+    "pinky_pad": {
+     "minMm": 235.367,
+     "medianMm": 240.353
+    },
+    "pinky_side": {
+     "minMm": 245.456,
+     "medianMm": 256.051
+    },
+    "thumb": {
+     "minMm": 168.671,
+     "medianMm": 187.072
+    },
+    "palm_heel": {
+     "minMm": 190.117,
+     "medianMm": 214.344
+    },
+    "palm_centre": {
+     "minMm": 190.768,
+     "medianMm": 222.759
+    },
+    "applying_wrist": {
+     "minMm": 178.705,
+     "medianMm": 217.057
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.947,
+     "medianMm": 259.698
+    },
+    "treated_wrist": {
+     "minMm": 93.833,
+     "medianMm": 139.544
+    },
+    "treated_forearm": {
+     "minMm": -13.142,
+     "medianMm": 84.236
+    }
+   }
+  },
+  {
+   "frame": 137,
+   "contact": {
+    "index_tip": {
+     "minMm": 159.102,
+     "medianMm": 165.152
+    },
+    "index_pad": {
+     "minMm": 158.731,
+     "medianMm": 165.67
+    },
+    "index_side": {
+     "minMm": 160.168,
+     "medianMm": 175.006
+    },
+    "middle_tip": {
+     "minMm": 179.655,
+     "medianMm": 182.849
+    },
+    "middle_pad": {
+     "minMm": 180.154,
+     "medianMm": 187.26
+    },
+    "middle_side": {
+     "minMm": 182.442,
+     "medianMm": 198.423
+    },
+    "ring_tip": {
+     "minMm": 189.081,
+     "medianMm": 192.21
+    },
+    "ring_pad": {
+     "minMm": 193.398,
+     "medianMm": 202.78
+    },
+    "ring_side": {
+     "minMm": 204.001,
+     "medianMm": 218.17
+    },
+    "pinky_tip": {
+     "minMm": 209.02,
+     "medianMm": 212.72
+    },
+    "pinky_pad": {
+     "minMm": 214.43,
+     "medianMm": 219.705
+    },
+    "pinky_side": {
+     "minMm": 225.238,
+     "medianMm": 235.557
+    },
+    "thumb": {
+     "minMm": 142.751,
+     "medianMm": 159.762
+    },
+    "palm_heel": {
+     "minMm": 170.236,
+     "medianMm": 192.925
+    },
+    "palm_centre": {
+     "minMm": 162.504,
+     "medianMm": 198.543
+    },
+    "applying_wrist": {
+     "minMm": 162.078,
+     "medianMm": 197.866
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.862,
+     "medianMm": 259.605
+    },
+    "treated_wrist": {
+     "minMm": 93.746,
+     "medianMm": 139.456
+    },
+    "treated_forearm": {
+     "minMm": -13.189,
+     "medianMm": 84.115
+    }
+   }
+  },
+  {
+   "frame": 141,
+   "contact": {
+    "index_tip": {
+     "minMm": 131.793,
+     "medianMm": 137.021
+    },
+    "index_pad": {
+     "minMm": 131.774,
+     "medianMm": 138.78
+    },
+    "index_side": {
+     "minMm": 133.251,
+     "medianMm": 148.106
+    },
+    "middle_tip": {
+     "minMm": 152.423,
+     "medianMm": 157.153
+    },
+    "middle_pad": {
+     "minMm": 152.016,
+     "medianMm": 159.92
+    },
+    "middle_side": {
+     "minMm": 155.252,
+     "medianMm": 171.11
+    },
+    "ring_tip": {
+     "minMm": 167.169,
+     "medianMm": 172.235
+    },
+    "ring_pad": {
+     "minMm": 168.475,
+     "medianMm": 178.546
+    },
+    "ring_side": {
+     "minMm": 176.492,
+     "medianMm": 192.003
+    },
+    "pinky_tip": {
+     "minMm": 190.894,
+     "medianMm": 193.475
+    },
+    "pinky_pad": {
+     "minMm": 193.379,
+     "medianMm": 196.723
+    },
+    "pinky_side": {
+     "minMm": 200.277,
+     "medianMm": 210.943
+    },
+    "thumb": {
+     "minMm": 115.401,
+     "medianMm": 132.774
+    },
+    "palm_heel": {
+     "minMm": 154.06,
+     "medianMm": 175.958
+    },
+    "palm_centre": {
+     "minMm": 135.553,
+     "medianMm": 172.0
+    },
+    "applying_wrist": {
+     "minMm": 139.318,
+     "medianMm": 178.995
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.762,
+     "medianMm": 259.492
+    },
+    "treated_wrist": {
+     "minMm": 93.644,
+     "medianMm": 139.356
+    },
+    "treated_forearm": {
+     "minMm": -13.243,
+     "medianMm": 83.984
+    }
+   }
+  },
+  {
+   "frame": 145,
+   "contact": {
+    "index_tip": {
+     "minMm": 110.139,
+     "medianMm": 115.403
+    },
+    "index_pad": {
+     "minMm": 110.083,
+     "medianMm": 117.11
+    },
+    "index_side": {
+     "minMm": 111.622,
+     "medianMm": 126.218
+    },
+    "middle_tip": {
+     "minMm": 130.449,
+     "medianMm": 134.938
+    },
+    "middle_pad": {
+     "minMm": 130.303,
+     "medianMm": 138.228
+    },
+    "middle_side": {
+     "minMm": 133.374,
+     "medianMm": 149.202
+    },
+    "ring_tip": {
+     "minMm": 144.697,
+     "medianMm": 149.395
+    },
+    "ring_pad": {
+     "minMm": 146.398,
+     "medianMm": 156.631
+    },
+    "ring_side": {
+     "minMm": 154.573,
+     "medianMm": 170.127
+    },
+    "pinky_tip": {
+     "minMm": 168.093,
+     "medianMm": 172.45
+    },
+    "pinky_pad": {
+     "minMm": 171.051,
+     "medianMm": 174.665
+    },
+    "pinky_side": {
+     "minMm": 178.37,
+     "medianMm": 188.885
+    },
+    "thumb": {
+     "minMm": 93.775,
+     "medianMm": 111.197
+    },
+    "palm_heel": {
+     "minMm": 131.727,
+     "medianMm": 158.575
+    },
+    "palm_centre": {
+     "minMm": 113.577,
+     "medianMm": 150.21
+    },
+    "applying_wrist": {
+     "minMm": 119.074,
+     "medianMm": 160.658
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.654,
+     "medianMm": 259.371
+    },
+    "treated_wrist": {
+     "minMm": 93.533,
+     "medianMm": 139.248
+    },
+    "treated_forearm": {
+     "minMm": -13.301,
+     "medianMm": 83.849
+    }
+   }
+  },
+  {
+   "frame": 149,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.536,
+     "medianMm": 102.849
+    },
+    "index_pad": {
+     "minMm": 97.544,
+     "medianMm": 104.515
+    },
+    "index_side": {
+     "minMm": 99.023,
+     "medianMm": 113.128
+    },
+    "middle_tip": {
+     "minMm": 117.881,
+     "medianMm": 122.382
+    },
+    "middle_pad": {
+     "minMm": 117.713,
+     "medianMm": 125.616
+    },
+    "middle_side": {
+     "minMm": 120.632,
+     "medianMm": 136.369
+    },
+    "ring_tip": {
+     "minMm": 132.036,
+     "medianMm": 136.625
+    },
+    "ring_pad": {
+     "minMm": 133.735,
+     "medianMm": 143.952
+    },
+    "ring_side": {
+     "minMm": 141.614,
+     "medianMm": 157.264
+    },
+    "pinky_tip": {
+     "minMm": 155.129,
+     "medianMm": 159.419
+    },
+    "pinky_pad": {
+     "minMm": 158.093,
+     "medianMm": 161.689
+    },
+    "pinky_side": {
+     "minMm": 165.419,
+     "medianMm": 176.019
+    },
+    "thumb": {
+     "minMm": 81.254,
+     "medianMm": 98.593
+    },
+    "palm_heel": {
+     "minMm": 118.584,
+     "medianMm": 145.737
+    },
+    "palm_centre": {
+     "minMm": 100.671,
+     "medianMm": 137.386
+    },
+    "applying_wrist": {
+     "minMm": 107.374,
+     "medianMm": 148.768
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.54,
+     "medianMm": 259.244
+    },
+    "treated_wrist": {
+     "minMm": 93.415,
+     "medianMm": 139.133
+    },
+    "treated_forearm": {
+     "minMm": -13.36,
+     "medianMm": 83.712
+    }
+   }
+  },
+  {
+   "frame": 153,
+   "contact": {
+    "index_tip": {
+     "minMm": 95.963,
+     "medianMm": 101.322
+    },
+    "index_pad": {
+     "minMm": 95.884,
+     "medianMm": 102.862
+    },
+    "index_side": {
+     "minMm": 97.281,
+     "medianMm": 111.427
+    },
+    "middle_tip": {
+     "minMm": 116.378,
+     "medianMm": 120.904
+    },
+    "middle_pad": {
+     "minMm": 116.147,
+     "medianMm": 123.973
+    },
+    "middle_side": {
+     "minMm": 118.849,
+     "medianMm": 134.516
+    },
+    "ring_tip": {
+     "minMm": 130.337,
+     "medianMm": 135.01
+    },
+    "ring_pad": {
+     "minMm": 132.023,
+     "medianMm": 142.238
+    },
+    "ring_side": {
+     "minMm": 139.674,
+     "medianMm": 155.286
+    },
+    "pinky_tip": {
+     "minMm": 153.097,
+     "medianMm": 157.337
+    },
+    "pinky_pad": {
+     "minMm": 156.06,
+     "medianMm": 159.654
+    },
+    "pinky_side": {
+     "minMm": 163.421,
+     "medianMm": 174.125
+    },
+    "thumb": {
+     "minMm": 79.761,
+     "medianMm": 97.03
+    },
+    "palm_heel": {
+     "minMm": 116.714,
+     "medianMm": 143.902
+    },
+    "palm_centre": {
+     "minMm": 98.841,
+     "medianMm": 135.559
+    },
+    "applying_wrist": {
+     "minMm": 105.719,
+     "medianMm": 147.019
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.424,
+     "medianMm": 259.118
+    },
+    "treated_wrist": {
+     "minMm": 93.296,
+     "medianMm": 139.019
+    },
+    "treated_forearm": {
+     "minMm": -13.42,
+     "medianMm": 83.578
+    }
+   }
+  },
+  {
+   "frame": 157,
+   "contact": {
+    "index_tip": {
+     "minMm": 96.28,
+     "medianMm": 101.751
+    },
+    "index_pad": {
+     "minMm": 96.077,
+     "medianMm": 103.07
+    },
+    "index_side": {
+     "minMm": 97.329,
+     "medianMm": 111.394
+    },
+    "middle_tip": {
+     "minMm": 116.882,
+     "medianMm": 121.452
+    },
+    "middle_pad": {
+     "minMm": 116.536,
+     "medianMm": 124.216
+    },
+    "middle_side": {
+     "minMm": 118.839,
+     "medianMm": 134.549
+    },
+    "ring_tip": {
+     "minMm": 130.519,
+     "medianMm": 135.337
+    },
+    "ring_pad": {
+     "minMm": 132.172,
+     "medianMm": 142.516
+    },
+    "ring_side": {
+     "minMm": 139.45,
+     "medianMm": 155.015
+    },
+    "pinky_tip": {
+     "minMm": 152.741,
+     "medianMm": 156.899
+    },
+    "pinky_pad": {
+     "minMm": 155.698,
+     "medianMm": 159.355
+    },
+    "pinky_side": {
+     "minMm": 163.106,
+     "medianMm": 174.015
+    },
+    "thumb": {
+     "minMm": 80.193,
+     "medianMm": 97.381
+    },
+    "palm_heel": {
+     "minMm": 116.663,
+     "medianMm": 143.862
+    },
+    "palm_centre": {
+     "minMm": 98.819,
+     "medianMm": 135.52
+    },
+    "applying_wrist": {
+     "minMm": 105.696,
+     "medianMm": 147.008
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.31,
+     "medianMm": 258.995
+    },
+    "treated_wrist": {
+     "minMm": 93.18,
+     "medianMm": 138.906
+    },
+    "treated_forearm": {
+     "minMm": -13.477,
+     "medianMm": 83.45
+    }
+   }
+  },
+  {
+   "frame": 161,
+   "contact": {
+    "index_tip": {
+     "minMm": 96.679,
+     "medianMm": 102.334
+    },
+    "index_pad": {
+     "minMm": 96.348,
+     "medianMm": 103.369
+    },
+    "index_side": {
+     "minMm": 97.423,
+     "medianMm": 111.313
+    },
+    "middle_tip": {
+     "minMm": 117.604,
+     "medianMm": 122.229
+    },
+    "middle_pad": {
+     "minMm": 117.097,
+     "medianMm": 124.566
+    },
+    "middle_side": {
+     "minMm": 118.869,
+     "medianMm": 134.617
+    },
+    "ring_tip": {
+     "minMm": 130.851,
+     "medianMm": 135.838
+    },
+    "ring_pad": {
+     "minMm": 132.447,
+     "medianMm": 142.935
+    },
+    "ring_side": {
+     "minMm": 139.211,
+     "medianMm": 154.706
+    },
+    "pinky_tip": {
+     "minMm": 152.366,
+     "medianMm": 156.686
+    },
+    "pinky_pad": {
+     "minMm": 155.297,
+     "medianMm": 159.163
+    },
+    "pinky_side": {
+     "minMm": 162.735,
+     "medianMm": 173.549
+    },
+    "thumb": {
+     "minMm": 80.76,
+     "medianMm": 97.834
+    },
+    "palm_heel": {
+     "minMm": 116.614,
+     "medianMm": 143.823
+    },
+    "palm_centre": {
+     "minMm": 98.809,
+     "medianMm": 135.486
+    },
+    "applying_wrist": {
+     "minMm": 105.675,
+     "medianMm": 146.998
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.202,
+     "medianMm": 258.879
+    },
+    "treated_wrist": {
+     "minMm": 93.07,
+     "medianMm": 138.801
+    },
+    "treated_forearm": {
+     "minMm": -13.531,
+     "medianMm": 83.332
+    }
+   }
+  },
+  {
+   "frame": 165,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.135,
+     "medianMm": 103.046
+    },
+    "index_pad": {
+     "minMm": 96.644,
+     "medianMm": 103.722
+    },
+    "index_side": {
+     "minMm": 97.553,
+     "medianMm": 111.252
+    },
+    "middle_tip": {
+     "minMm": 118.478,
+     "medianMm": 123.164
+    },
+    "middle_pad": {
+     "minMm": 117.709,
+     "medianMm": 124.987
+    },
+    "middle_side": {
+     "minMm": 118.938,
+     "medianMm": 134.711
+    },
+    "ring_tip": {
+     "minMm": 131.329,
+     "medianMm": 136.331
+    },
+    "ring_pad": {
+     "minMm": 132.845,
+     "medianMm": 143.463
+    },
+    "ring_side": {
+     "minMm": 138.998,
+     "medianMm": 154.318
+    },
+    "pinky_tip": {
+     "minMm": 152.051,
+     "medianMm": 156.297
+    },
+    "pinky_pad": {
+     "minMm": 154.929,
+     "medianMm": 158.994
+    },
+    "pinky_side": {
+     "minMm": 162.358,
+     "medianMm": 173.15
+    },
+    "thumb": {
+     "minMm": 81.392,
+     "medianMm": 98.33
+    },
+    "palm_heel": {
+     "minMm": 116.569,
+     "medianMm": 143.788
+    },
+    "palm_centre": {
+     "minMm": 98.808,
+     "medianMm": 135.458
+    },
+    "applying_wrist": {
+     "minMm": 105.658,
+     "medianMm": 146.99
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.105,
+     "medianMm": 258.787
+    },
+    "treated_wrist": {
+     "minMm": 92.97,
+     "medianMm": 138.705
+    },
+    "treated_forearm": {
+     "minMm": -13.579,
+     "medianMm": 83.227
+    }
+   }
+  },
+  {
+   "frame": 169,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.639,
+     "medianMm": 103.811
+    },
+    "index_pad": {
+     "minMm": 96.838,
+     "medianMm": 104.089
+    },
+    "index_side": {
+     "minMm": 97.698,
+     "medianMm": 111.403
+    },
+    "middle_tip": {
+     "minMm": 119.401,
+     "medianMm": 124.147
+    },
+    "middle_pad": {
+     "minMm": 118.068,
+     "medianMm": 125.426
+    },
+    "middle_side": {
+     "minMm": 119.032,
+     "medianMm": 134.643
+    },
+    "ring_tip": {
+     "minMm": 131.901,
+     "medianMm": 136.705
+    },
+    "ring_pad": {
+     "minMm": 133.32,
+     "medianMm": 144.038
+    },
+    "ring_side": {
+     "minMm": 138.834,
+     "medianMm": 154.091
+    },
+    "pinky_tip": {
+     "minMm": 151.804,
+     "medianMm": 156.02
+    },
+    "pinky_pad": {
+     "minMm": 154.64,
+     "medianMm": 158.871
+    },
+    "pinky_side": {
+     "minMm": 162.02,
+     "medianMm": 172.949
+    },
+    "thumb": {
+     "minMm": 82.015,
+     "medianMm": 98.973
+    },
+    "palm_heel": {
+     "minMm": 116.53,
+     "medianMm": 143.759
+    },
+    "palm_centre": {
+     "minMm": 98.813,
+     "medianMm": 135.435
+    },
+    "applying_wrist": {
+     "minMm": 105.644,
+     "medianMm": 146.984
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.023,
+     "medianMm": 258.699
+    },
+    "treated_wrist": {
+     "minMm": 92.881,
+     "medianMm": 138.624
+    },
+    "treated_forearm": {
+     "minMm": -13.62,
+     "medianMm": 83.138
+    }
+   }
+  },
+  {
+   "frame": 173,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.114,
+     "medianMm": 104.516
+    },
+    "index_pad": {
+     "minMm": 97.015,
+     "medianMm": 104.417
+    },
+    "index_side": {
+     "minMm": 97.772,
+     "medianMm": 111.542
+    },
+    "middle_tip": {
+     "minMm": 120.241,
+     "medianMm": 125.038
+    },
+    "middle_pad": {
+     "minMm": 118.417,
+     "medianMm": 125.823
+    },
+    "middle_side": {
+     "minMm": 119.133,
+     "medianMm": 134.572
+    },
+    "ring_tip": {
+     "minMm": 132.469,
+     "medianMm": 137.107
+    },
+    "ring_pad": {
+     "minMm": 133.792,
+     "medianMm": 144.574
+    },
+    "ring_side": {
+     "minMm": 138.719,
+     "medianMm": 153.939
+    },
+    "pinky_tip": {
+     "minMm": 151.644,
+     "medianMm": 155.831
+    },
+    "pinky_pad": {
+     "minMm": 154.442,
+     "medianMm": 158.795
+    },
+    "pinky_side": {
+     "minMm": 161.753,
+     "medianMm": 172.69
+    },
+    "thumb": {
+     "minMm": 82.554,
+     "medianMm": 99.513
+    },
+    "palm_heel": {
+     "minMm": 116.5,
+     "medianMm": 143.736
+    },
+    "palm_centre": {
+     "minMm": 98.823,
+     "medianMm": 135.419
+    },
+    "applying_wrist": {
+     "minMm": 105.633,
+     "medianMm": 146.98
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.959,
+     "medianMm": 258.617
+    },
+    "treated_wrist": {
+     "minMm": 92.811,
+     "medianMm": 138.561
+    },
+    "treated_forearm": {
+     "minMm": -13.652,
+     "medianMm": 83.071
+    }
+   }
+  },
+  {
+   "frame": 177,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.466,
+     "medianMm": 105.031
+    },
+    "index_pad": {
+     "minMm": 97.153,
+     "medianMm": 104.651
+    },
+    "index_side": {
+     "minMm": 97.824,
+     "medianMm": 111.456
+    },
+    "middle_tip": {
+     "minMm": 120.852,
+     "medianMm": 125.684
+    },
+    "middle_pad": {
+     "minMm": 118.682,
+     "medianMm": 126.129
+    },
+    "middle_side": {
+     "minMm": 119.215,
+     "medianMm": 134.613
+    },
+    "ring_tip": {
+     "minMm": 132.903,
+     "medianMm": 137.429
+    },
+    "ring_pad": {
+     "minMm": 134.153,
+     "medianMm": 144.968
+    },
+    "ring_side": {
+     "minMm": 138.651,
+     "medianMm": 153.881
+    },
+    "pinky_tip": {
+     "minMm": 151.565,
+     "medianMm": 155.74
+    },
+    "pinky_pad": {
+     "minMm": 154.326,
+     "medianMm": 158.759
+    },
+    "pinky_side": {
+     "minMm": 161.576,
+     "medianMm": 172.574
+    },
+    "thumb": {
+     "minMm": 82.934,
+     "medianMm": 99.882
+    },
+    "palm_heel": {
+     "minMm": 116.48,
+     "medianMm": 143.722
+    },
+    "palm_centre": {
+     "minMm": 98.834,
+     "medianMm": 135.409
+    },
+    "applying_wrist": {
+     "minMm": 105.627,
+     "medianMm": 146.977
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.917,
+     "medianMm": 258.572
+    },
+    "treated_wrist": {
+     "minMm": 92.766,
+     "medianMm": 138.521
+    },
+    "treated_forearm": {
+     "minMm": -13.672,
+     "medianMm": 83.028
+    }
+   }
+  },
+  {
+   "frame": 181,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.603,
+     "medianMm": 105.229
+    },
+    "index_pad": {
+     "minMm": 97.208,
+     "medianMm": 104.74
+    },
+    "index_side": {
+     "minMm": 97.845,
+     "medianMm": 111.424
+    },
+    "middle_tip": {
+     "minMm": 121.085,
+     "medianMm": 125.931
+    },
+    "middle_pad": {
+     "minMm": 118.786,
+     "medianMm": 126.305
+    },
+    "middle_side": {
+     "minMm": 119.248,
+     "medianMm": 134.608
+    },
+    "ring_tip": {
+     "minMm": 133.075,
+     "medianMm": 137.559
+    },
+    "ring_pad": {
+     "minMm": 134.295,
+     "medianMm": 145.121
+    },
+    "ring_side": {
+     "minMm": 138.629,
+     "medianMm": 153.864
+    },
+    "pinky_tip": {
+     "minMm": 151.544,
+     "medianMm": 155.715
+    },
+    "pinky_pad": {
+     "minMm": 154.287,
+     "medianMm": 158.75
+    },
+    "pinky_side": {
+     "minMm": 161.495,
+     "medianMm": 172.531
+    },
+    "thumb": {
+     "minMm": 83.076,
+     "medianMm": 100.019
+    },
+    "palm_heel": {
+     "minMm": 116.472,
+     "medianMm": 143.717
+    },
+    "palm_centre": {
+     "minMm": 98.844,
+     "medianMm": 135.406
+    },
+    "applying_wrist": {
+     "minMm": 105.625,
+     "medianMm": 146.976
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.902,
+     "medianMm": 258.555
+    },
+    "treated_wrist": {
+     "minMm": 92.75,
+     "medianMm": 138.506
+    },
+    "treated_forearm": {
+     "minMm": -13.679,
+     "medianMm": 83.012
+    }
+   }
+  },
+  {
+   "frame": 185,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.526,
+     "medianMm": 105.114
+    },
+    "index_pad": {
+     "minMm": 97.183,
+     "medianMm": 104.695
+    },
+    "index_side": {
+     "minMm": 97.842,
+     "medianMm": 111.456
+    },
+    "middle_tip": {
+     "minMm": 120.947,
+     "medianMm": 125.784
+    },
+    "middle_pad": {
+     "minMm": 118.73,
+     "medianMm": 126.205
+    },
+    "middle_side": {
+     "minMm": 119.237,
+     "medianMm": 134.631
+    },
+    "ring_tip": {
+     "minMm": 132.974,
+     "medianMm": 137.484
+    },
+    "ring_pad": {
+     "minMm": 134.214,
+     "medianMm": 145.033
+    },
+    "ring_side": {
+     "minMm": 138.652,
+     "medianMm": 153.884
+    },
+    "pinky_tip": {
+     "minMm": 151.565,
+     "medianMm": 155.738
+    },
+    "pinky_pad": {
+     "minMm": 154.32,
+     "medianMm": 158.764
+    },
+    "pinky_side": {
+     "minMm": 161.554,
+     "medianMm": 172.567
+    },
+    "thumb": {
+     "minMm": 82.994,
+     "medianMm": 99.942
+    },
+    "palm_heel": {
+     "minMm": 116.487,
+     "medianMm": 143.729
+    },
+    "palm_centre": {
+     "minMm": 98.866,
+     "medianMm": 135.419
+    },
+    "applying_wrist": {
+     "minMm": 105.631,
+     "medianMm": 146.979
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.922,
+     "medianMm": 258.577
+    },
+    "treated_wrist": {
+     "minMm": 92.772,
+     "medianMm": 138.526
+    },
+    "treated_forearm": {
+     "minMm": -13.671,
+     "medianMm": 83.037
+    }
+   }
+  },
+  {
+   "frame": 189,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.322,
+     "medianMm": 104.801
+    },
+    "index_pad": {
+     "minMm": 97.12,
+     "medianMm": 104.574
+    },
+    "index_side": {
+     "minMm": 97.838,
+     "medianMm": 111.546
+    },
+    "middle_tip": {
+     "minMm": 120.571,
+     "medianMm": 125.384
+    },
+    "middle_pad": {
+     "minMm": 118.581,
+     "medianMm": 126.003
+    },
+    "middle_side": {
+     "minMm": 119.209,
+     "medianMm": 134.613
+    },
+    "ring_tip": {
+     "minMm": 132.709,
+     "medianMm": 137.291
+    },
+    "ring_pad": {
+     "minMm": 133.999,
+     "medianMm": 144.798
+    },
+    "ring_side": {
+     "minMm": 138.722,
+     "medianMm": 153.954
+    },
+    "pinky_tip": {
+     "minMm": 151.633,
+     "medianMm": 155.812
+    },
+    "pinky_pad": {
+     "minMm": 154.417,
+     "medianMm": 158.811
+    },
+    "pinky_side": {
+     "minMm": 161.701,
+     "medianMm": 172.671
+    },
+    "thumb": {
+     "minMm": 82.773,
+     "medianMm": 99.731
+    },
+    "palm_heel": {
+     "minMm": 116.532,
+     "medianMm": 143.767
+    },
+    "palm_centre": {
+     "minMm": 98.916,
+     "medianMm": 135.46
+    },
+    "applying_wrist": {
+     "minMm": 105.651,
+     "medianMm": 146.99
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 140.978,
+     "medianMm": 258.643
+    },
+    "treated_wrist": {
+     "minMm": 92.833,
+     "medianMm": 138.579
+    },
+    "treated_forearm": {
+     "minMm": -13.648,
+     "medianMm": 83.109
+    }
+   }
+  },
+  {
+   "frame": 193,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.028,
+     "medianMm": 104.344
+    },
+    "index_pad": {
+     "minMm": 97.035,
+     "medianMm": 104.396
+    },
+    "index_side": {
+     "minMm": 97.836,
+     "medianMm": 111.593
+    },
+    "middle_tip": {
+     "minMm": 120.02,
+     "medianMm": 124.796
+    },
+    "middle_pad": {
+     "minMm": 118.372,
+     "medianMm": 125.771
+    },
+    "middle_side": {
+     "minMm": 119.176,
+     "medianMm": 134.693
+    },
+    "ring_tip": {
+     "minMm": 132.333,
+     "medianMm": 137.025
+    },
+    "ring_pad": {
+     "minMm": 133.695,
+     "medianMm": 144.458
+    },
+    "ring_side": {
+     "minMm": 138.835,
+     "medianMm": 154.066
+    },
+    "pinky_tip": {
+     "minMm": 151.761,
+     "medianMm": 155.953
+    },
+    "pinky_pad": {
+     "minMm": 154.578,
+     "medianMm": 158.893
+    },
+    "pinky_side": {
+     "minMm": 161.921,
+     "medianMm": 172.828
+    },
+    "thumb": {
+     "minMm": 82.441,
+     "medianMm": 99.408
+    },
+    "palm_heel": {
+     "minMm": 116.602,
+     "medianMm": 143.825
+    },
+    "palm_centre": {
+     "minMm": 98.989,
+     "medianMm": 135.521
+    },
+    "applying_wrist": {
+     "minMm": 105.683,
+     "medianMm": 147.007
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.067,
+     "medianMm": 258.764
+    },
+    "treated_wrist": {
+     "minMm": 92.926,
+     "medianMm": 138.665
+    },
+    "treated_forearm": {
+     "minMm": -13.61,
+     "medianMm": 83.222
+    }
+   }
+  },
+  {
+   "frame": 197,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.685,
+     "medianMm": 103.8
+    },
+    "index_pad": {
+     "minMm": 96.948,
+     "medianMm": 104.182
+    },
+    "index_side": {
+     "minMm": 97.825,
+     "medianMm": 111.545
+    },
+    "middle_tip": {
+     "minMm": 119.359,
+     "medianMm": 124.088
+    },
+    "middle_pad": {
+     "minMm": 118.135,
+     "medianMm": 125.493
+    },
+    "middle_side": {
+     "minMm": 119.149,
+     "medianMm": 134.824
+    },
+    "ring_tip": {
+     "minMm": 131.911,
+     "medianMm": 136.744
+    },
+    "ring_pad": {
+     "minMm": 133.355,
+     "medianMm": 144.059
+    },
+    "ring_side": {
+     "minMm": 138.996,
+     "medianMm": 154.302
+    },
+    "pinky_tip": {
+     "minMm": 151.958,
+     "medianMm": 156.172
+    },
+    "pinky_pad": {
+     "minMm": 154.807,
+     "medianMm": 159.016
+    },
+    "pinky_side": {
+     "minMm": 162.209,
+     "medianMm": 173.131
+    },
+    "thumb": {
+     "minMm": 82.03,
+     "medianMm": 98.931
+    },
+    "palm_heel": {
+     "minMm": 116.692,
+     "medianMm": 143.901
+    },
+    "palm_centre": {
+     "minMm": 99.084,
+     "medianMm": 135.601
+    },
+    "applying_wrist": {
+     "minMm": 105.725,
+     "medianMm": 147.029
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.182,
+     "medianMm": 258.876
+    },
+    "treated_wrist": {
+     "minMm": 93.041,
+     "medianMm": 138.777
+    },
+    "treated_forearm": {
+     "minMm": -13.561,
+     "medianMm": 83.371
+    }
+   }
+  },
+  {
+   "frame": 201,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.333,
+     "medianMm": 103.226
+    },
+    "index_pad": {
+     "minMm": 96.853,
+     "medianMm": 103.951
+    },
+    "index_side": {
+     "minMm": 97.778,
+     "medianMm": 111.58
+    },
+    "middle_tip": {
+     "minMm": 118.651,
+     "medianMm": 123.328
+    },
+    "middle_pad": {
+     "minMm": 117.902,
+     "medianMm": 125.196
+    },
+    "middle_side": {
+     "minMm": 119.135,
+     "medianMm": 134.942
+    },
+    "ring_tip": {
+     "minMm": 131.496,
+     "medianMm": 136.492
+    },
+    "ring_pad": {
+     "minMm": 133.023,
+     "medianMm": 143.642
+    },
+    "ring_side": {
+     "minMm": 139.198,
+     "medianMm": 154.573
+    },
+    "pinky_tip": {
+     "minMm": 152.224,
+     "medianMm": 156.465
+    },
+    "pinky_pad": {
+     "minMm": 155.112,
+     "medianMm": 159.181
+    },
+    "pinky_side": {
+     "minMm": 162.554,
+     "medianMm": 173.348
+    },
+    "thumb": {
+     "minMm": 81.572,
+     "medianMm": 98.523
+    },
+    "palm_heel": {
+     "minMm": 116.8,
+     "medianMm": 143.991
+    },
+    "palm_centre": {
+     "minMm": 99.195,
+     "medianMm": 135.692
+    },
+    "applying_wrist": {
+     "minMm": 105.775,
+     "medianMm": 147.056
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.32,
+     "medianMm": 259.038
+    },
+    "treated_wrist": {
+     "minMm": 93.181,
+     "medianMm": 138.913
+    },
+    "treated_forearm": {
+     "minMm": -13.502,
+     "medianMm": 83.553
+    }
+   }
+  },
+  {
+   "frame": 205,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.006,
+     "medianMm": 102.673
+    },
+    "index_pad": {
+     "minMm": 96.666,
+     "medianMm": 103.724
+    },
+    "index_side": {
+     "minMm": 97.743,
+     "medianMm": 111.777
+    },
+    "middle_tip": {
+     "minMm": 117.959,
+     "medianMm": 122.581
+    },
+    "middle_pad": {
+     "minMm": 117.448,
+     "medianMm": 124.907
+    },
+    "middle_side": {
+     "minMm": 119.144,
+     "medianMm": 134.94
+    },
+    "ring_tip": {
+     "minMm": 131.141,
+     "medianMm": 136.157
+    },
+    "ring_pad": {
+     "minMm": 132.741,
+     "medianMm": 143.251
+    },
+    "ring_side": {
+     "minMm": 139.448,
+     "medianMm": 154.921
+    },
+    "pinky_tip": {
+     "minMm": 152.552,
+     "medianMm": 156.853
+    },
+    "pinky_pad": {
+     "minMm": 155.489,
+     "medianMm": 159.387
+    },
+    "pinky_side": {
+     "minMm": 162.943,
+     "medianMm": 173.766
+    },
+    "thumb": {
+     "minMm": 81.097,
+     "medianMm": 98.191
+    },
+    "palm_heel": {
+     "minMm": 116.921,
+     "medianMm": 144.093
+    },
+    "palm_centre": {
+     "minMm": 99.323,
+     "medianMm": 135.792
+    },
+    "applying_wrist": {
+     "minMm": 105.833,
+     "medianMm": 147.086
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.477,
+     "medianMm": 259.204
+    },
+    "treated_wrist": {
+     "minMm": 93.34,
+     "medianMm": 139.067
+    },
+    "treated_forearm": {
+     "minMm": -13.434,
+     "medianMm": 83.761
+    }
+   }
+  },
+  {
+   "frame": 209,
+   "contact": {
+    "index_tip": {
+     "minMm": 96.7,
+     "medianMm": 102.183
+    },
+    "index_pad": {
+     "minMm": 96.483,
+     "medianMm": 103.52
+    },
+    "index_side": {
+     "minMm": 97.732,
+     "medianMm": 111.974
+    },
+    "middle_tip": {
+     "minMm": 117.335,
+     "medianMm": 121.902
+    },
+    "middle_pad": {
+     "minMm": 116.981,
+     "medianMm": 124.649
+    },
+    "middle_side": {
+     "minMm": 119.18,
+     "medianMm": 134.957
+    },
+    "ring_tip": {
+     "minMm": 130.875,
+     "medianMm": 135.738
+    },
+    "ring_pad": {
+     "minMm": 132.535,
+     "medianMm": 142.915
+    },
+    "ring_side": {
+     "minMm": 139.736,
+     "medianMm": 155.274
+    },
+    "pinky_tip": {
+     "minMm": 152.955,
+     "medianMm": 157.089
+    },
+    "pinky_pad": {
+     "minMm": 155.922,
+     "medianMm": 159.626
+    },
+    "pinky_side": {
+     "minMm": 163.355,
+     "medianMm": 174.262
+    },
+    "thumb": {
+     "minMm": 80.636,
+     "medianMm": 97.795
+    },
+    "palm_heel": {
+     "minMm": 117.051,
+     "medianMm": 144.201
+    },
+    "palm_centre": {
+     "minMm": 99.462,
+     "medianMm": 135.895
+    },
+    "applying_wrist": {
+     "minMm": 105.895,
+     "medianMm": 147.118
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.646,
+     "medianMm": 259.412
+    },
+    "treated_wrist": {
+     "minMm": 93.515,
+     "medianMm": 139.236
+    },
+    "treated_forearm": {
+     "minMm": -13.36,
+     "medianMm": 83.99
+    }
+   }
+  },
+  {
+   "frame": 213,
+   "contact": {
+    "index_tip": {
+     "minMm": 110.827,
+     "medianMm": 116.186
+    },
+    "index_pad": {
+     "minMm": 110.656,
+     "medianMm": 117.77
+    },
+    "index_side": {
+     "minMm": 112.08,
+     "medianMm": 126.849
+    },
+    "middle_tip": {
+     "minMm": 131.319,
+     "medianMm": 135.84
+    },
+    "middle_pad": {
+     "minMm": 131.076,
+     "medianMm": 138.881
+    },
+    "middle_side": {
+     "minMm": 133.701,
+     "medianMm": 149.44
+    },
+    "ring_tip": {
+     "minMm": 145.162,
+     "medianMm": 149.911
+    },
+    "ring_pad": {
+     "minMm": 146.853,
+     "medianMm": 157.137
+    },
+    "ring_side": {
+     "minMm": 154.625,
+     "medianMm": 170.105
+    },
+    "pinky_tip": {
+     "minMm": 167.929,
+     "medianMm": 172.206
+    },
+    "pinky_pad": {
+     "minMm": 170.887,
+     "medianMm": 174.523
+    },
+    "pinky_side": {
+     "minMm": 178.305,
+     "medianMm": 189.039
+    },
+    "thumb": {
+     "minMm": 94.619,
+     "medianMm": 111.942
+    },
+    "palm_heel": {
+     "minMm": 132.053,
+     "medianMm": 158.897
+    },
+    "palm_centre": {
+     "minMm": 114.244,
+     "medianMm": 150.515
+    },
+    "applying_wrist": {
+     "minMm": 119.17,
+     "medianMm": 160.673
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.825,
+     "medianMm": 259.572
+    },
+    "treated_wrist": {
+     "minMm": 93.702,
+     "medianMm": 139.417
+    },
+    "treated_forearm": {
+     "minMm": -13.281,
+     "medianMm": 84.236
+    }
+   }
+  },
+  {
+   "frame": 217,
+   "contact": {
+    "index_tip": {
+     "minMm": 183.737,
+     "medianMm": 187.66
+    },
+    "index_pad": {
+     "minMm": 187.512,
+     "medianMm": 195.363
+    },
+    "index_side": {
+     "minMm": 189.041,
+     "medianMm": 203.542
+    },
+    "middle_tip": {
+     "minMm": 198.089,
+     "medianMm": 201.948
+    },
+    "middle_pad": {
+     "minMm": 200.279,
+     "medianMm": 210.289
+    },
+    "middle_side": {
+     "minMm": 206.939,
+     "medianMm": 223.991
+    },
+    "ring_tip": {
+     "minMm": 209.292,
+     "medianMm": 212.945
+    },
+    "ring_pad": {
+     "minMm": 212.685,
+     "medianMm": 222.767
+    },
+    "ring_side": {
+     "minMm": 224.399,
+     "medianMm": 243.657
+    },
+    "pinky_tip": {
+     "minMm": 230.151,
+     "medianMm": 233.516
+    },
+    "pinky_pad": {
+     "minMm": 235.009,
+     "medianMm": 239.983
+    },
+    "pinky_side": {
+     "minMm": 245.124,
+     "medianMm": 255.948
+    },
+    "thumb": {
+     "minMm": 168.782,
+     "medianMm": 187.402
+    },
+    "palm_heel": {
+     "minMm": 190.108,
+     "medianMm": 214.339
+    },
+    "palm_centre": {
+     "minMm": 191.317,
+     "medianMm": 222.759
+    },
+    "applying_wrist": {
+     "minMm": 178.529,
+     "medianMm": 216.829
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.009,
+     "medianMm": 259.734
+    },
+    "treated_wrist": {
+     "minMm": 93.896,
+     "medianMm": 139.604
+    },
+    "treated_forearm": {
+     "minMm": -13.198,
+     "medianMm": 84.493
+    }
+   }
+  },
+  {
+   "frame": 221,
+   "contact": {
+    "index_tip": {
+     "minMm": 220.761,
+     "medianMm": 224.618
+    },
+    "index_pad": {
+     "minMm": 222.87,
+     "medianMm": 230.899
+    },
+    "index_side": {
+     "minMm": 227.701,
+     "medianMm": 243.826
+    },
+    "middle_tip": {
+     "minMm": 237.909,
+     "medianMm": 241.806
+    },
+    "middle_pad": {
+     "minMm": 239.143,
+     "medianMm": 248.793
+    },
+    "middle_side": {
+     "minMm": 244.687,
+     "medianMm": 262.621
+    },
+    "ring_tip": {
+     "minMm": 250.492,
+     "medianMm": 254.285
+    },
+    "ring_pad": {
+     "minMm": 253.294,
+     "medianMm": 264.354
+    },
+    "ring_side": {
+     "minMm": 263.817,
+     "medianMm": 281.924
+    },
+    "pinky_tip": {
+     "minMm": 272.082,
+     "medianMm": 275.573
+    },
+    "pinky_pad": {
+     "minMm": 276.323,
+     "medianMm": 280.932
+    },
+    "pinky_side": {
+     "minMm": 285.767,
+     "medianMm": 296.867
+    },
+    "thumb": {
+     "minMm": 205.319,
+     "medianMm": 223.391
+    },
+    "palm_heel": {
+     "minMm": 230.119,
+     "medianMm": 253.147
+    },
+    "palm_centre": {
+     "minMm": 227.198,
+     "medianMm": 260.238
+    },
+    "applying_wrist": {
+     "minMm": 214.914,
+     "medianMm": 253.284
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.193,
+     "medianMm": 259.926
+    },
+    "treated_wrist": {
+     "minMm": 94.091,
+     "medianMm": 139.793
+    },
+    "treated_forearm": {
+     "minMm": -13.093,
+     "medianMm": 84.756
+    }
+   }
+  },
+  {
+   "frame": 225,
+   "contact": {
+    "index_tip": {
+     "minMm": 190.259,
+     "medianMm": 194.341
+    },
+    "index_pad": {
+     "minMm": 191.929,
+     "medianMm": 200.053
+    },
+    "index_side": {
+     "minMm": 196.324,
+     "medianMm": 212.447
+    },
+    "middle_tip": {
+     "minMm": 208.471,
+     "medianMm": 212.397
+    },
+    "middle_pad": {
+     "minMm": 209.296,
+     "medianMm": 218.496
+    },
+    "middle_side": {
+     "minMm": 213.905,
+     "medianMm": 231.393
+    },
+    "ring_tip": {
+     "minMm": 221.409,
+     "medianMm": 225.518
+    },
+    "ring_pad": {
+     "minMm": 223.825,
+     "medianMm": 235.151
+    },
+    "ring_side": {
+     "minMm": 233.495,
+     "medianMm": 251.502
+    },
+    "pinky_tip": {
+     "minMm": 243.027,
+     "medianMm": 246.796
+    },
+    "pinky_pad": {
+     "minMm": 246.929,
+     "medianMm": 251.394
+    },
+    "pinky_side": {
+     "minMm": 255.973,
+     "medianMm": 267.284
+    },
+    "thumb": {
+     "minMm": 174.691,
+     "medianMm": 192.757
+    },
+    "palm_heel": {
+     "minMm": 205.428,
+     "medianMm": 229.477
+    },
+    "palm_centre": {
+     "minMm": 197.684,
+     "medianMm": 230.168
+    },
+    "applying_wrist": {
+     "minMm": 194.126,
+     "medianMm": 231.215
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.376,
+     "medianMm": 260.186
+    },
+    "treated_wrist": {
+     "minMm": 94.283,
+     "medianMm": 139.981
+    },
+    "treated_forearm": {
+     "minMm": -12.928,
+     "medianMm": 85.017
+    }
+   }
+  },
+  {
+   "frame": 229,
+   "contact": {
+    "index_tip": {
+     "minMm": 108.616,
+     "medianMm": 112.957
+    },
+    "index_pad": {
+     "minMm": 109.479,
+     "medianMm": 118.503
+    },
+    "index_side": {
+     "minMm": 111.942,
+     "medianMm": 128.375
+    },
+    "middle_tip": {
+     "minMm": 128.769,
+     "medianMm": 133.215
+    },
+    "middle_pad": {
+     "minMm": 128.627,
+     "medianMm": 136.961
+    },
+    "middle_side": {
+     "minMm": 130.649,
+     "medianMm": 148.766
+    },
+    "ring_tip": {
+     "minMm": 142.017,
+     "medianMm": 146.861
+    },
+    "ring_pad": {
+     "minMm": 143.639,
+     "medianMm": 154.309
+    },
+    "ring_side": {
+     "minMm": 150.622,
+     "medianMm": 168.454
+    },
+    "pinky_tip": {
+     "minMm": 163.437,
+     "medianMm": 167.609
+    },
+    "pinky_pad": {
+     "minMm": 166.444,
+     "medianMm": 170.51
+    },
+    "pinky_side": {
+     "minMm": 174.236,
+     "medianMm": 185.568
+    },
+    "thumb": {
+     "minMm": 93.233,
+     "medianMm": 111.271
+    },
+    "palm_heel": {
+     "minMm": 139.576,
+     "medianMm": 170.576
+    },
+    "palm_centre": {
+     "minMm": 120.204,
+     "medianMm": 153.064
+    },
+    "applying_wrist": {
+     "minMm": 136.272,
+     "medianMm": 175.734
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.552,
+     "medianMm": 260.438
+    },
+    "treated_wrist": {
+     "minMm": 94.466,
+     "medianMm": 140.163
+    },
+    "treated_forearm": {
+     "minMm": -12.769,
+     "medianMm": 85.271
+    }
+   }
+  },
+  {
+   "frame": 233,
+   "contact": {
+    "index_tip": {
+     "minMm": 12.997,
+     "medianMm": 15.216
+    },
+    "index_pad": {
+     "minMm": 11.094,
+     "medianMm": 17.907
+    },
+    "index_side": {
+     "minMm": -8.688,
+     "medianMm": 8.705
+    },
+    "middle_tip": {
+     "minMm": 26.691,
+     "medianMm": 28.631
+    },
+    "middle_pad": {
+     "minMm": 22.867,
+     "medianMm": 31.794
+    },
+    "middle_side": {
+     "minMm": 14.313,
+     "medianMm": 27.72
+    },
+    "ring_tip": {
+     "minMm": 30.021,
+     "medianMm": 35.047
+    },
+    "ring_pad": {
+     "minMm": 32.096,
+     "medianMm": 42.727
+    },
+    "ring_side": {
+     "minMm": 36.125,
+     "medianMm": 48.383
+    },
+    "pinky_tip": {
+     "minMm": 46.285,
+     "medianMm": 50.467
+    },
+    "pinky_pad": {
+     "minMm": 49.63,
+     "medianMm": 55.352
+    },
+    "pinky_side": {
+     "minMm": 58.165,
+     "medianMm": 69.436
+    },
+    "thumb": {
+     "minMm": 3.232,
+     "medianMm": 16.482
+    },
+    "palm_heel": {
+     "minMm": 58.254,
+     "medianMm": 88.402
+    },
+    "palm_centre": {
+     "minMm": 18.706,
+     "medianMm": 47.078
+    },
+    "applying_wrist": {
+     "minMm": 71.837,
+     "medianMm": 99.333
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.716,
+     "medianMm": 260.655
+    },
+    "treated_wrist": {
+     "minMm": 94.637,
+     "medianMm": 140.333
+    },
+    "treated_forearm": {
+     "minMm": -12.621,
+     "medianMm": 85.511
+    }
+   }
+  },
+  {
+   "frame": 237,
+   "contact": {
+    "index_tip": {
+     "minMm": 62.659,
+     "medianMm": 68.074
+    },
+    "index_pad": {
+     "minMm": 69.727,
+     "medianMm": 81.276
+    },
+    "index_side": {
+     "minMm": 79.496,
+     "medianMm": 97.137
+    },
+    "middle_tip": {
+     "minMm": 43.07,
+     "medianMm": 45.925
+    },
+    "middle_pad": {
+     "minMm": 44.613,
+     "medianMm": 56.865
+    },
+    "middle_side": {
+     "minMm": 57.083,
+     "medianMm": 76.737
+    },
+    "ring_tip": {
+     "minMm": 29.55,
+     "medianMm": 33.73
+    },
+    "ring_pad": {
+     "minMm": 32.279,
+     "medianMm": 44.095
+    },
+    "ring_side": {
+     "minMm": 43.326,
+     "medianMm": 63.298
+    },
+    "pinky_tip": {
+     "minMm": 24.025,
+     "medianMm": 28.887
+    },
+    "pinky_pad": {
+     "minMm": 30.819,
+     "medianMm": 37.821
+    },
+    "pinky_side": {
+     "minMm": 33.039,
+     "medianMm": 47.203
+    },
+    "thumb": {
+     "minMm": 62.328,
+     "medianMm": 80.981
+    },
+    "palm_heel": {
+     "minMm": 19.634,
+     "medianMm": 44.195
+    },
+    "palm_centre": {
+     "minMm": 21.558,
+     "medianMm": 63.074
+    },
+    "applying_wrist": {
+     "minMm": 37.692,
+     "medianMm": 65.743
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.864,
+     "medianMm": 260.787
+    },
+    "treated_wrist": {
+     "minMm": 94.791,
+     "medianMm": 140.488
+    },
+    "treated_forearm": {
+     "minMm": -12.485,
+     "medianMm": 85.73
+    }
+   }
+  },
+  {
+   "frame": 241,
+   "contact": {
+    "index_tip": {
+     "minMm": 175.323,
+     "medianMm": 178.446
+    },
+    "index_pad": {
+     "minMm": 185.208,
+     "medianMm": 192.793
+    },
+    "index_side": {
+     "minMm": 197.207,
+     "medianMm": 212.308
+    },
+    "middle_tip": {
+     "minMm": 159.912,
+     "medianMm": 162.28
+    },
+    "middle_pad": {
+     "minMm": 163.132,
+     "medianMm": 176.398
+    },
+    "middle_side": {
+     "minMm": 181.51,
+     "medianMm": 201.225
+    },
+    "ring_tip": {
+     "minMm": 153.328,
+     "medianMm": 156.538
+    },
+    "ring_pad": {
+     "minMm": 158.978,
+     "medianMm": 169.216
+    },
+    "ring_side": {
+     "minMm": 174.852,
+     "medianMm": 193.447
+    },
+    "pinky_tip": {
+     "minMm": 157.939,
+     "medianMm": 163.005
+    },
+    "pinky_pad": {
+     "minMm": 165.858,
+     "medianMm": 169.967
+    },
+    "pinky_side": {
+     "minMm": 172.969,
+     "medianMm": 182.798
+    },
+    "thumb": {
+     "minMm": 159.544,
+     "medianMm": 188.41
+    },
+    "palm_heel": {
+     "minMm": 102.379,
+     "medianMm": 119.988
+    },
+    "palm_centre": {
+     "minMm": 138.004,
+     "medianMm": 179.639
+    },
+    "applying_wrist": {
+     "minMm": 102.512,
+     "medianMm": 122.412
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.993,
+     "medianMm": 260.901
+    },
+    "treated_wrist": {
+     "minMm": 94.924,
+     "medianMm": 140.624
+    },
+    "treated_forearm": {
+     "minMm": -12.347,
+     "medianMm": 85.908
+    }
+   }
+  },
+  {
+   "frame": 245,
+   "contact": {
+    "index_tip": {
+     "minMm": 255.459,
+     "medianMm": 258.699
+    },
+    "index_pad": {
+     "minMm": 265.014,
+     "medianMm": 273.187
+    },
+    "index_side": {
+     "minMm": 278.382,
+     "medianMm": 295.11
+    },
+    "middle_tip": {
+     "minMm": 252.419,
+     "medianMm": 253.938
+    },
+    "middle_pad": {
+     "minMm": 258.005,
+     "medianMm": 267.101
+    },
+    "middle_side": {
+     "minMm": 275.896,
+     "medianMm": 295.698
+    },
+    "ring_tip": {
+     "minMm": 253.641,
+     "medianMm": 256.288
+    },
+    "ring_pad": {
+     "minMm": 262.26,
+     "medianMm": 268.376
+    },
+    "ring_side": {
+     "minMm": 279.973,
+     "medianMm": 297.538
+    },
+    "pinky_tip": {
+     "minMm": 266.983,
+     "medianMm": 271.041
+    },
+    "pinky_pad": {
+     "minMm": 276.586,
+     "medianMm": 279.196
+    },
+    "pinky_side": {
+     "minMm": 284.868,
+     "medianMm": 293.804
+    },
+    "thumb": {
+     "minMm": 233.679,
+     "medianMm": 264.765
+    },
+    "palm_heel": {
+     "minMm": 193.305,
+     "medianMm": 216.643
+    },
+    "palm_centre": {
+     "minMm": 235.328,
+     "medianMm": 277.855
+    },
+    "applying_wrist": {
+     "minMm": 192.598,
+     "medianMm": 216.802
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.097,
+     "medianMm": 260.994
+    },
+    "treated_wrist": {
+     "minMm": 95.033,
+     "medianMm": 140.736
+    },
+    "treated_forearm": {
+     "minMm": -12.227,
+     "medianMm": 86.034
+    }
+   }
+  },
+  {
+   "frame": 249,
+   "contact": {
+    "index_tip": {
+     "minMm": 313.698,
+     "medianMm": 317.59
+    },
+    "index_pad": {
+     "minMm": 320.615,
+     "medianMm": 329.246
+    },
+    "index_side": {
+     "minMm": 332.426,
+     "medianMm": 349.39
+    },
+    "middle_tip": {
+     "minMm": 319.298,
+     "medianMm": 321.408
+    },
+    "middle_pad": {
+     "minMm": 323.102,
+     "medianMm": 332.847
+    },
+    "middle_side": {
+     "minMm": 337.766,
+     "medianMm": 358.896
+    },
+    "ring_tip": {
+     "minMm": 325.555,
+     "medianMm": 328.199
+    },
+    "ring_pad": {
+     "minMm": 332.083,
+     "medianMm": 341.845
+    },
+    "ring_side": {
+     "minMm": 349.621,
+     "medianMm": 368.764
+    },
+    "pinky_tip": {
+     "minMm": 344.238,
+     "medianMm": 347.76
+    },
+    "pinky_pad": {
+     "minMm": 351.723,
+     "medianMm": 355.977
+    },
+    "pinky_side": {
+     "minMm": 362.639,
+     "medianMm": 371.848
+    },
+    "thumb": {
+     "minMm": 290.857,
+     "medianMm": 320.07
+    },
+    "palm_heel": {
+     "minMm": 270.605,
+     "medianMm": 295.851
+    },
+    "palm_centre": {
+     "minMm": 306.891,
+     "medianMm": 344.686
+    },
+    "applying_wrist": {
+     "minMm": 269.966,
+     "medianMm": 301.736
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.174,
+     "medianMm": 261.062
+    },
+    "treated_wrist": {
+     "minMm": 95.113,
+     "medianMm": 140.819
+    },
+    "treated_forearm": {
+     "minMm": -12.139,
+     "medianMm": 86.126
+    }
+   }
+  },
+  {
+   "frame": 253,
+   "contact": {
+    "index_tip": {
+     "minMm": 351.466,
+     "medianMm": 355.227
+    },
+    "index_pad": {
+     "minMm": 356.753,
+     "medianMm": 365.486
+    },
+    "index_side": {
+     "minMm": 366.964,
+     "medianMm": 383.168
+    },
+    "middle_tip": {
+     "minMm": 361.443,
+     "medianMm": 364.285
+    },
+    "middle_pad": {
+     "minMm": 364.684,
+     "medianMm": 374.124
+    },
+    "middle_side": {
+     "minMm": 376.462,
+     "medianMm": 396.553
+    },
+    "ring_tip": {
+     "minMm": 370.48,
+     "medianMm": 373.845
+    },
+    "ring_pad": {
+     "minMm": 375.728,
+     "medianMm": 385.67
+    },
+    "ring_side": {
+     "minMm": 391.588,
+     "medianMm": 410.814
+    },
+    "pinky_tip": {
+     "minMm": 391.057,
+     "medianMm": 395.141
+    },
+    "pinky_pad": {
+     "minMm": 397.53,
+     "medianMm": 402.276
+    },
+    "pinky_side": {
+     "minMm": 408.233,
+     "medianMm": 418.128
+    },
+    "thumb": {
+     "minMm": 329.417,
+     "medianMm": 356.344
+    },
+    "palm_heel": {
+     "minMm": 322.989,
+     "medianMm": 347.581
+    },
+    "palm_centre": {
+     "minMm": 353.117,
+     "medianMm": 385.541
+    },
+    "applying_wrist": {
+     "minMm": 321.655,
+     "medianMm": 351.345
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.219,
+     "medianMm": 261.102
+    },
+    "treated_wrist": {
+     "minMm": 95.16,
+     "medianMm": 140.867
+    },
+    "treated_forearm": {
+     "minMm": -12.087,
+     "medianMm": 86.181
+    }
+   }
+  },
+  {
+   "frame": 257,
+   "contact": {
+    "index_tip": {
+     "minMm": 361.309,
+     "medianMm": 365.162
+    },
+    "index_pad": {
+     "minMm": 366.226,
+     "medianMm": 374.48
+    },
+    "index_side": {
+     "minMm": 376.449,
+     "medianMm": 392.321
+    },
+    "middle_tip": {
+     "minMm": 371.553,
+     "medianMm": 374.251
+    },
+    "middle_pad": {
+     "minMm": 374.234,
+     "medianMm": 383.26
+    },
+    "middle_side": {
+     "minMm": 387.76,
+     "medianMm": 407.235
+    },
+    "ring_tip": {
+     "minMm": 382.779,
+     "medianMm": 386.488
+    },
+    "ring_pad": {
+     "minMm": 387.549,
+     "medianMm": 397.645
+    },
+    "ring_side": {
+     "minMm": 403.876,
+     "medianMm": 422.27
+    },
+    "pinky_tip": {
+     "minMm": 404.937,
+     "medianMm": 409.335
+    },
+    "pinky_pad": {
+     "minMm": 411.286,
+     "medianMm": 415.421
+    },
+    "pinky_side": {
+     "minMm": 420.936,
+     "medianMm": 430.667
+    },
+    "thumb": {
+     "minMm": 339.579,
+     "medianMm": 365.962
+    },
+    "palm_heel": {
+     "minMm": 335.729,
+     "medianMm": 361.559
+    },
+    "palm_centre": {
+     "minMm": 364.588,
+     "medianMm": 395.576
+    },
+    "applying_wrist": {
+     "minMm": 333.576,
+     "medianMm": 363.625
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.225,
+     "medianMm": 261.106
+    },
+    "treated_wrist": {
+     "minMm": 95.166,
+     "medianMm": 140.873
+    },
+    "treated_forearm": {
+     "minMm": -12.084,
+     "medianMm": 86.185
+    }
+   }
+  },
+  {
+   "frame": 261,
+   "contact": {
+    "index_tip": {
+     "minMm": 410.787,
+     "medianMm": 419.617
+    },
+    "index_pad": {
+     "minMm": 406.437,
+     "medianMm": 410.572
+    },
+    "index_side": {
+     "minMm": 390.001,
+     "medianMm": 407.922
+    },
+    "middle_tip": {
+     "minMm": 447.104,
+     "medianMm": 455.403
+    },
+    "middle_pad": {
+     "minMm": 438.462,
+     "medianMm": 444.189
+    },
+    "middle_side": {
+     "minMm": 406.396,
+     "medianMm": 431.935
+    },
+    "ring_tip": {
+     "minMm": 462.786,
+     "medianMm": 471.196
+    },
+    "ring_pad": {
+     "minMm": 454.223,
+     "medianMm": 460.295
+    },
+    "ring_side": {
+     "minMm": 422.54,
+     "medianMm": 444.309
+    },
+    "pinky_tip": {
+     "minMm": 455.068,
+     "medianMm": 464.297
+    },
+    "pinky_pad": {
+     "minMm": 451.702,
+     "medianMm": 455.753
+    },
+    "pinky_side": {
+     "minMm": 429.255,
+     "medianMm": 446.319
+    },
+    "thumb": {
+     "minMm": 340.503,
+     "medianMm": 365.597
+    },
+    "palm_heel": {
+     "minMm": 335.688,
+     "medianMm": 361.553
+    },
+    "palm_centre": {
+     "minMm": 364.807,
+     "medianMm": 395.549
+    },
+    "applying_wrist": {
+     "minMm": 333.612,
+     "medianMm": 363.667
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.132,
+     "medianMm": 261.013
+    },
+    "treated_wrist": {
+     "minMm": 95.066,
+     "medianMm": 140.754
+    },
+    "treated_forearm": {
+     "minMm": -12.278,
+     "medianMm": 85.994
+    }
+   }
+  },
+  {
+   "frame": 265,
+   "contact": {
+    "index_tip": {
+     "minMm": 89.824,
+     "medianMm": 100.909
+    },
+    "index_pad": {
+     "minMm": 79.678,
+     "medianMm": 88.671
+    },
+    "index_side": {
+     "minMm": 48.246,
+     "medianMm": 69.838
+    },
+    "middle_tip": {
+     "minMm": 99.143,
+     "medianMm": 105.63
+    },
+    "middle_pad": {
+     "minMm": 83.702,
+     "medianMm": 93.125
+    },
+    "middle_side": {
+     "minMm": 44.116,
+     "medianMm": 73.392
+    },
+    "ring_tip": {
+     "minMm": 85.199,
+     "medianMm": 92.149
+    },
+    "ring_pad": {
+     "minMm": 73.919,
+     "medianMm": 80.221
+    },
+    "ring_side": {
+     "minMm": 40.17,
+     "medianMm": 64.988
+    },
+    "pinky_tip": {
+     "minMm": 52.486,
+     "medianMm": 61.223
+    },
+    "pinky_pad": {
+     "minMm": 49.311,
+     "medianMm": 55.482
+    },
+    "pinky_side": {
+     "minMm": 35.131,
+     "medianMm": 49.926
+    },
+    "thumb": {
+     "minMm": -9.854,
+     "medianMm": 22.639
+    },
+    "palm_heel": {
+     "minMm": -3.219,
+     "medianMm": 25.539
+    },
+    "palm_centre": {
+     "minMm": 1.351,
+     "medianMm": 30.461
+    },
+    "applying_wrist": {
+     "minMm": -6.029,
+     "medianMm": 32.495
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.945,
+     "medianMm": 260.827
+    },
+    "treated_wrist": {
+     "minMm": 94.864,
+     "medianMm": 140.517
+    },
+    "treated_forearm": {
+     "minMm": -12.611,
+     "medianMm": 85.553
+    }
+   }
+  },
+  {
+   "frame": 269,
+   "contact": {
+    "index_tip": {
+     "minMm": 125.484,
+     "medianMm": 135.889
+    },
+    "index_pad": {
+     "minMm": 119.915,
+     "medianMm": 125.562
+    },
+    "index_side": {
+     "minMm": 104.403,
+     "medianMm": 121.159
+    },
+    "middle_tip": {
+     "minMm": 148.182,
+     "medianMm": 155.801
+    },
+    "middle_pad": {
+     "minMm": 137.454,
+     "medianMm": 145.202
+    },
+    "middle_side": {
+     "minMm": 113.345,
+     "medianMm": 136.043
+    },
+    "ring_tip": {
+     "minMm": 150.357,
+     "medianMm": 158.185
+    },
+    "ring_pad": {
+     "minMm": 142.588,
+     "medianMm": 148.517
+    },
+    "ring_side": {
+     "minMm": 124.401,
+     "medianMm": 142.417
+    },
+    "pinky_tip": {
+     "minMm": 134.513,
+     "medianMm": 143.066
+    },
+    "pinky_pad": {
+     "minMm": 133.717,
+     "medianMm": 138.347
+    },
+    "pinky_side": {
+     "minMm": 129.604,
+     "medianMm": 139.585
+    },
+    "thumb": {
+     "minMm": 53.216,
+     "medianMm": 65.885
+    },
+    "palm_heel": {
+     "minMm": 81.424,
+     "medianMm": 107.99
+    },
+    "palm_centre": {
+     "minMm": 78.373,
+     "medianMm": 106.588
+    },
+    "applying_wrist": {
+     "minMm": 66.202,
+     "medianMm": 109.745
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.698,
+     "medianMm": 260.487
+    },
+    "treated_wrist": {
+     "minMm": 94.598,
+     "medianMm": 140.215
+    },
+    "treated_forearm": {
+     "minMm": -13.0,
+     "medianMm": 84.948
+    }
+   }
+  },
+  {
+   "frame": 273,
+   "contact": {
+    "index_tip": {
+     "minMm": 114.525,
+     "medianMm": 125.463
+    },
+    "index_pad": {
+     "minMm": 107.56,
+     "medianMm": 113.9
+    },
+    "index_side": {
+     "minMm": 89.602,
+     "medianMm": 106.887
+    },
+    "middle_tip": {
+     "minMm": 136.15,
+     "medianMm": 143.193
+    },
+    "middle_pad": {
+     "minMm": 123.665,
+     "medianMm": 132.251
+    },
+    "middle_side": {
+     "minMm": 97.294,
+     "medianMm": 121.254
+    },
+    "ring_tip": {
+     "minMm": 137.012,
+     "medianMm": 144.876
+    },
+    "ring_pad": {
+     "minMm": 128.219,
+     "medianMm": 134.204
+    },
+    "ring_side": {
+     "minMm": 107.596,
+     "medianMm": 126.429
+    },
+    "pinky_tip": {
+     "minMm": 118.922,
+     "medianMm": 127.772
+    },
+    "pinky_pad": {
+     "minMm": 117.64,
+     "medianMm": 122.604
+    },
+    "pinky_side": {
+     "minMm": 111.978,
+     "medianMm": 122.464
+    },
+    "thumb": {
+     "minMm": 37.057,
+     "medianMm": 50.835
+    },
+    "palm_heel": {
+     "minMm": 65.042,
+     "medianMm": 92.254
+    },
+    "palm_centre": {
+     "minMm": 61.11,
+     "medianMm": 90.539
+    },
+    "applying_wrist": {
+     "minMm": 52.086,
+     "medianMm": 92.62
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.434,
+     "medianMm": 260.037
+    },
+    "treated_wrist": {
+     "minMm": 94.31,
+     "medianMm": 139.896
+    },
+    "treated_forearm": {
+     "minMm": -13.24,
+     "medianMm": 84.318
+    }
+   }
+  },
+  {
+   "frame": 277,
+   "contact": {
+    "index_tip": {
+     "minMm": 101.707,
+     "medianMm": 112.606
+    },
+    "index_pad": {
+     "minMm": 93.523,
+     "medianMm": 100.195
+    },
+    "index_side": {
+     "minMm": 69.087,
+     "medianMm": 88.616
+    },
+    "middle_tip": {
+     "minMm": 122.058,
+     "medianMm": 128.259
+    },
+    "middle_pad": {
+     "minMm": 106.943,
+     "medianMm": 115.686
+    },
+    "middle_side": {
+     "minMm": 76.242,
+     "medianMm": 101.231
+    },
+    "ring_tip": {
+     "minMm": 119.148,
+     "medianMm": 126.96
+    },
+    "ring_pad": {
+     "minMm": 109.852,
+     "medianMm": 116.045
+    },
+    "ring_side": {
+     "minMm": 84.788,
+     "medianMm": 105.525
+    },
+    "pinky_tip": {
+     "minMm": 98.778,
+     "medianMm": 107.987
+    },
+    "pinky_pad": {
+     "minMm": 96.669,
+     "medianMm": 102.149
+    },
+    "pinky_side": {
+     "minMm": 88.217,
+     "medianMm": 99.512
+    },
+    "thumb": {
+     "minMm": 14.505,
+     "medianMm": 33.424
+    },
+    "palm_heel": {
+     "minMm": 42.656,
+     "medianMm": 71.124
+    },
+    "palm_centre": {
+     "minMm": 38.261,
+     "medianMm": 68.249
+    },
+    "applying_wrist": {
+     "minMm": 33.115,
+     "medianMm": 70.633
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.186,
+     "medianMm": 259.784
+    },
+    "treated_wrist": {
+     "minMm": 94.042,
+     "medianMm": 139.603
+    },
+    "treated_forearm": {
+     "minMm": -13.414,
+     "medianMm": 83.752
+    }
+   }
+  },
+  {
+   "frame": 281,
+   "contact": {
+    "index_tip": {
+     "minMm": 92.183,
+     "medianMm": 103.519
+    },
+    "index_pad": {
+     "minMm": 82.081,
+     "medianMm": 89.471
+    },
+    "index_side": {
+     "minMm": 52.072,
+     "medianMm": 72.93
+    },
+    "middle_tip": {
+     "minMm": 111.197,
+     "medianMm": 116.882
+    },
+    "middle_pad": {
+     "minMm": 94.696,
+     "medianMm": 104.421
+    },
+    "middle_side": {
+     "minMm": 56.115,
+     "medianMm": 83.84
+    },
+    "ring_tip": {
+     "minMm": 104.341,
+     "medianMm": 111.637
+    },
+    "ring_pad": {
+     "minMm": 93.385,
+     "medianMm": 100.267
+    },
+    "ring_side": {
+     "minMm": 63.819,
+     "medianMm": 85.288
+    },
+    "pinky_tip": {
+     "minMm": 81.658,
+     "medianMm": 90.503
+    },
+    "pinky_pad": {
+     "minMm": 78.451,
+     "medianMm": 84.171
+    },
+    "pinky_side": {
+     "minMm": 65.643,
+     "medianMm": 78.182
+    },
+    "thumb": {
+     "minMm": -6.333,
+     "medianMm": 19.556
+    },
+    "palm_heel": {
+     "minMm": 20.522,
+     "medianMm": 50.204
+    },
+    "palm_centre": {
+     "minMm": 18.968,
+     "medianMm": 47.929
+    },
+    "applying_wrist": {
+     "minMm": 13.428,
+     "medianMm": 51.169
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.993,
+     "medianMm": 259.599
+    },
+    "treated_wrist": {
+     "minMm": 93.84,
+     "medianMm": 139.39
+    },
+    "treated_forearm": {
+     "minMm": -13.545,
+     "medianMm": 83.33
+    }
+   }
+  },
+  {
+   "frame": 285,
+   "contact": {
+    "index_tip": {
+     "minMm": 90.017,
+     "medianMm": 100.68
+    },
+    "index_pad": {
+     "minMm": 78.886,
+     "medianMm": 86.663
+    },
+    "index_side": {
+     "minMm": 44.457,
+     "medianMm": 66.114
+    },
+    "middle_tip": {
+     "minMm": 106.869,
+     "medianMm": 111.776
+    },
+    "middle_pad": {
+     "minMm": 89.265,
+     "medianMm": 99.493
+    },
+    "middle_side": {
+     "minMm": 45.381,
+     "medianMm": 75.411
+    },
+    "ring_tip": {
+     "minMm": 98.028,
+     "medianMm": 104.613
+    },
+    "ring_pad": {
+     "minMm": 85.679,
+     "medianMm": 92.51
+    },
+    "ring_side": {
+     "minMm": 50.905,
+     "medianMm": 73.319
+    },
+    "pinky_tip": {
+     "minMm": 71.219,
+     "medianMm": 80.112
+    },
+    "pinky_pad": {
+     "minMm": 67.924,
+     "medianMm": 73.402
+    },
+    "pinky_side": {
+     "minMm": 51.376,
+     "medianMm": 65.948
+    },
+    "thumb": {
+     "minMm": -17.489,
+     "medianMm": 14.813
+    },
+    "palm_heel": {
+     "minMm": 5.766,
+     "medianMm": 35.662
+    },
+    "palm_centre": {
+     "minMm": 7.348,
+     "medianMm": 36.475
+    },
+    "applying_wrist": {
+     "minMm": -1.389,
+     "medianMm": 37.597
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.896,
+     "medianMm": 259.443
+    },
+    "treated_wrist": {
+     "minMm": 93.74,
+     "medianMm": 139.306
+    },
+    "treated_forearm": {
+     "minMm": -13.61,
+     "medianMm": 83.124
+    }
+   }
+  },
+  {
+   "frame": 289,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.821,
+     "medianMm": 102.566
+    },
+    "index_pad": {
+     "minMm": 80.556,
+     "medianMm": 88.462
+    },
+    "index_side": {
+     "minMm": 44.165,
+     "medianMm": 66.576
+    },
+    "middle_tip": {
+     "minMm": 108.012,
+     "medianMm": 113.191
+    },
+    "middle_pad": {
+     "minMm": 90.271,
+     "medianMm": 100.733
+    },
+    "middle_side": {
+     "minMm": 44.857,
+     "medianMm": 75.667
+    },
+    "ring_tip": {
+     "minMm": 98.646,
+     "medianMm": 105.002
+    },
+    "ring_pad": {
+     "minMm": 85.973,
+     "medianMm": 92.829
+    },
+    "ring_side": {
+     "minMm": 48.512,
+     "medianMm": 71.81
+    },
+    "pinky_tip": {
+     "minMm": 69.463,
+     "medianMm": 78.377
+    },
+    "pinky_pad": {
+     "minMm": 66.094,
+     "medianMm": 71.797
+    },
+    "pinky_side": {
+     "minMm": 48.193,
+     "medianMm": 63.907
+    },
+    "thumb": {
+     "minMm": -18.222,
+     "medianMm": 16.668
+    },
+    "palm_heel": {
+     "minMm": 1.222,
+     "medianMm": 30.038
+    },
+    "palm_centre": {
+     "minMm": 6.188,
+     "medianMm": 33.332
+    },
+    "applying_wrist": {
+     "minMm": -6.946,
+     "medianMm": 32.59
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.893,
+     "medianMm": 259.437
+    },
+    "treated_wrist": {
+     "minMm": 93.737,
+     "medianMm": 139.304
+    },
+    "treated_forearm": {
+     "minMm": -13.613,
+     "medianMm": 83.115
+    }
+   }
+  },
+  {
+   "frame": 293,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.897,
+     "medianMm": 102.73
+    },
+    "index_pad": {
+     "minMm": 80.589,
+     "medianMm": 88.506
+    },
+    "index_side": {
+     "minMm": 43.799,
+     "medianMm": 66.207
+    },
+    "middle_tip": {
+     "minMm": 108.135,
+     "medianMm": 113.414
+    },
+    "middle_pad": {
+     "minMm": 90.444,
+     "medianMm": 100.987
+    },
+    "middle_side": {
+     "minMm": 44.771,
+     "medianMm": 75.485
+    },
+    "ring_tip": {
+     "minMm": 98.678,
+     "medianMm": 105.001
+    },
+    "ring_pad": {
+     "minMm": 85.966,
+     "medianMm": 92.579
+    },
+    "ring_side": {
+     "minMm": 48.366,
+     "medianMm": 71.522
+    },
+    "pinky_tip": {
+     "minMm": 69.019,
+     "medianMm": 77.921
+    },
+    "pinky_pad": {
+     "minMm": 65.644,
+     "medianMm": 71.225
+    },
+    "pinky_side": {
+     "minMm": 47.577,
+     "medianMm": 63.285
+    },
+    "thumb": {
+     "minMm": -19.026,
+     "medianMm": 16.292
+    },
+    "palm_heel": {
+     "minMm": 0.994,
+     "medianMm": 29.545
+    },
+    "palm_centre": {
+     "minMm": 5.809,
+     "medianMm": 32.942
+    },
+    "applying_wrist": {
+     "minMm": -7.435,
+     "medianMm": 32.433
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.901,
+     "medianMm": 259.448
+    },
+    "treated_wrist": {
+     "minMm": 93.744,
+     "medianMm": 139.311
+    },
+    "treated_forearm": {
+     "minMm": -13.613,
+     "medianMm": 83.118
+    }
+   }
+  },
+  {
+   "frame": 297,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.588,
+     "medianMm": 102.354
+    },
+    "index_pad": {
+     "minMm": 80.185,
+     "medianMm": 88.022
+    },
+    "index_side": {
+     "minMm": 42.939,
+     "medianMm": 65.323
+    },
+    "middle_tip": {
+     "minMm": 107.577,
+     "medianMm": 112.841
+    },
+    "middle_pad": {
+     "minMm": 89.708,
+     "medianMm": 100.477
+    },
+    "middle_side": {
+     "minMm": 44.314,
+     "medianMm": 74.78
+    },
+    "ring_tip": {
+     "minMm": 97.214,
+     "medianMm": 103.564
+    },
+    "ring_pad": {
+     "minMm": 84.295,
+     "medianMm": 90.646
+    },
+    "ring_side": {
+     "minMm": 48.013,
+     "medianMm": 70.953
+    },
+    "pinky_tip": {
+     "minMm": 66.879,
+     "medianMm": 75.566
+    },
+    "pinky_pad": {
+     "minMm": 63.353,
+     "medianMm": 68.75
+    },
+    "pinky_side": {
+     "minMm": 45.881,
+     "medianMm": 61.453
+    },
+    "thumb": {
+     "minMm": -20.59,
+     "medianMm": 15.268
+    },
+    "palm_heel": {
+     "minMm": -0.707,
+     "medianMm": 28.805
+    },
+    "palm_centre": {
+     "minMm": 3.77,
+     "medianMm": 32.653
+    },
+    "applying_wrist": {
+     "minMm": -8.058,
+     "medianMm": 32.669
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.916,
+     "medianMm": 259.47
+    },
+    "treated_wrist": {
+     "minMm": 93.758,
+     "medianMm": 139.325
+    },
+    "treated_forearm": {
+     "minMm": -13.612,
+     "medianMm": 83.125
+    }
+   }
+  },
+  {
+   "frame": 301,
+   "contact": {
+    "index_tip": {
+     "minMm": 93.483,
+     "medianMm": 104.069
+    },
+    "index_pad": {
+     "minMm": 82.001,
+     "medianMm": 89.783
+    },
+    "index_side": {
+     "minMm": 43.536,
+     "medianMm": 66.104
+    },
+    "middle_tip": {
+     "minMm": 108.369,
+     "medianMm": 113.672
+    },
+    "middle_pad": {
+     "minMm": 90.672,
+     "medianMm": 101.297
+    },
+    "middle_side": {
+     "minMm": 46.248,
+     "medianMm": 76.412
+    },
+    "ring_tip": {
+     "minMm": 96.968,
+     "medianMm": 103.647
+    },
+    "ring_pad": {
+     "minMm": 85.006,
+     "medianMm": 91.63
+    },
+    "ring_side": {
+     "minMm": 49.524,
+     "medianMm": 72.603
+    },
+    "pinky_tip": {
+     "minMm": 64.565,
+     "medianMm": 73.328
+    },
+    "pinky_pad": {
+     "minMm": 61.644,
+     "medianMm": 67.249
+    },
+    "pinky_side": {
+     "minMm": 48.886,
+     "medianMm": 62.211
+    },
+    "thumb": {
+     "minMm": -20.733,
+     "medianMm": 16.983
+    },
+    "palm_heel": {
+     "minMm": -3.503,
+     "medianMm": 28.487
+    },
+    "palm_centre": {
+     "minMm": 2.077,
+     "medianMm": 34.61
+    },
+    "applying_wrist": {
+     "minMm": -8.219,
+     "medianMm": 31.307
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.937,
+     "medianMm": 259.502
+    },
+    "treated_wrist": {
+     "minMm": 93.779,
+     "medianMm": 139.347
+    },
+    "treated_forearm": {
+     "minMm": -13.61,
+     "medianMm": 83.136
+    }
+   }
+  },
+  {
+   "frame": 305,
+   "contact": {
+    "index_tip": {
+     "minMm": 96.387,
+     "medianMm": 106.813
+    },
+    "index_pad": {
+     "minMm": 84.297,
+     "medianMm": 92.38
+    },
+    "index_side": {
+     "minMm": 45.201,
+     "medianMm": 68.632
+    },
+    "middle_tip": {
+     "minMm": 112.911,
+     "medianMm": 118.573
+    },
+    "middle_pad": {
+     "minMm": 95.403,
+     "medianMm": 106.199
+    },
+    "middle_side": {
+     "minMm": 49.398,
+     "medianMm": 79.808
+    },
+    "ring_tip": {
+     "minMm": 100.401,
+     "medianMm": 107.534
+    },
+    "ring_pad": {
+     "minMm": 89.104,
+     "medianMm": 95.706
+    },
+    "ring_side": {
+     "minMm": 54.113,
+     "medianMm": 77.243
+    },
+    "pinky_tip": {
+     "minMm": 68.436,
+     "medianMm": 77.28
+    },
+    "pinky_pad": {
+     "minMm": 65.421,
+     "medianMm": 71.264
+    },
+    "pinky_side": {
+     "minMm": 53.228,
+     "medianMm": 66.586
+    },
+    "thumb": {
+     "minMm": -19.625,
+     "medianMm": 20.514
+    },
+    "palm_heel": {
+     "minMm": -4.687,
+     "medianMm": 27.554
+    },
+    "palm_centre": {
+     "minMm": 0.893,
+     "medianMm": 36.213
+    },
+    "applying_wrist": {
+     "minMm": -8.49,
+     "medianMm": 31.553
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 141.967,
+     "medianMm": 259.546
+    },
+    "treated_wrist": {
+     "minMm": 93.808,
+     "medianMm": 139.376
+    },
+    "treated_forearm": {
+     "minMm": -13.608,
+     "medianMm": 83.154
+    }
+   }
+  },
+  {
+   "frame": 309,
+   "contact": {
+    "index_tip": {
+     "minMm": 100.306,
+     "medianMm": 110.739
+    },
+    "index_pad": {
+     "minMm": 87.933,
+     "medianMm": 95.729
+    },
+    "index_side": {
+     "minMm": 47.461,
+     "medianMm": 71.023
+    },
+    "middle_tip": {
+     "minMm": 117.558,
+     "medianMm": 122.786
+    },
+    "middle_pad": {
+     "minMm": 99.564,
+     "medianMm": 110.44
+    },
+    "middle_side": {
+     "minMm": 51.228,
+     "medianMm": 82.322
+    },
+    "ring_tip": {
+     "minMm": 105.392,
+     "medianMm": 112.38
+    },
+    "ring_pad": {
+     "minMm": 93.752,
+     "medianMm": 99.98
+    },
+    "ring_side": {
+     "minMm": 55.331,
+     "medianMm": 79.672
+    },
+    "pinky_tip": {
+     "minMm": 74.235,
+     "medianMm": 83.119
+    },
+    "pinky_pad": {
+     "minMm": 72.0,
+     "medianMm": 78.036
+    },
+    "pinky_side": {
+     "minMm": 54.662,
+     "medianMm": 71.136
+    },
+    "thumb": {
+     "minMm": -13.793,
+     "medianMm": 26.47
+    },
+    "palm_heel": {
+     "minMm": -3.689,
+     "medianMm": 28.856
+    },
+    "palm_centre": {
+     "minMm": 1.552,
+     "medianMm": 36.327
+    },
+    "applying_wrist": {
+     "minMm": -7.168,
+     "medianMm": 32.29
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.005,
+     "medianMm": 259.597
+    },
+    "treated_wrist": {
+     "minMm": 93.844,
+     "medianMm": 139.413
+    },
+    "treated_forearm": {
+     "minMm": -13.603,
+     "medianMm": 83.177
+    }
+   }
+  },
+  {
+   "frame": 313,
+   "contact": {
+    "index_tip": {
+     "minMm": 103.659,
+     "medianMm": 114.011
+    },
+    "index_pad": {
+     "minMm": 90.947,
+     "medianMm": 98.939
+    },
+    "index_side": {
+     "minMm": 49.617,
+     "medianMm": 73.207
+    },
+    "middle_tip": {
+     "minMm": 120.642,
+     "medianMm": 125.709
+    },
+    "middle_pad": {
+     "minMm": 102.277,
+     "medianMm": 113.44
+    },
+    "middle_side": {
+     "minMm": 53.186,
+     "medianMm": 84.355
+    },
+    "ring_tip": {
+     "minMm": 108.627,
+     "medianMm": 115.373
+    },
+    "ring_pad": {
+     "minMm": 96.487,
+     "medianMm": 103.046
+    },
+    "ring_side": {
+     "minMm": 56.62,
+     "medianMm": 81.012
+    },
+    "pinky_tip": {
+     "minMm": 78.692,
+     "medianMm": 87.441
+    },
+    "pinky_pad": {
+     "minMm": 75.379,
+     "medianMm": 80.235
+    },
+    "pinky_side": {
+     "minMm": 53.497,
+     "medianMm": 71.524
+    },
+    "thumb": {
+     "minMm": -6.37,
+     "medianMm": 31.527
+    },
+    "palm_heel": {
+     "minMm": -1.158,
+     "medianMm": 30.081
+    },
+    "palm_centre": {
+     "minMm": 3.78,
+     "medianMm": 37.959
+    },
+    "applying_wrist": {
+     "minMm": -5.228,
+     "medianMm": 34.062
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.052,
+     "medianMm": 259.637
+    },
+    "treated_wrist": {
+     "minMm": 93.891,
+     "medianMm": 139.459
+    },
+    "treated_forearm": {
+     "minMm": -13.595,
+     "medianMm": 82.585
+    }
+   }
+  },
+  {
+   "frame": 317,
+   "contact": {
+    "index_tip": {
+     "minMm": 104.435,
+     "medianMm": 114.764
+    },
+    "index_pad": {
+     "minMm": 91.659,
+     "medianMm": 99.676
+    },
+    "index_side": {
+     "minMm": 50.158,
+     "medianMm": 74.328
+    },
+    "middle_tip": {
+     "minMm": 121.174,
+     "medianMm": 126.213
+    },
+    "middle_pad": {
+     "minMm": 102.8,
+     "medianMm": 114.033
+    },
+    "middle_side": {
+     "minMm": 53.528,
+     "medianMm": 84.774
+    },
+    "ring_tip": {
+     "minMm": 109.11,
+     "medianMm": 115.763
+    },
+    "ring_pad": {
+     "minMm": 96.848,
+     "medianMm": 103.487
+    },
+    "ring_side": {
+     "minMm": 57.183,
+     "medianMm": 81.443
+    },
+    "pinky_tip": {
+     "minMm": 79.051,
+     "medianMm": 87.803
+    },
+    "pinky_pad": {
+     "minMm": 75.744,
+     "medianMm": 80.602
+    },
+    "pinky_side": {
+     "minMm": 54.247,
+     "medianMm": 72.146
+    },
+    "thumb": {
+     "minMm": -5.136,
+     "medianMm": 33.232
+    },
+    "palm_heel": {
+     "minMm": -0.54,
+     "medianMm": 30.665
+    },
+    "palm_centre": {
+     "minMm": 4.38,
+     "medianMm": 38.525
+    },
+    "applying_wrist": {
+     "minMm": -4.871,
+     "medianMm": 34.499
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.109,
+     "medianMm": 259.686
+    },
+    "treated_wrist": {
+     "minMm": 93.947,
+     "medianMm": 139.514
+    },
+    "treated_forearm": {
+     "minMm": -13.585,
+     "medianMm": 81.692
+    }
+   }
+  },
+  {
+   "frame": 321,
+   "contact": {
+    "index_tip": {
+     "minMm": 100.845,
+     "medianMm": 111.392
+    },
+    "index_pad": {
+     "minMm": 88.651,
+     "medianMm": 96.402
+    },
+    "index_side": {
+     "minMm": 48.423,
+     "medianMm": 71.67
+    },
+    "middle_tip": {
+     "minMm": 118.201,
+     "medianMm": 123.274
+    },
+    "middle_pad": {
+     "minMm": 99.873,
+     "medianMm": 111.121
+    },
+    "middle_side": {
+     "minMm": 51.969,
+     "medianMm": 82.687
+    },
+    "ring_tip": {
+     "minMm": 106.216,
+     "medianMm": 113.183
+    },
+    "ring_pad": {
+     "minMm": 94.703,
+     "medianMm": 100.788
+    },
+    "ring_side": {
+     "minMm": 56.78,
+     "medianMm": 81.165
+    },
+    "pinky_tip": {
+     "minMm": 74.901,
+     "medianMm": 83.812
+    },
+    "pinky_pad": {
+     "minMm": 72.737,
+     "medianMm": 78.833
+    },
+    "pinky_side": {
+     "minMm": 57.433,
+     "medianMm": 73.075
+    },
+    "thumb": {
+     "minMm": -14.09,
+     "medianMm": 26.117
+    },
+    "palm_heel": {
+     "minMm": -3.01,
+     "medianMm": 28.991
+    },
+    "palm_centre": {
+     "minMm": 2.964,
+     "medianMm": 38.072
+    },
+    "applying_wrist": {
+     "minMm": -7.064,
+     "medianMm": 32.489
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.175,
+     "medianMm": 259.743
+    },
+    "treated_wrist": {
+     "minMm": 94.013,
+     "medianMm": 139.579
+    },
+    "treated_forearm": {
+     "minMm": -13.573,
+     "medianMm": 81.214
+    }
+   }
+  },
+  {
+   "frame": 325,
+   "contact": {
+    "index_tip": {
+     "minMm": 96.367,
+     "medianMm": 107.05
+    },
+    "index_pad": {
+     "minMm": 84.741,
+     "medianMm": 92.724
+    },
+    "index_side": {
+     "minMm": 45.554,
+     "medianMm": 68.659
+    },
+    "middle_tip": {
+     "minMm": 112.588,
+     "medianMm": 118.099
+    },
+    "middle_pad": {
+     "minMm": 95.081,
+     "medianMm": 105.665
+    },
+    "middle_side": {
+     "minMm": 50.482,
+     "medianMm": 79.819
+    },
+    "ring_tip": {
+     "minMm": 101.484,
+     "medianMm": 108.152
+    },
+    "ring_pad": {
+     "minMm": 89.317,
+     "medianMm": 95.639
+    },
+    "ring_side": {
+     "minMm": 53.285,
+     "medianMm": 76.737
+    },
+    "pinky_tip": {
+     "minMm": 69.603,
+     "medianMm": 78.264
+    },
+    "pinky_pad": {
+     "minMm": 66.611,
+     "medianMm": 71.951
+    },
+    "pinky_side": {
+     "minMm": 49.736,
+     "medianMm": 66.097
+    },
+    "thumb": {
+     "minMm": -18.705,
+     "medianMm": 19.116
+    },
+    "palm_heel": {
+     "minMm": 3.56,
+     "medianMm": 30.902
+    },
+    "palm_centre": {
+     "minMm": 7.699,
+     "medianMm": 37.285
+    },
+    "applying_wrist": {
+     "minMm": -6.091,
+     "medianMm": 34.868
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.253,
+     "medianMm": 259.811
+    },
+    "treated_wrist": {
+     "minMm": 94.091,
+     "medianMm": 139.654
+    },
+    "treated_forearm": {
+     "minMm": -13.556,
+     "medianMm": 81.171
+    }
+   }
+  },
+  {
+   "frame": 329,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.763,
+     "medianMm": 102.736
+    },
+    "index_pad": {
+     "minMm": 80.739,
+     "medianMm": 88.623
+    },
+    "index_side": {
+     "minMm": 43.324,
+     "medianMm": 66.08
+    },
+    "middle_tip": {
+     "minMm": 109.96,
+     "medianMm": 114.73
+    },
+    "middle_pad": {
+     "minMm": 91.725,
+     "medianMm": 102.459
+    },
+    "middle_side": {
+     "minMm": 45.122,
+     "medianMm": 76.676
+    },
+    "ring_tip": {
+     "minMm": 101.802,
+     "medianMm": 108.177
+    },
+    "ring_pad": {
+     "minMm": 88.933,
+     "medianMm": 95.931
+    },
+    "ring_side": {
+     "minMm": 50.497,
+     "medianMm": 73.863
+    },
+    "pinky_tip": {
+     "minMm": 74.193,
+     "medianMm": 83.111
+    },
+    "pinky_pad": {
+     "minMm": 70.541,
+     "medianMm": 75.646
+    },
+    "pinky_side": {
+     "minMm": 50.289,
+     "medianMm": 66.862
+    },
+    "thumb": {
+     "minMm": -18.432,
+     "medianMm": 14.7
+    },
+    "palm_heel": {
+     "minMm": -2.038,
+     "medianMm": 30.913
+    },
+    "palm_centre": {
+     "minMm": 1.412,
+     "medianMm": 34.13
+    },
+    "applying_wrist": {
+     "minMm": 0.227,
+     "medianMm": 35.336
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.341,
+     "medianMm": 259.888
+    },
+    "treated_wrist": {
+     "minMm": 94.18,
+     "medianMm": 139.74
+    },
+    "treated_forearm": {
+     "minMm": -13.535,
+     "medianMm": 81.509
+    }
+   }
+  },
+  {
+   "frame": 333,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.009,
+     "medianMm": 101.489
+    },
+    "index_pad": {
+     "minMm": 79.348,
+     "medianMm": 87.122
+    },
+    "index_side": {
+     "minMm": 42.521,
+     "medianMm": 65.118
+    },
+    "middle_tip": {
+     "minMm": 112.685,
+     "medianMm": 117.82
+    },
+    "middle_pad": {
+     "minMm": 94.459,
+     "medianMm": 105.245
+    },
+    "middle_side": {
+     "minMm": 45.614,
+     "medianMm": 76.336
+    },
+    "ring_tip": {
+     "minMm": 108.027,
+     "medianMm": 115.055
+    },
+    "ring_pad": {
+     "minMm": 95.079,
+     "medianMm": 101.696
+    },
+    "ring_side": {
+     "minMm": 52.84,
+     "medianMm": 76.846
+    },
+    "pinky_tip": {
+     "minMm": 85.512,
+     "medianMm": 93.222
+    },
+    "pinky_pad": {
+     "minMm": 80.276,
+     "medianMm": 83.965
+    },
+    "pinky_side": {
+     "minMm": 52.892,
+     "medianMm": 70.963
+    },
+    "thumb": {
+     "minMm": -21.152,
+     "medianMm": 12.443
+    },
+    "palm_heel": {
+     "minMm": -0.683,
+     "medianMm": 32.02
+    },
+    "palm_centre": {
+     "minMm": 2.437,
+     "medianMm": 34.04
+    },
+    "applying_wrist": {
+     "minMm": -1.458,
+     "medianMm": 34.757
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.441,
+     "medianMm": 259.976
+    },
+    "treated_wrist": {
+     "minMm": 94.282,
+     "medianMm": 139.836
+    },
+    "treated_forearm": {
+     "minMm": -13.509,
+     "medianMm": 82.273
+    }
+   }
+  },
+  {
+   "frame": 337,
+   "contact": {
+    "index_tip": {
+     "minMm": 91.609,
+     "medianMm": 102.461
+    },
+    "index_pad": {
+     "minMm": 80.567,
+     "medianMm": 88.294
+    },
+    "index_side": {
+     "minMm": 43.567,
+     "medianMm": 66.295
+    },
+    "middle_tip": {
+     "minMm": 110.33,
+     "medianMm": 115.245
+    },
+    "middle_pad": {
+     "minMm": 91.99,
+     "medianMm": 103.093
+    },
+    "middle_side": {
+     "minMm": 45.262,
+     "medianMm": 76.769
+    },
+    "ring_tip": {
+     "minMm": 102.825,
+     "medianMm": 109.549
+    },
+    "ring_pad": {
+     "minMm": 89.94,
+     "medianMm": 96.707
+    },
+    "ring_side": {
+     "minMm": 50.824,
+     "medianMm": 74.4
+    },
+    "pinky_tip": {
+     "minMm": 76.613,
+     "medianMm": 85.428
+    },
+    "pinky_pad": {
+     "minMm": 72.726,
+     "medianMm": 77.213
+    },
+    "pinky_side": {
+     "minMm": 51.041,
+     "medianMm": 67.463
+    },
+    "thumb": {
+     "minMm": -19.691,
+     "medianMm": 14.114
+    },
+    "palm_heel": {
+     "minMm": -2.441,
+     "medianMm": 30.78
+    },
+    "palm_centre": {
+     "minMm": 1.225,
+     "medianMm": 34.821
+    },
+    "applying_wrist": {
+     "minMm": -1.25,
+     "medianMm": 34.819
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.553,
+     "medianMm": 260.109
+    },
+    "treated_wrist": {
+     "minMm": 94.397,
+     "medianMm": 139.944
+    },
+    "treated_forearm": {
+     "minMm": -13.478,
+     "medianMm": 83.199
+    }
+   }
+  },
+  {
+   "frame": 341,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.227,
+     "medianMm": 107.812
+    },
+    "index_pad": {
+     "minMm": 85.349,
+     "medianMm": 93.369
+    },
+    "index_side": {
+     "minMm": 46.081,
+     "medianMm": 69.7
+    },
+    "middle_tip": {
+     "minMm": 114.684,
+     "medianMm": 120.078
+    },
+    "middle_pad": {
+     "minMm": 96.848,
+     "medianMm": 107.723
+    },
+    "middle_side": {
+     "minMm": 50.9,
+     "medianMm": 81.336
+    },
+    "ring_tip": {
+     "minMm": 103.181,
+     "medianMm": 110.01
+    },
+    "ring_pad": {
+     "minMm": 91.338,
+     "medianMm": 97.65
+    },
+    "ring_side": {
+     "minMm": 54.74,
+     "medianMm": 78.302
+    },
+    "pinky_tip": {
+     "minMm": 70.983,
+     "medianMm": 79.774
+    },
+    "pinky_pad": {
+     "minMm": 68.025,
+     "medianMm": 73.265
+    },
+    "pinky_side": {
+     "minMm": 52.004,
+     "medianMm": 67.847
+    },
+    "thumb": {
+     "minMm": -18.305,
+     "medianMm": 20.514
+    },
+    "palm_heel": {
+     "minMm": 1.769,
+     "medianMm": 30.56
+    },
+    "palm_centre": {
+     "minMm": 7.494,
+     "medianMm": 37.234
+    },
+    "applying_wrist": {
+     "minMm": -4.357,
+     "medianMm": 34.451
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.677,
+     "medianMm": 260.298
+    },
+    "treated_wrist": {
+     "minMm": 94.526,
+     "medianMm": 140.064
+    },
+    "treated_forearm": {
+     "minMm": -13.441,
+     "medianMm": 83.757
+    }
+   }
+  },
+  {
+   "frame": 345,
+   "contact": {
+    "index_tip": {
+     "minMm": 102.702,
+     "medianMm": 113.111
+    },
+    "index_pad": {
+     "minMm": 90.181,
+     "medianMm": 98.065
+    },
+    "index_side": {
+     "minMm": 47.986,
+     "medianMm": 71.981
+    },
+    "middle_tip": {
+     "minMm": 119.839,
+     "medianMm": 124.948
+    },
+    "middle_pad": {
+     "minMm": 101.557,
+     "medianMm": 112.549
+    },
+    "middle_side": {
+     "minMm": 51.474,
+     "medianMm": 82.234
+    },
+    "ring_tip": {
+     "minMm": 108.376,
+     "medianMm": 115.076
+    },
+    "ring_pad": {
+     "minMm": 96.266,
+     "medianMm": 102.826
+    },
+    "ring_side": {
+     "minMm": 58.52,
+     "medianMm": 81.636
+    },
+    "pinky_tip": {
+     "minMm": 77.247,
+     "medianMm": 85.88
+    },
+    "pinky_pad": {
+     "minMm": 73.858,
+     "medianMm": 79.06
+    },
+    "pinky_side": {
+     "minMm": 57.8,
+     "medianMm": 73.237
+    },
+    "thumb": {
+     "minMm": -9.78,
+     "medianMm": 29.947
+    },
+    "palm_heel": {
+     "minMm": -3.278,
+     "medianMm": 29.249
+    },
+    "palm_centre": {
+     "minMm": 2.643,
+     "medianMm": 39.097
+    },
+    "applying_wrist": {
+     "minMm": -7.084,
+     "medianMm": 32.499
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.814,
+     "medianMm": 260.508
+    },
+    "treated_wrist": {
+     "minMm": 94.669,
+     "medianMm": 140.196
+    },
+    "treated_forearm": {
+     "minMm": -13.399,
+     "medianMm": 83.895
+    }
+   }
+  },
+  {
+   "frame": 349,
+   "contact": {
+    "index_tip": {
+     "minMm": 103.286,
+     "medianMm": 113.664
+    },
+    "index_pad": {
+     "minMm": 90.66,
+     "medianMm": 98.604
+    },
+    "index_side": {
+     "minMm": 48.091,
+     "medianMm": 72.325
+    },
+    "middle_tip": {
+     "minMm": 120.228,
+     "medianMm": 125.309
+    },
+    "middle_pad": {
+     "minMm": 101.922,
+     "medianMm": 112.9
+    },
+    "middle_side": {
+     "minMm": 51.462,
+     "medianMm": 82.499
+    },
+    "ring_tip": {
+     "minMm": 108.857,
+     "medianMm": 115.467
+    },
+    "ring_pad": {
+     "minMm": 96.592,
+     "medianMm": 103.245
+    },
+    "ring_side": {
+     "minMm": 58.497,
+     "medianMm": 81.459
+    },
+    "pinky_tip": {
+     "minMm": 77.313,
+     "medianMm": 85.924
+    },
+    "pinky_pad": {
+     "minMm": 73.839,
+     "medianMm": 79.025
+    },
+    "pinky_side": {
+     "minMm": 57.237,
+     "medianMm": 72.989
+    },
+    "thumb": {
+     "minMm": -8.672,
+     "medianMm": 30.766
+    },
+    "palm_heel": {
+     "minMm": -2.953,
+     "medianMm": 28.625
+    },
+    "palm_centre": {
+     "minMm": 3.269,
+     "medianMm": 38.731
+    },
+    "applying_wrist": {
+     "minMm": -7.973,
+     "medianMm": 32.509
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 142.965,
+     "medianMm": 260.733
+    },
+    "treated_wrist": {
+     "minMm": 94.825,
+     "medianMm": 140.375
+    },
+    "treated_forearm": {
+     "minMm": -13.349,
+     "medianMm": 83.95
+    }
+   }
+  },
+  {
+   "frame": 353,
+   "contact": {
+    "index_tip": {
+     "minMm": 103.797,
+     "medianMm": 114.226
+    },
+    "index_pad": {
+     "minMm": 91.114,
+     "medianMm": 99.201
+    },
+    "index_side": {
+     "minMm": 48.123,
+     "medianMm": 72.691
+    },
+    "middle_tip": {
+     "minMm": 120.474,
+     "medianMm": 125.427
+    },
+    "middle_pad": {
+     "minMm": 101.941,
+     "medianMm": 113.165
+    },
+    "middle_side": {
+     "minMm": 51.233,
+     "medianMm": 82.85
+    },
+    "ring_tip": {
+     "minMm": 108.863,
+     "medianMm": 115.415
+    },
+    "ring_pad": {
+     "minMm": 96.412,
+     "medianMm": 103.056
+    },
+    "ring_side": {
+     "minMm": 57.193,
+     "medianMm": 80.893
+    },
+    "pinky_tip": {
+     "minMm": 76.557,
+     "medianMm": 85.21
+    },
+    "pinky_pad": {
+     "minMm": 73.037,
+     "medianMm": 78.174
+    },
+    "pinky_side": {
+     "minMm": 54.374,
+     "medianMm": 71.211
+    },
+    "thumb": {
+     "minMm": -8.669,
+     "medianMm": 31.656
+    },
+    "palm_heel": {
+     "minMm": -3.655,
+     "medianMm": 26.316
+    },
+    "palm_centre": {
+     "minMm": 2.807,
+     "medianMm": 37.582
+    },
+    "applying_wrist": {
+     "minMm": -11.437,
+     "medianMm": 29.293
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.128,
+     "medianMm": 260.879
+    },
+    "treated_wrist": {
+     "minMm": 94.994,
+     "medianMm": 140.649
+    },
+    "treated_forearm": {
+     "minMm": -13.291,
+     "medianMm": 84.16
+    }
+   }
+  },
+  {
+   "frame": 357,
+   "contact": {
+    "index_tip": {
+     "minMm": 104.229,
+     "medianMm": 114.616
+    },
+    "index_pad": {
+     "minMm": 91.474,
+     "medianMm": 99.739
+    },
+    "index_side": {
+     "minMm": 48.83,
+     "medianMm": 73.099
+    },
+    "middle_tip": {
+     "minMm": 120.83,
+     "medianMm": 125.783
+    },
+    "middle_pad": {
+     "minMm": 102.292,
+     "medianMm": 113.531
+    },
+    "middle_side": {
+     "minMm": 50.777,
+     "medianMm": 83.241
+    },
+    "ring_tip": {
+     "minMm": 108.464,
+     "medianMm": 115.19
+    },
+    "ring_pad": {
+     "minMm": 96.437,
+     "medianMm": 102.843
+    },
+    "ring_side": {
+     "minMm": 54.887,
+     "medianMm": 79.011
+    },
+    "pinky_tip": {
+     "minMm": 75.141,
+     "medianMm": 83.623
+    },
+    "pinky_pad": {
+     "minMm": 71.53,
+     "medianMm": 77.311
+    },
+    "pinky_side": {
+     "minMm": 51.238,
+     "medianMm": 68.92
+    },
+    "thumb": {
+     "minMm": -7.782,
+     "medianMm": 32.633
+    },
+    "palm_heel": {
+     "minMm": -5.659,
+     "medianMm": 21.37
+    },
+    "palm_centre": {
+     "minMm": 0.589,
+     "medianMm": 36.063
+    },
+    "applying_wrist": {
+     "minMm": -14.444,
+     "medianMm": 24.947
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.3,
+     "medianMm": 261.037
+    },
+    "treated_wrist": {
+     "minMm": 95.173,
+     "medianMm": 140.925
+    },
+    "treated_forearm": {
+     "minMm": -13.225,
+     "medianMm": 84.441
+    }
+   }
+  },
+  {
+   "frame": 361,
+   "contact": {
+    "index_tip": {
+     "minMm": 104.304,
+     "medianMm": 114.553
+    },
+    "index_pad": {
+     "minMm": 91.432,
+     "medianMm": 99.789
+    },
+    "index_side": {
+     "minMm": 49.208,
+     "medianMm": 73.179
+    },
+    "middle_tip": {
+     "minMm": 120.796,
+     "medianMm": 125.849
+    },
+    "middle_pad": {
+     "minMm": 102.387,
+     "medianMm": 113.614
+    },
+    "middle_side": {
+     "minMm": 50.383,
+     "medianMm": 83.069
+    },
+    "ring_tip": {
+     "minMm": 107.286,
+     "medianMm": 113.984
+    },
+    "ring_pad": {
+     "minMm": 95.411,
+     "medianMm": 101.996
+    },
+    "ring_side": {
+     "minMm": 52.989,
+     "medianMm": 78.539
+    },
+    "pinky_tip": {
+     "minMm": 73.232,
+     "medianMm": 81.614
+    },
+    "pinky_pad": {
+     "minMm": 69.456,
+     "medianMm": 75.364
+    },
+    "pinky_side": {
+     "minMm": 49.037,
+     "medianMm": 66.679
+    },
+    "thumb": {
+     "minMm": -7.274,
+     "medianMm": 33.04
+    },
+    "palm_heel": {
+     "minMm": -9.205,
+     "medianMm": 16.956
+    },
+    "palm_centre": {
+     "minMm": -2.344,
+     "medianMm": 35.236
+    },
+    "applying_wrist": {
+     "minMm": -17.858,
+     "medianMm": 21.426
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.466,
+     "medianMm": 261.201
+    },
+    "treated_wrist": {
+     "minMm": 95.36,
+     "medianMm": 141.302
+    },
+    "treated_forearm": {
+     "minMm": -13.154,
+     "medianMm": 84.662
+    }
+   }
+  },
+  {
+   "frame": 365,
+   "contact": {
+    "index_tip": {
+     "minMm": 104.081,
+     "medianMm": 114.321
+    },
+    "index_pad": {
+     "minMm": 91.066,
+     "medianMm": 99.143
+    },
+    "index_side": {
+     "minMm": 48.636,
+     "medianMm": 72.633
+    },
+    "middle_tip": {
+     "minMm": 119.488,
+     "medianMm": 124.852
+    },
+    "middle_pad": {
+     "minMm": 101.568,
+     "medianMm": 112.483
+    },
+    "middle_side": {
+     "minMm": 50.597,
+     "medianMm": 83.202
+    },
+    "ring_tip": {
+     "minMm": 105.58,
+     "medianMm": 112.19
+    },
+    "ring_pad": {
+     "minMm": 93.61,
+     "medianMm": 100.19
+    },
+    "ring_side": {
+     "minMm": 51.509,
+     "medianMm": 77.409
+    },
+    "pinky_tip": {
+     "minMm": 71.532,
+     "medianMm": 79.735
+    },
+    "pinky_pad": {
+     "minMm": 67.433,
+     "medianMm": 73.124
+    },
+    "pinky_side": {
+     "minMm": 47.012,
+     "medianMm": 64.356
+    },
+    "thumb": {
+     "minMm": -8.318,
+     "medianMm": 32.207
+    },
+    "palm_heel": {
+     "minMm": -14.509,
+     "medianMm": 14.086
+    },
+    "palm_centre": {
+     "minMm": -5.451,
+     "medianMm": 34.156
+    },
+    "applying_wrist": {
+     "minMm": -21.01,
+     "medianMm": 17.828
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.624,
+     "medianMm": 261.428
+    },
+    "treated_wrist": {
+     "minMm": 95.552,
+     "medianMm": 141.729
+    },
+    "treated_forearm": {
+     "minMm": -13.078,
+     "medianMm": 84.898
+    }
+   }
+  },
+  {
+   "frame": 369,
+   "contact": {
+    "index_tip": {
+     "minMm": 102.274,
+     "medianMm": 112.645
+    },
+    "index_pad": {
+     "minMm": 89.607,
+     "medianMm": 97.591
+    },
+    "index_side": {
+     "minMm": 48.163,
+     "medianMm": 72.147
+    },
+    "middle_tip": {
+     "minMm": 117.261,
+     "medianMm": 122.693
+    },
+    "middle_pad": {
+     "minMm": 99.533,
+     "medianMm": 110.307
+    },
+    "middle_side": {
+     "minMm": 50.64,
+     "medianMm": 82.598
+    },
+    "ring_tip": {
+     "minMm": 103.65,
+     "medianMm": 110.405
+    },
+    "ring_pad": {
+     "minMm": 91.729,
+     "medianMm": 98.139
+    },
+    "ring_side": {
+     "minMm": 49.631,
+     "medianMm": 75.584
+    },
+    "pinky_tip": {
+     "minMm": 69.508,
+     "medianMm": 77.828
+    },
+    "pinky_pad": {
+     "minMm": 65.59,
+     "medianMm": 71.318
+    },
+    "pinky_side": {
+     "minMm": 45.344,
+     "medianMm": 62.739
+    },
+    "thumb": {
+     "minMm": -11.676,
+     "medianMm": 29.195
+    },
+    "palm_heel": {
+     "minMm": -15.927,
+     "medianMm": 12.824
+    },
+    "palm_centre": {
+     "minMm": -5.814,
+     "medianMm": 33.9
+    },
+    "applying_wrist": {
+     "minMm": -20.426,
+     "medianMm": 17.667
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.783,
+     "medianMm": 261.7
+    },
+    "treated_wrist": {
+     "minMm": 95.749,
+     "medianMm": 141.966
+    },
+    "treated_forearm": {
+     "minMm": -12.963,
+     "medianMm": 85.145
+    }
+   }
+  },
+  {
+   "frame": 373,
+   "contact": {
+    "index_tip": {
+     "minMm": 98.279,
+     "medianMm": 109.056
+    },
+    "index_pad": {
+     "minMm": 86.627,
+     "medianMm": 94.359
+    },
+    "index_side": {
+     "minMm": 47.337,
+     "medianMm": 71.121
+    },
+    "middle_tip": {
+     "minMm": 114.141,
+     "medianMm": 119.576
+    },
+    "middle_pad": {
+     "minMm": 96.405,
+     "medianMm": 107.169
+    },
+    "middle_side": {
+     "minMm": 48.994,
+     "medianMm": 80.517
+    },
+    "ring_tip": {
+     "minMm": 101.206,
+     "medianMm": 108.038
+    },
+    "ring_pad": {
+     "minMm": 89.495,
+     "medianMm": 95.672
+    },
+    "ring_side": {
+     "minMm": 49.361,
+     "medianMm": 74.369
+    },
+    "pinky_tip": {
+     "minMm": 68.109,
+     "medianMm": 76.762
+    },
+    "pinky_pad": {
+     "minMm": 64.213,
+     "medianMm": 69.687
+    },
+    "pinky_side": {
+     "minMm": 46.07,
+     "medianMm": 62.804
+    },
+    "thumb": {
+     "minMm": -16.963,
+     "medianMm": 23.176
+    },
+    "palm_heel": {
+     "minMm": -11.654,
+     "medianMm": 19.183
+    },
+    "palm_centre": {
+     "minMm": -3.394,
+     "medianMm": 34.674
+    },
+    "applying_wrist": {
+     "minMm": -15.369,
+     "medianMm": 23.402
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 143.952,
+     "medianMm": 261.935
+    },
+    "treated_wrist": {
+     "minMm": 95.948,
+     "medianMm": 142.165
+    },
+    "treated_forearm": {
+     "minMm": -12.808,
+     "medianMm": 85.399
+    }
+   }
+  },
+  {
+   "frame": 377,
+   "contact": {
+    "index_tip": {
+     "minMm": 93.631,
+     "medianMm": 104.8
+    },
+    "index_pad": {
+     "minMm": 83.123,
+     "medianMm": 90.839
+    },
+    "index_side": {
+     "minMm": 47.614,
+     "medianMm": 70.111
+    },
+    "middle_tip": {
+     "minMm": 110.183,
+     "medianMm": 115.791
+    },
+    "middle_pad": {
+     "minMm": 93.188,
+     "medianMm": 103.168
+    },
+    "middle_side": {
+     "minMm": 48.667,
+     "medianMm": 79.403
+    },
+    "ring_tip": {
+     "minMm": 99.703,
+     "medianMm": 106.291
+    },
+    "ring_pad": {
+     "minMm": 87.466,
+     "medianMm": 94.172
+    },
+    "ring_side": {
+     "minMm": 52.986,
+     "medianMm": 76.014
+    },
+    "pinky_tip": {
+     "minMm": 70.398,
+     "medianMm": 79.089
+    },
+    "pinky_pad": {
+     "minMm": 67.173,
+     "medianMm": 72.71
+    },
+    "pinky_side": {
+     "minMm": 51.54,
+     "medianMm": 66.717
+    },
+    "thumb": {
+     "minMm": -16.976,
+     "medianMm": 17.655
+    },
+    "palm_heel": {
+     "minMm": -0.454,
+     "medianMm": 31.785
+    },
+    "palm_centre": {
+     "minMm": 4.632,
+     "medianMm": 36.404
+    },
+    "applying_wrist": {
+     "minMm": -3.02,
+     "medianMm": 35.623
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 144.138,
+     "medianMm": 262.209
+    },
+    "treated_wrist": {
+     "minMm": 96.146,
+     "medianMm": 142.365
+    },
+    "treated_forearm": {
+     "minMm": -12.652,
+     "medianMm": 85.657
+    }
+   }
+  },
+  {
+   "frame": 381,
+   "contact": {
+    "index_tip": {
+     "minMm": 97.796,
+     "medianMm": 109.265
+    },
+    "index_pad": {
+     "minMm": 88.718,
+     "medianMm": 96.153
+    },
+    "index_side": {
+     "minMm": 59.856,
+     "medianMm": 80.154
+    },
+    "middle_tip": {
+     "minMm": 116.412,
+     "medianMm": 121.887
+    },
+    "middle_pad": {
+     "minMm": 100.255,
+     "medianMm": 109.785
+    },
+    "middle_side": {
+     "minMm": 63.627,
+     "medianMm": 90.928
+    },
+    "ring_tip": {
+     "minMm": 108.793,
+     "medianMm": 116.088
+    },
+    "ring_pad": {
+     "minMm": 98.325,
+     "medianMm": 105.187
+    },
+    "ring_side": {
+     "minMm": 70.109,
+     "medianMm": 91.673
+    },
+    "pinky_tip": {
+     "minMm": 85.193,
+     "medianMm": 94.29
+    },
+    "pinky_pad": {
+     "minMm": 82.916,
+     "medianMm": 88.634
+    },
+    "pinky_side": {
+     "minMm": 72.053,
+     "medianMm": 85.407
+    },
+    "thumb": {
+     "minMm": 1.294,
+     "medianMm": 26.925
+    },
+    "palm_heel": {
+     "minMm": 23.415,
+     "medianMm": 53.764
+    },
+    "palm_centre": {
+     "minMm": 26.048,
+     "medianMm": 54.708
+    },
+    "applying_wrist": {
+     "minMm": 18.055,
+     "medianMm": 55.005
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 144.344,
+     "medianMm": 262.483
+    },
+    "treated_wrist": {
+     "minMm": 96.342,
+     "medianMm": 142.54
+    },
+    "treated_forearm": {
+     "minMm": -12.497,
+     "medianMm": 85.907
+    }
+   }
+  },
+  {
+   "frame": 385,
+   "contact": {
+    "index_tip": {
+     "minMm": 110.211,
+     "medianMm": 121.232
+    },
+    "index_pad": {
+     "minMm": 102.388,
+     "medianMm": 109.018
+    },
+    "index_side": {
+     "minMm": 81.099,
+     "medianMm": 99.653
+    },
+    "middle_tip": {
+     "minMm": 129.133,
+     "medianMm": 135.557
+    },
+    "middle_pad": {
+     "minMm": 115.364,
+     "medianMm": 123.995
+    },
+    "middle_side": {
+     "minMm": 86.627,
+     "medianMm": 111.491
+    },
+    "ring_tip": {
+     "minMm": 126.755,
+     "medianMm": 134.501
+    },
+    "ring_pad": {
+     "minMm": 117.97,
+     "medianMm": 124.202
+    },
+    "ring_side": {
+     "minMm": 95.346,
+     "medianMm": 115.667
+    },
+    "pinky_tip": {
+     "minMm": 106.829,
+     "medianMm": 115.485
+    },
+    "pinky_pad": {
+     "minMm": 105.52,
+     "medianMm": 110.862
+    },
+    "pinky_side": {
+     "minMm": 99.04,
+     "medianMm": 110.168
+    },
+    "thumb": {
+     "minMm": 27.501,
+     "medianMm": 45.007
+    },
+    "palm_heel": {
+     "minMm": 51.243,
+     "medianMm": 78.66
+    },
+    "palm_centre": {
+     "minMm": 50.49,
+     "medianMm": 78.574
+    },
+    "applying_wrist": {
+     "minMm": 39.55,
+     "medianMm": 79.91
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 144.559,
+     "medianMm": 262.735
+    },
+    "treated_wrist": {
+     "minMm": 96.534,
+     "medianMm": 142.434
+    },
+    "treated_forearm": {
+     "minMm": -12.347,
+     "medianMm": 86.107
+    }
+   }
+  },
+  {
+   "frame": 389,
+   "contact": {
+    "index_tip": {
+     "minMm": 119.376,
+     "medianMm": 130.094
+    },
+    "index_pad": {
+     "minMm": 113.23,
+     "medianMm": 119.496
+    },
+    "index_side": {
+     "minMm": 96.615,
+     "medianMm": 113.569
+    },
+    "middle_tip": {
+     "minMm": 139.277,
+     "medianMm": 146.282
+    },
+    "middle_pad": {
+     "minMm": 127.859,
+     "medianMm": 136.52
+    },
+    "middle_side": {
+     "minMm": 103.694,
+     "medianMm": 127.075
+    },
+    "ring_tip": {
+     "minMm": 139.25,
+     "medianMm": 146.979
+    },
+    "ring_pad": {
+     "minMm": 131.524,
+     "medianMm": 137.427
+    },
+    "ring_side": {
+     "minMm": 113.499,
+     "medianMm": 131.547
+    },
+    "pinky_tip": {
+     "minMm": 121.907,
+     "medianMm": 130.499
+    },
+    "pinky_pad": {
+     "minMm": 121.34,
+     "medianMm": 126.234
+    },
+    "pinky_side": {
+     "minMm": 118.048,
+     "medianMm": 128.009
+    },
+    "thumb": {
+     "minMm": 45.936,
+     "medianMm": 59.668
+    },
+    "palm_heel": {
+     "minMm": 70.541,
+     "medianMm": 96.957
+    },
+    "palm_centre": {
+     "minMm": 69.142,
+     "medianMm": 96.242
+    },
+    "applying_wrist": {
+     "minMm": 55.851,
+     "medianMm": 98.227
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 144.771,
+     "medianMm": 262.962
+    },
+    "treated_wrist": {
+     "minMm": 96.72,
+     "medianMm": 142.358
+    },
+    "treated_forearm": {
+     "minMm": -12.202,
+     "medianMm": 86.299
+    }
+   }
+  },
+  {
+   "frame": 393,
+   "contact": {
+    "index_tip": {
+     "minMm": 104.964,
+     "medianMm": 115.589
+    },
+    "index_pad": {
+     "minMm": 99.475,
+     "medianMm": 105.222
+    },
+    "index_side": {
+     "minMm": 84.693,
+     "medianMm": 100.889
+    },
+    "middle_tip": {
+     "minMm": 122.172,
+     "medianMm": 128.899
+    },
+    "middle_pad": {
+     "minMm": 111.406,
+     "medianMm": 119.654
+    },
+    "middle_side": {
+     "minMm": 90.33,
+     "medianMm": 112.087
+    },
+    "ring_tip": {
+     "minMm": 119.934,
+     "medianMm": 127.568
+    },
+    "ring_pad": {
+     "minMm": 113.647,
+     "medianMm": 119.015
+    },
+    "ring_side": {
+     "minMm": 100.261,
+     "medianMm": 116.742
+    },
+    "pinky_tip": {
+     "minMm": 104.845,
+     "medianMm": 113.024
+    },
+    "pinky_pad": {
+     "minMm": 105.292,
+     "medianMm": 109.565
+    },
+    "pinky_side": {
+     "minMm": 105.012,
+     "medianMm": 113.928
+    },
+    "thumb": {
+     "minMm": 34.34,
+     "medianMm": 48.175
+    },
+    "palm_heel": {
+     "minMm": 63.813,
+     "medianMm": 92.156
+    },
+    "palm_centre": {
+     "minMm": 58.947,
+     "medianMm": 85.104
+    },
+    "applying_wrist": {
+     "minMm": 53.446,
+     "medianMm": 95.182
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 144.969,
+     "medianMm": 263.177
+    },
+    "treated_wrist": {
+     "minMm": 96.898,
+     "medianMm": 142.365
+    },
+    "treated_forearm": {
+     "minMm": -12.067,
+     "medianMm": 86.48
+    }
+   }
+  },
+  {
+   "frame": 397,
+   "contact": {
+    "index_tip": {
+     "minMm": 67.163,
+     "medianMm": 77.957
+    },
+    "index_pad": {
+     "minMm": 55.395,
+     "medianMm": 65.166
+    },
+    "index_side": {
+     "minMm": 13.865,
+     "medianMm": 38.4
+    },
+    "middle_tip": {
+     "minMm": 72.173,
+     "medianMm": 78.793
+    },
+    "middle_pad": {
+     "minMm": 55.851,
+     "medianMm": 65.871
+    },
+    "middle_side": {
+     "minMm": 12.542,
+     "medianMm": 42.294
+    },
+    "ring_tip": {
+     "minMm": 54.174,
+     "medianMm": 62.044
+    },
+    "ring_pad": {
+     "minMm": 44.181,
+     "medianMm": 50.685
+    },
+    "ring_side": {
+     "minMm": 16.952,
+     "medianMm": 38.749
+    },
+    "pinky_tip": {
+     "minMm": 23.178,
+     "medianMm": 31.75
+    },
+    "pinky_pad": {
+     "minMm": 22.451,
+     "medianMm": 28.705
+    },
+    "pinky_side": {
+     "minMm": 18.229,
+     "medianMm": 28.277
+    },
+    "thumb": {
+     "minMm": -21.048,
+     "medianMm": 11.287
+    },
+    "palm_heel": {
+     "minMm": 10.309,
+     "medianMm": 34.593
+    },
+    "palm_centre": {
+     "minMm": -19.146,
+     "medianMm": 5.885
+    },
+    "applying_wrist": {
+     "minMm": 11.292,
+     "medianMm": 50.07
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.14,
+     "medianMm": 263.368
+    },
+    "treated_wrist": {
+     "minMm": 97.066,
+     "medianMm": 142.523
+    },
+    "treated_forearm": {
+     "minMm": -11.92,
+     "medianMm": 86.644
+    }
+   }
+  },
+  {
+   "frame": 401,
+   "contact": {
+    "index_tip": {
+     "minMm": 155.167,
+     "medianMm": 161.631
+    },
+    "index_pad": {
+     "minMm": 140.553,
+     "medianMm": 146.974
+    },
+    "index_side": {
+     "minMm": 78.788,
+     "medianMm": 112.308
+    },
+    "middle_tip": {
+     "minMm": 166.527,
+     "medianMm": 168.792
+    },
+    "middle_pad": {
+     "minMm": 147.039,
+     "medianMm": 155.863
+    },
+    "middle_side": {
+     "minMm": 77.48,
+     "medianMm": 115.188
+    },
+    "ring_tip": {
+     "minMm": 153.028,
+     "medianMm": 157.56
+    },
+    "ring_pad": {
+     "minMm": 138.511,
+     "medianMm": 145.507
+    },
+    "ring_side": {
+     "minMm": 73.396,
+     "medianMm": 103.598
+    },
+    "pinky_tip": {
+     "minMm": 124.125,
+     "medianMm": 129.992
+    },
+    "pinky_pad": {
+     "minMm": 117.758,
+     "medianMm": 118.537
+    },
+    "pinky_side": {
+     "minMm": 72.552,
+     "medianMm": 95.227
+    },
+    "thumb": {
+     "minMm": 67.849,
+     "medianMm": 106.064
+    },
+    "palm_heel": {
+     "minMm": 36.065,
+     "medianMm": 51.344
+    },
+    "palm_centre": {
+     "minMm": 47.212,
+     "medianMm": 75.86
+    },
+    "applying_wrist": {
+     "minMm": 15.726,
+     "medianMm": 43.606
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.293,
+     "medianMm": 263.524
+    },
+    "treated_wrist": {
+     "minMm": 97.223,
+     "medianMm": 142.71
+    },
+    "treated_forearm": {
+     "minMm": -11.781,
+     "medianMm": 86.79
+    }
+   }
+  },
+  {
+   "frame": 405,
+   "contact": {
+    "index_tip": {
+     "minMm": 297.794,
+     "medianMm": 305.156
+    },
+    "index_pad": {
+     "minMm": 283.401,
+     "medianMm": 290.306
+    },
+    "index_side": {
+     "minMm": 223.659,
+     "medianMm": 256.079
+    },
+    "middle_tip": {
+     "minMm": 308.784,
+     "medianMm": 311.513
+    },
+    "middle_pad": {
+     "minMm": 289.25,
+     "medianMm": 298.071
+    },
+    "middle_side": {
+     "minMm": 220.67,
+     "medianMm": 258.06
+    },
+    "ring_tip": {
+     "minMm": 290.541,
+     "medianMm": 296.224
+    },
+    "ring_pad": {
+     "minMm": 276.094,
+     "medianMm": 283.047
+    },
+    "ring_side": {
+     "minMm": 214.229,
+     "medianMm": 243.379
+    },
+    "pinky_tip": {
+     "minMm": 254.348,
+     "medianMm": 261.565
+    },
+    "pinky_pad": {
+     "minMm": 248.458,
+     "medianMm": 251.347
+    },
+    "pinky_side": {
+     "minMm": 206.307,
+     "medianMm": 228.184
+    },
+    "thumb": {
+     "minMm": 203.683,
+     "medianMm": 243.094
+    },
+    "palm_heel": {
+     "minMm": 124.053,
+     "medianMm": 153.885
+    },
+    "palm_centre": {
+     "minMm": 172.352,
+     "medianMm": 212.032
+    },
+    "applying_wrist": {
+     "minMm": 114.42,
+     "medianMm": 135.345
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.43,
+     "medianMm": 263.585
+    },
+    "treated_wrist": {
+     "minMm": 97.362,
+     "medianMm": 142.865
+    },
+    "treated_forearm": {
+     "minMm": -11.661,
+     "medianMm": 86.916
+    }
+   }
+  },
+  {
+   "frame": 409,
+   "contact": {
+    "index_tip": {
+     "minMm": 424.624,
+     "medianMm": 432.215
+    },
+    "index_pad": {
+     "minMm": 410.508,
+     "medianMm": 418.136
+    },
+    "index_side": {
+     "minMm": 353.47,
+     "medianMm": 383.984
+    },
+    "middle_tip": {
+     "minMm": 428.297,
+     "medianMm": 431.824
+    },
+    "middle_pad": {
+     "minMm": 411.104,
+     "medianMm": 417.746
+    },
+    "middle_side": {
+     "minMm": 342.484,
+     "medianMm": 380.496
+    },
+    "ring_tip": {
+     "minMm": 406.289,
+     "medianMm": 412.596
+    },
+    "ring_pad": {
+     "minMm": 392.126,
+     "medianMm": 399.193
+    },
+    "ring_side": {
+     "minMm": 332.288,
+     "medianMm": 361.887
+    },
+    "pinky_tip": {
+     "minMm": 368.175,
+     "medianMm": 375.928
+    },
+    "pinky_pad": {
+     "minMm": 362.479,
+     "medianMm": 367.966
+    },
+    "pinky_side": {
+     "minMm": 323.158,
+     "medianMm": 345.058
+    },
+    "thumb": {
+     "minMm": 338.726,
+     "medianMm": 377.094
+    },
+    "palm_heel": {
+     "minMm": 260.135,
+     "medianMm": 282.379
+    },
+    "palm_centre": {
+     "minMm": 293.063,
+     "medianMm": 339.491
+    },
+    "applying_wrist": {
+     "minMm": 244.539,
+     "medianMm": 266.568
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.544,
+     "medianMm": 263.655
+    },
+    "treated_wrist": {
+     "minMm": 97.48,
+     "medianMm": 142.996
+    },
+    "treated_forearm": {
+     "minMm": -11.564,
+     "medianMm": 87.018
+    }
+   }
+  },
+  {
+   "frame": 413,
+   "contact": {
+    "index_tip": {
+     "minMm": 199.634,
+     "medianMm": 202.899
+    },
+    "index_pad": {
+     "minMm": 211.741,
+     "medianMm": 218.076
+    },
+    "index_side": {
+     "minMm": 226.009,
+     "medianMm": 252.298
+    },
+    "middle_tip": {
+     "minMm": 194.453,
+     "medianMm": 196.323
+    },
+    "middle_pad": {
+     "minMm": 197.87,
+     "medianMm": 210.378
+    },
+    "middle_side": {
+     "minMm": 219.473,
+     "medianMm": 249.209
+    },
+    "ring_tip": {
+     "minMm": 214.955,
+     "medianMm": 218.077
+    },
+    "ring_pad": {
+     "minMm": 220.062,
+     "medianMm": 230.581
+    },
+    "ring_side": {
+     "minMm": 238.418,
+     "medianMm": 267.024
+    },
+    "pinky_tip": {
+     "minMm": 250.723,
+     "medianMm": 254.351
+    },
+    "pinky_pad": {
+     "minMm": 256.274,
+     "medianMm": 261.651
+    },
+    "pinky_side": {
+     "minMm": 267.812,
+     "medianMm": 284.548
+    },
+    "thumb": {
+     "minMm": 250.098,
+     "medianMm": 276.236
+    },
+    "palm_heel": {
+     "minMm": 336.842,
+     "medianMm": 357.101
+    },
+    "palm_centre": {
+     "minMm": 273.892,
+     "medianMm": 298.118
+    },
+    "applying_wrist": {
+     "minMm": 359.803,
+     "medianMm": 389.678
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.632,
+     "medianMm": 263.766
+    },
+    "treated_wrist": {
+     "minMm": 97.57,
+     "medianMm": 143.097
+    },
+    "treated_forearm": {
+     "minMm": -11.492,
+     "medianMm": 87.094
+    }
+   }
+  },
+  {
+   "frame": 417,
+   "contact": {
+    "index_tip": {
+     "minMm": 480.572,
+     "medianMm": 490.164
+    },
+    "index_pad": {
+     "minMm": 477.026,
+     "medianMm": 480.21
+    },
+    "index_side": {
+     "minMm": 466.767,
+     "medianMm": 482.923
+    },
+    "middle_tip": {
+     "minMm": 519.946,
+     "medianMm": 528.271
+    },
+    "middle_pad": {
+     "minMm": 513.222,
+     "medianMm": 518.401
+    },
+    "middle_side": {
+     "minMm": 487.634,
+     "medianMm": 510.793
+    },
+    "ring_tip": {
+     "minMm": 536.467,
+     "medianMm": 545.699
+    },
+    "ring_pad": {
+     "minMm": 530.569,
+     "medianMm": 536.338
+    },
+    "ring_side": {
+     "minMm": 507.791,
+     "medianMm": 527.565
+    },
+    "pinky_tip": {
+     "minMm": 534.072,
+     "medianMm": 542.795
+    },
+    "pinky_pad": {
+     "minMm": 532.699,
+     "medianMm": 536.465
+    },
+    "pinky_side": {
+     "minMm": 519.106,
+     "medianMm": 533.725
+    },
+    "thumb": {
+     "minMm": 420.878,
+     "medianMm": 432.056
+    },
+    "palm_heel": {
+     "minMm": 439.255,
+     "medianMm": 464.797
+    },
+    "palm_centre": {
+     "minMm": 446.753,
+     "medianMm": 483.797
+    },
+    "applying_wrist": {
+     "minMm": 432.7,
+     "medianMm": 467.679
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.689,
+     "medianMm": 263.837
+    },
+    "treated_wrist": {
+     "minMm": 97.628,
+     "medianMm": 143.162
+    },
+    "treated_forearm": {
+     "minMm": -11.447,
+     "medianMm": 87.141
+    }
+   }
+  },
+  {
+   "frame": 421,
+   "contact": {
+    "index_tip": {
+     "minMm": 539.424,
+     "medianMm": 548.87
+    },
+    "index_pad": {
+     "minMm": 534.131,
+     "medianMm": 538.325
+    },
+    "index_side": {
+     "minMm": 516.418,
+     "medianMm": 534.55
+    },
+    "middle_tip": {
+     "minMm": 578.986,
+     "medianMm": 586.934
+    },
+    "middle_pad": {
+     "minMm": 570.518,
+     "medianMm": 576.868
+    },
+    "middle_side": {
+     "minMm": 537.338,
+     "medianMm": 562.37
+    },
+    "ring_tip": {
+     "minMm": 593.112,
+     "medianMm": 601.937
+    },
+    "ring_pad": {
+     "minMm": 585.419,
+     "medianMm": 591.938
+    },
+    "ring_side": {
+     "minMm": 556.077,
+     "medianMm": 577.012
+    },
+    "pinky_tip": {
+     "minMm": 586.061,
+     "medianMm": 595.097
+    },
+    "pinky_pad": {
+     "minMm": 583.855,
+     "medianMm": 587.633
+    },
+    "pinky_side": {
+     "minMm": 565.505,
+     "medianMm": 581.582
+    },
+    "thumb": {
+     "minMm": 466.643,
+     "medianMm": 483.882
+    },
+    "palm_heel": {
+     "minMm": 475.907,
+     "medianMm": 503.21
+    },
+    "palm_centre": {
+     "minMm": 493.144,
+     "medianMm": 530.474
+    },
+    "applying_wrist": {
+     "minMm": 463.056,
+     "medianMm": 498.362
+    }
+   },
+   "garment": {
+    "treated_hand": {
+     "minMm": 145.708,
+     "medianMm": 263.862
+    },
+    "treated_wrist": {
+     "minMm": 97.648,
+     "medianMm": 143.184
+    },
+    "treated_forearm": {
+     "minMm": -11.431,
+     "medianMm": 87.158
+    }
+   }
+  }
+ ],
+ "summary": {
+  "worstPerRegion": {
+   "garment:treated_hand": {
+    "minMm": -72.133,
+    "frame": 45
+   },
+   "contact:thumb": {
+    "minMm": -21.152,
+    "frame": 333
+   },
+   "contact:applying_wrist": {
+    "minMm": -21.01,
+    "frame": 365
+   },
+   "contact:palm_centre": {
+    "minMm": -19.146,
+    "frame": 397
+   },
+   "contact:ring_side": {
+    "minMm": -18.102,
+    "frame": 109
+   },
+   "contact:palm_heel": {
+    "minMm": -15.927,
+    "frame": 369
+   },
+   "garment:treated_forearm": {
+    "minMm": -15.789,
+    "frame": 61
+   },
+   "contact:pinky_side": {
+    "minMm": -13.48,
+    "frame": 109
+   },
+   "contact:ring_tip": {
+    "minMm": -9.83,
+    "frame": 109
+   },
+   "contact:index_side": {
+    "minMm": -8.688,
+    "frame": 233
+   },
+   "contact:ring_pad": {
+    "minMm": -6.905,
+    "frame": 109
+   },
+   "contact:pinky_pad": {
+    "minMm": -6.875,
+    "frame": 109
+   },
+   "contact:pinky_tip": {
+    "minMm": -5.783,
+    "frame": 109
+   },
+   "contact:middle_side": {
+    "minMm": 1.796,
+    "frame": 109
+   },
+   "contact:middle_pad": {
+    "minMm": 2.081,
+    "frame": 109
+   },
+   "contact:middle_tip": {
+    "minMm": 2.231,
+    "frame": 109
+   },
+   "contact:index_pad": {
+    "minMm": 11.094,
+    "frame": 233
+   },
+   "contact:index_tip": {
+    "minMm": 12.975,
+    "frame": 109
+   },
+   "garment:treated_wrist": {
+    "minMm": 16.364,
+    "frame": 37
+   }
+  },
+  "worstContactMm": -21.152,
+  "worstGarmentMm": -72.133
+ },
+ "label": "BEFORE"
+}
