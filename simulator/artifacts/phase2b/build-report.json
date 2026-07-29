@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "blenderVersion": "4.5.12 LTS",
-  "buildSeconds": 52.7,
+  "buildSeconds": 218.6,
   "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
   "originalChecksumUnchanged": true,
   "outputs": {
@@ -60,101 +60,121 @@
   },
   "gripSolution": {
     "fingers": {
-      "index": 2.325,
-      "middle": 2.6350000000000002,
-      "ring": 2.2475,
-      "pinky": 1.085
+      "index": 2.48,
+      "middle": 2.8675,
+      "ring": 2.6350000000000002,
+      "pinky": 2.0925000000000002
     },
     "thumb": {
-      "oppose": 0.0,
-      "flex": 1.6
+      "oppose": 0.25,
+      "flex": 0.1,
+      "tip": 1.2000000000000002
     },
     "contact": {
       "index": {
-        "rn": 1.4131,
-        "axialMm": 16.5,
-        "padGapMm": 4.89,
+        "rn": 1.4034,
+        "axialMm": 15.3,
+        "padGapMm": 4.91,
         "wantGapMm": 5.45,
-        "pipGapMm": 27.18,
-        "dipGapMm": 13.76,
+        "pipGapMm": 17.91,
+        "dipGapMm": 7.76,
         "dipWantMm": 9.23
       },
       "middle": {
-        "rn": 1.4935,
-        "axialMm": -4.4,
-        "padGapMm": 6.63,
+        "rn": 1.2903,
+        "axialMm": -9.3,
+        "padGapMm": 4.28,
         "wantGapMm": 4.51,
-        "pipGapMm": 21.22,
-        "dipGapMm": 7.03,
+        "pipGapMm": 21.0,
+        "dipGapMm": 6.09,
         "dipWantMm": 8.85
       },
       "ring": {
-        "rn": 1.897,
-        "axialMm": -24.7,
-        "padGapMm": 10.88,
+        "rn": 1.3228,
+        "axialMm": -25.2,
+        "padGapMm": 4.25,
         "wantGapMm": 4.84,
-        "pipGapMm": 16.0,
-        "dipGapMm": 5.36,
+        "pipGapMm": 19.93,
+        "dipGapMm": 5.94,
         "dipWantMm": 7.71
       },
       "pinky": {
-        "rn": 1.7656,
-        "axialMm": -60.8,
-        "padGapMm": 10.31,
+        "rn": 1.2674,
+        "axialMm": -45.7,
+        "padGapMm": 3.16,
         "wantGapMm": 3.29,
-        "pipGapMm": 11.2,
-        "dipGapMm": 3.46,
+        "pipGapMm": 12.6,
+        "dipGapMm": 3.19,
         "dipWantMm": 5.58
       },
       "thumb": {
-        "rn": 3.184,
-        "axialMm": -9.5,
-        "padGapMm": 28.74,
+        "rn": 1.3225,
+        "axialMm": 8.7,
+        "padGapMm": 5.02,
         "wantGapMm": 5.71
       }
     },
     "penetration": 0.0,
     "unreachable": [],
-    "thumbError": 0.03924896678857015,
+    "thumbError": 0.0006897341801702346,
     "thumbEnvelope": [
       {
-        "gapMm": -6.8,
-        "opposeDeg": 48.7,
-        "flexDeg": 17.2,
-        "axialMm": -62.9
+        "errMm": 29.5,
+        "padGapMm": 35.2,
+        "ipGapMm": 7.4,
+        "opposeDeg": 14.3,
+        "flexDeg": 5.7,
+        "axialMm": 35.8
       },
       {
-        "gapMm": -5.9,
-        "opposeDeg": 45.8,
-        "flexDeg": 22.9,
-        "axialMm": -60.8
+        "errMm": 30.8,
+        "padGapMm": 36.5,
+        "ipGapMm": 7.5,
+        "opposeDeg": 17.2,
+        "flexDeg": 5.7,
+        "axialMm": 28.6
       },
       {
-        "gapMm": -3.2,
-        "opposeDeg": 51.6,
-        "flexDeg": 11.5,
-        "axialMm": -64.9
+        "errMm": 31.6,
+        "padGapMm": 37.3,
+        "ipGapMm": 7.5,
+        "opposeDeg": 20.1,
+        "flexDeg": 5.7,
+        "axialMm": 21.3
       },
       {
-        "gapMm": -3.1,
-        "opposeDeg": 43.0,
-        "flexDeg": 28.6,
-        "axialMm": -58.4
+        "errMm": 31.8,
+        "padGapMm": 37.5,
+        "ipGapMm": 7.2,
+        "opposeDeg": 25.8,
+        "flexDeg": 5.7,
+        "axialMm": 6.4
       },
       {
-        "gapMm": -3.0,
-        "opposeDeg": 54.4,
-        "flexDeg": 11.5,
-        "axialMm": -69.1
+        "errMm": 31.9,
+        "padGapMm": 37.7,
+        "ipGapMm": 7.4,
+        "opposeDeg": 22.9,
+        "flexDeg": 5.7,
+        "axialMm": 13.8
+      },
+      {
+        "errMm": 32.1,
+        "padGapMm": 37.8,
+        "ipGapMm": 9.0,
+        "opposeDeg": 17.2,
+        "flexDeg": 0.0,
+        "axialMm": 33.6
       }
     ],
-    "wrapError": 0.0008294488623975249,
+    "wrapError": 0.0,
     "offset": [
       0.0,
       0.092,
-      0.0316
+      0.0276
     ],
-    "palmGapMm": 1.5,
+    "tiltDeg": 18.0,
+    "palmGapMm": -2.5,
     "seatMeasuredMm": [
       0.0,
       78.0,
@@ -165,84 +185,90 @@
         "offset": [
           0.0,
           0.092,
-          0.0316
+          0.0276
         ],
-        "score": 0.0247,
-        "contactErrMm": 3.94,
-        "thumbErrMm": 23.03,
-        "wrapErrorMm": 0.83,
-        "palmGapMm": 1.5,
+        "tiltDeg": 18.0,
+        "score": 0.00542,
+        "contactErrMm": 0.37,
+        "thumbErrMm": 0.69,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -2.5,
         "penetrationMm": 0.0,
-        "unreachable": []
-      },
-      {
-        "offset": [
-          -0.014,
-          0.092,
-          0.0316
-        ],
-        "score": 0.02548,
-        "contactErrMm": 3.86,
-        "thumbErrMm": 23.98,
-        "wrapErrorMm": 0.91,
-        "palmGapMm": 1.5,
-        "penetrationMm": 0.0,
-        "unreachable": []
-      },
-      {
-        "offset": [
-          0.014,
-          0.092,
-          0.0356
-        ],
-        "score": 0.02941,
-        "contactErrMm": 2.27,
-        "thumbErrMm": 24.09,
-        "wrapErrorMm": 2.43,
-        "palmGapMm": 5.5,
-        "penetrationMm": 0.0,
-        "unreachable": []
-      },
-      {
-        "offset": [
-          -0.014,
-          0.092,
-          0.0356
-        ],
-        "score": 0.03072,
-        "contactErrMm": 1.86,
-        "thumbErrMm": 24.58,
-        "wrapErrorMm": 2.88,
-        "palmGapMm": 5.5,
-        "penetrationMm": 0.26,
         "unreachable": []
       },
       {
         "offset": [
           0.0,
           0.092,
-          0.0356
+          0.0276
         ],
-        "score": 0.03079,
-        "contactErrMm": 1.86,
-        "thumbErrMm": 25.44,
-        "wrapErrorMm": 2.61,
-        "palmGapMm": 5.5,
-        "penetrationMm": 0.16,
+        "tiltDeg": 34.0,
+        "score": 0.00807,
+        "contactErrMm": 1.95,
+        "thumbErrMm": 0.33,
+        "wrapErrorMm": 1.13,
+        "palmGapMm": -2.5,
+        "penetrationMm": 0.0,
         "unreachable": []
       },
       {
         "offset": [
-          0.014,
+          0.0,
+          0.092,
+          0.0316
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.00915,
+        "contactErrMm": 1.75,
+        "thumbErrMm": 0.67,
+        "wrapErrorMm": 4.6,
+        "palmGapMm": 1.5,
+        "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
           0.092,
           0.0236
         ],
-        "score": 0.04088,
-        "contactErrMm": 3.98,
-        "thumbErrMm": 31.5,
+        "tiltDeg": 18.0,
+        "score": 0.01234,
+        "contactErrMm": 0.36,
+        "thumbErrMm": 0.35,
         "wrapErrorMm": 0.0,
         "palmGapMm": -6.5,
         "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0236
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.01319,
+        "contactErrMm": 1.19,
+        "thumbErrMm": 0.21,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -6.5,
+        "penetrationMm": 0.04,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          -0.028,
+          0.078,
+          0.0236
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.01355,
+        "contactErrMm": 1.14,
+        "thumbErrMm": 0.38,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -6.5,
+        "penetrationMm": 0.14,
         "unreachable": []
       }
     ]
@@ -312,7 +338,7 @@
     "schemaVersion": 1,
     "assetVersion": "2b.1.0+6114fceafe6c",
     "asset": "human_application_baked.glb",
-    "generatedAtUtc": "2026-07-29T11:53:34Z",
+    "generatedAtUtc": "2026-07-29T12:15:07Z",
     "clip": {
       "name": "phase2_application",
       "fps": 30,
@@ -478,16 +504,16 @@
     "[phase2b] palm contact point (hand-local): [-0.0105, 0.0442, 0.0239]",
     "[phase2b] finger soft tissue (pad radius, mm): index=7.5, middle=6.5, ring=6.8, pinky=5.3, thumb=7.7",
     "[phase2b] palm surface (60 verts): median 16.3 mm  p75 18.6 mm  max 27.6 mm  -> barrel axis seated at 27.6 mm",
-    "[phase2b] grip seating: offset=[0.0, 0.092, 0.0316]  palmGap=+1.5mm  penetration=0.00mm  wrapError=0.83mm  unreachable=[]",
-    "[phase2b] pad contact (achieved vs wanted, mm from the barrel surface): index=+4.9/5.5@+16mm, middle=+6.6/4.5@-4mm, ring=+10.9/4.8@-25mm, pinky=+10.3/3.3@-61mm, thumb=+28.7/5.7@-10mm",
-    "[phase2b] finger wrap (pip/dip gap vs dip want, mm): index=+27.2/+13.8/9.2, middle=+21.2/+7.0/8.8, ring=+16.0/+5.4/7.7, pinky=+11.2/+3.5/5.6",
-    "[phase2b]   finger totals (deg): index=133, middle=151, ring=129, pinky=62  thumb oppose=0 flex=92",
+    "[phase2b] grip seating: offset=[0.0, 0.092, 0.0276] tilt=18.0deg  palmGap=-2.5mm  penetration=0.00mm  wrapError=0.00mm  unreachable=[]",
+    "[phase2b] pad contact (achieved vs wanted, mm from the barrel surface): index=+4.9/5.5@+15mm, middle=+4.3/4.5@-9mm, ring=+4.2/4.8@-25mm, pinky=+3.2/3.3@-46mm, thumb=+5.0/5.7@+9mm",
+    "[phase2b] finger wrap (pip/dip gap vs dip want, mm): index=+17.9/+7.8/9.2, middle=+21.0/+6.1/8.8, ring=+19.9/+5.9/7.7, pinky=+12.6/+3.2/5.6",
+    "[phase2b]   finger totals (deg): index=142, middle=164, ring=151, pinky=120  thumb oppose=14 flex=6",
     "[phase2b] deposit point (world): [0.1644, -0.1863, 1.2068]  forearm radius 0.0439 (mean 0.0348, profile 0.0497..0.0267)",
     "[phase2b] palm-to-skin gap across the application keys: f266=+88.2mm, f286=-1.0mm, f296=-1.4mm, f316=-1.5mm, f334=-1.3mm, f346=-1.4mm, f376=+0.4mm, f391=+77.0mm, f404=+173.1mm, f421=+520.5mm",
     "[phase2b]   worst -1.5 mm, largest hover +520.5 mm",
     "[phase2b] baked pose: 53 bones, 531 fcurves, 223551 keys, range [1.0, 421.0]",
     "[phase2b] strand span 64.5..622.1 mm",
-    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20469195 bytes)",
+    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20462643 bytes)",
     "[phase2b] purged 9 non-export objects: CTRL_hand_l, CTRL_hand_r, CTRL_pole_l, CTRL_pole_r, LIGHT_fill, LIGHT_key, LIGHT_rake, LIGHT_rim, PREVIEW_camera",
     "[phase2b] exported simulator/assets/human/human_application_baked.glb (20218708 bytes) from 18 objects",
     "[phase2b] wrote simulator/assets/human/human_application_manifest.json"

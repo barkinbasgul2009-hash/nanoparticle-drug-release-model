@@ -335,7 +335,8 @@ THUMB_CMC_FLEX = 0.30       # radians of CMC flexion per unit opposition
 
 def set_finger_totals(armature: bpy.types.Object, side: str, axes: dict,
                       totals: dict, spread_scale: float = 1.0,
-                      thumb_oppose: float = 0.0, thumb_flex: float = 0.0) -> None:
+                      thumb_oppose: float = 0.0, thumb_flex: float = 0.0,
+                      thumb_tip: float = 0.0) -> None:
     """Pose one hand from EXPLICIT per-finger total flexion angles (radians).
 
     Total flexion is split across MCP/PIP/DIP by that finger's own share, so the PIP leads, the DIP
@@ -358,6 +359,12 @@ def set_finger_totals(armature: bpy.types.Object, side: str, axes: dict,
         pb.rotation_mode = "QUATERNION"
         ax = axes[f"thumb_{seg}_{side}"]
         q = Quaternion(ax["flex"], thumb_flex * flex_share)
+        if seg == "03":
+            # The IP joint needs its own freedom, not a fixed share of the total. Measured against
+            # the barrel, a thumb driven only by a shared total contacts with its MIDDLE phalanx and
+            # leaves the pad 25 mm out in the air, because the distal phalanx is 40 mm long against a
+            # 23-30 mm cross-section. Curling the last joint is what puts the pad on the tube.
+            q = Quaternion(ax["flex"], thumb_tip) @ q
         if seg == "01":
             # Order matters: swing the thumb across the palm, roll it so the pad faces the fingers,
             # then bend it. Without the roll the thumb arrives edge-on and has to be pushed through
@@ -392,12 +399,14 @@ def set_finger_pose(armature: bpy.types.Object, side: str, axes: dict, close: fl
         totals[name] = target * local + 0.42 * squeeze * local
     oppose_max = grip["thumb"]["oppose"] if grip else 0.92
     flex_max = grip["thumb"]["flex"] if grip else 1.10
+    tip_max = grip["thumb"].get("tip", 0.0) if grip else 0.0
     shaped = minimum_jerk(close)
     set_finger_totals(
         armature, side, axes, totals,
         spread_scale=1.0 - 0.65 * shaped,
         thumb_oppose=(thumb_oppose if thumb_oppose is not None else oppose_max * shaped),
         thumb_flex=flex_max * shaped + 0.18 * squeeze,
+        thumb_tip=tip_max * shaped + 0.10 * squeeze,
     )
 
 

@@ -353,7 +353,8 @@ def grip_seat(frame: dict, surf: dict) -> Vector:
     ))
 
 
-def grip_matrix(armature: bpy.types.Object, side: str, frame: dict, seat: Vector) -> Matrix:
+def grip_matrix(armature: bpy.types.Object, side: str, frame: dict, seat: Vector,
+                tilt: float = 0.0) -> Matrix:
     """Tube pose expressed in hand-bone local space, built from the ANATOMICAL frame.
 
     A flat oval tube is held with its FLAT face against the palm: the thin axis (which is also the
@@ -374,11 +375,22 @@ def grip_matrix(armature: bpy.types.Object, side: str, frame: dict, seat: Vector
     to end mid-palm puts the thumb's IP joint 6-11 mm INSIDE the barrel, because the crossing arc
     passes through the volume the tube occupies. Sizing the body to the digits' actual 108 mm contact
     span (`p2b_geometry.TUBE`) removes the crossing entirely.
+
+    `tilt` swings the barrel within the palm plane, from straight across the palm towards the
+    thumb-index web. Nobody holds a tube exactly across their palm; the barrel lies diagonally, and
+    on this rig the angle is not cosmetic. The thumb's flexion plane runs nearly parallel to a barrel
+    laid straight across, so curling the thumb sweeps its pad ALONGSIDE the tube instead of onto it,
+    and the pad stalls ~23 mm out however the joint angles are tuned. Rotating the barrel into the
+    thumb's plane is what lets the pad actually land, so the angle is searched with the seating
+    rather than assumed.
     """
     hand_inv3 = armature.data.bones[f"hand_{side}"].matrix_local.to_3x3().inverted()
+    c, s = math.cos(tilt), math.sin(tilt)
+    axis = frame["radial"] * c + frame["distal"] * s          # tail -> nozzle, in the palm plane
+    wide = -(frame["distal"] * c - frame["radial"] * s)       # wide oval axis, also in the palm
     m = Matrix.Identity(3)
-    m.col[0] = hand_inv3 @ (-frame["distal"])    # tube +X (wide oval axis) lies along the palm
-    m.col[1] = hand_inv3 @ frame["radial"]       # tube +Y (tail -> nozzle) exits past the index side
+    m.col[0] = hand_inv3 @ wide                  # tube +X (wide oval axis) lies along the palm
+    m.col[1] = hand_inv3 @ axis                  # tube +Y (tail -> nozzle) exits towards the web
     m.col[2] = hand_inv3 @ frame["palmar"]       # tube +Z (label face)     faces the palm
     return Matrix.Translation(frame_to_hand_local(armature, side, frame, seat)) @ m.to_4x4()
 
@@ -533,7 +545,7 @@ def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.t
     # different pair of values. A sweep that is too narrow silently returns its own boundary, which
     # is what left the thumb 3.7 radii off the barrel with zero flexion.
     for oppose in [i * 0.05 for i in range(0, 30)]:
-        for flex in [i * 0.10 for i in range(0, 18)]:
+        for flex in [i * 0.10 for i in range(0, 27)]:
             R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35,
                                 thumb_oppose=oppose, thumb_flex=flex)
             _rn, y, gap = rn_of(f"thumb_03_{side}")
@@ -545,23 +557,37 @@ def solve_grip_at(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.t
                    + 8.0 * max(0.0, want_thumb - PENETRATION_TOLERANCE - gap)
                    + 8.0 * max(0.0, want_thumb_ip - PENETRATION_TOLERANCE - gap2)
                    + axial_penalty * 12.0)
-            envelope.append((gap, oppose, flex, y))
+            envelope.append((err, gap, gap2, oppose, flex, y))
             if err < best_err:
                 best_oppose, best_flex, best_err = oppose, flex, err
-    solution["thumb"] = {"oppose": best_oppose, "flex": best_flex}
-    solution["thumbError"] = best_err
+    # Third pass: curl the IP alone until the PAD reaches the barrel. The two-parameter sweep above
+    # places the thumb's approach; this places its contact.
+    best_tip, tip_err = 0.0, float("inf")
+    for i in range(29):
+        tip = i * 0.05
+        R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35,
+                            thumb_oppose=best_oppose, thumb_flex=best_flex, thumb_tip=tip)
+        _rn, y, gap = rn_of(f"thumb_03_{side}")
+        err = (abs(gap - want_thumb)
+               + 8.0 * max(0.0, want_thumb - PENETRATION_TOLERANCE - gap)
+               + 12.0 * (max(0.0, lo_y - y) + max(0.0, y - hi_y)))
+        if err < tip_err:
+            best_tip, tip_err = tip, err
+    solution["thumb"] = {"oppose": best_oppose, "flex": best_flex, "tip": best_tip}
+    solution["thumbError"] = tip_err
     # What the thumb could actually reach, regardless of the axial window. If the closest approach
     # over the whole sweep is still far from the barrel, the problem is the tube's placement or its
     # dimensions -- not the thumb's angles -- and the report has to say which (ss9).
     envelope.sort(key=lambda e: e[0])
     solution["thumbEnvelope"] = [
-        {"gapMm": round(g * 1000, 1), "opposeDeg": round(math.degrees(o), 1),
+        {"errMm": round(e * 1000, 1), "padGapMm": round(g * 1000, 1),
+         "ipGapMm": round(g2 * 1000, 1), "opposeDeg": round(math.degrees(o), 1),
          "flexDeg": round(math.degrees(f), 1), "axialMm": round(y * 1000, 1)}
-        for g, o, f, y in envelope[:5]]
+        for e, g, g2, o, f, y in envelope[:6]]
 
     # record the achieved contact so the build report carries evidence, not a claim
     R.set_finger_totals(armature, side, axes, totals, spread_scale=0.35,
-                        thumb_oppose=best_oppose, thumb_flex=best_flex)
+                        thumb_oppose=best_oppose, thumb_flex=best_flex, thumb_tip=best_tip)
     wrap = 0.0
     for name in R.FINGERS + ("thumb",):
         rn, y, gap = rn_of(f"{name}_03_{side}")
@@ -603,11 +629,12 @@ def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.typ
     """
     trials = []
     best = None
-    for dx in (-0.014, 0.0, 0.014):
-        for dy in (-0.014, 0.0, 0.014, 0.028, 0.042):
+    for tilt in (0.0, math.radians(18.0), math.radians(34.0), math.radians(50.0)):
+      for dx in (-0.028, -0.014, 0.0):
+        for dy in (-0.014, 0.0, 0.014, 0.028):
             for dz in (-0.004, 0.0, 0.004, 0.008):
                 offset = seat + Vector((dx, dy, dz))
-                grip = grip_matrix(armature, side, frame, offset)
+                grip = grip_matrix(armature, side, frame, offset, tilt)
                 hand_ctrl.matrix_world = tray_tube @ grip.inverted()
                 bpy.context.view_layer.update()
                 sol = solve_grip_at(armature, side, axes, tube, flesh)
@@ -629,7 +656,8 @@ def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.typ
                 score = (contact_err + 0.8 * thumb_err
                          + 3.0 * sol["penetration"] + 0.02 * len(sol["unreachable"])
                          + 1.2 * sol["wrapError"] + 0.9 * palm_penalty)
-                trials.append({"offset": [round(c, 4) for c in offset], "score": round(score, 5),
+                trials.append({"offset": [round(c, 4) for c in offset],
+                               "tiltDeg": round(math.degrees(tilt), 1), "score": round(score, 5),
                                "contactErrMm": round(contact_err * 1000, 2),
                                "thumbErrMm": round(thumb_err * 1000, 2),
                                "wrapErrorMm": round(sol["wrapError"] * 1000, 2),
@@ -637,12 +665,13 @@ def search_grip(armature: bpy.types.Object, side: str, axes: dict, tube: bpy.typ
                                "penetrationMm": round(sol["penetration"] * 1000, 2),
                                "unreachable": sol["unreachable"]})
                 if best is None or score < best[0]:
-                    best = (score, offset, grip, sol)
-    _score, offset, grip, sol = best
+                    best = (score, offset, grip, sol, tilt)
+    _score, offset, grip, sol, tilt = best
     hand_ctrl.matrix_world = tray_tube @ grip.inverted()
     bpy.context.view_layer.update()
     sol = solve_grip_at(armature, side, axes, tube, flesh)
     sol["offset"] = [round(c, 4) for c in offset]
+    sol["tiltDeg"] = round(math.degrees(tilt), 1)
     sol["palmGapMm"] = round(((offset.z - G.TUBE["radius_z"]) - surf["p75Z"]) * 1000, 2)
     sol["seatMeasuredMm"] = [round(c * 1000, 2) for c in seat]
     sol["trials"] = sorted(trials, key=lambda t: t["score"])[:6]
@@ -744,7 +773,7 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
                                                controls[R.APPLYING]["hand"], frame_r, seat,
                                                flesh_r, surf_r)
     grip_inv = grip.inverted()
-    log(f"grip seating: offset={grip_solution['offset']}  "
+    log(f"grip seating: offset={grip_solution['offset']} tilt={grip_solution['tiltDeg']}deg  "
         f"palmGap={grip_solution['palmGapMm']:+.1f}mm  "
         f"penetration={grip_solution['penetration']*1000:.2f}mm  "
         f"wrapError={grip_solution['wrapError']*1000:.2f}mm  "
