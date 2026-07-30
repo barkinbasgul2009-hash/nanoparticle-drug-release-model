@@ -1,0 +1,215 @@
+name: auto-merge when verified
+
+# Turns a fully verified pull request into a merge WITHOUT asking the user to click through GitHub.
+#
+# What this does NOT do, deliberately:
+#   * It never merges the PR itself. It asks GitHub to enable NATIVE auto-merge, which merges only
+#     once every branch-protection condition — required checks, required reviewers, required
+#     conversations — is satisfied. If a rule blocks the merge, the PR simply waits. Nothing here
+#     weakens, bypasses or disables a protection rule, and it never uses admin merge.
+#   * It never treats a machine review as a human approval. If the repository requires an
+#     independent review, that review is still required and the PR stays open until a person gives
+#     it. The job summary names the blocking rule instead of pretending the work shipped.
+#   * It cannot be talked into merging a blocked animation. The acceptance gate is re-run here, at
+#     the exact commit being merged and against the same base the PR will merge into, so the opt-in
+#     label is a second condition and never a substitute for the gate. The label cannot change which
+#     acceptance reports are required — that comes from the changed paths, which are the diff itself.
+#
+# Opt in per PR with the label:  auto-merge: verified
+# Remove the label to stop it. Auto-merge already enabled on GitHub can be cancelled from the PR.
+
+on:
+  workflow_run:
+    workflows: ["simulator gates"]
+    types: [completed]
+
+# Minimum needed: read the repo, read the check results, and set the auto-merge flag on a PR.
+# No `contents: write` — this workflow never pushes, and cannot.
+permissions:
+  contents: read
+  pull-requests: write
+  checks: read
+  actions: read
+
+concurrency:
+  group: auto-merge-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  enable-auto-merge:
+    name: enable auto-merge
+    runs-on: ubuntu-latest
+    # A gate run that failed, was cancelled, or ran on main (no PR) is not a merge candidate.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch != 'main' &&
+      github.event.workflow_run.event != 'workflow_dispatch'
+    steps:
+      # Check out the EXACT commit the gates ran against, not the branch tip. If someone pushed
+      # again while the gates were running, this job must judge the commit that was verified.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          # The acceptance gate diffs against the merge base, which a shallow clone lacks.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Find the pull request for this commit
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          gh pr list --state open --base main --limit 100 \
+            --json number,headRefOid,labels,isDraft,title > prs.json
+          number=$(node -e '
+            const prs = require("./prs.json");
+            const hit = prs.find((p) => p.headRefOid === process.env.HEAD_SHA);
+            console.log(hit ? hit.number : "");
+          ')
+          if [ -z "$number" ]; then
+            echo "No open PR against main has head $HEAD_SHA — nothing to merge."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Require the explicit opt-in label
+        id: optin
+        if: steps.pr.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          labels=$(gh pr view "$PR" --json labels -q '.labels[].name')
+          if printf '%s\n' "$labels" | grep -qx 'auto-merge: verified'; then
+            echo "opted-in=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "opted-in=false" >> "$GITHUB_OUTPUT"
+            echo "PR #$PR is not labelled 'auto-merge: verified' — leaving it alone."
+          fi
+
+      # Defence in depth. The gates already ran this, but re-running it here means the merge decision
+      # and the acceptance decision are read from the same commit at the same moment, and against the
+      # base this PR will actually merge into. A blocked animation cannot be merged by adding a label:
+      # the label is checked separately above and has no influence on what the gate requires.
+      - name: Re-read the acceptance gate at the merge commit
+        if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          base_ref=$(gh pr view "$PR" --json baseRefName -q '.baseRefName')
+          git fetch --no-tags origin "$base_ref"
+          node simulator/tools/check-acceptance.mjs --base "origin/$base_ref"
+
+      - name: Require every check on this commit to be green
+        if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          REPO: ${{ github.repository }}
+          # Checks that must be PRESENT, not merely not-failing. Without this list a commit whose
+          # `tests` workflow never ran at all would pass the loop below, because there would be
+          # nothing red to find. An absent check is not a passing check.
+          REQUIRED: "all gates r-tests js-tests hidden-char-check"
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/commits/$HEAD_SHA/check-runs" --paginate \
+            -q '.check_runs[] | [.name, .status, (.conclusion // "pending")] | @tsv' > checks.tsv
+          cat checks.tsv
+
+          # `neutral` and `skipped` are legitimate non-failures; anything else that is not success,
+          # including a check still in progress, blocks.
+          bad() { awk -F'\t' '$2 != "completed" || ($3 != "success" && $3 != "neutral" && $3 != "skipped")' checks.tsv; }
+          if bad | grep -q .; then
+            echo "::error::Not every check on $HEAD_SHA is green — refusing to enable auto-merge."
+            bad
+            exit 1
+          fi
+
+          missing=""
+          for name in $REQUIRED; do
+            cut -f1 checks.tsv | grep -qxF "$name" || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Required check(s) never reported on $HEAD_SHA:$missing"
+            exit 1
+          fi
+
+      - name: Ask GitHub to auto-merge once its own rules are satisfied
+        id: enable
+        if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -uo pipefail
+          # --auto sets the flag; GitHub performs the merge itself when, and only when, every
+          # required check and required review is satisfied. It is not an override.
+          if gh pr merge "$PR" --auto --squash 2> merge-error.txt; then
+            echo "state=enabled" >> "$GITHUB_OUTPUT"
+          else
+            echo "state=refused" >> "$GITHUB_OUTPUT"
+            # The message names the blocking rule (auto-merge disabled for the repository, a
+            # required review, a protected-branch restriction). Surface it verbatim; do not try to
+            # work around it, and do not report the change as shipped.
+            {
+              echo "reason<<EOF"
+              cat merge-error.txt
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report
+        if: always()
+        env:
+          PR: ${{ steps.pr.outputs.number }}
+          FOUND: ${{ steps.pr.outputs.found }}
+          OPTED: ${{ steps.optin.outputs.opted-in }}
+          STATE: ${{ steps.enable.outputs.state }}
+          REASON: ${{ steps.enable.outputs.reason }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          {
+            echo "### Auto-merge"
+            echo ""
+            echo "commit: \`$HEAD_SHA\`"
+            echo ""
+            if [ "$FOUND" != "true" ]; then
+              echo "No open PR against \`main\` has this head commit. Nothing to do."
+            elif [ "$OPTED" != "true" ]; then
+              echo "PR #$PR is **not opted in**. Add the \`auto-merge: verified\` label to let a"
+              echo "fully green commit merge without a manual click."
+            elif [ "$STATE" = "enabled" ]; then
+              echo "Auto-merge is **enabled** on PR #$PR."
+              echo ""
+              echo "GitHub will merge it as soon as its own required checks and required reviews are"
+              echo "satisfied. If a required review is outstanding the PR stays open until a person"
+              echo "gives it — that is the intended behaviour, and it is not a deployment."
+            elif [ "$STATE" = "refused" ]; then
+              echo "GitHub **refused** to enable auto-merge on PR #$PR. Reported reason:"
+              echo ""
+              echo '```'
+              echo "$REASON"
+              echo '```'
+              echo ""
+              echo "This is a legitimate repository rule. It has not been changed or bypassed."
+              echo "Common causes: *Allow auto-merge* is off in Settings → General, or the branch"
+              echo "ruleset requires something this commit does not yet have."
+            else
+              echo "Auto-merge was not attempted — an earlier condition blocked it. See the failed"
+              echo "step above for which one."
+            fi
+            echo ""
+            echo "> If the merge is performed by \`GITHUB_TOKEN\`-enabled auto-merge, the resulting"
+            echo "> push to \`main\` does not itself start new workflow runs. \`deploy-reconcile.yml\`"
+            echo "> exists to notice that and dispatch the Pages deployment."
+          } >> "$GITHUB_STEP_SUMMARY"
