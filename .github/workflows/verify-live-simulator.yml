@@ -1,0 +1,93 @@
+name: verify live simulator
+
+# Browser-level verification of the LIVE Phase 2B application page.
+#
+# deploy-verify.yml already proves the right BYTES are being served — it hashes the live root page
+# against web/index.html at the deployed commit. That cannot tell you whether the 3D scene renders:
+# the GLB could 404, WebGL could fail to initialise, a module could throw on import. Those all
+# produce a blank canvas and a perfectly matching page hash.
+#
+# So this loads the real public URL in a real browser and checks what a person would check by
+# looking: the human is in the scene, the sequence moves, nothing threw, every asset arrived.
+#
+# It runs after every Pages deployment, and on demand.
+
+on:
+  workflow_run:
+    workflows:
+      - "Deploy web tool to GitHub Pages"
+      - "rollback production deployment"
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pages: read
+
+concurrency:
+  group: verify-live-simulator
+  cancel-in-progress: true
+
+jobs:
+  live:
+    name: verify the live simulator
+    runs-on: ubuntu-latest
+    # A deployment that did not succeed has nothing to verify; deploy-verify.yml reports that failure.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The only place in this repository that takes a dependency, and it never ships: it exists to
+      # look at production from the outside.
+      - name: Install Playwright Chromium
+        run: npx --yes playwright@1.49.1 install --with-deps chromium
+
+      - name: Resolve the live site URL from the Pages API
+        id: site
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          url=$(gh api "repos/$REPO/pages" -q '.html_url')
+          [ -n "$url" ] || { echo "::error::could not read the Pages configuration"; exit 1; }
+          echo "url=${url%/}" >> "$GITHUB_OUTPUT"
+          echo "site: $url"
+
+      - name: Drive a real browser at the live page
+        env:
+          SHOT_OUT: live-frame.png
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.49.1 >/dev/null 2>&1
+          node simulator/tools/verify-live-simulator.mjs "${{ steps.site.outputs.url }}" | tee live.txt
+
+      - name: Publish the result
+        if: always()
+        run: |
+          {
+            echo "### Live simulator verification"
+            echo ""
+            echo "URL: ${{ steps.site.outputs.url }}/simulator/phase2b-preview.html"
+            echo ""
+            echo '```'
+            cat live.txt 2>/dev/null || echo "(no output — treat as failed)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The frame the live site actually rendered. This is the evidence, and it is worth keeping:
+      # the Phase 2B preview ships with known visual defects and this shows exactly what they look
+      # like in production.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-frame-${{ github.event.workflow_run.head_sha || github.sha }}
+          path: live-frame.png
+          if-no-files-found: warn
