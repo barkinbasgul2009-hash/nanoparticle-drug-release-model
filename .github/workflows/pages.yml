@@ -74,9 +74,11 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
+          # .nojekyll is a zero-byte marker, so it is checked for EXISTENCE, not size. Everything
+          # below it is content and must be non-empty.
+          test -f _site/.nojekyll || { echo "::error::missing from the Pages artifact: _site/.nojekyll"; fail=1; }
           for f in \
             _site/index.html \
-            _site/.nojekyll \
             _site/simulator/phase2b-preview.html \
             _site/simulator/src/three/presentationMode.js \
             _site/simulator/src/three/bakedApplicationScene.js \
