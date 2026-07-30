@@ -1,0 +1,110 @@
+name: reconcile production with main
+
+# Closes the one hole in the automatic path.
+#
+# `pages.yml` deploys on push to main, which covers every merge a person performs. It does NOT cover
+# a merge performed by GitHub's auto-merge after `auto-merge.yml` enabled it with `GITHUB_TOKEN`:
+# a push attributed to that token does not start new workflow runs, by design, so main can move
+# while the live site quietly stays where it was. Without this workflow the automation would end in
+# "merged but never deployed" and, worse, would look successful.
+#
+# So: compare the live deployment against main, and if main is ahead, dispatch the EXISTING Pages
+# workflow. (`workflow_dispatch` is one of the two events `GITHUB_TOKEN` is allowed to raise, which
+# is why this indirection works where a push does not.) pages.yml itself is not modified.
+#
+# It will not push a commit that has not passed its gates, and it will not re-dispatch a commit whose
+# deployment has already failed — a scheduler that keeps redeploying the same broken commit turns one
+# bad deploy into an outage nobody can interrupt.
+
+on:
+  schedule:
+    # Four times a day. Frequent enough that an unmerged-to-undeployed gap is measured in hours, not
+    # days; rare enough that it is not a polling loop.
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: deploy-reconcile
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    name: is the live site behind main?
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare, decide, and dispatch only if it is safe
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          main_sha=$(gh api "repos/$REPO/commits/main" -q '.sha')
+          echo "main:      $main_sha"
+
+          # The most recent Pages deployment attempt, whatever its outcome.
+          latest=$(gh api "repos/$REPO/actions/workflows/pages.yml/runs?per_page=1" \
+                     -q '.workflow_runs[0] | "\(.head_sha)\t\(.status)\t\(.conclusion // "pending")\t\(.html_url)"')
+          deployed_sha=$(printf '%s' "$latest" | cut -f1)
+          status=$(printf '%s' "$latest" | cut -f2)
+          conclusion=$(printf '%s' "$latest" | cut -f3)
+          run_url=$(printf '%s' "$latest" | cut -f4)
+          echo "last pages run: $deployed_sha $status/$conclusion"
+
+          summary() { printf '%s\n' "$1" >> "$GITHUB_STEP_SUMMARY"; }
+          summary "### Reconcile production with main"
+          summary ""
+          summary "| field | value |"
+          summary "|---|---|"
+          summary "| main | \`$main_sha\` |"
+          summary "| last Pages run | \`$deployed_sha\` ($status/$conclusion) |"
+          summary ""
+
+          if [ "$deployed_sha" = "$main_sha" ]; then
+            case "$conclusion" in
+              success)
+                summary "Production is level with main. Nothing to do."; exit 0;;
+              pending)
+                summary "A deployment of this commit is already $status. Leaving it alone."; exit 0;;
+              *)
+                summary "**The deployment of this commit FAILED** ($run_url)."
+                summary ""
+                summary "Not re-dispatching it. Redeploying an unchanged commit that has already"
+                summary "failed cannot succeed and would hide the failure behind repeated runs."
+                summary "Fix the cause and push a new commit, or roll back with the"
+                summary "\`rollback production deployment\` workflow."
+                echo "::error::Last Pages deployment failed for $main_sha and will not be retried automatically"
+                exit 1;;
+            esac
+          fi
+
+          # main has moved. Before deploying it, insist its gates are green — this path bypasses the
+          # push trigger, so it must not become a way to ship an ungated commit.
+          gate=$(gh api "repos/$REPO/commits/$main_sha/check-runs" --paginate \
+                   -q '.check_runs[] | select(.name == "all gates") | .conclusion' | head -1)
+          if [ "$gate" != "success" ]; then
+            summary "main is ahead of production, but its \`all gates\` check is \`${gate:-missing}\`."
+            summary ""
+            summary "Refusing to deploy. A commit that has not passed the simulator gates and the"
+            summary "visual acceptance gate does not reach the live site through this workflow."
+            echo "::error::main ($main_sha) has no green 'all gates' check — not deploying"
+            exit 1
+          fi
+
+          # Has this commit already been attempted and failed under a different run? Do not loop.
+          prior=$(gh api "repos/$REPO/actions/workflows/pages.yml/runs?per_page=30" \
+                    -q '[.workflow_runs[] | select(.head_sha == "'"$main_sha"'")] | length')
+          if [ "$prior" -gt 0 ]; then
+            summary "A Pages run for \`$main_sha\` already exists. Not dispatching another."
+            exit 0
+          fi
+
+          gh workflow run pages.yml --ref main
+          summary "Dispatched **Deploy web tool to GitHub Pages** for \`$main_sha\`."
+          summary ""
+          summary "\`verify production deployment\` will confirm the live site afterwards. Until it"
+          summary "reports a byte-for-byte match, production has not been updated."

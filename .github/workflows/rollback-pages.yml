@@ -1,0 +1,110 @@
+name: rollback production deployment
+
+# Puts a known-good commit back on the live website.
+#
+# GitHub Pages keeps no "previous version" you can click back to: the site is whatever the last
+# successful deployment uploaded. Recovery therefore means redeploying an earlier commit's web/
+# directory, which is exactly what this does. The rollback target SHA is printed by every
+# `verify production deployment` run, and stored in its `deployment-record.json` artifact.
+#
+# Manual on purpose. Automatic rollback would fight with whatever caused the bad deployment, and a
+# loop that keeps redeploying is worse than a site that is visibly wrong. Nothing here re-runs a
+# failed deployment of the same commit.
+#
+# .github/workflows/pages.yml is untouched; this is an additional entry point to the same Pages site.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full 40-character commit SHA to put back on the live site"
+        required: true
+        type: string
+      confirm:
+        description: "Type ROLLBACK to confirm you are replacing the live site"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Shares the `pages` group with pages.yml and deploy-teacher-demo.yml so deployments to the single
+# Pages site are serialised. Never cancel an in-flight deployment: a half-applied upload is worse
+# than a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: rebuild the site from ${{ inputs.sha }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require explicit confirmation
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.confirm }}" != "ROLLBACK" ]; then
+            echo "::error::confirm must be exactly ROLLBACK — refusing to replace the live site"
+            exit 1
+          fi
+          case "${{ inputs.sha }}" in
+            [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*) ;;
+            *) echo "::error::sha must be a full lowercase commit SHA"; exit 1;;
+          esac
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha }}
+          # Needed to prove the target is real history on this repository rather than an arbitrary
+          # object pushed to a fork.
+          fetch-depth: 0
+
+      - name: Confirm the target is a commit on main's history
+        run: |
+          set -euo pipefail
+          git cat-file -e "${{ inputs.sha }}^{commit}"
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "${{ inputs.sha }}" origin/main; then
+            echo "::error::${{ inputs.sha }} is not an ancestor of main — refusing to deploy it as production"
+            exit 1
+          fi
+          echo "Rolling back to: $(git log -1 --format='%h %ad %s' --date=short ${{ inputs.sha }})"
+
+      - name: Check the artifact is deployable
+        run: |
+          set -euo pipefail
+          test -s web/index.html
+          test -f web/.nojekyll
+          echo "web/index.html sha256 $(sha256sum web/index.html | cut -d' ' -f1)"
+
+      - uses: actions/configure-pages@v5
+
+      # Same shape as pages.yml: the web/ directory is the site root.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./web
+
+  deploy:
+    needs: build
+    name: deploy the rollback
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Report
+        run: |
+          {
+            echo "### Rolled back"
+            echo ""
+            echo "The live site now serves \`${{ inputs.sha }}\`."
+            echo ""
+            echo "\`verify production deployment\` runs next and will confirm — or contradict — that."
+            echo "Until it reports a byte-for-byte match, treat the rollback as unconfirmed."
+          } >> "$GITHUB_STEP_SUMMARY"
