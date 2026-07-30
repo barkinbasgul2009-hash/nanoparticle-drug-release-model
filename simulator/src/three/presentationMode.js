@@ -5,10 +5,12 @@
 // A channel owned by both would be caught here rather than showing up as a fight between the mixer
 // and the procedural rig on the same bone.
 //
-// The default is the PROCEDURAL FALLBACK. It was briefly `blender-baked` after the Phase 2B
-// technical gates passed, and has been restored because the Phase 2B completion review found the
-// baked hands, grip and contact are not yet visually accepted. Technical gates passing is not the
-// same as visual acceptance, and the production default follows the stricter of the two.
+// The default is `blender-baked`, by EXPLICIT OWNER AUTHORISATION, as a preview that ships with
+// known and documented visual defects. See docs/production-note-phase2b-preview.md. This is an
+// override of the project's own standard, not a change to it: the three Phase-2B acceptance locks
+// still declare REMAINS BLOCKED, the acceptance gate still fails on any change to these paths, and
+// none of the defect reports has been edited. Switch back with `?presentationMode=procedural-fallback`
+// or by restoring one line here.
 
 export const PRESENTATION_MODES = Object.freeze({
   BAKED: 'blender-baked',
@@ -20,20 +22,27 @@ export const ALL_MODES = Object.freeze([PRESENTATION_MODES.BAKED, PRESENTATION_M
 /**
  * The default the application boots with.
  *
- * RESTORED TO THE PROCEDURAL FALLBACK for the Phase 2B completion pass.
+ * SET TO `blender-baked` UNDER AN EXPLICIT, TEMPORARY OWNER AUTHORISATION.
  *
  * The technical gates all pass — asset verification, manifest validation, bone-for-bone skeleton
  * comparison, 18/18 in-browser determinism checks, disposal, and a frame cost below the procedural
- * path. Those were enough to flip the default once, and that was wrong: the completion review
- * identified blocking VISUAL defects in the baked hands, product grip, application contact and skin
- * deformation. A default is a claim about what is good enough to show, so it follows the stricter
- * standard, not the one that happens to be measurable.
+ * path. The VISUAL gates do not: the applying hand still intersects the treated forearm, the treated
+ * hand still enters the shirt, arm and wrist motion is not yet accepted, cream readability is
+ * unresolved, and there has been no physical iPad/WebKit run. All five are listed, unedited, in
+ * docs/production-note-phase2b-preview.md and in the three lock reports under
+ * simulator/artifacts/phase2b/, every one of which still declares REMAINS BLOCKED.
  *
- * `blender-baked` remains fully built, fully tested and one query parameter away
- * (`?presentationMode=blender-baked`). Nothing about the baked implementation has been weakened.
- * This flips back only when the visual acceptance in ss33 passes.
+ * Normally the default follows the stricter standard, because a default is a claim about what is
+ * good enough to show. The owner has decided to show it anyway, as a preview, while those defects
+ * are corrected. Recording that here rather than quietly flipping the constant is the point: the
+ * next person to read this file should learn that this is an override with a known cost, not that
+ * the baked path was accepted.
+ *
+ * `procedural-fallback` remains fully built, fully tested, and is the immediate rollback — one query
+ * parameter (`?presentationMode=procedural-fallback`) with no redeploy, or one line here with one.
+ * `resolvePresentationMode` also falls back to it automatically if the baked asset fails to load.
  */
-export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.PROCEDURAL;
+export const DEFAULT_PRESENTATION_MODE = PRESENTATION_MODES.BAKED;
 
 /** Channels that exactly one system must own at any moment. */
 export const CHANNELS = Object.freeze([
