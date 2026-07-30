@@ -1,0 +1,218 @@
+name: verify production deployment
+
+# Answers the only question that matters after a deployment: is the live website actually serving
+# the commit we think it is?
+#
+# A green deploy job is not evidence of a working site. `actions/deploy-pages` succeeding means the
+# artifact was accepted, not that the page loads, and a successful `git push` means nothing at all.
+# This workflow fetches the real URL over the public internet and compares what came back, byte for
+# byte, against web/index.html at the deployed commit. That comparison is what makes the deployed
+# SHA traceable — no build stamp is injected into the site, because application source is not this
+# workflow's to edit.
+#
+# It observes the existing Pages workflow from the outside. .github/workflows/pages.yml is not
+# modified, wrapped or replaced.
+
+on:
+  workflow_run:
+    workflows:
+      - "Deploy web tool to GitHub Pages"
+      - "rollback production deployment"
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pages: read
+
+# A deployment that has already been superseded is not worth verifying, and verifying it would
+# report a confusing mismatch. Cancel the obsolete run and let the newest one speak.
+concurrency:
+  group: deploy-verify
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: verify the live site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve what was deployed
+        id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+          FALLBACK_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            echo "sha=$FALLBACK_SHA" >> "$GITHUB_OUTPUT"
+            echo "deploy_ok=true" >> "$GITHUB_OUTPUT"
+            echo "deploy_url=(manual verification run)" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=$RUN_SHA" >> "$GITHUB_OUTPUT"
+            echo "deploy_url=$RUN_URL" >> "$GITHUB_OUTPUT"
+            if [ "$RUN_CONCLUSION" = "success" ]; then
+              echo "deploy_ok=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy_ok=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      # A failed deployment is reported as a failure here and now. It is not softened into a warning
+      # and the site is never described as updated.
+      - name: Fail loudly if the deployment itself failed
+        if: steps.target.outputs.deploy_ok != 'true'
+        env:
+          RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+        run: |
+          {
+            echo "### Deployment FAILED"
+            echo ""
+            echo "\`$RUN_NAME\` concluded **$RUN_CONCLUSION** for commit \`${{ steps.target.outputs.sha }}\`."
+            echo ""
+            echo "Run: ${{ steps.target.outputs.deploy_url }}"
+            echo ""
+            echo "The live site still serves the previous deployment. Do not re-run the same commit"
+            echo "hoping for a different result — read the deploy log, fix the cause, and push a new"
+            echo "commit, or roll back with the \`rollback production deployment\` workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::Pages deployment concluded $RUN_CONCLUSION for ${{ steps.target.outputs.sha }}"
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target.outputs.sha }}
+
+      - name: Resolve the real site URL from the Pages API
+        id: site
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Ask GitHub where the site actually is rather than assuming a URL shape — a custom
+          # domain, a user/organisation site or a renamed repository would all break a guess.
+          url=$(gh api "repos/$REPO/pages" -q '.html_url' 2>/dev/null || true)
+          if [ -z "$url" ]; then
+            echo "::error::Could not read the Pages configuration for $REPO — is GitHub Pages enabled?"
+            exit 1
+          fi
+          case "$url" in */) ;; *) url="$url/";; esac
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Site: $url"
+
+      - name: Fetch the live page and compare it with the deployed commit
+        id: fetch
+        env:
+          URL: ${{ steps.site.outputs.url }}
+        run: |
+          set -euo pipefail
+          expected=$(sha256sum web/index.html | cut -d' ' -f1)
+          echo "expected=$expected" >> "$GITHUB_OUTPUT"
+          echo "Expecting sha256 $expected ($(wc -c < web/index.html) bytes)"
+
+          # Pages fronts the origin with a CDN, so a freshly deployed file can take a little while to
+          # become visible everywhere. Retry rather than declare a false failure; give up loudly.
+          status=""
+          live=""
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            code=$(curl -sS -o live.html -w '%{http_code}' --compressed -L \
+                     -H 'Cache-Control: no-cache' --max-time 30 "$URL" || echo 000)
+            live=$(sha256sum live.html | cut -d' ' -f1)
+            echo "attempt $attempt: HTTP $code, sha256 $live"
+            if [ "$code" = "200" ] && [ "$live" = "$expected" ]; then
+              status=match
+              break
+            fi
+            status="code=$code hash=$live"
+            sleep 20
+          done
+          echo "live=$live" >> "$GITHUB_OUTPUT"
+          if [ "$status" != "match" ]; then
+            echo "::error::The live site is not serving the deployed commit ($status)"
+            echo "matched=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "matched=true" >> "$GITHUB_OUTPUT"
+
+      # The byte-identical hash already proves the payload; these assert it is a usable page rather
+      # than an error document that happens to match, and that the model core the tests exercise is
+      # present in what is actually being served.
+      - name: Smoke-check the served document
+        env:
+          URL: ${{ steps.site.outputs.url }}
+        run: |
+          set -euo pipefail
+          grep -qi '<title' live.html || { echo "::error::served document has no <title>"; exit 1; }
+          grep -q 'canvas'  live.html || { echo "::error::served document has no canvas — the animated tool is missing"; exit 1; }
+          test "$(wc -c < live.html)" -gt 10000 || { echo "::error::served document is implausibly small"; exit 1; }
+          # The one non-inline file the site depends on.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 "${URL}.nojekyll" || echo 000)
+          echo ".nojekyll -> HTTP $code"
+
+      - name: Record the deployment for traceability and rollback
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.target.outputs.sha }}
+          URL: ${{ steps.site.outputs.url }}
+          EXPECTED: ${{ steps.fetch.outputs.expected }}
+          LIVE: ${{ steps.fetch.outputs.live }}
+          MATCHED: ${{ steps.fetch.outputs.matched }}
+          DEPLOY_RUN: ${{ steps.target.outputs.deploy_url }}
+        run: |
+          set -euo pipefail
+          # The previous successful Pages deployment: the commit to roll back TO if this one is bad.
+          previous=$(gh api "repos/$REPO/actions/workflows/pages.yml/runs?status=success&per_page=10" \
+                       -q '[.workflow_runs[].head_sha] | map(select(. != "'"$SHA"'")) | .[0]' 2>/dev/null || echo "")
+          export PREVIOUS="$previous"
+          node -e '
+            const fs = require("node:fs");
+            fs.writeFileSync("deployment-record.json", JSON.stringify({
+              repository: process.env.REPO,
+              deployed_sha: process.env.SHA,
+              site_url: process.env.URL,
+              expected_sha256: process.env.EXPECTED,
+              live_sha256: process.env.LIVE,
+              verified: process.env.MATCHED === "true",
+              deploy_run: process.env.DEPLOY_RUN,
+              verify_run: `${process.env.GITHUB_SERVER_URL}/${process.env.REPO}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+              rollback_target_sha: process.env.PREVIOUS || null,
+              recorded_at: new Date().toISOString(),
+            }, null, 2) + "\n");
+          '
+          cat deployment-record.json
+          {
+            echo "### Production deployment"
+            echo ""
+            echo "| field | value |"
+            echo "|---|---|"
+            echo "| deployed commit | \`$SHA\` |"
+            echo "| site | $URL |"
+            echo "| expected sha256 | \`$EXPECTED\` |"
+            echo "| live sha256 | \`$LIVE\` |"
+            echo "| verified | ${MATCHED:-false} |"
+            echo "| rollback target | \`${previous:-unknown}\` |"
+            echo ""
+            if [ "${MATCHED:-false}" = "true" ]; then
+              echo "The live site is serving commit \`$SHA\` byte for byte."
+            else
+              echo "**The live site is NOT serving \`$SHA\`.** Treat production as not updated."
+              echo ""
+              echo "To recover, run the \`rollback production deployment\` workflow with"
+              echo "\`sha = ${previous:-<last known good commit>}\`."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-record-${{ steps.target.outputs.sha }}
+          path: deployment-record.json
+          if-no-files-found: warn

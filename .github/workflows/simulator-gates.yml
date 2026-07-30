@@ -1,0 +1,170 @@
+name: simulator gates
+
+# MANDATORY GATES for the Profile-B simulator. This is the check that decides whether a task's work
+# is allowed to reach main and therefore the live site.
+#
+# It runs the repository's REAL commands — the same ones a developer runs locally — and adds one
+# thing test counts cannot express: the VISUAL ACCEPTANCE GATE. An animation task is not "done"
+# because 6195 assertions passed; it is done when its own report declares its visual lock passed.
+# Both must hold.
+#
+# This workflow is deliberately read-only. It merges nothing, deploys nothing and writes nothing back
+# to the repository. Merging is a separate workflow (auto-merge.yml) that consumes this one's result.
+#
+# The existing `tests.yml` (R suite, production JS model tests, hidden-character scan) is NOT
+# duplicated or replaced here — it covers the scientific/production side and runs alongside this one.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - stage2/deep-scientific-evidence-review
+      - "claude/**"
+  workflow_dispatch:
+
+# Read-only. No token in this workflow can change the repository.
+permissions:
+  contents: read
+
+# One gate run per ref. A superseded run is pointless work, so cancel it — but never cancel a run on
+# main, whose result is what the deployment path is judged against.
+concurrency:
+  group: simulator-gates-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  simulator-tests:
+    name: simulator suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Zero-dependency ES modules: no install step exists, and adding one would be a lie about how
+      # this project builds.
+      - name: Run the simulator foundation suite
+        run: node simulator/tests/run.mjs
+
+  type-contract:
+    name: TypeScript contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # simulator/tsconfig.json is noEmit and covers src/types/**. The version is pinned so the gate
+      # cannot start failing because a new TypeScript release tightened a rule overnight.
+      - name: Type-check the interface contract
+        run: npx --yes -p typescript@5.6.3 tsc --noEmit -p simulator/tsconfig.json
+
+  generated-assets:
+    name: generated-asset and manifest gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The immutable source human. If this ever fails, something overwrote the asset the whole
+      # Phase-2B pipeline is derived from.
+      - name: Verify the original human asset
+        run: node simulator/tools/verify-human-asset.mjs simulator/assets/human/human.glb
+
+      # Reads the baked GLB's own JSON chunk and compares it bone-for-bone against the original, and
+      # field-for-field against the manifest. This is the skeleton/bone check and the manifest
+      # validation in one: the manifest is validated by the same validator the runtime imports.
+      - name: Verify the baked asset against its manifest and the original skeleton
+        run: node simulator/tools/verify-baked-asset.mjs
+
+  deployable-site:
+    name: deployable site artifact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Rehearse exactly what .github/workflows/pages.yml publishes (the web/ directory as site root)
+      # so a broken deployable is caught on the PR rather than on the live site.
+      - name: Assemble and check the artifact pages.yml would upload
+        run: |
+          set -euo pipefail
+          test -d web || { echo "::error::web/ is missing — pages.yml would upload nothing"; exit 1; }
+          test -s web/index.html || { echo "::error::web/index.html is missing or empty"; exit 1; }
+          # Pages runs Jekyll unless told not to; without this, paths beginning with _ are dropped.
+          test -f web/.nojekyll || { echo "::error::web/.nojekyll is missing"; exit 1; }
+          # The site is served from /<repo>/, so a root-absolute reference resolves to the wrong host
+          # path. Flag them rather than discovering it after deployment.
+          if grep -nE '(src|href)="/[^/]' web/index.html; then
+            echo "::error::root-absolute asset path in web/index.html breaks under the /<repo>/ subpath"
+            exit 1
+          fi
+          echo "web/index.html $(wc -c < web/index.html) bytes, sha256 $(sha256sum web/index.html | cut -d' ' -f1)"
+
+      # The production model core lives inline in web/index.html; this test loads it from there and
+      # checks it against the R-derived golden reference. Running it here means the artifact being
+      # published is the artifact that was verified.
+      - name: Check the published model core against the R golden reference
+        run: node tests/js/model.test.mjs
+
+  visual-acceptance:
+    name: visual acceptance gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Reads the declared decision line in each animation lock's own report. A report that is
+      # missing, unreadable or undeclared counts as BLOCKED. This cannot be satisfied by making
+      # tests pass, and it is the only thing that authorises deploying an animation.
+      - name: Read the declared visual decision for every animation lock
+        run: node simulator/tools/check-acceptance.mjs
+
+  gate-summary:
+    name: all gates
+    runs-on: ubuntu-latest
+    needs: [simulator-tests, type-contract, generated-assets, deployable-site, visual-acceptance]
+    # Run even when a dependency failed, so the summary reports WHICH gate failed instead of being
+    # skipped and leaving a blank required check.
+    if: always()
+    steps:
+      - name: Collect results
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          echo "### Simulator gates" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| gate | result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          failed=0
+          for gate in simulator-tests type-contract generated-assets deployable-site visual-acceptance; do
+            result=$(printf '%s' "$RESULTS" | node -e \
+              'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s)[process.argv[1]].result))' "$gate")
+            echo "| $gate | $result |" >> "$GITHUB_STEP_SUMMARY"
+            [ "$result" = "success" ] || failed=1
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$failed" -ne 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Not mergeable.** Every gate above must be green before this commit may reach main." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "All gates passed." >> "$GITHUB_STEP_SUMMARY"
