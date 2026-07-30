@@ -28,14 +28,15 @@ from the outside.
   push to a feature branch
         |
         v
-  simulator gates ............ simulator suite · TypeScript contract · generated-asset and
-        |                      manifest gates · deployable site artifact · VISUAL ACCEPTANCE
+  simulator gates ............ change scope · simulator suite · TypeScript contract ·
+        |                      generated-asset and manifest gates · deployable site artifact ·
+        |                      ACCEPTANCE (scoped to the paths this change touches)
         |                      (plus the existing `tests` workflow: R suite, production JS
         |                       model tests, hidden-character scan)
         |
         |  all green?  and the PR carries `auto-merge: verified`?
         v
-  auto-merge when verified ... re-reads the visual acceptance gate at the merge commit, requires
+  auto-merge when verified ... re-reads the acceptance gate at the merge commit, requires
         |                      every other check on that commit to be green, then asks GitHub to
         |                      enable NATIVE auto-merge. It never merges anything itself.
         v
@@ -72,7 +73,11 @@ Every one runs the repository's real command, the same one a developer runs loca
 The pre-existing `tests` workflow (R suite, regression baseline, worked example, production JS model
 tests, hidden-character scan) is untouched and runs alongside. It was not folded in or duplicated.
 
-### The visual gate (`simulator/tools/check-acceptance.mjs`)
+The `simulator/` tree does not exist on every branch. A gate whose subject is absent reports that it
+has nothing to verify; a gate whose subject was **deleted by the change under test** fails. The
+`change scope` job draws that distinction, so "not there yet" cannot be used as "not checked".
+
+### The acceptance gate (`simulator/tools/check-acceptance.mjs`)
 
 Test counts cannot express "the hands look wrong". Each animation lock ends with a single declared
 decision line, written after looking at the actual videos, and that line is the only thing that can
@@ -86,17 +91,42 @@ authorise deploying an animation.
 
 A report that declares `… REMAINS BLOCKED`, or that is missing, unreadable, or contains no
 recognisable decision, counts as **blocked**. A gate that opens when it cannot find its input is not
-a gate. The check runs twice — once in `simulator gates`, and again in `auto-merge when verified` at
-the exact commit being merged — so the opt-in label is a second condition and never a substitute.
+a gate. Add a row to `LOCKS` when a new lock is introduced.
 
-Add a row to `LOCKS` when a new animation lock is introduced.
+#### Which locks apply is decided by the changed paths
 
-**As of this writing all three locks declare `REMAINS BLOCKED`**, so this branch cannot merge or
-deploy. That is the machinery working, not a fault in it.
+Requiring every lock for every change conflates *"this repository contains unfinished animation
+work"* with *"this change ships unfinished animation work"*. Those are different claims, and the
+first one should not stop a CI/CD fix from landing. So the gate classifies each changed path and
+takes the union of the locks its domains require.
+
+| domain | paths | acceptance locks required |
+|---|---|---|
+| `ci-cd` | `.github/**`, `simulator/tools/check-acceptance.mjs`, this document | none |
+| `phase2b-animation` | `simulator/tools/blender/**`, `simulator/assets/**`, `simulator/vendor/**`, `simulator/src/{three,render,camera,scene}/**`, `simulator/artifacts/phase2b/**`, the `*preview*.html` pages, the capture/record/GLB tools | **all three Phase-2B locks** |
+| `simulator-runtime` | the rest of `simulator/**` | none — covered by the simulator suite and the type contract |
+| `scientific` | `R/**`, `tests/**`, `data/**`, `examples/**`, `notebooks/**`, `app/**`, `web/**`, `tools/**`, `package.json` | none — covered by `r-tests` and `js-tests` |
+| `docs` | `docs/**`, root `*.md` | none |
+| *anything else* | — | **fails closed** |
+
+This is scoping, not softening:
+
+* **A label cannot reach the gate.** Ownership comes from paths, which are the diff itself. The
+  `auto-merge: verified` label is checked separately and is an *additional* condition — it can never
+  remove a required lock.
+* **An unclassified production path fails.** A new top-level directory blocks until someone declares
+  what verifies it, rather than sliding through ungated.
+* **No defensible diff base means every lock.** A hand-dispatched run, a force-pushed branch or an
+  unreachable base ref all fall back to `--all`, not to none.
+* The gate runs **twice** — in `simulator gates`, and again in `auto-merge when verified` at the exact
+  merge commit against the branch's real base.
+
+**As of this writing all three Phase-2B locks declare `REMAINS BLOCKED`.** Any change touching
+`phase2b-animation` paths therefore cannot merge or deploy. That is the machinery working.
 
 ## Enabling auto-merge on a PR
 
-1. The task's own report declares its visual gate passed.
+1. Every acceptance lock applicable to the PR's changed paths declares its pass phrase.
 2. Every check on the head commit is green, **and** `all gates`, `r-tests`, `js-tests` and
    `hidden-char-check` have all actually reported. An absent check is not a passing check: without
    that list, a commit whose `tests` workflow never ran would sail through, because there would be

@@ -10,9 +10,10 @@ name: auto-merge when verified
 #   * It never treats a machine review as a human approval. If the repository requires an
 #     independent review, that review is still required and the PR stays open until a person gives
 #     it. The job summary names the blocking rule instead of pretending the work shipped.
-#   * It cannot be talked into merging a blocked animation. The visual acceptance gate is re-run
-#     here, at the exact commit being merged, so the opt-in label is a second condition and never a
-#     substitute for the gate.
+#   * It cannot be talked into merging a blocked animation. The acceptance gate is re-run here, at
+#     the exact commit being merged and against the same base the PR will merge into, so the opt-in
+#     label is a second condition and never a substitute for the gate. The label cannot change which
+#     acceptance reports are required — that comes from the changed paths, which are the diff itself.
 #
 # Opt in per PR with the label:  auto-merge: verified
 # Remove the label to stop it. Auto-merge already enabled on GitHub can be cancelled from the PR.
@@ -49,6 +50,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+          # The acceptance gate diffs against the merge base, which a shallow clone lacks.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -92,12 +95,20 @@ jobs:
             echo "PR #$PR is not labelled 'auto-merge: verified' — leaving it alone."
           fi
 
-      # Defence in depth. The gates already ran this, but re-running it here means the merge
-      # decision and the acceptance decision are read from the same commit at the same moment.
-      # A blocked animation cannot be merged by adding a label.
-      - name: Re-read the visual acceptance gate at the merge commit
+      # Defence in depth. The gates already ran this, but re-running it here means the merge decision
+      # and the acceptance decision are read from the same commit at the same moment, and against the
+      # base this PR will actually merge into. A blocked animation cannot be merged by adding a label:
+      # the label is checked separately above and has no influence on what the gate requires.
+      - name: Re-read the acceptance gate at the merge commit
         if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
-        run: node simulator/tools/check-acceptance.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          base_ref=$(gh pr view "$PR" --json baseRefName -q '.baseRefName')
+          git fetch --no-tags origin "$base_ref"
+          node simulator/tools/check-acceptance.mjs --base "origin/$base_ref"
 
       - name: Require every check on this commit to be green
         if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'

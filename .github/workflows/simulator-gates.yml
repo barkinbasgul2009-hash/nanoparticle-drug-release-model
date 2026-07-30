@@ -1,18 +1,23 @@
 name: simulator gates
 
-# MANDATORY GATES for the Profile-B simulator. This is the check that decides whether a task's work
-# is allowed to reach main and therefore the live site.
+# MANDATORY GATES. This is the check that decides whether a change is allowed to reach main and
+# therefore the live site.
 #
 # It runs the repository's REAL commands — the same ones a developer runs locally — and adds one
-# thing test counts cannot express: the VISUAL ACCEPTANCE GATE. An animation task is not "done"
-# because 6195 assertions passed; it is done when its own report declares its visual lock passed.
-# Both must hold.
+# thing test counts cannot express: the ACCEPTANCE GATE. An animation task is not "done" because
+# 6195 assertions passed; it is done when its own report declares its visual lock passed. Both must
+# hold.
 #
-# This workflow is deliberately read-only. It merges nothing, deploys nothing and writes nothing back
-# to the repository. Merging is a separate workflow (auto-merge.yml) that consumes this one's result.
+# WHICH acceptance reports are required is derived from the paths the change touches, not from a
+# label and not from a blanket rule. A CI/CD-only change requires the CI/CD checks; an animation
+# change requires the animation locks; a change touching both requires both; a path belonging to no
+# declared domain fails closed. See simulator/tools/check-acceptance.mjs.
+#
+# Deliberately read-only. It merges nothing, deploys nothing, writes nothing back. Merging is a
+# separate workflow (auto-merge.yml) that consumes this one's result.
 #
 # The existing `tests.yml` (R suite, production JS model tests, hidden-character scan) is NOT
-# duplicated or replaced here — it covers the scientific/production side and runs alongside this one.
+# duplicated or replaced here — it covers the scientific/production side and runs alongside.
 
 on:
   pull_request:
@@ -36,56 +41,136 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  scope:
+    name: change scope
+    runs-on: ubuntu-latest
+    outputs:
+      base: ${{ steps.base.outputs.ref }}
+      simulator: ${{ steps.probe.outputs.simulator }}
+    steps:
+      # Full history: the acceptance gate compares against the merge base, which a shallow clone
+      # does not contain.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out what to diff against
+        id: base
+        run: |
+          set -euo pipefail
+          case "${{ github.event_name }}" in
+            pull_request) ref="${{ github.event.pull_request.base.sha }}" ;;
+            push)         ref="${{ github.event.before }}" ;;
+            *)            ref="" ;;   # dispatched by hand: no defensible base, so require everything
+          esac
+          # An all-zero SHA is what GitHub sends for a branch's first push or after a force-push.
+          case "$ref" in 0000000000000000000000000000000000000000) ref="" ;; esac
+          if [ -n "$ref" ] && ! git cat-file -e "$ref^{commit}" 2>/dev/null; then
+            echo "base $ref is not in this clone; falling back to requiring every lock"
+            ref=""
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "diff base: ${ref:-<none — every acceptance lock will be required>}"
+
+      # The simulator tree does not exist on every branch. A gate whose subject is absent has nothing
+      # to verify and says so; a gate whose subject was DELETED by this very change is a different
+      # thing entirely, and fails.
+      - name: Is the simulator present, and was it removed by this change?
+        id: probe
+        env:
+          BASE: ${{ steps.base.outputs.ref }}
+        run: |
+          set -euo pipefail
+          if [ -f simulator/tests/run.mjs ]; then
+            echo "simulator=true" >> "$GITHUB_OUTPUT"
+            echo "simulator tree present — its gates will run"
+            exit 0
+          fi
+          echo "simulator=false" >> "$GITHUB_OUTPUT"
+          if [ -n "$BASE" ]; then
+            removed=$(git diff --name-only --diff-filter=D "$BASE...HEAD" -- \
+                        simulator/tests simulator/tsconfig.json simulator/src \
+                        simulator/assets simulator/tools || true)
+            if [ -n "$removed" ]; then
+              echo "::error::This change DELETES simulator files that the gates depend on:"
+              printf '%s\n' "$removed"
+              exit 1
+            fi
+          fi
+          echo "simulator tree not present in this commit and not deleted by it — its gates have nothing to verify"
+
   simulator-tests:
     name: simulator suite
     runs-on: ubuntu-latest
+    needs: scope
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
+        if: needs.scope.outputs.simulator == 'true'
         with:
           node-version: '22'
 
       # Zero-dependency ES modules: no install step exists, and adding one would be a lie about how
       # this project builds.
       - name: Run the simulator foundation suite
+        if: needs.scope.outputs.simulator == 'true'
         run: node simulator/tests/run.mjs
+
+      - name: Nothing to verify
+        if: needs.scope.outputs.simulator != 'true'
+        run: echo "No simulator tree in this commit. The scope job confirmed this change did not delete one."
 
   type-contract:
     name: TypeScript contract
     runs-on: ubuntu-latest
+    needs: scope
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
+        if: needs.scope.outputs.simulator == 'true'
         with:
           node-version: '22'
 
       # simulator/tsconfig.json is noEmit and covers src/types/**. The version is pinned so the gate
       # cannot start failing because a new TypeScript release tightened a rule overnight.
       - name: Type-check the interface contract
+        if: needs.scope.outputs.simulator == 'true'
         run: npx --yes -p typescript@5.6.3 tsc --noEmit -p simulator/tsconfig.json
+
+      - name: Nothing to verify
+        if: needs.scope.outputs.simulator != 'true'
+        run: echo "No simulator tree in this commit."
 
   generated-assets:
     name: generated-asset and manifest gates
     runs-on: ubuntu-latest
+    needs: scope
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
+        if: needs.scope.outputs.simulator == 'true'
         with:
           node-version: '22'
 
       # The immutable source human. If this ever fails, something overwrote the asset the whole
       # Phase-2B pipeline is derived from.
       - name: Verify the original human asset
+        if: needs.scope.outputs.simulator == 'true'
         run: node simulator/tools/verify-human-asset.mjs simulator/assets/human/human.glb
 
       # Reads the baked GLB's own JSON chunk and compares it bone-for-bone against the original, and
       # field-for-field against the manifest. This is the skeleton/bone check and the manifest
       # validation in one: the manifest is validated by the same validator the runtime imports.
       - name: Verify the baked asset against its manifest and the original skeleton
+        if: needs.scope.outputs.simulator == 'true'
         run: node simulator/tools/verify-baked-asset.mjs
+
+      - name: Nothing to verify
+        if: needs.scope.outputs.simulator != 'true'
+        run: echo "No simulator tree in this commit."
 
   deployable-site:
     name: deployable site artifact
@@ -98,7 +183,8 @@ jobs:
           node-version: '22'
 
       # Rehearse exactly what .github/workflows/pages.yml publishes (the web/ directory as site root)
-      # so a broken deployable is caught on the PR rather than on the live site.
+      # so a broken deployable is caught on the PR rather than on the live site. Unconditional: the
+      # site is what this repository ships, and it exists on every branch.
       - name: Assemble and check the artifact pages.yml would upload
         run: |
           set -euo pipefail
@@ -120,26 +206,48 @@ jobs:
       - name: Check the published model core against the R golden reference
         run: node tests/js/model.test.mjs
 
-  visual-acceptance:
-    name: visual acceptance gate
+  acceptance:
+    name: acceptance gate
     runs-on: ubuntu-latest
+    needs: scope
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      # Reads the declared decision line in each animation lock's own report. A report that is
-      # missing, unreadable or undeclared counts as BLOCKED. This cannot be satisfied by making
-      # tests pass, and it is the only thing that authorises deploying an animation.
-      - name: Read the declared visual decision for every animation lock
-        run: node simulator/tools/check-acceptance.mjs
+      # Classifies every changed path, works out which acceptance reports this change is answerable
+      # for, and reads the declared decision in each. Missing, unreadable or undeclared counts as
+      # BLOCKED; an unclassified production path fails closed. With no defensible base, `--all`
+      # requires every lock rather than none.
+      - name: Read the acceptance decision for every lock this change is answerable for
+        run: |
+          set -euo pipefail
+          base='${{ needs.scope.outputs.base }}'
+          if [ -n "$base" ]; then
+            node simulator/tools/check-acceptance.mjs --base "$base" | tee gate.txt
+          else
+            node simulator/tools/check-acceptance.mjs --all | tee gate.txt
+          fi
+
+      - name: Publish the classification
+        if: always()
+        run: |
+          {
+            echo "### Acceptance gate"
+            echo ""
+            echo '```'
+            cat gate.txt 2>/dev/null || echo "(the gate produced no output — treat as blocked)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   gate-summary:
     name: all gates
     runs-on: ubuntu-latest
-    needs: [simulator-tests, type-contract, generated-assets, deployable-site, visual-acceptance]
+    needs: [scope, simulator-tests, type-contract, generated-assets, deployable-site, acceptance]
     # Run even when a dependency failed, so the summary reports WHICH gate failed instead of being
     # skipped and leaving a blank required check.
     if: always()
@@ -154,7 +262,7 @@ jobs:
           echo "| gate | result |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
           failed=0
-          for gate in simulator-tests type-contract generated-assets deployable-site visual-acceptance; do
+          for gate in scope simulator-tests type-contract generated-assets deployable-site acceptance; do
             result=$(printf '%s' "$RESULTS" | node -e \
               'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s)[process.argv[1]].result))' "$gate")
             echo "| $gate | $result |" >> "$GITHUB_STEP_SUMMARY"
