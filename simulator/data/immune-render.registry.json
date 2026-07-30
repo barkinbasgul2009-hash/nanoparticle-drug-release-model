@@ -1,0 +1,48 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Part 2 immune renderer registry (read-only visualization layer). Defines component display titles, colour palettes (biological interpretation only - a DISTINCT unavailable palette; confidence has its OWN encoding, never reusing biological-magnitude colour), category->palette mapping, accessibility icons/labels, value bands, and the render severity vocabulary + mapping from runtime issue severities. The renderer NEVER creates biology / warnings / transitions - it only presents immutable published outputs. All render constants are registry-driven.",
+  "render_version": "7C.2.0",
+  "component_titles": {
+    "tumor_visibility": "Tumour Immune Visibility", "antigen_availability": "Antigen Availability", "immune_accessibility": "Immune Accessibility",
+    "macrophage": "Macrophage Contribution", "nk": "NK Contribution", "dendritic": "Dendritic Contribution",
+    "innate_readiness": "Innate Immune Readiness", "adaptive_readiness": "Adaptive Immune Readiness",
+    "cd8": "CD8 Cytotoxic Potential", "cd4": "CD4 Helper Competence", "treg": "Treg Suppressive Competence",
+    "checkpoint": "Checkpoint Pressure", "suppression": "Immune Suppression", "escape": "Immune Escape",
+    "net_immune_potential": "Net Immune-Mediated Tumour-Loss Potential", "blocked_immune_potential": "Blocked Immune Potential",
+    "immune_control": "Immune Control State", "immune_failure": "Immune Failure State"
+  },
+  "palettes": {
+    "neutral":     { "id": "neutral", "token": "#9aa5b1", "meaning": "low / baseline activity" },
+    "positive":    { "id": "positive", "token": "#2f9e44", "meaning": "increasing immune activity / control" },
+    "suppressive": { "id": "suppressive", "token": "#e8590c", "meaning": "immune suppression" },
+    "checkpoint":  { "id": "checkpoint", "token": "#9c36b5", "meaning": "checkpoint burden" },
+    "escape":      { "id": "escape", "token": "#c92a2a", "meaning": "immune escape / failure" },
+    "unavailable": { "id": "unavailable", "token": "#cfd4da", "pattern": "hatched", "meaning": "value cannot be determined (NOT zero)" }
+  },
+  "category_palette": {
+    "tumor_visibility": "positive", "antigen_availability": "positive", "immune_accessibility": "positive",
+    "macrophage": "positive", "nk": "positive", "dendritic": "positive", "innate_readiness": "positive", "adaptive_readiness": "positive",
+    "cd8": "positive", "cd4": "positive", "treg": "suppressive", "checkpoint": "checkpoint", "suppression": "suppressive",
+    "escape": "escape", "net_immune_potential": "positive", "blocked_immune_potential": "escape", "immune_control": "positive", "immune_failure": "escape"
+  },
+  "confidence_encoding": {
+    "note": "Confidence uses a SEPARATE visual channel (opacity band) so it is never confused with biological magnitude (colour).",
+    "bands": { "VERY_LOW": 0.2, "LOW": 0.4, "MODERATE": 0.6, "HIGH": 0.8, "VERY_HIGH": 1.0 }
+  },
+  "value_bands": { "Low": 0.0, "Moderate": 0.34, "High": 0.67 },
+  "accessibility": {
+    "icons": { "positive": "shield", "suppressive": "down-arrow", "checkpoint": "lock", "escape": "break", "neutral": "dot", "unavailable": "question" },
+    "require_text": true, "require_label": true, "require_tooltip": true,
+    "note": "Never rely on colour alone; every component also carries icon + label + text value + state description."
+  },
+  "render_severity": {
+    "categories": ["INFO", "MINOR", "MODERATE", "MAJOR", "CRITICAL"],
+    "issue_severity_map": { "INFO": "INFO", "WARNING": "MINOR", "ERROR": "MAJOR", "FATAL": "CRITICAL" },
+    "note": "Render severity is derived deterministically from the immutable runtime-issue severity; the renderer never invents severities."
+  },
+  "invariants": {
+    "read_only": "The renderer consumes immutable published objects and mutates nothing.",
+    "no_biology": "The renderer never estimates, smooths, or interpolates biological values (replay may interpolate VISUAL position only).",
+    "unavailable_visible": "Unavailable values are shown with the distinct unavailable palette + text, never as zero."
+  }
+}

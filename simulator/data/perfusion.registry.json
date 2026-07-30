@@ -1,0 +1,13 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B perfusion states as ORDINAL qualitative levels. Represents relative perfusion efficiency only - NO quantitative blood-flow calculations, NO absolute perfusion rate. Schematic 0-1 efficiency per state.",
+  "perfusion_states": {
+    "very_low":  { "efficiency": 0.15 },
+    "low":       { "efficiency": 0.35 },
+    "moderate":  { "efficiency": 0.55 },
+    "high":      { "efficiency": 0.8 },
+    "very_high": { "efficiency": 0.95 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Relative perfusion only; no blood-flow value (NOT_REPORTED)."
+}

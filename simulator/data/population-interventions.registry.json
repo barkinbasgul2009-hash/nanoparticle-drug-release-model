@@ -1,0 +1,20 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6C population-intervention policy. Phase-6C interventions are the POPULATION ECHO of the Phase-6B single-cell interventions: they act on the upstream single-cell apoptosis trajectory that the Population Engine reads read-only, so the population composition already reflects them. Phase 6C Part 1 defines NO population-only intervention (no double-counting); the descriptors below document the inherited, upstream-applied consequences only.",
+  "policy": {
+    "applied_upstream": true,
+    "explanation": "A Phase-6B intervention (e.g. ROS scavenger, PI3K activator, caspase inhibitor, AIF knockdown) reshapes the single (modal) cell's commitment/execution. Because the Population Engine derives its fractions from that trajectory, the population response follows automatically - the intervention is not re-applied at the population layer.",
+    "no_population_only_intervention_in_part1": true
+  },
+  "inherited_interventions": {
+    "mouse_b16bl6_population": [
+      { "intervention_type": "ros_scavenger", "upstream_target": "single_cell:ms_oxidative_stress", "population_consequence": "fewer cells reach commitment -> apoptotic_fraction accumulates less", "acts": "before commitment", "applied_upstream": true },
+      { "intervention_type": "caspase_inhibitor", "upstream_target": "single_cell:caspase_branch", "population_consequence": "committed cells still accumulate (AIF branch) -> apoptotic_fraction largely unchanged", "acts": "during execution", "applied_upstream": true },
+      { "intervention_type": "aif_knockdown", "upstream_target": "single_cell:aif_branch", "population_consequence": "dominant branch attenuated -> execution drive lower, apoptotic accumulation slower; commitment unchanged", "acts": "during execution", "applied_upstream": true }
+    ],
+    "mouse_b16f10_population": [
+      { "intervention_type": "pi3k_activator", "upstream_target": "single_cell:ms_survival_signaling", "population_consequence": "survival restored before the gate -> population stays viable (little apoptotic accumulation)", "acts": "before commitment", "applied_upstream": true }
+    ]
+  },
+  "strength_class_values": { "partial": 0.5, "strong": 0.8, "complete": 1.0 }
+}

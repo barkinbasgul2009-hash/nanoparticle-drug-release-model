@@ -1,0 +1,10 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Parameter -> equation term -> qualitative effect. Magnitudes pending sourced values. See docs/parameter-to-equation-map.md.",
+  "entries": [
+    {"parameter":"tissue_diffusivity_D","symbol":"D","unit":"length^2/time","term":"D*laplacian(C)","state":"C(x,t)","direction":"increase -> faster/deeper spread","range":null,"pending_full_text":true},
+    {"parameter":"local_clearance_ke","symbol":"k_e","unit":"1/time","term":"-k_e*C","state":"C(x,t)","direction":"increase -> shallower, lower C","range":null,"pending_full_text":true},
+    {"parameter":"release_rate","symbol":"Q(t)","unit":"mass/time","term":"inner boundary source","state":"boundary","direction":"increase -> higher surface C","range":null,"pending_full_text":true},
+    {"parameter":"interface_partition_K","symbol":"K","unit":"dimensionless","term":"Robin boundary","state":"boundary","direction":"context-dependent","range":null,"pending_full_text":true}
+  ]
+}

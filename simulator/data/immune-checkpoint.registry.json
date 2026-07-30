@@ -1,0 +1,21 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C endogenous checkpoint-pressure structure: PD-1, PD-L1, CTLA-4. Models ENDOGENOUS checkpoint-related pressure ONLY - checkpoint-inhibitor treatment / blockade is NOT modelled here (it belongs to a later treatment/combination layer). PD-1 and PD-L1 are kept as separate components and only then combined into a derived PD-1/PD-L1 axis pressure (never merged into one unexplained constant). Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1]; no receptor/ligand expression level (NOT_REPORTED).",
+  "components": {
+    "pd1": { "stages": ["component_availability", "expression_pressure", "interaction_potential", "functional_suppression"] },
+    "pdl1": { "stages": ["component_availability", "expression_pressure", "interaction_potential", "functional_suppression"] },
+    "ctla4": { "stages": ["component_availability", "expression_pressure", "interaction_potential", "functional_suppression"] }
+  },
+  "derived_axes": {
+    "pd1_pdl1_axis_pressure": "combined from the separate PD-1 and PD-L1 component records (interaction potential), bounded [0,1]",
+    "ctla4_pressure": "from the CTLA-4 component record, bounded [0,1]"
+  },
+  "coefficient_policy": {
+    "valid_range": "each stage / axis in [0,1]",
+    "source": "general checkpoint-biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "if checkpoint inputs are unavailable, the axis is UNAVAILABLE (never set to zero) and downstream suppression/escape confidence is reduced.",
+    "limitations": "No PD-1/PD-L1/CTLA-4 expression level; no checkpoint-inhibitor treatment response (excluded)."
+  },
+  "excluded": ["checkpoint_inhibitor_treatment", "checkpoint_blockade_response", "immunotherapy_dosing"]
+}

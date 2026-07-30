@@ -1,0 +1,43 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Component-level inventory across Profile-B presets. Shows which excipients are PRESET-LOCKED vs comparatively studied. Prevents unrestricted ingredient menus.",
+  "design_rule": "Components are properties of a preset, NOT free user selections. A component becomes user-selectable ONLY if comparative quantitative evidence within a compatible system exists.",
+  "component_classes": {
+    "solid_lipid": [
+      {"name":"glyceryl behenate (Compritol/Gb)","preset":"P1 neutral","status":"preset-locked (verified)"},
+      {"name":"Precirol ATO-5 (glyceryl palmitostearate)","preset":"P1 anionic","status":"preset-locked (verified)"}
+    ],
+    "liquid_lipid": [
+      {"name":"isopropyl myristate (IPM)","preset":"P1 cationic & anionic","status":"preset-locked (verified)"},
+      {"name":"medium-chain triglycerides (MCTs)","preset":"P1 neutral","status":"preset-locked (verified)"}
+    ],
+    "charge_modifier": [
+      {"name":"stearylamine","preset":"P1 cationic","status":"preset-locked (verified)","effect":"positive zeta (+26 mV); ALSO changes lipid matrix - charge not isolated"}
+    ],
+    "surfactant_emulsifier": [
+      {"name":"soybean lecithin","preset":"P1 all configs (30 mg)","status":"preset-locked (verified, constant)"},
+      {"name":"TPGS (d-alpha-tocopheryl PEG-1000 succinate)","preset":"P1 all configs (30 mg)","status":"preset-locked (verified, constant)","note":"acts as surfactant + stabilizer; NOT comparatively varied in Chen"},
+      {"name":"Pluronic F68 (poloxamer 188)","preset":"P1 aqueous phase","status":"preset-locked (verified)"}
+    ],
+    "surface_polymer_coating": [
+      {"name":"hyaluronic acid","preset":"P4 (identified)","status":"candidate - pending full text"},
+      {"name":"DSPE-PEG (+ TSE ligand)","preset":"P3 (identified)","status":"candidate - pending full text"}
+    ],
+    "targeting_ligand": [
+      {"name":"folic acid","preset":"P4 (identified)","status":"candidate"},
+      {"name":"p-tosylethylenediamine (TSE, ER-targeting)","preset":"P3 (identified)","status":"candidate"}
+    ],
+    "polymer_matrix": [
+      {"name":"PLGA","preset":"P3 (identified)","status":"candidate"},
+      {"name":"polymeric micelle (unspecified)","preset":"P5 (identified)","status":"candidate"}
+    ]
+  },
+  "comparative_evidence_available": {
+    "surfactants": "NONE within a compatible celastrol system opened here (Chen does not compare surfactants). A surfactant SELECTOR is NOT justified.",
+    "stabilizers": "NONE opened. Stabilizer stays preset-locked.",
+    "surface_charge": "Chen compares cationic/neutral/anionic BUT with confounded lipids -> charge is a preset CONFIGURATION, explained as observed-association not isolated-cause.",
+    "coatings": "HA / PEG appear only in identified (unopened) systems -> coatings become SEPARATE presets, not toggles on P1."
+  },
+  "user_selectable_after_verification": ["P1 surface configuration (cationic/neutral/anionic)"],
+  "everything_else": "preset-locked or informational-only until comparative primaries are opened"
+}

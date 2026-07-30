@@ -1,0 +1,31 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour growth-model architecture + normalized burden defaults. Supports the ARCHITECTURE for several growth models but activates none without evidence or an explicitly labelled prediction. The Profile-B default is ordinal / normalized schematic growth because no verified quantitative tumour curves are extracted in the frozen package.",
+  "growth_models": {
+    "ordinal_schematic": {
+      "id": "ordinal_schematic",
+      "active": true,
+      "description": "Normalized schematic growth driven by ordinal net-pressure classes; the Profile-B default.",
+      "evidence_level": "MECHANISTIC_PREDICTION",
+      "quantitative": false
+    },
+    "exponential": { "id": "exponential", "active": false, "description": "Architecture only; requires an extracted growth constant (NOT_REPORTED).", "evidence_level": "UNAVAILABLE", "quantitative": true, "parameters_status": "NOT_REPORTED" },
+    "logistic": { "id": "logistic", "active": false, "description": "Architecture only; requires an extracted carrying capacity + rate (NOT_REPORTED).", "evidence_level": "UNAVAILABLE", "quantitative": true, "parameters_status": "NOT_REPORTED" },
+    "gompertz": { "id": "gompertz", "active": false, "description": "Architecture only; requires extracted Gompertz parameters (NOT_REPORTED).", "evidence_level": "UNAVAILABLE", "quantitative": true, "parameters_status": "NOT_REPORTED" },
+    "evidence_derived_curve": { "id": "evidence_derived_curve", "active": false, "description": "Architecture only; requires a primary-source numeric curve (NOT_REPORTED).", "evidence_level": "UNAVAILABLE", "quantitative": true, "parameters_status": "NOT_REPORTED" },
+    "none": { "id": "none", "active": false, "description": "No growth model (idle contexts).", "evidence_level": "NOT_REPORTED", "quantitative": false }
+  },
+  "burden_defaults": {
+    "baseline_burden": 1.0,
+    "lower_bound": 0.0,
+    "upper_bound": 1.5,
+    "initial_viable_fraction": 1.0,
+    "note": "baseline_burden = 1.0 is a simulation reference only; NOT a real tumour volume."
+  },
+  "predictive_model_policy": {
+    "no_math_model_without_evidence": true,
+    "predictive_model_must_be_labelled": true,
+    "predictive_model_user_disable": true,
+    "never_call_predictive_experimental": true
+  }
+}

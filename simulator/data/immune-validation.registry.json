@@ -1,0 +1,59 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C validation + versioning architecture. Enumerates the version identifiers, the conditions the immune validator/frame-builder must reject, and the Section-1 foundational acceptance criteria. Part 1 - Section 1 implements the structural subset (contracts, immutability, availability, versioning, serialization, read-only boundaries); behavioural biology validation continues in later sections and Part 2.",
+  "versions": {
+    "immune_frame_schema": "7C.1.0",
+    "immune_engine": "7C-part1-section1",
+    "registry_bundle": "7C.1.0",
+    "state_machine": "7C.1.0",
+    "resistance_adapter_contract": "7C-8A.1.0",
+    "evidence_schema": "1.0",
+    "prediction_schema": "1.0"
+  },
+  "must_reject": [
+    "corrupted_registry",
+    "incompatible_schema_version",
+    "non_finite_core_value_after_validation",
+    "impossible_frame_ordering",
+    "invalid_state_machine_definition",
+    "mutation_of_frozen_published_data",
+    "serialization_failure_of_required_output",
+    "illegal_state_machine_transition",
+    "unbounded_or_out_of_range_score_uncorrected",
+    "unavailable_input_silently_converted_to_zero",
+    "upstream_engine_mutation_by_immune_runtime",
+    "phase8a_mutation_of_immune_state"
+  ],
+  "must_not_fail_frame_for": [
+    "ordinary_unavailable_scientific_input",
+    "partial_availability",
+    "missing_prior_frame_first_run",
+    "checkpoint_data_unavailable"
+  ],
+  "foundational_acceptance_criteria": [
+    "positioned_after_tumor_tme_vascular_before_resistance_interpretation",
+    "no_upstream_engine_mutated",
+    "phase8a_cannot_mutate_phase7c",
+    "immune_outputs_versioned",
+    "immune_outputs_immutable",
+    "immune_outputs_serializable",
+    "input_absence_not_zero",
+    "partial_availability_explicit",
+    "temporal_state_no_hidden_global_memory",
+    "frame_ordering_validated",
+    "deterministic_replay_possible",
+    "contribution_tracing_supported",
+    "evidence_and_prediction_attachment_supported",
+    "phase8a_compatibility_explicit",
+    "existing_phase8a_fallback_preserved",
+    "no_resistance_mechanism_fabricated_in_phase7c",
+    "no_clinical_treatment_claims",
+    "no_renderer_or_ui_in_part1"
+  ],
+  "availability_model": {
+    "values": ["AVAILABLE", "PARTIALLY_AVAILABLE", "UNAVAILABLE", "NOT_APPLICABLE"],
+    "rule": "zero means a modelled zero; unavailable means the model cannot determine the value; these are distinct.",
+    "aggregator_rule": "aggregators distinguish zero contribution / unavailable contribution / excluded contribution / not-applicable contribution."
+  },
+  "notes": "Section-1 validate() covers: registry integrity, evidence + prediction labelling, version compatibility, immutability of published frames, availability labelling (no silent zeros), state-machine structural integrity, and the read-only 7C<->8A boundary. Behavioural immune-biology validation is added when the biology sections are implemented."
+}

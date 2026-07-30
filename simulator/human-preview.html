@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Human Asset Preview (Phase 0 patch) — dev only</title>
+  <style>
+    body{margin:0;font:13px/1.5 system-ui,sans-serif;background:#eef1f6;color:#1a2233}
+    header{padding:8px 14px;border-bottom:1px solid #cfd7e3;background:#fff}
+    header h1{font-size:14px;margin:0}
+    .bar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;background:#fff;border-bottom:1px solid #cfd7e3}
+    button,select{font:inherit;padding:4px 10px;border:1px solid #cfd7e3;border-radius:6px;background:#f7f9fc;cursor:pointer}
+    button.on{background:#1f6feb;color:#fff;border-color:#1f6feb}
+    #host{width:100%;height:72vh;background:#dfe5ee}
+    #stats{padding:8px 14px;font-family:ui-monospace,monospace;font-size:11px;white-space:pre-wrap;background:#fff;border-top:1px solid #cfd7e3}
+    #load{padding:6px 14px;font-size:12px;color:#5b6675}
+  </style>
+</head>
+<body>
+  <header><h1>Human asset preview — development only (not part of the public demo)</h1></header>
+  <div class="bar">
+    <select id="model"><option value="Michelle.glb">Michelle.glb</option><option value="Soldier.glb">Soldier.glb</option></select>
+    <button data-view="body" class="on">Full body</button>
+    <button data-view="upper">Upper body</button>
+    <button data-view="face">Face &amp; eyes</button>
+    <button data-view="forearm">Forearm</button>
+    <button data-view="hand">Hand &amp; fingers</button>
+    <button id="skel">Skeleton</button>
+    <button id="wire">Wireframe</button>
+    <select id="clip"><option value="">(no clip)</option></select>
+  </div>
+  <div id="host"></div>
+  <div id="load">loading…</div>
+  <pre id="stats"></pre>
+
+  <script type="module">
+    import * as THREE from './vendor/three/three.module.js';
+    import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from './vendor/three/addons/controls/OrbitControls.js';
+    import { RoomEnvironment } from './vendor/three/addons/environments/RoomEnvironment.js';
+    import { buildBoneMap } from './src/three/boneMap.js';
+    import { disposeObject } from './src/three/disposal.js';
+    import { HumanAnimationController } from './src/three/humanAnimationController.js';
+    import { applyHumanPresentation } from './src/three/humanPresentation.js';
+
+    const host = document.getElementById('host');
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(host.clientWidth, host.clientHeight);
+    // --- FACE QUALITY PASS: correct colour pipeline + tone mapping + exposure ---
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xdfe5ee);
+    // local procedural studio environment (NO CDN, no external HDR needed)
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(35, host.clientWidth / host.clientHeight, 0.01, 100);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // soft key + fill + rim (scientific presentation, not dramatic movie lighting)
+    const key = new THREE.DirectionalLight(0xfff4e8, 2.0); key.position.set(1.6, 2.4, 2.2);
+    key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0005; scene.add(key);
+    const fill = new THREE.DirectionalLight(0xdce8ff, 0.7); fill.position.set(-2.0, 1.2, 1.4); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xffffff, 1.1); rim.position.set(-0.6, 1.8, -2.4); scene.add(rim);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0.35));
+
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(3, 48), new THREE.ShadowMaterial({ opacity: 0.22 }));
+    ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+    let model = null, mixer = null, skelHelper = null, boneMap = null, clips = [], action = null;
+    let wire = false, animCtrl = null, siteMarker = null, handMarker = null;
+    const loader = new GLTFLoader();
+    const statsEl = document.getElementById('stats'), loadEl = document.getElementById('load');
+
+    // Robust bounds for SKINNED meshes: Box3.setFromObject uses bind-pose geometry and
+    // under-reports posed characters, so union the geometry bounds with every bone's world
+    // position (what the viewer actually sees).
+    function robustBounds(obj) {
+      obj.updateWorldMatrix(true, true);
+      const box = new THREE.Box3().setFromObject(obj);
+      const p = new THREE.Vector3(); let bones = 0;
+      obj.traverse((o) => { if (o.isBone) { o.getWorldPosition(p); box.expandByPoint(p); bones += 1; } });
+      if (bones === 0 || box.isEmpty()) return new THREE.Box3().setFromObject(obj);
+      // bones are joint centres — pad so the silhouette (head top / feet) is inside
+      const s = box.getSize(new THREE.Vector3());
+      box.expandByScalar(Math.max(s.x, s.y, s.z) * 0.06);
+      return box;
+    }
+    function fitViews() {
+      const box = robustBounds(model);
+      const size = box.getSize(new THREE.Vector3()), min = box.min, max = box.max;
+      const cx = (min.x + max.x) / 2, cz = (min.z + max.z) / 2;
+      const headY = max.y - size.y * 0.06;
+      // find the forearm/hand bones for targeted close-ups
+      const p = new THREE.Vector3();
+      const bone = (role) => { const n = boneMap.map[role]; let b = null; model.traverse((o) => { if (o.isBone && o.name === n) b = o; }); return b; };
+      const fa = bone('forearmL') || bone('forearmR'), hd = bone('handL') || bone('handR');
+      const faP = fa ? fa.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3(cx, size.y * 0.55, cz);
+      const hdP = hd ? hd.getWorldPosition(new THREE.Vector3()) : faP.clone();
+      return {
+        body:    { t: new THREE.Vector3(cx, min.y + size.y * 0.52, cz), d: size.y * 2.2 },
+        upper:   { t: new THREE.Vector3(cx, min.y + size.y * 0.78, cz), d: size.y * 1.0 },
+        face:    { t: new THREE.Vector3(cx, headY, cz),                 d: size.y * 0.30 },
+        forearm: { t: faP,                                              d: size.y * 0.30 },
+        hand:    { t: hdP,                                              d: size.y * 0.16 },
+      };
+    }
+    let views = null;
+    /** @param {string} name  @param {number} [dist] multiplier on the framing distance (1 = default) */
+    function setView(name, dist = 1) {
+      if (!views) return;
+      const v = views[name]; if (!v) return;
+      const d = v.d * (Number(dist) > 0 ? Number(dist) : 1);
+      controls.target.copy(v.t);
+      camera.position.set(v.t.x + d * 0.55, v.t.y + d * 0.10, v.t.z + d * 0.95);
+      camera.near = Math.max(0.005, d / 200); camera.far = d * 40; camera.updateProjectionMatrix();
+      controls.update();
+    }
+
+    async function load(name) {
+      if (model) { disposeObject(model); model = null; }
+      if (skelHelper) { scene.remove(skelHelper); skelHelper = null; }
+      loadEl.textContent = `loading ${name}…`;
+      const gltf = await new Promise((res, rej) => loader.load(`./assets/human/${name}`, res, (e) => { loadEl.textContent = `loading ${name}… ${(e.loaded / 1048576).toFixed(1)} MB`; }, rej));
+      model = gltf.scene; clips = gltf.animations || [];
+      let tris = 0, meshes = 0, mats = new Set(), texs = new Set(), bones = [];
+      model.traverse((o) => {
+        if (o.isMesh || o.isSkinnedMesh) {
+          meshes += 1;
+          const g = o.geometry; if (g && g.index) tris += g.index.count / 3; else if (g && g.attributes.position) tris += g.attributes.position.count / 3;
+          for (const m of (Array.isArray(o.material) ? o.material : [o.material])) {
+            if (!m) continue; mats.add(m.uuid);
+            for (const k of Object.keys(m)) if (m[k] && m[k].isTexture) texs.add(m[k].uuid);
+          }
+        }
+        if (o.isBone) bones.push(o.name);
+      });
+      // RENDERER-SIDE presentation pass (fixes the exporter's blanket alphaMode:BLEND, sets skin /
+      // eye / hair surface response and shadow flags). Does not modify the asset.
+      const pres = applyHumanPresentation(model);
+      scene.add(model);
+      boneMap = buildBoneMap(bones);
+      // --- topical-application controller bound to the REAL skeleton (validated bone map only) ---
+      const boneByName = {}; model.traverse((o) => { if (o.isBone) boneByName[o.name] = o; });
+      animCtrl = new HumanAnimationController({ root: model, boneNames: Object.keys(boneByName), lookupBone: (n) => boneByName[n], side: 'R' });
+      // visual debug targets: application site (treated forearm) + applying hand
+      const mk2 = (c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 12), new THREE.MeshBasicMaterial({ color: c, depthTest: false, transparent: true, opacity: 0.9 })); m.renderOrder = 999; return m; };
+      if (siteMarker) disposeObject(siteMarker); if (handMarker) disposeObject(handMarker);
+      siteMarker = mk2(0x2f9e8f); handMarker = mk2(0x1f6feb); scene.add(siteMarker); scene.add(handMarker);
+      window.__markers = { site: siteMarker, hand: handMarker, boneByName };
+      const box = robustBounds(model);
+      const size = box.getSize(new THREE.Vector3());
+      ground.position.y = box.min.y;
+      views = fitViews(); setView('body');
+
+      mixer = new THREE.AnimationMixer(model);
+      const sel = document.getElementById('clip');
+      sel.innerHTML = '<option value="">(no clip — bind pose)</option>' + clips.map((c, i) => `<option value="${i}">${c.name} (${c.duration.toFixed(2)}s)</option>`).join('');
+
+      const texDims = [];
+      model.traverse((o) => { if (o.isMesh || o.isSkinnedMesh) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) { if (!m) continue; for (const k of Object.keys(m)) { const t = m[k]; if (t && t.isTexture && t.image) texDims.push(`${k}:${t.image.width}x${t.image.height}`); } } });
+      statsEl.textContent =
+        `file            ${name}\n` +
+        `bbox            ${size.x.toFixed(2)} x ${size.y.toFixed(2)} x ${size.z.toFixed(2)} (height ${size.y.toFixed(2)} units)\n` +
+        `origin/min.y    ${box.min.y.toFixed(3)}   orientation Y-up=${size.y > size.x && size.y > size.z}\n` +
+        `meshes          ${meshes}   triangles ${Math.round(tris).toLocaleString()}\n` +
+        `materials       ${mats.size}   textures ${texs.size}  [${[...new Set(texDims)].join(', ')}]\n` +
+        `bones           ${bones.length}   fingerBones ${boneMap.fingerBoneCount}\n` +
+        `boneMap ok      ${boneMap.ok}   missingRequired: ${boneMap.missingRequired.join(', ') || 'none'}\n` +
+        `roles           ${Object.entries(boneMap.map).map(([k, v]) => k + '=' + v).join('\n                ')}\n` +
+        `clips           ${clips.map((c) => c.name + ' ' + c.duration.toFixed(2) + 's').join(', ') || '(none)'}\n` +
+        `presentation    ${pres.materials} materials · alphaTest cut-outs: ${pres.cutouts.join(', ') || 'none'}\n` +
+        `                roles ${Object.entries(pres.byRole).map(([k, v]) => k + '(' + v.length + ')').join(' ')}\n` +
+        `morphTargets    ${(() => { let n = 0; model.traverse((o) => { if (o.morphTargetInfluences) n += o.morphTargetInfluences.length; }); return n; })()}`;
+      loadEl.textContent = `loaded ${name}`;
+      window.__ready = true;
+    }
+
+    document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('[data-view]').forEach((x) => x.classList.remove('on')); b.classList.add('on'); setView(b.dataset.view);
+    }));
+    document.getElementById('skel').addEventListener('click', (e) => {
+      if (skelHelper) { scene.remove(skelHelper); skelHelper = null; e.target.classList.remove('on'); }
+      else { skelHelper = new THREE.SkeletonHelper(model); scene.add(skelHelper); e.target.classList.add('on'); }
+    });
+    document.getElementById('wire').addEventListener('click', (e) => {
+      wire = !wire; e.target.classList.toggle('on', wire);
+      model.traverse((o) => { if (o.isMesh || o.isSkinnedMesh) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) if (m) m.wireframe = wire; });
+    });
+    document.getElementById('clip').addEventListener('change', (e) => {
+      if (action) { action.stop(); action = null; }
+      const i = e.target.value; if (i === '') return;
+      action = mixer.clipAction(clips[Number(i)]); action.play();
+    });
+    document.getElementById('model').addEventListener('change', (e) => { window.__ready = false; load(e.target.value); });
+
+    const clock = new THREE.Clock();
+    (function loop() {
+      requestAnimationFrame(loop);
+      const d = clock.getDelta();
+      if (mixer && action) mixer.update(d);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+    addEventListener('resize', () => { camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); });
+
+    /** Apply the topical-application pose at a normalized master-timeline progress (pure). */
+    window.__applyPose = (p) => {
+      if (!animCtrl) return null;
+      const r = animCtrl.apply(p);
+      model.updateMatrixWorld(true);
+      const m = window.__markers;
+      if (m) {
+        const fa = m.boneByName[boneMap.map.forearmL], hd = m.boneByName[boneMap.map.handR];
+        if (fa) m.site.position.copy(fa.getWorldPosition(new THREE.Vector3()));
+        if (hd) m.hand.position.copy(hd.getWorldPosition(new THREE.Vector3()));
+      }
+      loadEl.textContent = `pose @ progress ${p.toFixed(2)} — stage: ${r.stage} · bones driven: ${r.applied.length} · skipped: ${r.skipped.length}`;
+      return r;
+    };
+    // screenshot hooks for the automated quality gate
+    window.__setView = setView; window.__load = load;
+    /** Toggle the SkeletonHelper programmatically (same code path as the button). */
+    window.__setSkeleton = (on) => {
+      if (on && !skelHelper) { skelHelper = new THREE.SkeletonHelper(model); scene.add(skelHelper); document.getElementById('skel').classList.add('on'); }
+      else if (!on && skelHelper) { scene.remove(skelHelper); skelHelper = null; document.getElementById('skel').classList.remove('on'); }
+      return !!skelHelper;
+    };
+    /** Orbit the camera around the current view target (degrees), for front/side captures. */
+    window.__orbit = (deg, lift = 0.10) => {
+      const t = controls.target.clone();
+      const d = camera.position.distanceTo(t), a = (deg * Math.PI) / 180;
+      camera.position.set(t.x + Math.sin(a) * d, t.y + d * lift, t.z + Math.cos(a) * d);
+      camera.lookAt(t); controls.update();
+    };
+
+    // Deterministic URL-driven state so the headless screenshot gate can capture any view without
+    // a scripting bridge:  ?model=human.glb&view=face&pose=0.70&skel=1&wire=0&orbit=0
+    const q = new URLSearchParams(location.search);
+    load(q.get('model') || 'Michelle.glb').then(() => {
+      if (q.get('view')) setView(q.get('view'), Number(q.get('dist')) || 1);
+      if (q.get('pose') !== null) window.__applyPose(Number(q.get('pose')) || 0);
+      if (q.get('skel') === '1') window.__setSkeleton(true);
+      if (q.get('wire') === '1') document.getElementById('wire').click();
+      if (q.get('orbit') !== null) window.__orbit(Number(q.get('orbit')) || 0);
+      window.__captureReady = true;
+    });
+  </script>
+</body>
+</html>

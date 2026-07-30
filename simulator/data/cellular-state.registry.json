@@ -1,0 +1,41 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6A CELLULAR-STATE registry. Defines the schematic, reversible early cellular-state variables that protein function and accepted signaling can adjust. Consumed READ-ONLY by proteinFunctionEngine.js. Every value is a SCHEMATIC cellular-state abstraction on a normalized 0.0-1.0 scale (ordinal very_low/low/moderate/high/very_high) - NEVER a concentration, biomarker, catalytic activity, viability, or clinical value. States are reversible and bounded [0,1]. Species/cell contexts are never mixed. STOPS before cell fate.",
+  "value_model": {
+    "kind": "schematic_cellular_state",
+    "range": [0.0, 1.0],
+    "ordinal": ["very_low", "low", "moderate", "high", "very_high"],
+    "not": ["concentration", "biomarker", "catalytic_activity", "percent_inhibition", "viability", "ROS_concentration", "membrane_potential", "therapeutic_effect"],
+    "label": "Schematic cellular-state value"
+  },
+  "state_types_allowed": ["oxidative_stress", "antioxidant_capacity", "inflammatory_state", "adhesion_readiness", "survival_signaling", "mitochondrial_stress", "homeostatic_capacity", "general_stress", "translation_capacity", "protein_function_output"],
+  "profiles": {
+    "human_hacat": {
+      "status": "ACTIVE",
+      "species": "human", "cell_model": "HaCaT",
+      "states": {
+        "cs_oxidative_stress": { "canonical_name": "oxidative_stress", "display_name": "Oxidative stress", "state_type": "oxidative_stress", "baseline": 0.4, "direction": "bidirectional", "reversible": true, "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "MEDIUM", "notes": "Schematic oxidative-stress state; rises with ROS signaling, counteracted by antioxidant capacity." },
+        "cs_antioxidant_capacity": { "canonical_name": "antioxidant_capacity", "display_name": "Antioxidant capacity", "state_type": "antioxidant_capacity", "baseline": 0.3, "direction": "bidirectional", "reversible": true, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM", "notes": "Schematic antioxidant-capacity abstraction; raised by active HO-1 / predicted NQO1 function." },
+        "cs_inflammatory_state": { "canonical_name": "inflammatory_state", "display_name": "Inflammatory signaling state", "state_type": "inflammatory_state", "baseline": 0.5, "direction": "bidirectional", "reversible": true, "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "LOW", "notes": "Schematic intracellular inflammatory-signaling state; lowered by NF-kB suppression + HO-1 function. No cytokines/immune cells." },
+        "cs_adhesion_readiness": { "canonical_name": "adhesion_readiness", "display_name": "Adhesion readiness", "state_type": "adhesion_readiness", "baseline": 0.5, "direction": "bidirectional", "reversible": true, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "notes": "Schematic adhesion-readiness state driven by the inflammatory (ICAM1-like) protein abundance. Stops at readiness; no monocytes/leukocytes/recruitment." }
+      }
+    },
+    "mouse_b16bl6": {
+      "status": "ACTIVE",
+      "species": "mouse", "cell_model": "B16BL6",
+      "states": {
+        "ms_survival_signaling": { "canonical_name": "survival_signaling", "display_name": "Survival signaling", "state_type": "survival_signaling", "baseline": 0.8, "direction": "bidirectional", "reversible": true, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "MEDIUM", "notes": "Schematic survival-signaling state; lowered by PI3K/AKT/mTOR suppression. Reduced survival signaling is NOT apoptosis." },
+        "ms_oxidative_stress": { "canonical_name": "oxidative_stress", "display_name": "Oxidative stress", "state_type": "oxidative_stress", "baseline": 0.3, "direction": "bidirectional", "reversible": true, "evidence_level": "LITERATURE_DERIVED_PREDICTION", "prediction_level": "LITERATURE_DERIVED_PREDICTION", "confidence": "LOW", "notes": "Schematic oxidative-stress state; celastrol exposure raises it (mouse melanoma context)." },
+        "ms_mitochondrial_stress": { "canonical_name": "mitochondrial_stress", "display_name": "Mitochondrial-stress readiness", "state_type": "mitochondrial_stress", "baseline": 0.3, "direction": "bidirectional", "reversible": true, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "ordinal_states": ["normal", "sensitized", "stressed", "highly_stressed", "not_reported"], "notes": "Preparatory mitochondrial-stress readiness ONLY. NO membrane-potential value, permeability transition, cytochrome-c/AIF release, fragmentation, ATP collapse, or death." },
+        "ms_stress_readiness": { "canonical_name": "stress_readiness", "display_name": "Preparatory stress readiness", "state_type": "general_stress", "baseline": 0.3, "direction": "bidirectional", "reversible": true, "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION", "confidence": "LOW", "notes": "PREPARATORY, reversible stress-readiness state - explicitly NOT apoptosis, NOT a cell-death commitment. No caspases / cytochrome-c / Bax-Bcl2 / execution." }
+      }
+    },
+    "rat_skin": {
+      "status": "NOT_REPORTED",
+      "species": "rat", "cell_model": "ex_vivo_skin",
+      "reason": "Rat evidence concerns skin permeation, not validated intracellular functional response. No Phase-5D protein output and no functional profile -> cellular states are NOT REPORTED (idle). No human/mouse fallback.",
+      "states": {}
+    }
+  },
+  "integrity_note": "Cellular states are schematic and reversible; no apoptosis/caspase/cytochrome-c/AIF/necrosis/ferroptosis state exists. Cell-fate evidence is NOT_EVALUATED. Values are clamped [0,1] and cannot oscillate unstably."
+}

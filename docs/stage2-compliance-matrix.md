@@ -1,0 +1,78 @@
+# Stage-2 Prompt Compliance Matrix
+
+Requirement-by-requirement audit against the original Stage-2 spec, honestly graded.
+
+| Requirement | Status | Evidence / location | Remaining action |
+|---|---|---|---|
+| Verify every uploaded file | **DONE** | source-ingestion-audit.md | — |
+| Identify wrong/missing files | **DONE** | audit + critical-paywalled-sources.md (Potts&Guy wrong; Dreher/Chen/Potts&Guy missing) | user to provide 3 PDFs |
+| Do not limit to uploads; expand search | **PARTIAL (blocked)** | search-log.md (backward citation from PDFs done; forward citation web-blocked) | source-enabled pass |
+| Full-text quantitative extraction | **DONE for provided** | evidence-matrix.md, study-level-extraction.json | extract tumour/NP-skin once provided |
+| Release-data extraction | **NOT POSSIBLE** | no release dataset in provided sources (skin permeation ≠ NP release) | needs NP-formulation primary |
+| Free/encapsulated/total API | **DONE (assessment)** | free-vs-encapsulated-api.md (all provided = free small molecule) | NP source needed for encapsulated |
+| Release-to-tissue coupling | **DONE (design)** | release-to-tissue-coupling.md | fix per selected NP profile |
+| Mass-balance design | **DONE (design)** | mass-balance-candidate-design.md | implement in Stage 3 |
+| Biological environment profiles | **PARTIAL (skin sourced; tumour/bladder pending)** | environment-profiles.json, biological-environment-comparison.md | primaries for tumour/bladder |
+| Parameter classification + maps | **DONE** | parameter-classification.md, parameter-to-equation-map.md | refine on selection |
+| Study-level extraction | **DONE for provided** | study-level-extraction.json | tumour/NP pending |
+| Risk-of-bias APPLIED | **DONE for opened** | risk-of-bias.md | assess unopened when provided |
+| Calibration + independent validation | **DONE (assessment): none adequate** | calibration-validation-inventory.md | independent NP validation needed |
+| Identifiability / sensitivity / uncertainty | **DONE (plans)** | respective docs | execute in Stage 3 |
+| Penetration endpoint definitions | **DONE** | penetration-endpoint-definitions.md | — |
+| Educational-layer specs + content | **DONE (specs); skin content partially sourced** | interactive-knowledge-layer-spec.md, parameter-explanations.json | populate tumour content |
+| Evidence grades re-evaluated | **DONE** | tissue-profiles.json, stage3-recommendation.md | — |
+| Finalist decision re-done | **DONE** | stage3-recommendation.md (skin primary; tumour fallback blocked) | — |
+| Final scientific decision (A/B/C) | **DONE: OUTCOME B** | stage3-recommendation.md | — |
+| JSON valid / provenance | **DONE** | all data/*.json valid | — |
+| Update PR #3, do not merge | **DONE** | this branch/PR | — |
+
+**Honest overall:** Stage 2 is complete **to the extent the available evidence
+allows**. Two hard blockers remain, both requiring user-provided PDFs or network
+access: (1) tumour candidate sources (Dreher, Chen); (2) any nanoparticle-formulation
+primary with release + penetration. Until then, no QUALIFIED profile is possible and
+the skin sub-model is the maximum defensible (RESEARCH_SUPPORTED) selection.
+
+---
+
+## Stage-2 CONTINUATION 2 — external-dossier ingestion audit (update)
+| Requirement | Status | Evidence |
+|---|---|---|
+| Ingest + audit the 2 external artifacts | **DONE** | external-dossier-ingestion-audit.md; artifacts stored in docs/external/ |
+| Verify dossier claims vs primaries | **DONE** | Rothe/Iliopoulos/OECD/Sarfraz VERIFIED (opened); Chen/Dreher SECONDARY/UNVERIFIED (not opened) |
+| Reconcile + resolve contradictions | **DONE** | tumour reclassified to 2 separate benchmarks; niacinamide = verified non-NP submodel; celastrol NLC added as strongest NP candidate |
+| Continue research / citation network | **PARTIAL (web-blocked)** | search-log.md #8-9; celastrol NLC + Mitragotri 2011 identified, not opened |
+| Do NOT bridge incompatible systems | **ENFORCED** | skin / spheroid-carrier / dextran-vascular kept separate |
+| Keep provenance (measured vs secondary) | **DONE** | secondary_reported_values fields; "UNVERIFIED" flags |
+| Final decision A/B/C | **OUTCOME B** (complete NP profile = INSUFFICIENT_EVIDENCE) | stage3-recommendation.md |
+| User-held/not-ingested sources listed | **DONE** | critical-paywalled-sources.md (§30: no "01" file present) |
+| Update PR #3, do not merge | **DONE** | this branch/PR |
+
+**Honest overall:** Stage 2 is as complete as the available (opened) evidence allows.
+Open blockers requiring user-provided PDFs or network access: celastrol/tripterine NLC
+skin primaries (to build a real NP profile), Chen 2024 & Dreher 2006 primaries (to
+verify the benchmarks), Potts & Guy 1992 (coefficients). No QUALIFIED profile is
+possible until these are obtained and an independent validation set is confirmed.
+
+---
+
+## Stage-2 CONTINUATION 3 — modular restructuring (this iteration)
+| Requirement | Status | Evidence |
+|---|---|---|
+| Inspect/verify uploaded images (not filenames) | **DONE** | 5 images = Dreher 2006 pp.335-339; read directly |
+| Replace binary evidence logic with modular architecture | **DONE** | data/evidence-labels.json; docs/evidence-architecture.md |
+| Build 5-6 profile portfolio with per-module grades | **DONE** | data/profile-portfolio.json; docs/profile-portfolio.md (Profiles A-F) |
+| Evidence bridge tables | **DONE** | docs/evidence-bridge-tables.md |
+| Parameter-level provenance | **DONE** | data/parameter-provenance.json (verified vs secondary vs assumed) |
+| Profile-level LEVEL grading (0-6) | **DONE** | evidence-labels.json + portfolio |
+| Continue research (E/F, citation network) | **PARTIAL (web-blocked)** | search-log #10-11; Doxil/Abraxane/Onivyde identified, not opened |
+| Endpoint-specific validation | **DONE** | stage3-recommendation.md; no external validation for any |
+| Stage-3 readiness (block claim not profile) | **DONE** | A & D ready (labelled); C illustrative; B/E/F blocked |
+| Do NOT fabricate / bridge silently | **ENFORCED** | UNVERIFIED_SECONDARY flags; prohibited-bridges list |
+| §20 user-held files | **DONE** | no "01" file present; listed as user-held |
+| Update PR #3, do not merge | **DONE** | this branch/PR |
+
+**Honest overall:** Stage 2 now delivers a modular, Stage-3-actionable portfolio.
+Profiles A (skin released-API) and D (vascular benchmark, primary-verified) are ready
+with explicit labels; B/E/F need primary PDFs/labels; C is illustrative until the Chen
+primary is opened. No externally-validated or clinically-qualified profile exists, and
+none is claimed.

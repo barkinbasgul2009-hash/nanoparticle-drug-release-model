@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A rechallenge abstraction: ordinal states for renewed treatment after a washout interval. Rechallenge provides EVIDENCE about persistence vs re-sensitization (reduced response on rechallenge supports persistent resistance; restored response supports re-sensitization). Real-world durations are NOT defined without evidence; ordinal simulation stages only.",
+  "coefficient_policy": {
+    "valid_range": "rechallenge_response_retention in [0,1] (1 = full response retained, i.e. re-sensitized; lower = reduced response = persistence signal)",
+    "0_interpretation": "0 = no response on rechallenge (strong persistence signal)",
+    "1_interpretation": "1 = full response retained on rechallenge (re-sensitized)",
+    "source": "general rechallenge biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "retention is an evidence signal feeding the acquired-resistance / re-sensitization evaluation; it is not itself a mechanism.",
+    "limitations": "No real rechallenge timing or dose (NOT_REPORTED)."
+  },
+  "states": {
+    "not_rechallenged":     { "rechallenge_response_retention": null, "meaning": "No rechallenge performed." },
+    "rechallenge_pending":  { "rechallenge_response_retention": null, "meaning": "Rechallenge scheduled but not yet evaluated." },
+    "rechallenge_active":   { "rechallenge_response_retention": null, "meaning": "Rechallenge treatment in progress." },
+    "rechallenge_evaluated": { "rechallenge_response_retention": 0.5, "meaning": "Rechallenge response evaluated (retention resolved per profile)." }
+  },
+  "evidence_outcomes": ["persistent_resistance", "partial_re_sensitization", "full_re_sensitization", "uncertain_response"],
+  "ordered_states": ["not_rechallenged", "rechallenge_pending", "rechallenge_active", "rechallenge_evaluated"],
+  "rules": { "requires_prior_washout": "A meaningful rechallenge signal requires a preceding washout interval." }
+}

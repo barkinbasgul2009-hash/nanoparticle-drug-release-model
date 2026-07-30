@@ -1,28 +1,91 @@
 {
-  "$schema_version": "0.1.0",
-  "description": "SCHEMA ONLY. This file defines the shape of a tissue/route profile for the future Animated Tissue View. It contains NO populated profiles: every numeric parameter must come from a verified entry in data/source-registry.json and pass the Phase-3 eligibility gate before it may appear here. Populating profiles is gated on user approval (Phase 17). An empty 'profiles' array is intentional and correct at this stage.",
+  "$schema_version": "0.2.0",
+  "description": "Named-tissue profiles. Stage 2 identifies candidate structures only. Every profile is eligibility-graded and carries NO verified numeric parameters (access block). populated=false everywhere.",
   "eligibility_status_enum": {
-    "QUALIFIED": "Validated or independently testable model + suitable quantitative data. May produce quantitative predictions.",
-    "RESEARCH_SUPPORTED": "Multiple credible studies, meaningful uncertainty / limited validation. May produce quantitative predictions only with explicit uncertainty and justification.",
-    "ILLUSTRATIVE_ONLY": "Insufficient evidence for quantitative prediction. Shown as schematic only, never as a prediction.",
-    "EXCLUDED": "Evidence missing/incompatible/unsuitable. Not implemented; selector entry disabled with explanation."
+    "QUALIFIED": "validated+calibrated+externally validated",
+    "RESEARCH_SUPPORTED": "credible studies, uncertainty remains",
+    "ILLUSTRATIVE_ONLY": "visual/teaching only",
+    "INSUFFICIENT_EVIDENCE": "critical data missing",
+    "EXCLUDED": "inappropriate/misleading"
   },
-  "profile_field_definitions": {
-    "id": "stable key",
-    "display_name": "human-readable tissue/organ name",
-    "route": "administration route this profile is valid for (must match an entry in routes)",
-    "eligibility_status": "one of eligibility_status_enum",
-    "process_represented": "which of the 9 processes in docs/model-scope.md this profile models (must be a subset the current solver actually computes)",
-    "geometry": "spatial idealisation (e.g. 1D slab, 1D spherical) — must match a solver the code implements",
-    "parameters": "object mapping parameter name -> { value|range, unit, source_id, status (measured|fitted|assumed), species, confidence, uncertainty }",
-    "applicable_controls": "which existing UI controls are scientifically meaningful for this profile",
-    "inapplicable_controls": "existing controls that must be shown as disabled/not-used for this profile",
-    "extrapolation_domain": "supported parameter ranges; values outside trigger an extrapolation warning",
-    "evidence_grade": "summary grade shown in UI (mirrors eligibility_status)",
-    "source_ids": "list of source-registry ids backing this profile",
-    "limitations_note": "short UI-facing limitations statement",
-    "assumptions": "list of explicit modelling assumptions"
-  },
-  "routes": [],
-  "profiles": []
+  "profiles": [
+    {
+      "id": "generic_soft_tissue",
+      "status": "ILLUSTRATIVE_ONLY",
+      "geometry": "1D spherical",
+      "populated": true,
+      "note": "the existing live generic animation; not organ-specific"
+    },
+    {
+      "id": "solid_tumor_local",
+      "status": "Profile D (Dreher vascular) PRIMARY-VERIFIED via user images = LEVEL_2 benchmark; Profile C (Chen spheroid) UNVERIFIED_SECONDARY = LEVEL_1",
+      "geometry": "1D radial",
+      "process": "released-API interstitial diffusion + clearance",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "dreher-2006",
+        "spheroid-size-penetration-2024"
+      ],
+      "note": "Two SEPARATE benchmarks (not a drug profile). Dreher now primary-verified; Chen still dossier-only. See profile-portfolio.json.",
+      "sub_benchmarks": [
+        "chen-2024-spheroid (carrier, no API)",
+        "dreher-2006 (dextran, vascular)"
+      ]
+    },
+    {
+      "id": "topical_skin",
+      "status": "RESEARCH_SUPPORTED (released small-molecule SC diffusion sub-model)",
+      "geometry": "1D multilayer slab (new)",
+      "process": "released-API diffusion through SC/epidermis/dermis",
+      "populated": "partial (small-molecule sub-model)",
+      "pending_full_text": true,
+      "sources_to_open": [
+        "rothe-2017",
+        "potts-guy-1992",
+        "pharmaceutics-2020-franz-raman",
+        "oecd-tg428-2004"
+      ],
+      "note": "REVISED PRIMARY: only candidate with extracted transport parameters. Small-molecule, not nanoparticle; needs NP-formulation primary + validation to become a real NP profile.",
+      "sourced_parameters": "K_SC/v & D_SC/H2 (Rothe 2017, small molecule); geometry (OECD TG428); IVIVC (Iliopoulos 2020)"
+    },
+    {
+      "id": "intravesical_bladder",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "geometry": "1D slab (new)",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "intravesical-review-2022"
+      ],
+      "note": "promising; needs primary depth-concentration sources"
+    },
+    {
+      "id": "ocular_cornea",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "populated": false,
+      "pending_full_text": true
+    },
+    {
+      "id": "gastrointestinal_regional",
+      "status": "INSUFFICIENT_EVIDENCE_pending",
+      "populated": false,
+      "pending_full_text": true,
+      "note": "confounds local vs systemic; region-specific"
+    },
+    {
+      "id": "topical_skin_celastrol_nlc",
+      "status": "RESEARCH_SUPPORTED candidate (UNVERIFIED - primaries web-blocked)",
+      "geometry": "1D multilayer slab (new)",
+      "process": "NLC releasing celastrol -> multilayer skin diffusion",
+      "populated": false,
+      "pending_full_text": true,
+      "sources_to_open": [
+        "celastrol-tripterine-nlc-skin"
+      ],
+      "note": "Strongest EXACT NANOPARTICLE-skin candidate: has formulation+release+Franz permeation+in vivo (per search, unverified). Needs PDFs to verify/extract and to confirm independent validation."
+    }
+  ],
+  "stage2_continuation_note": "After external-dossier ingestion: tumour reclassified to two SEPARATE unverified benchmarks (not a drug profile). Verified skin submodel = niacinamide (small molecule, not NP). Strongest NP candidate = celastrol/tripterine NLC skin (unverified). No profile QUALIFIED.",
+  "portfolio_reference": "See data/profile-portfolio.json for the modular 6-profile portfolio with per-module evidence labels and profile LEVELs. This file retains the earlier tissue-candidate view."
 }

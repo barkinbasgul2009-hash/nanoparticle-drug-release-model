@@ -1,9 +1,19 @@
 name: Deploy web tool to GitHub Pages
 
-# Publishes web/index.html as the public website at
+# Publishes the public website at
 #   https://<owner>.github.io/<repo>/
-# The web/ folder is uploaded as the site root, so index.html loads directly
-# and every asset it uses is inline — nothing breaks under the /<repo>/ subpath.
+#
+# ROOT is web/index.html — the scientific web tool, self-contained and inline, exactly as before.
+#
+# /simulator/ is ALSO published now, because the Phase-2B human application sequence has to be
+# reachable on the live site and previously was not: this workflow uploaded web/ alone, so the whole
+# simulator existed only in the repository. That is the one behavioural change here.
+#
+# The simulator subtree is CURATED, not copied wholesale. simulator/ is ~119 MB, most of it QA
+# videos, frame captures and the 19 MB Blender source file, none of which the browser needs. What
+# ships is the code, the data, the vendored Three.js and the two GLBs the two presentation modes
+# load — about 42 MB, of which only one ~20 MB GLB is fetched on a default page load, because the
+# scenes are built lazily.
 
 on:
   push:
@@ -32,13 +42,73 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Assemble the site (web tool at root, simulator under /simulator/)
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/simulator/assets/human
+
+          # --- root: the scientific web tool, unchanged ------------------------------------------
+          cp web/index.html _site/index.html
+          cp web/.nojekyll  _site/.nojekyll 2>/dev/null || touch _site/.nojekyll
+
+          # --- /simulator/: pages, code, data, vendored Three.js --------------------------------
+          cp    simulator/index.html            _site/simulator/index.html
+          cp    simulator/phase2b-preview.html  _site/simulator/phase2b-preview.html
+          cp -R simulator/src                   _site/simulator/src
+          cp -R simulator/data                  _site/simulator/data
+          cp -R simulator/vendor                _site/simulator/vendor
+
+          # --- the two GLBs the two presentation modes load --------------------------------------
+          # human_application_baked.glb  -> blender-baked   (the default; the authored sequence)
+          # human.glb                    -> procedural-fallback (the immediate rollback path)
+          # Both must ship, or the rollback would not be instant.
+          cp simulator/assets/human/human.glb                       _site/simulator/assets/human/
+          cp simulator/assets/human/human_application_baked.glb     _site/simulator/assets/human/
+          cp simulator/assets/human/human_application_manifest.json _site/simulator/assets/human/
+          cp simulator/assets/ASSET_LICENCES.json                   _site/simulator/assets/
+
+      # A deployment that is missing one file fails as a blank canvas in a browser, which is a much
+      # worse way to find out. Assert every entry point and asset the page actually requests.
+      - name: Verify the artifact before uploading it
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in \
+            _site/index.html \
+            _site/.nojekyll \
+            _site/simulator/phase2b-preview.html \
+            _site/simulator/src/three/presentationMode.js \
+            _site/simulator/src/three/bakedApplicationScene.js \
+            _site/simulator/src/three/humanApplicationScene.js \
+            _site/simulator/src/three/applicationManifest.js \
+            _site/simulator/src/render/threeRenderer.js \
+            _site/simulator/vendor/three/three.module.js \
+            _site/simulator/vendor/three/addons/loaders/GLTFLoader.js \
+            _site/simulator/assets/human/human.glb \
+            _site/simulator/assets/human/human_application_baked.glb \
+            _site/simulator/assets/human/human_application_manifest.json ; do
+            if [ -s "$f" ]; then
+              printf '  ok    %10s  %s\n' "$(stat -c%s "$f")" "$f"
+            else
+              echo "::error::missing or empty in the Pages artifact: $f"; fail=1
+            fi
+          done
+          # The manifest names the GLB the baked scene loads; if they disagree the page 404s.
+          want=$(node -e 'console.log(require("./_site/simulator/assets/human/human_application_manifest.json").asset)')
+          test -s "_site/simulator/assets/human/$want" \
+            || { echo "::error::manifest asset '$want' is not in the artifact"; fail=1; }
+          echo "manifest asset: $want"
+          echo "artifact total: $(du -sh _site | cut -f1)"
+          exit $fail
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload web/ as the site root
+      - name: Upload the assembled site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./web
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         id: deployment

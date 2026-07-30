@@ -1,0 +1,21 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A efflux-associated resistance: efflux tendency represented QUALITATIVELY through a normalized modifier. Individual transporter kinetics are NOT modelled and transporter names / expression levels are NEVER invented - specific transporters may be referenced only inside evidence-backed profiles (none in this build). Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "availability_reduction in [0,1] (additive, bounded; efflux lowers effective intracellular availability)",
+    "0_interpretation": "0 = baseline efflux (no extra reduction)",
+    "1_interpretation": "1 = maximal schematic efflux-driven availability reduction the model represents",
+    "source": "general efflux-mediated resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "shares the availability channel with uptake resistance; the adapter normalizes to avoid double counting.",
+    "limitations": "No transporter identity / expression / kinetics (all NOT_REPORTED)."
+  },
+  "states": {
+    "baseline":             { "availability_reduction": 0.0 },
+    "mildly_elevated":      { "availability_reduction": 0.1 },
+    "moderately_elevated":  { "availability_reduction": 0.3 },
+    "highly_elevated":      { "availability_reduction": 0.5 },
+    "unknown":              { "availability_reduction": null, "evidence_level": "NOT_REPORTED" }
+  },
+  "rules": { "no_transporter_invention": "No ABC transporter or pump is named unless an evidence-backed profile supplies it." }
+}

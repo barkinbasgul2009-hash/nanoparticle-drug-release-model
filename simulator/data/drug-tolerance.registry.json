@@ -1,0 +1,36 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A reversible drug-tolerance model. Drug tolerance is a REVERSIBLE (or slowly reversible) state in which surviving cells remain viable despite exposure - it is NOT stable genetic resistance and must remain distinguishable from persistent/acquired resistance. Each state defines entry/maintenance/exit criteria, reversibility, expected washout behavior, a bounded survival modifier, and evidence. Schematic; no measured persistence time or tolerant-cell count (NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "tolerance_survival_modifier in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no tolerance-derived survival advantage",
+    "1_interpretation": "1 = maximal schematic tolerance-derived survival advantage the model represents",
+    "source": "general drug-tolerant persister biology applied predictively (no direct tolerance dataset in the frozen package)",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "the survival modifier feeds the resistance-response modifier through a bounded adapter; it never rewrites the Phase-6 apoptosis engine.",
+    "limitations": "No measured re-sensitization time, persister fraction, or drug-tolerance mutation (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":      { "tolerance_survival_modifier": 0.0, "reversibility": "not_applicable", "meaning": "No tolerant state." },
+    "emerging":    { "tolerance_survival_modifier": 0.15, "reversibility": "reversible", "meaning": "Tolerant phenotype beginning under sustained pressure." },
+    "established": { "tolerance_survival_modifier": 0.35, "reversibility": "reversible", "meaning": "Tolerant survivor state present." },
+    "maintained":  { "tolerance_survival_modifier": 0.45, "reversibility": "slowly_reversible", "meaning": "Tolerant state sustained under continued pressure." },
+    "resolving":   { "tolerance_survival_modifier": 0.2, "reversibility": "reversing", "meaning": "Tolerance relaxing after pressure reduction / washout." },
+    "resolved":    { "tolerance_survival_modifier": 0.0, "reversibility": "resolved", "meaning": "Tolerance resolved; re-sensitization to baseline." }
+  },
+  "entry_conditions": [
+    "sustained_effective_treatment_pressure", "incomplete_population_killing", "viable_survivor_fraction",
+    "elevated_stress_response", "sublethal_apoptosis_pressure", "profile_supported_tolerant_phenotype", "prior_adaptive_state"
+  ],
+  "maintenance_conditions": ["continued_effective_pressure", "profile_supported_tolerant_phenotype"],
+  "exit_conditions": ["treatment_withdrawal", "reduced_treatment_pressure", "washout_stage", "recovery_interval", "profile_defined_relaxation"],
+  "resolution": {
+    "modes": ["complete", "partial", "delayed", "unsupported"],
+    "rule": "Tolerance does NOT automatically return to baseline; resolution follows profile-defined relaxation, and a resolved state can re-enter EMERGING only under new supported treatment pressure."
+  },
+  "rules": {
+    "not_stable_resistance": "A tolerant state is never automatically classified as persistent/acquired resistance.",
+    "reversible_by_default": "Tolerance is reversible unless a profile-supported persistence transition is evaluated separately."
+  }
+}

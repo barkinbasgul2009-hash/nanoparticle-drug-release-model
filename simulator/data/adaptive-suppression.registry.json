@@ -1,0 +1,24 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 integrated immune-suppression coefficients. Combines Treg + PD-1 + PD-L1 + PD-1/PD-L1 axis + CTLA-4 + repository-supported suppressive context into overall suppressive pressure using the Section-2 aggregation framework (bounded_multiplicative). Each contribution is uniquely identified so it is counted ONCE (Treg suppression, PD-1 pressure, CTLA-4 priming inhibition, exhaustion are never double-applied). Suppression influences adaptive function only - it NEVER reduces tumour burden directly. Prediction-only; schematic [0,1].",
+  "component_weights": {
+    "treg_suppressive_competence": 0.3,
+    "pd_axis_engagement": 0.3,
+    "ctla4_pressure": 0.2,
+    "microenvironment_suppressive_context": 0.2
+  },
+  "targets": {
+    "cd8_activation": 0.35, "cd8_effector_competence": 0.4, "cd8_persistence": 0.3, "cd8_recovery": 0.3,
+    "cd4_helper_support": 0.3, "adaptive_readiness": 0.25, "future_immune_effectiveness": 0.25,
+    "note": "each target is applied via a unique contribution id; the guard rejects duplicate causal application."
+  },
+  "persistence": { "min_persistence_frames": 2, "decay_rate": 0.12, "hysteresis_margin": 0.06 },
+  "state_thresholds": { "pressure": { "NONE": 0.0, "LOW": 0.2, "MODERATE": 0.4, "HIGH": 0.65, "DOMINANT": 0.85 } },
+  "coefficient_policy": {
+    "valid_range": "every component + pressure in [0,1]",
+    "source": "general immunosuppressive-microenvironment biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "bounded_multiplicative aggregation guarantees [0,1] and softens correlated components.",
+    "limitations": "No absolute suppressive-factor concentration (NOT_REPORTED)."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design/research only, not implemented",
+  "purpose": "Preset-by-preset biological-context matrix: each preset's exact route/species/tissue/model and its OWN scene pipeline. Every scene names its exact evidence context; models are NEVER silently merged.",
+  "confidence_vocab": ["DIRECTLY_OBSERVED","QUANTITATIVELY_SUPPORTED","QUALITATIVELY_SUPPORTED","ABSTRACT_SUPPORTED","CONTEXTUAL_ANATOMY","MECHANISTIC_TRANSFER","INFERRED_RISK","ILLUSTRATIVE_ONLY","NOT_REPORTED","UNSUPPORTED_DO_NOT_ANIMATE","NOT_APPLICABLE"],
+  "presets": {
+    "B1_chen2012": {
+      "source": "chen_2012 (frozen evidence package)",
+      "evidence_access": "FULL_TEXT_PRIMARY",
+      "api": "celastrol / tripterine", "carrier": "NLC (~85-90 nm)", "route": "topical",
+      "distinct_experimental_contexts": [
+        {"context":"EX_VIVO_RAT_SKIN","use":"Franz-cell permeation + depth sections 0-30/30-60/60-90 um","species":"Sprague-Dawley rat","confidence":"QUANTITATIVELY_SUPPORTED (flux/depth)"},
+        {"context":"IN_VITRO_HUMAN_KERATINOCYTE","use":"HaCaT uptake","species":"human cell line (immortalized)","confidence":"QUALITATIVELY_SUPPORTED (uptake ordering)"},
+        {"context":"IN_VITRO_MURINE_MELANOMA","use":"B16BL6 uptake + cytotoxicity","species":"mouse melanoma line","confidence":"QUALITATIVELY_SUPPORTED"},
+        {"context":"IN_VIVO_MOUSE_MELANOMA","use":"antimelanoma efficacy endpoint","species":"C57BL/6 melanoma-bearing mice","confidence":"QUALITATIVELY_SUPPORTED (endpoint)"}
+      ],
+      "merge_prohibition": "these four contexts must appear as SEPARATE, labelled scenes; never composited into one unlabelled specimen",
+      "scene_pipeline": ["S1_application_site","S2_formulation_on_skin","S3_stratum_corneum_barrier","S4_depth_layer_deposition","S5_epidermal_cell_environment","S6_uptake_comparison","S7_melanoma_context","S8_therapeutic_effect","S9_limitation_panel"],
+      "supported_events": ["topical application","skin permeation","depth-layer deposition (0-30/30-60/60-90 um)","charge-ordinal uptake (cationic>neutral>anionic)","qualitative sustained/delayed release","qualitative antimelanoma endpoint"],
+      "contextual_only": ["generic human skin cross-section scaffold","dermal vessels as anatomical context","keratinocyte/melanocyte arrangement"],
+      "unsupported_do_not_animate": ["blood-vessel extravasation","systemic circulation","intracellular trafficking/organelles","metabolic conversion","ECM traversal as a quantified process","precipitation clock","aggregation as inevitable","human clinical melanoma response","exact concentration fields"]
+    },
+    "B2_wang2025": {
+      "source": "wang_2025",
+      "evidence_access": "PRIMARY_ARTICLE_PREVIEW (abstract level)",
+      "api": "celastrol", "carrier": "PLGA + TSE-DSPE-PEG (TSE-CEL/NP)", "route": "systemic (tumor-bearing mice)",
+      "distinct_experimental_contexts": [
+        {"context":"IN_VITRO_MURINE_MELANOMA","use":"B16F10 cells; ER targeting","species":"mouse melanoma line","confidence":"ABSTRACT_SUPPORTED"},
+        {"context":"IN_VIVO_MOUSE_MELANOMA","use":"unilateral/bilateral + lung-metastasis models","species":"tumor-bearing mice (strain NOT REPORTED)","confidence":"ABSTRACT_SUPPORTED"}
+      ],
+      "scene_pipeline": ["S1_systemic_context_orientation","S2_tumor_cell_arrival","S3_cell_uptake_ER_localization","S4_ER_stress_ICD","S5_immune_activation","S6_limitation_panel"],
+      "supported_events": ["cell uptake -> ER localization (abstract)","ER stress -> CRT/HMGB1/ATP (abstract)","DC maturation -> CD8+ activation (abstract)"],
+      "organelle_scene_allowed": "ER close-up allowed for B2 ONLY (ER-targeting is the reported mechanism)",
+      "unsupported_do_not_animate": ["numeric size/zeta/EE/PK read-outs","deterministic timing","release curve","precipitation/aggregation/degradation","B1-style skin depth scenes"]
+    },
+    "B3_shukla2020": {
+      "source": "shukla_2020",
+      "evidence_access": "PREVIEW; NON-NANOPARTICLE",
+      "api": "celastrol", "carrier": "SBE-betaCD inclusion complex (molecular, NOT an NP)", "route": "in vitro comparator",
+      "distinct_experimental_contexts": [
+        {"context":"IN_VITRO_INTESTINAL_MODEL","use":"EpiIntestinal 3D permeability","species":"human 3D tissue model","confidence":"QUALITATIVELY_SUPPORTED"},
+        {"context":"IN_VITRO_NSCLC","use":"human lung cancer cells (line NOT REPORTED)","species":"human","confidence":"CONTEXTUAL_ANATOMY"}
+      ],
+      "scene_pipeline": ["comparator_panel_only"],
+      "render_mode": "INFO/COMPARATOR panel (solubility 30-fold, stability, intestinal permeability) - NOT a body-travel animation",
+      "unsupported_do_not_animate": ["nanoparticle morphology/size/growth (it is a molecular complex)","precipitation/aggregation timing","skin scenes","circulation"]
+    }
+  },
+  "review_identified_only": {
+    "records": ["yang_2019","yin_2017","zhao_2018","zhou_2019"],
+    "scene_policy": "NOT animated; research-candidates panel with DOI/title only"
+  }
+}

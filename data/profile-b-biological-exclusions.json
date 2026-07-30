@@ -1,0 +1,36 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Explicit list of biological elements/events that must NOT be animated for each preset, with the reason. Enforces the scientific-integrity rules.",
+  "global_prohibitions": [
+    "blood-circulation journey for topical B1",
+    "oral administration / swallowing / GI transit for B1",
+    "intravenous injection for B1",
+    "intact nanoparticles reaching deep tissue (subcutis) without evidence",
+    "confusing nanoparticle penetration with released-API penetration (label which is shown)",
+    "human skin depicted for rat-skin data without a transfer label",
+    "human melanoma depicted for B16BL6 murine data without a label",
+    "merging HaCaT + rat skin + B16BL6 culture + mouse tumour into one unlabelled scene",
+    "precipitation clock / deterministic onset time",
+    "aggregation shown as inevitable when only a risk is known",
+    "exact concentration fields without quantitative evidence",
+    "organelles / intracellular pathways without evidence (B1)",
+    "microscopy stain colors used as natural colors without explanation",
+    "decorative cells added only for visual complexity"
+  ],
+  "per_preset": {
+    "B1": {
+      "prohibited": ["systemic circulation","vessels inside epidermis","extravasation","intracellular trafficking/organelles","metabolic conversion","ECM traversal as a quantified process","precipitation/aggregation as timed events","human invasive-melanoma histology as the model","exact tumor shrinkage %/survival","immune-pathway activation (ICD)"],
+      "reason": "topical single-study rat/mouse evidence; systemic/organelle/immune/quantitative-precipitation data NOT REPORTED"
+    },
+    "B2": {
+      "prohibited": ["numeric size/zeta/EE/PK read-outs","deterministic timing","release curve","B1-style skin depth scenes","precipitation/aggregation/degradation"],
+      "reason": "abstract/preview level; only the ER->ICD mechanism chain is supported (qualitatively)"
+    },
+    "B3": {
+      "prohibited": ["nanoparticle size/morphology/growth","precipitation/aggregation timing","skin scenes","circulation"],
+      "reason": "molecular inclusion complex (NOT a nanoparticle); comparator info panel only"
+    }
+  },
+  "review_identified": {"prohibited":["any animated scene"],"reason":"review-identified only; DOI/title panel only"}
+}

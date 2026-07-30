@@ -1,0 +1,167 @@
+{
+  "$schema": "./human_application_manifest.schema.json",
+  "schemaVersion": 1,
+  "assetVersion": "2b.1.0+6114fceafe6c",
+  "asset": "human_application_baked.glb",
+  "generatedAtUtc": "2026-07-30T07:05:04Z",
+  "clip": {
+    "name": "phase2_application",
+    "fps": 30,
+    "durationSeconds": 14.0,
+    "frameStart": 1,
+    "frameEnd": 421
+  },
+  "source": {
+    "originalAsset": "human.glb",
+    "originalAssetChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
+    "blenderSource": "../blender/phase2_application_source.blend",
+    "blenderVersion": "4.5.12 LTS",
+    "buildScript": "simulator/tools/blender/build_phase2_realism.py"
+  },
+  "skeleton": {
+    "boneMapVersion": "phase0-ue-makehuman-1",
+    "boneCount": 53,
+    "rootBone": "Root",
+    "compatibilityStatus": "verified"
+  },
+  "objects": {
+    "humanRoot": "Human_rig",
+    "bodyMesh": "Human",
+    "tube": "NANODERM_tube",
+    "cap": "NANODERM_cap",
+    "tray": "PRODUCT_tray",
+    "creamStrand": "CREAM_strand",
+    "nozzleAnchor": "ANCHOR_nozzle",
+    "depositAnchor": "ANCHOR_deposit",
+    "creamDeposit": "CREAM_film",
+    "creamSpread": "CREAM_film"
+  },
+  "morphTargets": {
+    "tubeSqueeze": {
+      "mesh": "NANODERM_tube",
+      "targets": [
+        "TUBE_GRIP_COMPRESSION",
+        "TUBE_SQUEEZE",
+        "TUBE_CREASE",
+        "TUBE_RECOVERY"
+      ]
+    },
+    "tubeDepletion": {
+      "mesh": "NANODERM_tube",
+      "targets": [
+        "TUBE_DEPLETION"
+      ]
+    },
+    "skinIndent": {
+      "mesh": "Human",
+      "targets": [
+        "SKIN_INDENT_CONTACT_A",
+        "SKIN_INDENT_CONTACT_B",
+        "SKIN_INDENT_CONTACT_C",
+        "SKIN_INDENT_CONTACT_D",
+        "SKIN_INDENT_CONTACT_E",
+        "SKIN_INDENT_CONTACT_F",
+        "SKIN_INDENT_CONTACT_G",
+        "SKIN_INDENT_RELEASE"
+      ]
+    },
+    "creamNozzle": {
+      "mesh": "CREAM_strand",
+      "targets": [
+        "STRAND_NOZZLE_BEAD"
+      ]
+    },
+    "creamStrand": {
+      "mesh": "CREAM_strand",
+      "targets": [
+        "STRAND_SHORT",
+        "STRAND_EXTENDED",
+        "STRAND_THINNING",
+        "STRAND_BROKEN"
+      ]
+    },
+    "creamDeposit": {
+      "mesh": "CREAM_film",
+      "targets": [
+        "CREAM_CONTACT_BEAD",
+        "CREAM_COMPRESSED_BEAD"
+      ]
+    },
+    "creamSpread": {
+      "mesh": "CREAM_film",
+      "targets": [
+        "CREAM_SPREAD_PRIMARY",
+        "CREAM_SPREAD_SECONDARY",
+        "CREAM_FINAL_FILM"
+      ]
+    },
+    "creamSkinIndent": {
+      "mesh": "CREAM_film",
+      "targets": [
+        "SKIN_INDENT_CONTACT_A",
+        "SKIN_INDENT_CONTACT_B",
+        "SKIN_INDENT_CONTACT_C",
+        "SKIN_INDENT_CONTACT_D",
+        "SKIN_INDENT_CONTACT_E",
+        "SKIN_INDENT_CONTACT_F",
+        "SKIN_INDENT_CONTACT_G",
+        "SKIN_INDENT_RELEASE"
+      ]
+    }
+  },
+  "events": {
+    "neutral": 0.0,
+    "productEstablishStart": 0.071429,
+    "gripPreparation": 0.142857,
+    "productGripEstablished": 0.214286,
+    "dispensePreparation": 0.285714,
+    "dispenseStart": 0.357143,
+    "creamContact": 0.428571,
+    "dispenseEnd": 0.5,
+    "productRetreatStart": 0.52381,
+    "productRetreatEnd": 0.607143,
+    "handApproach": 0.630952,
+    "skinContact": 0.678571,
+    "spreadStart": 0.702381,
+    "strokeOne": 0.75,
+    "strokeTwo": 0.821429,
+    "releaseStart": 0.892857,
+    "releaseEnd": 0.928571,
+    "heroStart": 0.940476,
+    "heroHold": 0.964286,
+    "sequenceEnd": 1.0
+  },
+  "ownership": {
+    "bones": "blender-baked",
+    "morphTargets": "blender-baked",
+    "camera": "threejs",
+    "timeline": "master-progress",
+    "surfaceShader": "threejs-glsl"
+  },
+  "provenance": {
+    "humanMotion": "VISUAL_ONLY",
+    "productMotion": "VISUAL_ONLY",
+    "tubeSqueeze": "VISUAL_ONLY",
+    "creamExtrusion": "VISUAL_ONLY",
+    "skinIndentation": "VISUAL_ONLY",
+    "camera": "VISUAL_ONLY"
+  },
+  "compatibility": {
+    "threeRevision": "r160",
+    "gltf": "2.0",
+    "presentationModes": [
+      "blender-baked",
+      "procedural-fallback"
+    ]
+  },
+  "statistics": {
+    "fileSizeBytes": 20302740,
+    "meshCount": 15,
+    "triangleCount": 45680,
+    "materialCount": 17,
+    "textureCount": 10,
+    "animationTrackCount": 531,
+    "animationKeyframeCount": 223551,
+    "morphTargetCount": 31
+  }
+}

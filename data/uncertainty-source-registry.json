@@ -1,0 +1,6 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Uncertainty sources to track/propagate (docs/sensitivity-analysis-plan.md).",
+  "sources": ["measurement","biological_variability","formulation_variability","environmental_variability","inter_study","parameter","structural_model","numerical","digitization","extrapolation"],
+  "stage2_dominant": "epistemic: model-critical values unverified (full-text access blocked)"
+}

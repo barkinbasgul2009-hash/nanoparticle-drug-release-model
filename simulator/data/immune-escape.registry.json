@@ -1,0 +1,18 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C immune-escape abstraction - DISTINCT from immune suppression. Suppression = reduced immune effectiveness; escape = the tumour's modelled ability to avoid / resist / bypass immune recognition and elimination. Phase 7C keeps escape a MICROENVIRONMENTAL + FUNCTIONAL abstraction; it does NOT infer acquired genetic immune escape (Phase 8A may later interpret persistent, treatment-associated escape as resistance-related - Phase 7C does not). Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1].",
+  "components": ["low_tumor_visibility", "poor_antigen_presentation", "high_checkpoint_pressure", "regulatory_cell_pressure", "dysfunctional_effector_state", "tumor_derived_evasion_pressure", "persistent_survival_despite_immune_pressure"],
+  "outputs": ["escape_pressure", "persistent_escape"],
+  "coefficient_policy": {
+    "valid_range": "escape_pressure + persistent_escape in [0,1]",
+    "source": "general tumour immune-evasion biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "persistent_escape requires prior-frame persistence (temporal), not a single frame; it is the observation Phase 8A may later read.",
+    "limitations": "No genetic immune-escape mutation is inferred (excluded); microenvironmental/functional abstraction only."
+  },
+  "rules": {
+    "distinct_from_suppression": "escape is computed as its own metric, not a rename of total suppression.",
+    "no_genetic_escape": "no acquired genetic immune-escape mechanism is fabricated; persistence is a functional observation only.",
+    "phase8a_interpretation": "Phase 7C publishes persistent-escape observations; Phase 8A owns any resistance interpretation of them."
+  }
+}

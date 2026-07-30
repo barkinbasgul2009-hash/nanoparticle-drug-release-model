@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B nutrient SUPPLY as ORDINAL relative states only. Schematic 0-1 availability per state; no absolute concentration.",
+  "nutrient_states": {
+    "limited":    { "availability": 0.2 },
+    "restricted": { "availability": 0.4 },
+    "adequate":   { "availability": 0.65 },
+    "abundant":   { "availability": 0.9 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Relative nutrient availability only (NOT_REPORTED quantitatively)."
+}

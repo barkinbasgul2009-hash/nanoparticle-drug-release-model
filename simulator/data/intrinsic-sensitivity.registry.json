@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A intrinsic (baseline) treatment-sensitivity states as ORDINAL qualitative levels. Represents the population's PRE-EXISTING sensitivity before the current simulated treatment course - it may influence initial response but is NOT changed by current exposure (a separate transition to adaptive/acquired resistance handles change). Schematic normalized initial_response_factor only; no IC50, GI50, fold-resistance, or drug concentration (all NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "initial_response_factor in [0,1]",
+    "0_interpretation": "0 = intrinsically fully resistant (baseline treatment produces no effect)",
+    "1_interpretation": "1 = intrinsically fully sensitive (baseline treatment produces maximal expected effect)",
+    "intermediate_linearity": "ordinal boundaries; intermediate values are schematic, not measured",
+    "source": "general melanoma chemosensitivity biology applied predictively (no direct sensitivity dataset for this tripterine-NLC context in the frozen package)",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "initial_response_factor scales only the INITIAL response weighting; it is not a survival probability or a measured potency.",
+    "limitations": "No IC50 / GI50 / fold-resistance / potency value is stated; ordinal only."
+  },
+  "states": {
+    "very_high_sensitivity":   { "initial_response_factor": 0.95, "meaning": "Population is intrinsically highly responsive; minimal pre-existing resistance." },
+    "high_sensitivity":        { "initial_response_factor": 0.8,  "meaning": "Predominantly sensitive with a small less-sensitive tail." },
+    "moderate_sensitivity":    { "initial_response_factor": 0.6,  "meaning": "Mixed intrinsic responsiveness (schematic default for melanoma-like context)." },
+    "low_sensitivity":         { "initial_response_factor": 0.4,  "meaning": "Substantial intrinsic low-sensitivity component." },
+    "very_low_sensitivity":    { "initial_response_factor": 0.2,  "meaning": "Largely intrinsically resistant population." },
+    "heterogeneous_sensitivity": { "initial_response_factor": 0.55, "meaning": "Broad mixture of sensitive and resistant cells; wide response variance (uncertainty elevated)." },
+    "unknown":                 { "initial_response_factor": null, "meaning": "Intrinsic sensitivity not reported; must not be defaulted to fully sensitive.", "evidence_level": "NOT_REPORTED" }
+  },
+  "rules": {
+    "not_modified_by_exposure": "Intrinsic sensitivity is fixed for a context; treatment-induced change is represented only by adaptive/acquired resistance transitions, never by editing this state.",
+    "no_default_to_sensitive": "An unknown intrinsic sensitivity resolves to 'unknown' / NOT_REPORTED, never silently to very_high_sensitivity."
+  }
+}

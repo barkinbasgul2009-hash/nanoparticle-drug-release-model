@@ -1,0 +1,23 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C structured immune-suppression model. Suppression = reduced immune EFFECTIVENESS, kept DECOMPOSED into named separable components (never one opaque constant) and combined into a bounded total. Section 1 establishes the contract + double-counting rules; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1]; no cytokine / suppressive-factor concentration (NOT_REPORTED).",
+  "components": ["hypoxia_associated_suppression", "poor_vascular_access_suppression", "passive_microenvironment_barrier_suppression", "tumor_derived_suppression", "treg_suppression", "macrophage_tumor_supporting_suppression", "checkpoint_suppression", "cd8_exhaustion_suppression", "reduced_antigen_presentation_suppression"],
+  "aggregation": {
+    "method": "weighted_saturating",
+    "note": "total = 1 - PRODUCT over components of (1 - w_i * s_i); bounded [0,1], avoids naive summation. Weights + any correlation discounts are defined when the biology section is implemented.",
+    "bounded_range": "[0,1]"
+  },
+  "coefficient_policy": {
+    "valid_range": "each component + total in [0,1]",
+    "source": "general immunosuppressive-TME biology applied predictively; hypoxia/vascular components derive READ-ONLY from Phase-7A / Phase-7B outputs",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "each component is a named ledger entry so suppression can be inspected and audited for double counting.",
+    "limitations": "No suppressive-factor concentration (NOT_REPORTED)."
+  },
+  "double_counting_rules": {
+    "hypoxia_once": "hypoxia-associated suppression is applied once even if hypoxia also lowered vascular oxygen supply upstream.",
+    "checkpoint_once": "checkpoint suppression already captured in CD8 exhaustion is not re-added unchanged.",
+    "treg_decomposed": "Treg suppression is a named component, not duplicated in a generic tumour-derived term.",
+    "vascular_access_once": "poor perfusion reduces immune access once; it is not re-applied through an identical vascular term."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Maps each B1 storyboard scene to its exact evidence context, model label, scale level, confidence, and exclusions. The anatomical inclusion/exclusion matrix is embedded per scene.",
+  "scale_levels": {
+    "L1":"body orientation (site of topical application; NO systemic journey)",
+    "L2":"skin surface (formulation reservoir)",
+    "L3":"tissue cross-section (SC/epidermis/dermis; vessels as context)",
+    "L4":"cellular microenvironment (keratinocytes/melanoma/fibroblasts/ECM)",
+    "L5":"cell-membrane interaction (contact + supported uptake)",
+    "L6":"intracellular/molecular (ONLY where supported - B2 ER; not B1)"
+  },
+  "b1_scenes": [
+    {"id":"S1_application_site","scale":"L1-L2","model_label":"topical site (generic skin)","confidence":"CONTEXTUAL_ANATOMY","include":["skin site","topical dosage form"],"exclude":["mouth","stomach","GI transit","IV injection","bloodstream"]},
+    {"id":"S2_formulation_on_skin","scale":"L2","model_label":"NLC dispersion on skin surface","confidence":"QUALITATIVELY_SUPPORTED","include":["formulation reservoir","~85-90 nm particle class","charge state"],"exclude":["three distinct size choices","scale mismatch without a scale indicator"]},
+    {"id":"S3_stratum_corneum_barrier","scale":"L3-L6","model_label":"EX VIVO RAT SKIN model","confidence":"QUANTITATIVELY_SUPPORTED (permeation) + CONTEXTUAL_ANATOMY (structure)","include":["corneocyte stacks (anucleate)","lipid lamellae","released-API diffusion"],"exclude":["nuclei in SC","vessels in SC","unsupported intact-particle deep transport if carrier vs released not distinguished (label the limitation)"]},
+    {"id":"S4_depth_layer_deposition","scale":"L3","model_label":"EX VIVO RAT SKIN (0-30/30-60/60-90 um sections)","confidence":"DIRECTLY_OBSERVED (depth bands)","include":["relative deposition by band"],"exclude":["fabricated continuous concentration field","hypodermis penetration"]},
+    {"id":"S5_epidermal_cell_environment","scale":"L4","model_label":"epidermal context (generic) + labelled cell-model insets","confidence":"CONTEXTUAL_ANATOMY","include":["keratinocyte arrangement","basal melanocyte (context)"],"exclude":["vessels in epidermis","decorative immune cells"]},
+    {"id":"S6_uptake_comparison","scale":"L4-L5","model_label":"IN VITRO: HaCaT (human keratinocyte) + B16BL6 (murine melanoma) - shown as SEPARATE labelled insets","confidence":"QUALITATIVELY_SUPPORTED","include":["cationic>neutral>anionic ordinal uptake"],"mandatory_note":"charge AND lipid both changed - not a pure charge effect","exclude":["quantitative uptake ratios","detailed endocytosis machinery"]},
+    {"id":"S7_melanoma_context","scale":"L4","model_label":"MURINE B16BL6 melanoma (in vitro) / C57BL/6 mouse (in vivo)","confidence":"QUALITATIVELY_SUPPORTED","include":["murine melanoma cells (pigment optional)"],"exclude":["human clinical invasive-melanoma histology as this model"]},
+    {"id":"S8_therapeutic_effect","scale":"L4","model_label":"IN VIVO MOUSE melanoma efficacy","confidence":"QUALITATIVELY_SUPPORTED (endpoint)","include":["qualitative tumor-reduction cue","model label + uncertainty"],"exclude":["exact shrinkage %","survival benefit","metastasis prevention","immune-pathway activation (that is B2, not B1)"]},
+    {"id":"S9_limitation_panel","scale":"overlay","model_label":"limitations","confidence":"n/a","include":["rat skin","murine melanoma","single study","no systemic PK","no external validation","no time-resolved aggregation/precipitation","charge/lipid confound"]}
+  ]
+}

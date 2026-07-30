@@ -1,0 +1,38 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6C population-response STATE vocabulary + composition->state thresholds. A SCHEMATIC virtual cell population derived from the Phase-6B single-cell apoptosis trajectory. Fractions are normalized [0,1] simulation values - NEVER real cell counts, density, cellularity, or tumour geometry. The simulator STOPS at population composition; no tumour / clinical / survival outcome is represented.",
+  "fraction_semantics": {
+    "conservation_invariant": "living_fraction + apoptotic_fraction == 1.0 (always; no disappearing, duplicated, or spontaneously growing cells)",
+    "apoptotic_monotonic": "apoptotic_fraction is non-decreasing; committed apoptotic cells never resurrect",
+    "sub_classification": "adapted_fraction and recovered_fraction are sub-fractions of the LIVING pool (adapted + recovered <= living_fraction)",
+    "cumulative_apoptosis": "equals apoptotic_fraction (kept explicit for the timeline / history)"
+  },
+  "population_states": [
+    { "id": "healthy", "description": "No meaningful stress; apoptotic fraction negligible." },
+    { "id": "minimal_response", "description": "Detectable schematic stress; apoptotic fraction still negligible." },
+    { "id": "adaptive_response", "description": "Surviving cells adapt; apoptotic fraction still low." },
+    { "id": "partial_response", "description": "A minority sub-population has become apoptotic; living cells clearly dominant." },
+    { "id": "mixed_population", "description": "Apoptotic and living fractions are comparable." },
+    { "id": "apoptosis_accumulating", "description": "Apoptotic fraction is the majority and still rising." },
+    { "id": "apoptosis_dominant", "description": "Apoptotic fraction past the dominance threshold (irreversible)." },
+    { "id": "stable_terminal_state", "description": "Apoptotic fraction has reached its ceiling and stopped changing (irreversible terminal equilibrium)." }
+  ],
+  "idle_states": ["idle", "not_reported", "unavailable"],
+  "composition_thresholds": {
+    "stress_minimal": 0.08,
+    "adaptive_min": 0.12,
+    "apoptotic_partial": 0.15,
+    "apoptotic_mixed": 0.35,
+    "apoptotic_accumulating": 0.55,
+    "apoptotic_dominant": 0.75,
+    "terminal_epsilon": 0.0015,
+    "thresholds_basis": "SCHEMATIC ordinal boundaries on the normalized apoptotic fraction (and schematic stress/adaptation signals). NOT measured cellularity or an apoptotic index; no biological % of cells is claimed."
+  },
+  "stop_boundary": "population composition (living / apoptotic / adapted / recovered fractions + population state)",
+  "excluded_downstream_processes": [
+    "tumour_shrinkage", "tumour_size", "tumour_volume", "tumour_regression", "tumour_growth_inhibition",
+    "RECIST", "survival", "immune_clearance", "macrophages", "dendritic_cells", "t_cells", "cytokines",
+    "angiogenesis", "proliferation_kinetics", "cell_cycle", "mitosis", "necrosis", "invasion", "metastasis",
+    "wound_healing", "fibrosis", "pharmacokinetics", "pd_efficacy", "toxicity", "patient_outcome"
+  ]
+}

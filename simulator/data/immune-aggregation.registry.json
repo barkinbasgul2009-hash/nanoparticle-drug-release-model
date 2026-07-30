@@ -1,0 +1,122 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C shared aggregation framework registry (Part 1 - Section 2). Declares the aggregation METHODS available to every immune module and the DEFAULT method + bounds per aggregation target. No biological module implements its own aggregation - each declares a target here and calls the shared ImmuneAggregator. Availability, confidence, evidence, prediction, and contribution traceability are always preserved; unavailable inputs are never treated as zero. Deterministic (ordered contributor iteration).",
+  "aggregation_framework_version": "7C.1.0",
+  "methods": {
+    "weighted_average":            { "description": "sum(w_i*v_i)/sum(w_i) over available inputs", "bounded": true },
+    "weighted_sum":                { "description": "sum(w_i*v_i), then clamped to bounds", "bounded": true },
+    "bounded_additive":            { "description": "clamp(sum(w_i*v_i), min, max)", "bounded": true },
+    "bounded_multiplicative":      { "description": "product of (1 - w_i*v_i) style saturating combination, bounded", "bounded": true },
+    "min_selector":                { "description": "minimum available input value", "bounded": true },
+    "max_selector":                { "description": "maximum available input value", "bounded": true },
+    "dominant_contributor":        { "description": "value of the largest weighted contribution", "bounded": true },
+    "availability_aware_average":  { "description": "weighted average over AVAILABLE/PARTIALLY_AVAILABLE inputs only (Section-1 utility)", "bounded": true },
+    "confidence_weighted_average": { "description": "weighted average with per-input confidence folded into the weight", "bounded": true }
+  },
+  "targets": {
+    "innate_macrophage":        { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_nk_available":      { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_nk_activation":     { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_nk_cyto":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_dc_available":      { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_dc_uptake":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_dc_maturation":     { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_dc_presentation":   { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_ap":                { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_readiness":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_tumor_pressure":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_priming":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+
+    "cd8_priming":              { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_recruitment":          { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_infiltration":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_activation":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_effector_competence":  { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_target_engagement":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_cytotoxic_potential":  { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_dysfunction":          { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_exhaustion":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_recovery":             { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd8_capability":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+
+    "cd4_priming":              { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd4_recruitment":          { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd4_infiltration":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd4_activation":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd4_helper_competence":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "cd4_capability":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+
+    "treg_recruitment":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "treg_infiltration":        { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "treg_activation":          { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "treg_suppressive_competence": { "method": "availability_aware_average", "min": 0, "max": 1 },
+
+    "pd1_pressure":             { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "pdl1_pressure":            { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "ctla4_pressure":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+
+    "immune_suppression":       { "method": "bounded_multiplicative", "min": 0, "max": 1 },
+
+    "escape_recognition_escape": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_access_escape":      { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_priming_escape":     { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_effector_escape":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_checkpoint_escape":  { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_suppression_escape": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "escape_exhaustion_escape":  { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "immune_escape_overall":     { "method": "confidence_weighted_average", "min": 0, "max": 1 },
+
+    "adaptive_readiness":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_activation":          { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_effector_competence": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_effective_cytotoxic": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_persistence":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_recovery":            { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "net_readiness":            { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "net_competence":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "net_tumor_loss":           { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "immune_failure_v":         { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "immune_blocked_potential": { "method": "bounded_multiplicative", "min": 0, "max": 1 },
+
+    "tumor_visibility":     { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "innate_immunity":      { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "antigen_presentation": { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "adaptive_immunity":    { "method": "availability_aware_average", "min": 0, "max": 1 },
+    "checkpoint_pressure":  { "method": "bounded_additive", "min": 0, "max": 1 },
+    "immune_escape":        { "method": "bounded_multiplicative", "min": 0, "max": 1 },
+    "net_immune_effect":    { "method": "confidence_weighted_average", "min": 0, "max": 1 }
+  },
+  "target_policy": {
+    "unknown_target": "reject_before_evaluation",
+    "unknown_target_note": "An aggregation target not declared above is a fatal error thrown BEFORE biological evaluation - there is NO silent availability_aware_average/[0,1] fallback for production targets.",
+    "availability": "availability_aware: AVAILABLE only if all contributors available, PARTIALLY_AVAILABLE if some, UNAVAILABLE if none. Applies uniformly to every declared target.",
+    "empty_input": "no contributions -> NOT_APPLICABLE; all contributors unavailable -> UNAVAILABLE. UNAVAILABLE is NEVER converted to 0.",
+    "bounds": "every declared normalized target is [0,1]; methods that can exceed bounds are clamped to the declared min/max."
+  },
+  "target_domains": {
+    "innate": ["innate_macrophage", "innate_nk_available", "innate_nk_activation", "innate_nk_cyto", "innate_dc_available", "innate_dc_uptake", "innate_dc_maturation", "innate_dc_presentation", "innate_ap", "innate_readiness", "innate_tumor_pressure", "innate_priming"],
+    "adaptive_cd8": ["cd8_priming", "cd8_recruitment", "cd8_infiltration", "cd8_activation", "cd8_effector_competence", "cd8_target_engagement", "cd8_cytotoxic_potential", "cd8_dysfunction", "cd8_exhaustion", "cd8_recovery", "cd8_capability"],
+    "adaptive_cd4": ["cd4_priming", "cd4_recruitment", "cd4_infiltration", "cd4_activation", "cd4_helper_competence", "cd4_capability"],
+    "treg": ["treg_recruitment", "treg_infiltration", "treg_activation", "treg_suppressive_competence"],
+    "checkpoint": ["pd1_pressure", "pdl1_pressure", "ctla4_pressure"],
+    "suppression": ["immune_suppression"],
+    "escape": ["escape_recognition_escape", "escape_access_escape", "escape_priming_escape", "escape_effector_escape", "escape_checkpoint_escape", "escape_suppression_escape", "escape_exhaustion_escape", "immune_escape_overall"],
+    "adaptive_integration": ["adaptive_readiness", "adaptive_activation", "adaptive_effector_competence", "adaptive_effective_cytotoxic", "adaptive_persistence", "adaptive_recovery", "net_readiness", "net_competence", "net_tumor_loss", "immune_failure_v", "immune_blocked_potential"],
+    "reserved_section1": ["tumor_visibility", "innate_immunity", "antigen_presentation", "adaptive_immunity", "checkpoint_pressure", "immune_escape", "net_immune_effect"]
+  },
+  "target_aliases": {
+    "net_immune_effect": { "canonical": "immune_escape_overall", "reason": "the confidence-weighted overall escape aggregate was mislabelled with the net-effect target; renamed for semantic uniqueness. net_immune_effect is retained as a RESERVED Section-1 domain target.", "status": "resolved_rename", "note": "aggregation targets are internal only (never serialized / never in the contribution ledger), so no stored data references these ids and no replay migration is required." },
+    "immune_suppression@adaptive_integration_blocked": { "canonical": "immune_blocked_potential", "reason": "the adaptive-integration blocked-potential aggregate reused the integrated-suppression target (same method, different semantic); split for semantic uniqueness.", "status": "resolved_split", "note": "same bounded_multiplicative method/bounds preserved -> identical default output." }
+  },
+  "conflict_resolution": {
+    "policy": "explicit_no_silent_overwrite",
+    "note": "When modules produce competing effects (e.g. high CD8 activity + high checkpoint pressure), the aggregator records BOTH as contributions and resolves them through the declared method; a later module never silently overwrites an earlier result. Conflicts are recorded as warnings on the aggregation result.",
+    "conflict_flag_threshold": 0.5,
+    "conflict_flag_threshold_note": "If opposing signed contributions each exceed this magnitude, a conflict warning is attached (schematic)."
+  },
+  "rules": {
+    "registry_driven": "Every aggregation method + target is declared here, never hardcoded in a biological module.",
+    "availability_preserved": "Aggregate availability is AVAILABLE only if all inputs are available, PARTIALLY_AVAILABLE if some, UNAVAILABLE if none.",
+    "traceability_preserved": "Every aggregate records which inputs contributed, their weights, and which were ignored (and why)."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Extracellular-matrix and vascular atlas for Profile B skin/melanoma context. Components cited to open anatomy sources; abundance qualitative (no invented volume fractions). ECM must be biologically intentional, not random fibers.",
+  "ecm_components": [
+    {"component":"collagen I","location":"dermis (dominant fibrillar collagen)","confidence":"CONTEXTUAL_ANATOMY","visible_HE":"eosinophilic (pink)","visible_special":"blue in Masson trichrome","abundance":"dominant dermal ECM (qualitative)","b1_relevance":"dermal context only","cite":"OpenStax 5.1; StatPearls"},
+    {"component":"collagen III","location":"papillary dermis, reticular fibers","confidence":"CONTEXTUAL_ANATOMY","abundance":"minor (qualitative)","b1_relevance":"context"},
+    {"component":"collagen IV","location":"basement membrane (dermo-epidermal junction)","confidence":"CONTEXTUAL_ANATOMY","b1_relevance":"barrier context; basement-membrane disruption is a MELANOMA feature (contextual, human histopath)","cite":"Libre Pathology"},
+    {"component":"elastin","location":"dermis","confidence":"CONTEXTUAL_ANATOMY","abundance":"qualitative","b1_relevance":"context"},
+    {"component":"hyaluronan / proteoglycans (ground substance)","location":"dermis interstitium","confidence":"CONTEXTUAL_ANATOMY","b1_relevance":"interstitial context; NOT a quantified transport modifier for B1"},
+    {"component":"fibronectin / laminin","location":"basement membrane / interstitium","confidence":"CONTEXTUAL_ANATOMY","b1_relevance":"context/label-only"}
+  ],
+  "ecm_transport_effect": {
+    "status":"UNSUPPORTED_DO_NOT_ANIMATE as a quantified process for B1",
+    "reason":"Chen 2012 does not report ECM-dependent nanoparticle transport; ECM traversal must not be shown as a measured event"
+  },
+  "vascular": [
+    {"structure":"papillary dermal capillary loops","confidence":"CONTEXTUAL_ANATOMY","visual_rule":"appear in upper dermis as context","cite":"OpenStax 5.1"},
+    {"structure":"deeper dermal vascular plexus","confidence":"CONTEXTUAL_ANATOMY","visual_rule":"deep dermis context"},
+    {"structure":"red blood cells in lumen","confidence":"ILLUSTRATIVE_ONLY","visual_rule":"optional lumen content; color = illustrative"},
+    {"structure":"lymphatics","confidence":"CONTEXTUAL_ANATOMY / LABEL_ONLY","visual_rule":"optional context"},
+    {"structure":"tumor-associated vasculature","confidence":"CONTEXTUAL_ANATOMY (human) / NOT_REPORTED (B1 model)","visual_rule":"do NOT quantify; B1 did not measure tumour vasculature"}
+  ],
+  "vascular_rule_B1": {
+    "epidermis":"AVASCULAR - never draw vessels in epidermis",
+    "dermis":"vessels allowed as anatomical CONTEXT only",
+    "prohibited":"nanoparticle entry into vessels; systemic distribution; extravasation - all UNSUPPORTED_DO_NOT_ANIMATE for topical B1"
+  }
+}

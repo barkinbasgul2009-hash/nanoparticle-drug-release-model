@@ -1,0 +1,21 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A deterministic population-enrichment model. Given selection pressure + differential subpopulation response, it produces conserved fraction changes that redistribute the normalized population toward less-sensitive subpopulations. CRITICAL distinctions: (1) enrichment CONSERVES the normalized composition (sum stays 1.0); (2) relative resistant enrichment is NOT the same as absolute tumour growth - a resistant fraction may RISE while total tumour burden FALLS. Schematic only.",
+  "coefficient_policy": {
+    "valid_range": "enrichment_strength in [0,1]; fraction changes are conserved (sum of changes = 0)",
+    "0_interpretation": "0 = no enrichment (composition unchanged)",
+    "1_interpretation": "1 = maximal schematic enrichment step the model represents",
+    "source": "selection_pressure_value x per-subpopulation response differential (predicted)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "enrichment_step scales the per-frame redistribution; larger values enrich faster but never break conservation.",
+    "limitations": "No absolute count change; relative composition only (NOT_REPORTED quantitatively)."
+  },
+  "enrichment_step": 0.08,
+  "max_enrichment_per_frame": 0.15,
+  "dominant_subpopulation_threshold": 0.5,
+  "rules": {
+    "conservation": "Sum of all fraction changes each frame is 0 (within tolerance); no fraction leaves [0,1].",
+    "selection_vs_growth": "Enrichment describes relative composition, decoupled from absolute tumour burden; documentation and runtime preserve that a resistant fraction can increase while burden decreases.",
+    "de_enrichment_allowed": "Where biologically supported (e.g. re-sensitization / tolerance resolution), fractions may shift BACK toward sensitive; this is de-enrichment, still conserved."
+  }
+}

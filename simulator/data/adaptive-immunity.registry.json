@@ -1,0 +1,18 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C adaptive-immunity structure: CD8 cytotoxic T cells, CD4 helper T cells, regulatory T cells (Treg). Each cell type separates availability / recruitment-infiltration / activation / competence / suppression from net contribution; CD8 additionally separates priming, exhaustion, and recovery potential. Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1]; no T-cell count / TCR / clonality (NOT_REPORTED; excluded).",
+  "cd8": { "stages": ["available", "infiltration", "priming", "activation", "effector_competence", "suppression", "exhaustion", "recovery_potential", "cytotoxic_contribution"] },
+  "cd4": { "stages": ["available", "activation", "adaptive_support", "suppression", "functional_contribution"] },
+  "treg": { "stages": ["available", "enrichment", "activation", "suppressive_pressure", "escape_contribution"] },
+  "coefficient_policy": {
+    "valid_range": "each stage score in [0,1]",
+    "source": "general adaptive tumour-immunology biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "CD8 exhaustion consumes checkpoint pressure once; the final suppression score must not re-add the identical checkpoint term (double-counting guard).",
+    "limitations": "No T-cell count / TCR sequence / clonality / neoantigen prediction (all NOT_REPORTED / excluded)."
+  },
+  "double_counting_rules": {
+    "checkpoint_once": "PD-1/PD-L1 axis pressure enters CD8 exhaustion once; it is not re-applied unchanged in total immune suppression.",
+    "treg_decomposed": "Treg suppressive pressure is a named component of total immune suppression, not duplicated as an anonymous suppression term."
+  }
+}

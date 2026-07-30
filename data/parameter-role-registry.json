@@ -1,0 +1,16 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Parameter roles A-H (see docs/parameter-classification.md). Roles provisional until the selected model fixes equation terms.",
+  "roles_legend": {"A":"MODEL INPUT","B":"SCENARIO PRESET","C":"DERIVED","D":"USER-ADJUSTABLE","E":"LOCKED PROFILE","F":"UNCERTAINTY","G":"INFORMATIONAL","H":"UNSUPPORTED"},
+  "parameters": [
+    {"name":"tissue_diffusivity_D","roles":["A","D"],"bounded":true,"value":null,"pending_full_text":true},
+    {"name":"local_clearance_ke","roles":["A","D"],"bounded":true,"value":null,"pending_full_text":true},
+    {"name":"release_rate","roles":["A"],"value":null,"pending_full_text":true},
+    {"name":"interface_partition_K","roles":["A","E"],"value":null,"pending_full_text":true},
+    {"name":"skin_layer_thickness","roles":["B","E"],"value":null,"pending_full_text":true},
+    {"name":"tissue_pH","roles":["B","G"],"value":null,"pending_full_text":true},
+    {"name":"particle_diameter","roles":["A","G"],"value":null,"pending_full_text":true},
+    {"name":"zeta_potential","roles":["G","H"],"value":null,"pending_full_text":true},
+    {"name":"penetration_threshold","roles":["D"],"value":0.1,"note":"endpoint definition; user-visible; design default"}
+  ]
+}

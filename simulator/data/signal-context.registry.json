@@ -1,0 +1,62 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5B.1 SIGNAL-TRANSDUCTION CONTEXT registry. Defines the biological contexts (species + cell model + tissue/disease + drug + formulation + molecular target) that a future signaling graph is keyed by. ARCHITECTURE + EVIDENCE ONLY - no runtime engine, no renderer, no animation. Contexts NEVER mix species or cell models. A profile begins only via a declared start condition; the molecular target for Profile B is NOT REPORTED (Phase 5A), so signaling profiles are EXPOSURE-DRIVEN predictions, not target-mediated claims.",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012 supports the CELL MODELS (HaCaT human keratinocytes; B16BL6 murine melanoma) and the rat skin permeation model, but reports NO signal-transduction nodes/edges. Therefore all Profile-B signaling here is at best LITERATURE_DERIVED_PREDICTION / MECHANISTIC_PREDICTION and MUST be verified against primary sources before Phase 5B.2 upgrades any label. No outside citation is fabricated.",
+  "evidence_staging_note": "The frozen Profile-B package contains NO signaling data. Canonical pathway EDGES (e.g. ROS->ERK, PI3K->AKT->mTOR, Nrf2->ARE) are classified EXPERIMENTAL_PATHWAY_SPECIFIC as established GENERAL biology, with primary citations to be attached during the Phase-5B.1 review freeze. Drug-in-cell-model claims (celastrol drives these in HaCaT/B16BL6) are LITERATURE_DERIVED_PREDICTION pending primary-source verification (verification_status = UNVERIFIED_IN_REPO). Nothing is labelled EXPERIMENTAL_FORMULATION_SPECIFIC.",
+  "contexts": {
+    "human_hacat": {
+      "species": "human",
+      "cell_model": "HaCaT",
+      "cell_model_note": "immortalised human keratinocyte line",
+      "tissue_context": "skin / keratinocyte",
+      "disease_context": "normal keratinocyte (non-malignant)",
+      "drug": "tripterine (celastrol)",
+      "formulation": "surface-charged NLC (Profile B / B1)",
+      "molecular_target": null,
+      "target_evidence": "NOT_REPORTED",
+      "start_condition": "drug_exposure",
+      "start_condition_basis": "Molecular target is NOT REPORTED (Phase 5A), so signaling is modelled as EXPOSURE-DRIVEN (drug exposure), never implying a known target.",
+      "source_context": "Chen 2012 used HaCaT for cellular uptake; no HaCaT signaling was reported in the frozen package.",
+      "evidence_scope": "PREDICTIVE_EXPOSURE_DRIVEN"
+    },
+    "mouse_b16bl6": {
+      "species": "mouse",
+      "cell_model": "B16BL6",
+      "cell_model_note": "murine melanoma line",
+      "tissue_context": "melanoma",
+      "disease_context": "malignant melanoma",
+      "drug": "tripterine (celastrol)",
+      "formulation": "surface-charged NLC (Profile B / B1)",
+      "molecular_target": null,
+      "target_evidence": "NOT_REPORTED",
+      "start_condition": "drug_exposure",
+      "start_condition_basis": "Molecular target is NOT REPORTED (Phase 5A) -> EXPOSURE-DRIVEN signaling only.",
+      "source_context": "Chen 2012 used B16BL6 for cellular uptake + in-vivo antimelanoma efficacy (downstream, not modelled here); no B16BL6 signaling cascade was reported in the frozen package.",
+      "evidence_scope": "PREDICTIVE_EXPOSURE_DRIVEN"
+    },
+    "rat_skin": {
+      "species": "rat",
+      "cell_model": "ex_vivo_skin",
+      "cell_model_note": "Sprague-Dawley full-thickness skin (permeation model)",
+      "tissue_context": "skin",
+      "disease_context": "none",
+      "drug": "tripterine (celastrol)",
+      "formulation": "surface-charged NLC (Profile B / B1)",
+      "molecular_target": null,
+      "target_evidence": "NOT_REPORTED",
+      "start_condition": "none",
+      "start_condition_basis": "No rat cellular signaling evidence exists; signal transduction is NOT REPORTED for rat. No human/mouse pathway is silently reused.",
+      "source_context": "Chen 2012 used rat only for ex-vivo skin permeation; no rat signaling.",
+      "evidence_scope": "NOT_REPORTED"
+    }
+  },
+  "context_rules": {
+    "one_species_one_cell_model": "A pathway profile binds exactly one context; species and cell models are never mixed within a profile.",
+    "no_silent_transfer": "A human keratinocyte pathway is never auto-transferred to mouse melanoma; a mouse pathway is never auto-transferred to rat. Any transfer is a labelled prediction recorded in signal-prediction.registry.json.",
+    "target_gating": "Signal transduction never begins without a declared start condition. With an unknown target, only an EXPOSURE-DRIVEN predictive profile may exist; a fake generic target must never be used to force a pathway."
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - HaCaT + B16BL6 cell models; rat skin permeation; NO signaling reported",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476)"
+  ]
+}

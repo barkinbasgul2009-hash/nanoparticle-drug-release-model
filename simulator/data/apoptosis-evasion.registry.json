@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A apoptosis-evasion resistance. Represents an increased EFFECTIVE apoptosis threshold / reduced commitment abstraction / reduced downstream loss pressure as an ordinal state producing a BOUNDED modifier. Bax / Bcl-2 / caspase molecular values are NEVER changed directly, and an apoptosis change is applied at ONE level only (no double counting with the population modifier). Schematic ordinal only.",
+  "coefficient_policy": {
+    "valid_range": "apoptosis_threshold_increase in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no evasion (baseline apoptosis competence)",
+    "1_interpretation": "1 = maximal schematic increase in effective apoptosis threshold the model represents",
+    "source": "general apoptosis-evasion resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "consumed by resistanceToApoptosisAdapter once; the double-counting guard prevents re-application through the population-loss modifier.",
+    "limitations": "No Bax/Bcl-2/caspase level or commitment probability value (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":   { "apoptosis_threshold_increase": 0.0 },
+    "low":      { "apoptosis_threshold_increase": 0.12 },
+    "moderate": { "apoptosis_threshold_increase": 0.28 },
+    "high":     { "apoptosis_threshold_increase": 0.45 },
+    "dominant": { "apoptosis_threshold_increase": 0.6 },
+    "unknown":  { "apoptosis_threshold_increase": null, "evidence_level": "NOT_REPORTED" }
+  },
+  "rules": { "single_application": "An apoptosis-evasion effect is applied through the apoptosis adapter only; it is not re-added to the final population-loss modifier." }
+}

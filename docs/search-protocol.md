@@ -1,36 +1,39 @@
-# Systematic Search Protocol
-
-Status: protocol defined; full execution is the gated, post-approval work.
+# Systematic Search Protocol (Stage 2)
 
 ## Question
-For a chosen API–formulation–route–tissue system, what verified quantitative
-parameters exist for (a) release, (b) local tissue transport (diffusivity,
-partition, clearance), and (c) independent validation?
+Which API–nanoparticle-formulation–route–tissue system has sufficient high-quality
+quantitative LOCAL-penetration evidence to support the first named-tissue model in
+Stage 3, given the current solver (released-drug reaction–diffusion + clearance)?
 
-## Source hierarchy (highest first)
-regulatory guidance/assessments → official product labels/reviews (Drugs@FDA,
-EMA EPAR) → validated-platform docs → human quantitative studies → human-tissue
-studies → in vivo animal → in vitro mechanistic → systematic reviews/meta-analyses
-→ recognized PK/physicochemical databases → weaker sources only if nothing stronger.
+## Databases/resources targeted
+PubMed/PMC, Crossref/Europe PMC, ClinicalTrials.gov, FDA Drugs@FDA, EMA EPAR, OECD,
+publisher sites, OSP docs, and a general discovery engine — **subject to the access
+constraint in `full-text-access-log.md` (only WebSearch reachable here).**
 
-## Search facets (searched separately, per task Section 7)
-A physicochemical · B formulation · C release kinetics · D permeability/diffusion
-· E local tissue concentration · F systemic PK · G biodistribution · H carrier
-clearance · I free vs encapsulated · J validation datasets · K variability ·
-L prior model structures.
+## Facets (searched separately)
+API physicochemistry; formulation characterization; release kinetics & assay;
+free-vs-encapsulated; tissue permeability/diffusion; depth-resolved penetration;
+tissue retention/clearance; systemic PK/biodistribution; environmental conditions;
+barrier structure; prior model structures; calibration/validation datasets;
+uncertainty; assay interference.
+
+## Source hierarchy
+regulatory assessments → product labels → FDA/EMA/ICH/OECD guidance → human
+quantitative studies → human-tissue studies → in vivo animal → ex vivo → in vitro
+mechanistic → systematic reviews → validated databases → platform docs.
 
 ## Inclusion / exclusion
-Include: peer-reviewed or official; full text inspectable; parameter traceable to
-an original quantitative measurement; compatible species/route/formulation.
-Exclude: blogs, marketing, unsourced pages, snippets, AI summaries, generated
-citations, unopenable papers, incompatible cross-species/route/material transfer.
+Include: identity-verifiable peer-reviewed/official sources with parameters
+traceable to an original measurement, compatible species/route/formulation.
+Exclude: blogs, marketing, snippet-only claims, AI summaries as data, unopenable
+full texts used quantitatively, incompatible cross-context transfers.
 
-## Saturation criterion
-Stop when two consecutive well-designed iterations yield no new parameter-,
-validation-, or structure-relevant evidence. Record every iteration in
-`search-log.md`; excluded full texts in `excluded-studies.md`.
+## Saturation
+Two consecutive well-designed iterations per facet yielding no new
+parameter-/validation-/structure-relevant evidence. **Not reached in Stage 2** —
+truncated by the full-text access block (documented, not hidden).
 
 ## Honesty
-This is not called a "formal systematic review" unless it meets the relevant
-methodological standard. A PRISMA-style flow summary will be added when execution
-occurs.
+This is **not** a formal systematic review (PRISMA) — full-text screening could not
+be performed. It is a source-identification + design review conducted under a
+documented access constraint.

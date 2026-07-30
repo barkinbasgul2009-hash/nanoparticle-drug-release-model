@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Normal skin vs melanoma visual comparison. Human melanoma histopathology is CONTEXTUAL (education); the B1 experimental disease model is MURINE B16BL6 (culture + subcutaneous mouse), which must not be depicted as human invasive melanoma.",
+  "comparison": [
+    {"feature":"epidermal architecture","normal":"ordered stratified layers","melanoma_human":"disorganized; junctional/pagetoid spread","classify":"CONTEXTUAL (human histopath); NOT the B1 model"},
+    {"feature":"melanocyte distribution","normal":"solitary, evenly spaced at basale","melanoma_human":"atypical, confluent, nests + single cells","classify":"CONTEXTUAL"},
+    {"feature":"nuclear morphology","normal":"small, uniform","melanoma_human":"pleomorphism, prominent nucleoli","classify":"CONTEXTUAL","cite":"DermNet; Modern Pathology 3800508"},
+    {"feature":"maturation with depth","normal_nevus":"matures (cells shrink, nests disperse)","melanoma_human":"lack of maturation; atypia retained","classify":"CONTEXTUAL","cite":"Libre Pathology"},
+    {"feature":"dermal invasion","normal":"none","melanoma_human":"invasion, expansile dermal nests","classify":"CONTEXTUAL"},
+    {"feature":"basement membrane","normal":"intact","melanoma_human":"disrupted","classify":"CONTEXTUAL"},
+    {"feature":"stroma / ECM","normal":"ordered collagen","melanoma_human":"remodeling, desmoplasia (variable)","classify":"CONTEXTUAL"},
+    {"feature":"vascularity","normal":"regular plexus","melanoma_human":"increased/abnormal (variable)","classify":"CONTEXTUAL; NOT_REPORTED for B1"},
+    {"feature":"immune infiltrate","normal":"sparse","melanoma_human":"TILs variable","classify":"CONTEXTUAL; B2 ICD is a separate abstract mechanism"},
+    {"feature":"pigmentation","normal":"basal melanin","melanoma":"variable; B16 line is pigmented","classify":"B16 pigment = QUALITATIVELY_SUPPORTED (line property)"}
+  ],
+  "b1_disease_model_truth": {
+    "model":"B16BL6 murine melanoma (in vitro monolayer + in vivo C57BL/6 melanoma-bearing mice, percutaneous treatment)",
+    "not":"human spontaneous invasive cutaneous melanoma",
+    "visual_rule":"melanoma scenes for B1 must be labelled 'murine B16BL6 model'; human invasive-melanoma histology may appear ONLY as an educational CONTEXTUAL comparison, clearly separated"
+  }
+}

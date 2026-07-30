@@ -1,0 +1,44 @@
+{
+  "$schema_version": "1.0",
+  "status": "DESIGN BLUEPRINT - not implemented",
+  "purpose": "Evidence-linked information-panel registry. Every animated (or deliberately non-animated) event has a note that preserves scientific transparency. Badges map each note to its evidence confidence.",
+  "badges": {
+    "SUPPORTED": "directly supported by a full-text primary (green)",
+    "SUPPORTED_QUALITATIVE": "event reported but exact kinetics/timing not given (teal)",
+    "ABSTRACT_SUPPORTED": "supported at abstract/mechanism level only (blue)",
+    "OBSERVED_TIMING_UNKNOWN": "observed in literature; exact timing not reported (amber)",
+    "HYPOTHESIZED": "general expectation, not evidenced for this preset (grey)",
+    "DO_NOT_ANIMATE": "explicitly unsupported; shown as text note only, never animated (red)"
+  },
+  "panels": [
+    {"event":"B1 topical application","badge":"SUPPORTED","note":"Topical application supported by Chen 2012.","cite":"chen_2012"},
+    {"event":"B1 skin depth transport (0-30/30-60/60-90 um)","badge":"SUPPORTED","note":"Skin permeation and depth-layer deposition supported by Chen 2012 (rat abdominal skin; sections 0-30, 30-60, 60-90 um).","cite":"chen_2012"},
+    {"event":"B1 surface-charge uptake ranking","badge":"SUPPORTED","note":"Uptake order cationic > neutral > anionic (HaCaT/B16BL6), Chen 2012. Note: charge co-varies with lipid identity - observed association, not an isolated charge effect.","cite":"chen_2012"},
+    {"event":"B1 particle size","badge":"SUPPORTED_QUALITATIVE","note":"Particle size approximately 85-90 nm (Chen 2012). Sizes are too close to differentiate outcomes; size does not drive the animation.","cite":"chen_2012"},
+    {"event":"B1 release","badge":"OBSERVED_TIMING_UNKNOWN","note":"Sustained/delayed release has been reported, although exact release kinetics were not available (Chen 2012 selected a first-order model).","cite":"chen_2012"},
+    {"event":"B1 PDI / zeta / drug-loading / PK","badge":"OBSERVED_TIMING_UNKNOWN","note":"Not reported in the frozen evidence package.","cite":"evidence_package"},
+    {"event":"B1 therapeutic effect","badge":"SUPPORTED","note":"Reduced tumor burden in melanoma-bearing mice; cationic NLC highest antimelanoma efficacy (Chen 2012).","cite":"chen_2012"},
+    {"event":"B1 precipitation","badge":"DO_NOT_ANIMATE","note":"Precipitation was not reported. Extended storage or dilution of a poorly-soluble drug may result in precipitation; exact timing was not reported.","cite":"evidence_package"},
+    {"event":"B1 aggregation","badge":"DO_NOT_ANIMATE","note":"Aggregation was not reported; may occur under unfavorable conditions - exact timing not reported.","cite":"evidence_package"},
+    {"event":"B1 intracellular degradation / metabolism / extravasation / ECM traversal","badge":"DO_NOT_ANIMATE","note":"Not reported; not animated.","cite":"evidence_package"},
+
+    {"event":"B2 ER targeting / ER stress / ICD signaling","badge":"ABSTRACT_SUPPORTED","note":"ER localization, ER stress, and CRT/HMGB1/ATP release with DC maturation and CD8+ activation are supported at abstract level (Wang 2025). Shown qualitatively; no timing or quantities were reported.","cite":"wang_2025"},
+    {"event":"B2 size / zeta / EE / release / PK","badge":"OBSERVED_TIMING_UNKNOWN","note":"Not reported (article-page/abstract level). No numeric labels or deterministic timing are shown.","cite":"wang_2025"},
+    {"event":"B2 circulation/transport","badge":"HYPOTHESIZED","note":"Systemic transport is shown for orientation only; pharmacokinetics and biodistribution were not reported.","cite":"wang_2025"},
+
+    {"event":"B3 solubility increase","badge":"SUPPORTED","note":"Aqueous solubility increased 30-fold after SBE-betaCD complexation vs intrinsic solubility (Shukla 2020). Celastrol is BCS class IV.","cite":"shukla_2020"},
+    {"event":"B3 stability increase","badge":"SUPPORTED","note":"Celastrol stability greatly increased in PBS (pH 7.4) and in rat and human plasma upon SBE-betaCD complexation (Shukla 2020).","cite":"shukla_2020"},
+    {"event":"B3 intestinal permeability","badge":"SUPPORTED","note":"Improved permeability across an EpiIntestinal 3D small-intestine tissue model (Shukla 2020).","cite":"shukla_2020"},
+    {"event":"B3 as nanoparticle","badge":"DO_NOT_ANIMATE","note":"This is a molecular inclusion complex, not a nanoparticle; no particle size/morphology/growth is animated.","cite":"shukla_2020"},
+
+    {"event":"generic PEG -> longer circulation","badge":"HYPOTHESIZED","note":"A general nanomedicine expectation; no circulation/PK evidence exists for any Profile-B preset. Shown as a note, not an animation.","cite":"none"},
+    {"event":"generic size -> deeper penetration","badge":"HYPOTHESIZED","note":"Not evidenced within Profile B; not animated.","cite":"none"},
+    {"event":"review-identified candidates (Yang/Yin/Zhao/Zhou)","badge":"HYPOTHESIZED","note":"Identified in a review (Sun 2024); primaries not opened. Shown only in a research-candidates panel with DOI.","cite":"sun_2024"}
+  ],
+  "placement_rules": {
+    "persistent_badge": "each active scene shows the badge of its most-load-bearing event",
+    "hover_detail": "hovering any animated element reveals its note + citation",
+    "unsupported_tray": "a collapsible 'What is NOT shown and why' tray lists all DO_NOT_ANIMATE + HYPOTHESIZED items for the current preset",
+    "citation_link": "each note links to data/profile-b-evidence-package.json source id"
+  }
+}

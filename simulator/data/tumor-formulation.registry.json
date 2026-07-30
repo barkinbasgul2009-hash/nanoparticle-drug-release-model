@@ -1,0 +1,47 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour-response FORMULATION profiles. Surface-charged tripterine-loaded NLCs (cationic / anionic / neutral), free tripterine, and a vehicle control are kept as SEPARATE profiles - never merged into one universal NLC. The Chen 2012 in vivo antimelanoma pharmacodynamic evidence supports the treatment DIRECTION and the cationic > (anionic / neutral) RANKING (and NLC over tripterine alone) qualitatively; exact effect differences / percentages / tumour-volume gaps are NOT_REPORTED. Effect classes are ordinal, evidence- or prediction-labelled.",
+  "effect_class_values": { "none": 0.0, "minimal": 0.15, "low": 0.3, "moderate": 0.5, "high": 0.8 },
+  "formulations": {
+    "cationic_nlc": {
+      "id": "cationic_nlc", "label": "Cationic tripterine-loaded NLC", "administration_route": "topical",
+      "growth_suppression_class": "high", "loss_induction_class": "high", "effect_rank": 4,
+      "evidence_level": "EXPERIMENTAL_FORMULATION_SPECIFIC", "prediction_level": "EXPERIMENTAL_FORMULATION_SPECIFIC",
+      "confidence": "MEDIUM", "uncertainty": "Direction + strongest-formulation ranking are experimentally supported (Chen 2012); exact effect magnitude / % tumour-growth inhibition NOT_REPORTED.",
+      "evidence_refs": ["tum_chen_b16bl6_pd", "tum_chen_b16bl6_ranking"]
+    },
+    "anionic_nlc": {
+      "id": "anionic_nlc", "label": "Anionic tripterine-loaded NLC", "administration_route": "topical",
+      "growth_suppression_class": "moderate", "loss_induction_class": "moderate", "effect_rank": 2,
+      "evidence_level": "EXPERIMENTAL_FORMULATION_SPECIFIC", "prediction_level": "EXPERIMENTAL_FORMULATION_SPECIFIC",
+      "confidence": "MEDIUM", "uncertainty": "Lower relative antimelanoma direction than cationic (Chen 2012); exact magnitude NOT_REPORTED; anionic-vs-neutral ordering not over-claimed.",
+      "evidence_refs": ["tum_chen_b16bl6_ranking"]
+    },
+    "neutral_nlc": {
+      "id": "neutral_nlc", "label": "Neutral tripterine-loaded NLC", "administration_route": "topical",
+      "growth_suppression_class": "moderate", "loss_induction_class": "moderate", "effect_rank": 2,
+      "evidence_level": "EXPERIMENTAL_FORMULATION_SPECIFIC", "prediction_level": "EXPERIMENTAL_FORMULATION_SPECIFIC",
+      "confidence": "MEDIUM", "uncertainty": "Lower relative antimelanoma direction than cationic (Chen 2012); exact magnitude NOT_REPORTED; anionic-vs-neutral ordering not over-claimed.",
+      "evidence_refs": ["tum_chen_b16bl6_ranking"]
+    },
+    "free_tripterine": {
+      "id": "free_tripterine", "label": "Free tripterine (celastrol)", "administration_route": "topical",
+      "growth_suppression_class": "low", "loss_induction_class": "low", "effect_rank": 1,
+      "evidence_level": "EXPERIMENTAL_DRUG_CELL_SPECIFIC", "prediction_level": "EXPERIMENTAL_DRUG_CELL_SPECIFIC",
+      "confidence": "LOW", "uncertainty": "NLC formulations improved performance over tripterine alone where reported (Chen 2012); exact gap NOT_REPORTED.",
+      "evidence_refs": ["tum_chen_b16bl6_ranking"]
+    },
+    "vehicle_control": {
+      "id": "vehicle_control", "label": "Vehicle / untreated control", "administration_route": "topical",
+      "growth_suppression_class": "none", "loss_induction_class": "none", "effect_rank": 0,
+      "evidence_level": "EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC", "prediction_level": "EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC",
+      "confidence": "LOW", "uncertainty": "Untreated / vehicle reference trajectory (schematic baseline growth); exact control curve NOT_REPORTED.",
+      "evidence_refs": ["tum_chen_b16bl6_control"]
+    }
+  },
+  "ranking_policy": {
+    "supported_ranking": "cationic_nlc > anionic_nlc and cationic_nlc > neutral_nlc; NLC formulations > free_tripterine; vehicle_control has no treatment effect.",
+    "not_over_claimed": "The anionic-vs-neutral ordering and any exact effect differences are NOT asserted.",
+    "cell_model_scope": "This ranking is B16BL6-specific (Chen 2012); it is not transferred to B16 / B16-F10 without an explicit context-transfer label."
+  }
+}

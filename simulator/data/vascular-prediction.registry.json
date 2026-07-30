@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B vascular prediction records. Each documents a labelled prediction: relative perfusion / delivery / permeability / oxygen availability - never a fabricated absolute blood flow, vessel count, oxygen partial pressure, vascular diameter, or perfusion rate.",
+  "prediction_records": {
+    "pred_va_b16bl6": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "mouse_b16bl6_vascular",
+      "claim": "The abnormal B16BL6 melanoma vasculature (highly vascularized but immature/chaotic, poorly perfused, leaky) yields moderate-to-limited effective drug delivery and moderate oxygen supply relative to a well-perfused mature network.",
+      "confidence": "LOW",
+      "rationale": "General tumour-vasculature biology: high density + high permeability (EPR-style) is offset by poor perfusion + immaturity; applied predictively (no direct dataset).",
+      "source_context": "general tumour vasculature biology", "target_context": "mouse_b16bl6_vascular",
+      "assumptions": ["vessels modify delivery/oxygen/nutrient only", "no VEGF/HIF signalling in 7B", "no remodeling"],
+      "uncertainty": "Relative delivery/perfusion/oxygen only; all quantities NOT_REPORTED.",
+      "limitations": "Not a measured vasculature; schematic ordinal.",
+      "species": "mouse", "reference_ids": ["va_b16bl6_vasculature", "va_b16bl6_perfusion"],
+      "quantitative_status": "NOT_REPORTED", "may_show_by_default": true
+    },
+    "pred_va_human": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "human_skin_vascular",
+      "claim": "The predicted human skin/tumour vasculature (moderately vascularized, developing, moderate perfusion) yields moderate effective delivery - exploratory only.",
+      "confidence": "LOW",
+      "rationale": "Human skin vascular architecture is literature-known; applied predictively with distinct values (not copied from mouse).",
+      "source_context": "human skin vasculature biology", "target_context": "human_skin_vascular",
+      "assumptions": ["vessels modify delivery/oxygen/nutrient only", "no validated human vascular data", "no clinical claim"],
+      "uncertainty": "Entirely predictive; all quantities NOT_REPORTED.",
+      "limitations": "Exploratory; not shown by default; not validated for human clinical response.",
+      "species": "human", "reference_ids": ["va_human_vasculature"],
+      "quantitative_status": "NOT_REPORTED", "may_show_by_default": false
+    }
+  }
+}

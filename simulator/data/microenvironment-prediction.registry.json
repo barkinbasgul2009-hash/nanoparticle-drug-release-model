@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A microenvironment prediction records. Each documents a labelled prediction: relative ECM restriction / hypoxia influence / penetration reduction / oxygen limitation - never a fabricated oxygen concentration, ECM fibre density, collagen mass, interstitial pressure, absolute diffusion coefficient, or penetration rate.",
+  "prediction_records": {
+    "pred_me_b16bl6": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "mouse_b16bl6_tme",
+      "claim": "The passive B16BL6 melanoma environment (moderately dense, hyaluronic-acid-rich ECM, restrictive interstitium, moderate hypoxia) reduces effective drug penetration relative to an unrestricted environment.",
+      "confidence": "LOW",
+      "rationale": "General solid-tumour ECM + hypoxia biology restricts nanoparticle transport; applied predictively to this context (no direct dataset).",
+      "source_context": "general tumour ECM / hypoxia biology", "target_context": "mouse_b16bl6_tme",
+      "assumptions": ["passive modulation only", "no active remodeling", "no signalling from hypoxia in 7A"],
+      "uncertainty": "Relative restriction only; all quantities NOT_REPORTED.",
+      "limitations": "Not a measured TME; schematic ordinal.",
+      "species": "mouse", "reference_ids": ["me_b16bl6_ecm", "me_b16bl6_hypoxia"],
+      "quantitative_status": "NOT_REPORTED", "may_show_by_default": true
+    },
+    "pred_me_human": {
+      "prediction_category": "MECHANISTIC_PREDICTION",
+      "profile_id": "human_skin_tme",
+      "claim": "The predicted passive human skin environment (collagen-rich dermis, highly restrictive interstitium, mild hypoxia) reduces effective drug penetration - exploratory only.",
+      "confidence": "LOW",
+      "rationale": "Human dermis collagen density is literature-known; applied predictively with distinct values (not copied from mouse).",
+      "source_context": "human dermis passive ECM biology", "target_context": "human_skin_tme",
+      "assumptions": ["passive modulation only", "no validated human TME data", "no clinical claim"],
+      "uncertainty": "Entirely predictive; all quantities NOT_REPORTED.",
+      "limitations": "Exploratory; not shown by default; not validated for human clinical response.",
+      "species": "human", "reference_ids": ["me_human_ecm"],
+      "quantitative_status": "NOT_REPORTED", "may_show_by_default": false
+    }
+  }
+}

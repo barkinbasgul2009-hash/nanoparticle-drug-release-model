@@ -1,0 +1,14 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A interstitial space + extracellular diffusion resistance as PASSIVE descriptors. Represents available extracellular volume, fluid resistance, diffusion path length, and a particle-mobility modifier only - NO interstitial-flow simulation, NO fluid-dynamics solver, NO absolute diffusion coefficient. Schematic 0-1 values.",
+  "interstitial_space": {
+    "variants": {
+      "open":                { "available_volume": 0.7,  "fluid_resistance": 0.2,  "path_length": 0.3,  "mobility_modifier": 0.8,  "diffusion_resistance": 0.2 },
+      "moderate":            { "available_volume": 0.5,  "fluid_resistance": 0.4,  "path_length": 0.5,  "mobility_modifier": 0.6,  "diffusion_resistance": 0.4 },
+      "restrictive":         { "available_volume": 0.35, "fluid_resistance": 0.6,  "path_length": 0.65, "mobility_modifier": 0.4,  "diffusion_resistance": 0.6 },
+      "highly_restrictive":  { "available_volume": 0.2,  "fluid_resistance": 0.8,  "path_length": 0.8,  "mobility_modifier": 0.25, "diffusion_resistance": 0.78 }
+    },
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "note": "Schematic diffusion resistance; no absolute D reported (NOT_REPORTED)."
+  }
+}

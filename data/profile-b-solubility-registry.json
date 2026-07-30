@@ -1,0 +1,30 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Celastrol dissolution/solubility/degradation evidence for the released-API layer. Qualitative consensus recorded; NUMERIC values NOT recorded until a primary is opened (search returned figures but no full text opened here).",
+  "api": "celastrol (tripterine)",
+  "qualitative_consensus": {
+    "aqueous_solubility": "POORLY water-soluble (multiple reviews)",
+    "chemical_stability": "unstable in aqueous/physiological/oxidative conditions",
+    "reactivity": "quinone-methide Michael acceptor - binds thiols (mechanistic + instability basis)",
+    "sources": ["PMC7751759 (Front Pharmacol 2020;11:558741)","PMC10904542 (Front Pharmacol 2024)"],
+    "status": "SECONDARY_REVIEW / consensus - NOT a measured value in this project"
+  },
+  "numeric_values_NOT_recorded": {
+    "reason": "web search returned candidate numbers (e.g. an aqueous-solubility figure, a beta-CD 30-fold enhancement, a 96h degradation %) but NO primary/full text was opened; recording them would violate the no-numbers-from-search rule",
+    "needed_primary": ["celastrol equilibrium aqueous solubility vs pH (37 C)","celastrol logP/logD","celastrol degradation kinetics (t90) under physiological/oxidative conditions","celastrol dissolution rate / supersaturation-precipitation behaviour"]
+  },
+  "released_celastrol_fate_by_environment": {
+    "release_medium_2_8_ethanol_PBS": "co-solvent maintains sink (Chen release/permeation medium) - not physiological",
+    "skin_surface": "unknown quantitatively",
+    "stratum_corneum": "lipophilic - celastrol likely partitions into SC lipids (qualitative; celastrol is lipophilic)",
+    "viable_epidermis_dermis": "aqueous - precipitation/binding possible (unknown quantitatively)",
+    "melanoma_extracellular_space": "unknown",
+    "cytosol_lysosome": "unknown",
+    "plasma": "protein binding likely (unknown quantitatively)",
+    "rule": "do NOT apply one environment's behaviour universally; each is a separate, mostly-unknown state"
+  },
+  "supporting_solubilization_systems": [
+    {"id":"S1_celastrol_beta_cyclodextrin","effect":"SBE-betaCD complexation reported to enhance solubility & reduce degradation (values UNVERIFIED)","relevance":"evidence that celastrol precipitation/degradation is real and formulation-mitigable"}
+  ],
+  "modelability": "released-celastrol dissolution/precipitation is at most a QUALITATIVE risk layer (S1). A quantitative supersaturation-precipitation model (type E) is NOT supported - required solubility/pH/dissolution/nucleation data are not opened."
+}

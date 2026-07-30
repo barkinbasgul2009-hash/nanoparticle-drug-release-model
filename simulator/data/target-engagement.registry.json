@@ -1,0 +1,64 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5A TARGET ENGAGEMENT registry - the first pharmacology layer. Defines ONLY molecular recognition: schematic molecular targets, drug-target encounter, reversible/irreversible binding, occupancy, saturation, competition, residence time, and affinity metrics (Kd/Ki/IC50) WHEN evidence exists. It is a SEPARATE layer that READS the intracellular/uptake outputs read-only and modifies nothing upstream. NOTHING downstream of target binding is defined (no signalling, phosphorylation, MAPK/PI3K/AKT/mTOR/NF-kB, gene regulation, transcription, translation, apoptosis, proliferation, immune response, toxicity, efficacy, PK, PD downstream, tumour response).",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012 reports skin permeation, cellular uptake and in-vivo melanoma pharmacodynamics but NO molecular target identity or binding constants (Kd/Ki/IC50, kon/koff) for tripterine. Shukla 2020 'binding affinity' is celastrol-cyclodextrin COMPLEXATION, not a protein target. So target identity + binding are NOT REPORTED for this formulation; no target values are fabricated, and no outside knowledge is used to fill the gap.",
+  "prediction_labels": {
+    "note": "A prediction is acceptable ONLY when explicitly labelled; never presented as an experimental fact.",
+    "EXPERIMENTAL": "measured for this formulation",
+    "HIGH_CONFIDENCE_PREDICTION": "strongly supported prediction (close analogue / robust model)",
+    "MECHANISTIC_PREDICTION": "prediction from general binding mechanism",
+    "LITERATURE_PREDICTION": "prediction derived from separate literature (not this formulation)",
+    "UNAVAILABLE": "no profile / cannot animate",
+    "NOT_REPORTED": "not reported for this formulation (idle)"
+  },
+  "target_types": {
+    "note": "Generic schematic molecular TARGETS (individual proteins) - NOT cells or organelles. No disease-specific assumptions.",
+    "enzyme": { "label": "Enzyme", "default_compartment": "cytoplasm" },
+    "receptor": { "label": "Receptor", "default_compartment": "cytoplasm" },
+    "cytoplasmic_protein": { "label": "Cytoplasmic protein", "default_compartment": "cytoplasm" },
+    "transport_protein": { "label": "Transport protein", "default_compartment": "cytoplasm" },
+    "dna_associated_protein": { "label": "DNA-associated protein", "default_compartment": "nucleus" },
+    "nuclear_protein": { "label": "Nuclear protein", "default_compartment": "nucleus" }
+  },
+  "binding_models": {
+    "note": "Occupancy/dissociation/residence time supported for both. Irreversible never dissociates.",
+    "reversible": { "label": "Reversible binding (Drug <-> Target)", "dissociates": true },
+    "irreversible": { "label": "Irreversible binding (Drug -> Target)", "dissociates": false }
+  },
+  "affinity_metrics": {
+    "note": "Kd/Ki/IC50 are shown ONLY when evidence exists; otherwise Prediction or Not Reported. Numeric values are never fabricated. residence_time = 1/koff; Kd = koff/kon.",
+    "Kd": { "units": "M" },
+    "Ki": { "units": "M" },
+    "IC50": { "units": "M" }
+  },
+  "formulations": {
+    "note": "Per-formulation target profile (registry data; never hard-coded). For B1 the molecular target is NOT REPORTED (no target identity or binding constants in the frozen package), so no targets are placed and the engagement layer is idle. kon/koff/Kd are never invented.",
+    "B1_nlc": {
+      "target_evidence": "NOT_REPORTED",
+      "targets": [],
+      "binding": { "model": null, "kon": null, "koff": null, "Kd": null, "Ki": null, "IC50": null, "evidence_level": "NOT_REPORTED", "basis": "No molecular target identity or binding constants are reported for tripterine in the frozen package; nothing is fabricated and no outside knowledge is used." },
+      "compartment": "cytoplasm",
+      "nuclear_binding_requires_targeting": true
+    }
+  },
+  "species_target": {
+    "note": "Per-species target-engagement evidence. NOT REPORTED for all species (no target/binding data for this formulation); no fabricated evidence; no rat->human copy.",
+    "rat": { "evidence_level": "NOT_REPORTED", "referenceIds": [], "message": "Target Engagement Evidence: Not Reported. No molecular target or binding constants are reported for this formulation; no binding is shown." },
+    "human": { "evidence_level": "NOT_REPORTED", "referenceIds": [], "message": "Target Engagement Evidence: Not Reported. No molecular target or binding constants are reported for this formulation; no binding is shown." },
+    "mouse": { "evidence_level": "NOT_REPORTED", "referenceIds": [], "message": "Target Engagement Evidence: Not Reported. No molecular target or binding constants are reported for this formulation; no binding is shown." }
+  },
+  "integrity": {
+    "reads_only": "The target-engagement engine READS the intracellular/uptake outputs read-only and modifies NOTHING upstream. Binding state lives only in this engine (the Phase-4D molecule is never changed).",
+    "encounter_only": "Binding begins ONLY after a drug molecule physically reaches a target's vicinity. No long-distance attraction, no teleportation.",
+    "occupancy_capacity": "Occupied sites never exceed a target's available sites; excess molecules keep diffusing (competition).",
+    "irreversible_no_dissociation": "Irreversible binding never dissociates; only reversible binding may dissociate (koff).",
+    "nuclear_gate": "Binding a nuclear target requires that Phase-4D nucleus targeting has occurred (the drug has reached the nuclear membrane).",
+    "ends_at": "Ends at target binding / occupancy / (optional) dissociation. Nothing downstream.",
+    "not_to_scale": true,
+    "forbidden": ["signalling", "signal_transduction", "phosphorylation", "MAPK", "PI3K", "AKT", "mTOR", "NF_kB", "kinase_cascade", "gene_regulation", "gene_expression", "DNA_response", "transcription", "translation", "protein_synthesis", "apoptosis", "proliferation", "cell_cycle", "immune_response", "toxicity", "efficacy", "pharmacokinetics", "pharmacodynamics_downstream", "tumour_response"]
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - no molecular target identity or binding constants for tripterine; in-vivo PD is downstream (not modelled here)",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476) - primary full-text source"
+  ]
+}

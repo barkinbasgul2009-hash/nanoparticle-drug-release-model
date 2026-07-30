@@ -1,0 +1,52 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-4 DRUG RELEASE registry for the Profile-B simulator. Defines ONLY the release of the encapsulated payload from an NLC carrier AFTER it has arrived at the target region: the kinetic model, the release lifecycle states, the trigger, and integrity flags. This is a SEPARATE biological process from transport - transport ends, release begins, they never mix. The code hardcodes NO biology; the kinetic model + provenance live here. NOTHING beyond release is defined (no uptake, membrane crossing, endocytosis, PK, PD, etc.).",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012: release kinetics fit to zero-order / first-order / Higuchi / Ritger-Peppas; FIRST-ORDER selected (good correlation). Release time series 1-48 h. The rate constant k is NOT restated in the frozen package and is treated as NOT REPORTED (schematic).",
+  "release_model": {
+    "id": "first_order",
+    "name": "First-order release",
+    "equation_released": "F(t) = 1 - exp(-k * t)",
+    "equation_remaining": "Q(t) = Q0 * exp(-k * t)",
+    "selected_by": "chen_2012 - kinetics fit to zero-order, first-order, Higuchi and Ritger-Peppas; FIRST-ORDER selected (good correlation)",
+    "alternatives_considered": ["zero_order", "higuchi", "ritger_peppas"],
+    "confidence": "QUALITATIVELY_SUPPORTED",
+    "references": ["chen_2012"],
+    "notes": "The MODEL choice (first-order) is directly reported. It is a FORMULATION property (in-vitro release of the NLC into receptor medium), not a species property. The numeric rate constant k and the exact % released are NOT restated in the frozen package."
+  },
+  "rate_constant": {
+    "value": null,
+    "status": "NOT REPORTED",
+    "reported_model": "first_order",
+    "reported_window_h": [1, 48],
+    "note": "The frozen package reports the first-order MODEL and the 1-48 h release window but NOT a numeric k. The simulator therefore uses a SCHEMATIC rate (engine config) anchored to span the reported window; it is NOT a measured constant and no exact %-released value is claimed."
+  },
+  "release_time_series_h": [1, 2, 4, 8, 10, 12, 18, 24, 36, 48],
+  "states": [
+    { "id": "loaded", "name": "Loaded", "description": "Carrier holds its full payload; release has not begun (particle has not yet arrived, or has just arrived).", "payload": "full" },
+    { "id": "releasing", "name": "Releasing", "description": "Payload is leaving the carrier following first-order kinetics; drug inside decreases, released amount increases.", "payload": "decreasing" },
+    { "id": "empty", "name": "Empty", "description": "Payload has been released (asymptotic depletion reached the empty threshold).", "payload": "depleted" }
+  ],
+  "trigger": {
+    "condition": "particle.transportStatus == 'arrived'",
+    "note": "Release begins ONLY after transport ends. The release engine reads (never writes) the transport status; it never moves particles. Transport and release are separate processes and never mix."
+  },
+  "payload": {
+    "drug": "tripterine (celastrol)",
+    "carrier": "surface-charged nanostructured lipid carrier (NLC)",
+    "crystallinity_note": "Chen 2012: tripterine is AMORPHOUS in the surface-charged NLCs (supports simple diffusion-limited release; no crystallisation complication modelled).",
+    "charge_note": "Chen reports the release ORDER differs with surface charge, but the frozen package does not restate per-charge numbers - so charge is a LABEL only and a single schematic first-order rate is used (no per-charge k fabricated).",
+    "conservation": "released_fraction + payload_fraction = 1 at all times (mass conservation within the release domain)."
+  },
+  "integrity": {
+    "separation": "Drug release is a COMPLETELY separate process from transport. The transport engine only moves particles; the release engine only releases payload from ARRIVED particles. Neither modifies the other's state.",
+    "schematic_rate": "The first-order MODEL is evidence-based (reported). The rate magnitude k is NOT REPORTED -> schematic, anchored to the reported 1-48 h window; no quantitative %-released, k, or timing claim is made.",
+    "formulation_level": "Release kinetics are a FORMULATION property (same NLC regardless of the skin it was applied to); the model is NOT species-specific and NO per-species k is fabricated. For predictive-transport species (human/mouse, Phase 3.1) the ARRIVAL remains predictive; the release MODEL is the formulation's reported first-order kinetics.",
+    "not_to_scale": true,
+    "ends_at_empty": "This phase ends when the particle becomes empty. Nothing further is modelled.",
+    "excluded_downstream": ["cellular_uptake", "membrane_crossing", "receptor_binding", "endocytosis", "clathrin", "caveolae", "lysosome", "endosome", "cytoplasm", "nucleus", "intracellular_trafficking", "degradation", "pharmacokinetics", "pharmacodynamics", "blood_circulation", "immune_system", "toxicity", "tumor_killing", "apoptosis", "pharmacology", "payload_diffusion_transport"]
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - Chen 2012 release kinetics: FIRST-ORDER selected; release time series 1-48 h; tripterine amorphous in NLC",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476) - primary full-text source"
+  ]
+}

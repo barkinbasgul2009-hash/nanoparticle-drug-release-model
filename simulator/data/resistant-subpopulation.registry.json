@@ -1,0 +1,26 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistant-subpopulation model. Represents the tumour-response population as NORMALIZED fractions across sensitive / tolerant / adaptively-resistant / persistently-resistant / unclassified subpopulations. Fractions are relative composition only (never absolute cell counts) and always satisfy the population-fraction invariant. Baseline fractions come from the resistance-context profile; NO fabricated fraction is stated for a NOT_REPORTED context.",
+  "subpopulation_types": {
+    "sensitive":             { "default_sensitivity_state": "high_sensitivity", "default_resistance_state": "none", "response_modifier": 1.0, "meaning": "Treatment-sensitive cells." },
+    "tolerant":              { "default_sensitivity_state": "moderate_sensitivity", "default_resistance_state": "drug_tolerant", "response_modifier": 0.6, "meaning": "Reversible drug-tolerant survivors." },
+    "adaptive_resistant":    { "default_sensitivity_state": "low_sensitivity", "default_resistance_state": "adaptive", "response_modifier": 0.4, "meaning": "Treatment-induced, reversible adaptively resistant cells." },
+    "persistent_resistant":  { "default_sensitivity_state": "very_low_sensitivity", "default_resistance_state": "acquired_persistent", "response_modifier": 0.25, "meaning": "Persistently resistant cells (requires persistence evidence)." },
+    "unclassified":          { "default_sensitivity_state": "unknown", "default_resistance_state": "unknown", "response_modifier": null, "meaning": "Unclassified / unknown survivors (evidence gap)." }
+  },
+  "invariant": {
+    "components": ["sensitive_fraction", "tolerant_fraction", "adaptive_resistant_fraction", "persistent_resistant_fraction", "unclassified_fraction"],
+    "sum": 1.0,
+    "tolerance": 0.0001,
+    "non_negative": true,
+    "max_fraction": 1.0,
+    "no_silent_renormalization": "Biologically invalid input fractions are rejected by validation, not silently renormalized; internally computed enrichment conserves the sum by construction."
+  },
+  "coefficient_policy": {
+    "valid_range": "each fraction in [0,1]; response_modifier in [0,1]",
+    "source": "resistance-context baseline fractions (predicted) + deterministic enrichment; general heterogeneity biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "response_modifier scales a subpopulation's contribution to net treatment sensitivity.",
+    "limitations": "No absolute cell counts; relative composition only (NOT_REPORTED quantitatively)."
+  }
+}

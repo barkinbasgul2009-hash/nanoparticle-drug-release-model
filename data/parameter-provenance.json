@@ -1,0 +1,248 @@
+{
+  "$schema_version": "1.0",
+  "description": "Parameter-level provenance (\u00a714). Every value carries source, locator, evidence label, and verified_here flag. No naked numbers. 'verified_here' = read from an opened primary/PDF/user-image in this project.",
+  "parameters": [
+    {
+      "name": "P_app_dextran_3.3kDa",
+      "value": "154 [134-174]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006",
+      "locator": "p.338 text + Fig3",
+      "label": "DIRECT_EXACT",
+      "verified_here": true,
+      "system": "murine FaDu tumour vasculature"
+    },
+    {
+      "name": "P_app_dextran_40kDa",
+      "value": "9.5 [7.5-11.4]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006",
+      "locator": "p.338 text",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "P_app_dextran_2MDa",
+      "value": "1.7 [0.7-2.6]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006",
+      "locator": "p.335 abstract + p.338",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "P_app_serum_albumin",
+      "value": "4.9 [3.8-5.9]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006",
+      "locator": "p.339",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "P_app_dextran_10kDa",
+      "value": "32 [24-39]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006 (dossier/Fig3)",
+      "locator": "Dreher 2006 Table 1 (p.340)",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "P_app_dextran_70kDa",
+      "value": "9.8 [7.1-12.4]",
+      "unit": "1e-7 cm/s",
+      "source": "dreher-2006 (dossier/Fig3)",
+      "locator": "Dreher 2006 Table 1 (p.340)",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "plasma_half_life_3.3kDa",
+      "value": "3.8 [2.5-4.2]",
+      "unit": "min",
+      "source": "dreher-2006",
+      "locator": "Fig4 caption p.339",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "plasma_half_life_70kDa",
+      "value": "19.6 [18.3-21.0]",
+      "unit": "min",
+      "source": "dreher-2006",
+      "locator": "Fig4 caption p.339",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "extravascular_AUC_40kDa",
+      "value": "2398",
+      "unit": "%Vmax*min",
+      "source": "dreher-2006",
+      "locator": "p.339",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "penetration_depth_small_dextran",
+      "value": ">35",
+      "unit": "um",
+      "source": "dreher-2006",
+      "locator": "abstract/p.335",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "SC_partition_K_caffeine_human",
+      "value": "2.68 (20%CV)",
+      "unit": "dimensionless",
+      "source": "rothe-2017",
+      "locator": "Table 2, Protocol 1",
+      "label": "TISSUE_SPECIFIC",
+      "verified_here": true,
+      "note": "caffeine, not niacinamide"
+    },
+    {
+      "name": "SC_diffusion_DH2_caffeine_human",
+      "value": "0.21 (26%CV)",
+      "unit": "h^-1",
+      "source": "rothe-2017",
+      "locator": "Table 2",
+      "label": "TISSUE_SPECIFIC",
+      "verified_here": true
+    },
+    {
+      "name": "niacinamide_cumulative_permeation_24h",
+      "value": "100.3-106.7",
+      "unit": "ug/cm2",
+      "source": "iliopoulos-2020",
+      "locator": "Results",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "niacinamide_IVIVC_R2",
+      "value": "0.98",
+      "unit": "dimensionless",
+      "source": "iliopoulos-2020",
+      "locator": "Abstract/Results",
+      "label": "DIRECT_EXACT",
+      "verified_here": true
+    },
+    {
+      "name": "skin_split_thickness",
+      "value": "200-400",
+      "unit": "um",
+      "source": "oecd-tg428-2004",
+      "locator": "method",
+      "label": "DIRECT_PARTIAL",
+      "verified_here": true
+    },
+    {
+      "name": "doxil_composition",
+      "value": "HSPC 9.58 / chol 3.19 / DSPE-PEG2000 3.19; doxorubicin 2 mg/mL",
+      "unit": "mg/mL",
+      "source": "doxil-fda-label (search summary)",
+      "locator": "pending FDA label",
+      "label": "UNVERIFIED_SECONDARY",
+      "verified_here": false
+    },
+    {
+      "name": "doxil_elimination_half_life",
+      "value": "~20-30",
+      "unit": "h",
+      "source": "gabizon-2003-pld-pk (search)",
+      "locator": "pending primary",
+      "label": "UNVERIFIED_SECONDARY",
+      "verified_here": false
+    },
+    {
+      "name": "abraxane_particle_size",
+      "value": "~130 (dissociates to ~10)",
+      "unit": "nm",
+      "source": "abraxane-smpc (search)",
+      "locator": "pending label",
+      "label": "UNVERIFIED_SECONDARY",
+      "verified_here": false
+    },
+    {
+      "name": "chen_aunp_peak_depth",
+      "value": "15nm:21, 22nm:22, 60nm:15",
+      "unit": "um",
+      "source": "chen-2024 (dossier)",
+      "locator": "pending primary",
+      "label": "UNVERIFIED_SECONDARY",
+      "verified_here": false
+    },
+    {
+      "name": "celastrol_nlc_EE_SUPERSEDED",
+      "value": "~96.56 (celastrol-indomethacin NLC)",
+      "unit": "%",
+      "source": "celastrol-tripterine-nlc-skin (search)",
+      "locator": "pending primary",
+      "label": "UNVERIFIED_SECONDARY",
+      "verified_here": false,
+      "note": "SUPERSEDED by verified chen-2012-tripterine-nlc entries below (batch-1). This search-summary value referred to a DIFFERENT paper (celastrol+indomethacin, aid B2, still not opened)."
+    },
+
+    {"name":"tripterine_nlc_size_cationic","value":"90.2 +/- 9.7","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2 (n=3)","label":"FORMULATION_SPECIFIC","verified_here":true,"system":"celastrol/tripterine NLC, cationic"},
+    {"name":"tripterine_nlc_size_neutral","value":"87.8 +/- 7.4","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true},
+    {"name":"tripterine_nlc_size_anionic","value":"84.5 +/- 10.2","unit":"nm","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true},
+    {"name":"tripterine_nlc_PDI","value":"0.109-0.116","unit":"-","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic 0.109+/-0.018, neutral 0.113+/-0.029, anionic 0.116+/-0.024"},
+    {"name":"tripterine_nlc_zeta","value":"+26.4 / -2.7 / -24.3","unit":"mV","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic/neutral/anionic (+/-4.2, 0.9, 3.7)"},
+    {"name":"tripterine_nlc_EE","value":"69.3 / 67.8 / 72.5","unit":"%","source":"chen-2012-tripterine-nlc","locator":"Table 2","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"cationic/neutral/anionic entrapment efficiency (+/-5.1, 4.4, 4.9); abstract lists slightly different ordering (64.3/67.8/72.5) - Table 2 taken as authoritative"},
+    {"name":"tripterine_nlc_release_model","value":"first-order best fit","unit":"-","source":"chen-2012-tripterine-nlc","locator":"Table 3 + text","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"r2 0.9559/0.9521/0.9614 cationic/neutral/anionic; also fit zero-order/Higuchi/Ritger-Peppas"},
+    {"name":"tripterine_nlc_release_24h","value":"64.77 / 75.69 / 49.70","unit":"% released","source":"chen-2012-tripterine-nlc","locator":"Results text","label":"FORMULATION_SPECIFIC","verified_here":true,"note":"48h: 83.14 / 95.15 / 68.01%"},
+    {"name":"tripterine_nlc_flux_franz","value":"1.26 / 1.10 / 0.91","unit":"ug/cm2/h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true,"system":"rat full-thickness abdominal skin, Franz cell","note":"cationic/neutral/anionic steady-state flux"},
+    {"name":"tripterine_nlc_perm_coeff","value":"2.10 / 1.83 / 1.52","unit":"1e-3 cm/h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true,"note":"cationic/neutral/anionic permeability coefficient (+/-0.49, 0.43, 0.06)"},
+    {"name":"tripterine_nlc_lag_time","value":"0.43 / 0.42 / 0.52","unit":"h","source":"chen-2012-tripterine-nlc","locator":"Table 4","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"tripterine_nlc_cumulative_24h","value":"16.3 / 13.5 / 11.9","unit":"ug/cm2","source":"chen-2012-tripterine-nlc","locator":"Fig 4A / text","label":"DIRECT_EXACT","verified_here":true,"note":"cumulative permeation cationic/neutral/anionic (+/-0.81, 0.79, 0.85)"},
+
+    {"name":"doxil_composition_HSPC","value":"9.58","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11 Description","label":"DIRECT_EXACT","verified_here":true,"system":"Doxil PEGylated liposome"},
+    {"name":"doxil_composition_cholesterol","value":"3.19","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_composition_MPEG_DSPE","value":"3.19","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true,"note":"N-(carbonyl-methoxyPEG2000)-DSPE Na salt"},
+    {"name":"doxil_doxorubicin_HCl","value":"2 (=1.87 base)","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_ammonium_sulfate","value":"~0.6","unit":"mg/mL","source":"doxil-fda-pi","locator":"Section 11","label":"DIRECT_EXACT","verified_here":true,"note":"remote-loading gradient agent; histidine 1.55 mg/mL buffer; sucrose 94 mg/mL isotonicity; pH 6.0-7.0"},
+    {"name":"doxil_encapsulated_fraction","value":">=90","unit":"%","source":"doxil-fda-pi","locator":"Section 11 + 12.3 Distribution","label":"DIRECT_EXACT","verified_here":true,"note":"assay cannot quantify <5-10% free doxorubicin"},
+    {"name":"doxil_diameter","value":"<100 (~100)","unit":"nm","source":"barenholz-2012","locator":"Fig 4","label":"BENCHMARK","verified_here":true,"note":"label itself omits diameter"},
+    {"name":"doxil_Cmax_totaldox","value":"4.12 / 8.34","unit":"ug/mL","source":"doxil-fda-pi","locator":"Table 8 (AIDS-KS, N=23)","label":"DIRECT_EXACT","verified_here":true,"note":"10 / 20 mg/m2; total doxorubicin"},
+    {"name":"doxil_clearance_totaldox","value":"0.056 / 0.041","unit":"L/h/m2","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"10/20 mg/m2; conventional doxorubicin CL 24-35 L/h/m2 by contrast"},
+    {"name":"doxil_Vss_totaldox","value":"2.83 / 2.72","unit":"L/m2","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"conventional doxorubicin Vd 700-1100 L/m2 by contrast (confined to vascular fluid)"},
+    {"name":"doxil_AUC_totaldox","value":"277 / 590","unit":"ug/mL.h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_t_half_lambda1","value":"4.7 / 5.2","unit":"h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"first phase"},
+    {"name":"doxil_t_half_lambda2","value":"52.3 / 55.0","unit":"h","source":"doxil-fda-pi","locator":"Table 8","label":"DIRECT_EXACT","verified_here":true,"note":"second phase; label mislabels as lambda1; consistent with Barenholz/Gabizon 45 h median (secondary)"},
+    {"name":"doxil_doxorubicinol_plasma","value":"0.8-26.2","unit":"ng/mL","source":"doxil-fda-pi","locator":"Section 12.3 Metabolism","label":"DIRECT_EXACT","verified_here":true},
+    {"name":"doxil_be_free_dox_massbalance","value":"free = total - encapsulated; 42% samples negative; approach unreliable","unit":"-","source":"doxil-nda050718-s050","locator":"Clin Pharm review (Subramaniam), Reference ID 3853431","label":"DIRECT_PARTIAL","verified_here":true,"note":"free doxorubicin NOT directly measurable by the assay"},
+    {"name":"doxil_bioassay_LLOQ","value":"0.5","unit":"ug/mL","source":"doxil-nda050718-s050","locator":"Biopharmaceutics review","label":"DIRECT_EXACT","verified_here":true,"note":"calibration 0.5-50 ug/mL; QCs 1.50/10.0/37.5; total-dox accuracy 96.7-98.9%/precision 2.7-3.3%, encapsulated 98.4-100%/6.4-7.3%"},
+
+    {"name":"aunp_size_tiopronin","value":"2.6 / 6.1 / 14.8","unit":"nm (TEM, +/-0.3/0.7/1.8)","source":"huang-2012-aunp-spheroid","locator":"Fig 1A / text","label":"CARRIER_SPECIFIC","verified_here":true,"system":"Au@tiopronin, MCF-7 spheroid","note":"MEASURED sizes (not nominal 2/6/15)"},
+    {"name":"aunp_zeta_tiopronin","value":"-23.8 to -35.3","unit":"mV (paper prints eV, typo)","source":"huang-2012-aunp-spheroid","locator":"text","label":"CARRIER_SPECIFIC","verified_here":true},
+    {"name":"aunp_atoms_per_NP","value":"3248 (6.1nm) / 22523 (14.8nm)","unit":"Au atoms/NP","source":"huang-2012-aunp-spheroid","locator":"text","label":"CARRIER_SPECIFIC","verified_here":true},
+    {"name":"aunp_spheroid_penetration","value":"2 & 6 nm penetrate deep (core + cytoplasm/nucleus); 15 nm peripheral","unit":"semi-quantitative (dark-field/TEM)","source":"huang-2012-aunp-spheroid","locator":"Fig 4","label":"BENCHMARK","verified_here":true,"note":"NOT a concentration-vs-radius profile; imaging-based ranking only"},
+    {"name":"aunp_cell_uptake","value":"smaller NP -> more Au per cell","unit":"ICP-MS Au atoms/cell (quantitative)","source":"huang-2012-aunp-spheroid","locator":"Fig 2b","label":"CARRIER_SPECIFIC","verified_here":true,"note":"1 nM exposure, 24 h; MCF-7"},
+
+    {"name":"pld_free_dox_Cmax","value":"133.45 (test) / 114.23 (Caelyx ref)","unit":"ng/mL","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"system":"PLD/Caelyx, breast cancer, 50 mg/m2 IV","note":"FREE doxorubicin, SPE-separated (directly assayed)"},
+    {"name":"pld_free_dox_t_half","value":"97.31 (test) / 97.98 (ref)","unit":"h","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"note":"free-dox terminal half-life (release-rate-limited)"},
+    {"name":"pld_free_dox_CL","value":"2.60 / 2.88","unit":"L/h/m2","source":"li-2022-pld-be","locator":"Table 3","label":"DIRECT_PARTIAL","verified_here":true,"note":"free-dox CLz; Vd 358.96/403.57 L/m2"},
+    {"name":"pld_encapsulated_dox_Cmax","value":"34.37 / 33.73","unit":"ug/mL (paper prints mg/mL)","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true,"note":"ENCAPSULATED doxorubicin; consistent with DOXIL label scale"},
+    {"name":"pld_encapsulated_dox_t_half","value":"81.31 / 78.89","unit":"h","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true},
+    {"name":"pld_encapsulated_dox_CL","value":"12.51 / 13.16","unit":"mL/h/m2","source":"li-2022-pld-be","locator":"Table 4","label":"DIRECT_PARTIAL","verified_here":true,"note":"= 0.0125 L/h/m2, order-consistent with DOXIL label 0.041 L/h/m2; Vd 1.41/1.47 L/m2"},
+    {"name":"pld_BE_GMR_free","value":"Cmax 114.75 / AUC0t 112.27 / AUC0inf 111.80","unit":"% (90% CI within 80-125)","source":"li-2022-pld-be","locator":"Table 5/6","label":"DIRECT_EXACT","verified_here":true,"note":"free-dox bioequivalence test vs Caelyx"},
+    {"name":"pld_BE_GMR_encapsulated","value":"Cmax 102.01 / AUC0t 104.50 / AUC0inf 105.26","unit":"% (90% CI within 80-125)","source":"li-2022-pld-be","locator":"Table 5/6","label":"DIRECT_EXACT","verified_here":true},
+
+    {"name":"doxil_label_current_refid","value":"NDA 050718/S-064, Reference ID 5758049, rev 03/2026 (Baxter)","unit":"-","source":"doxil-fda-pi","locator":"S-064 label","label":"DIRECT_EXACT","verified_here":true,"note":"current Drugs@FDA label; supersedes S-060; PK Table 8 + composition identical to batch-1 DailyMed PI"},
+    {"name":"remote_loading_dataset","value":"60 drugs / 366 loading experiments; 5-fold external validation","unit":"-","source":"cern-2012-remote-loading-qspr","locator":"text","label":"MECHANISTIC_TRANSFER","verified_here":true,"note":"QSPR modeling support for ammonium-sulfate remote loading; NOT direct Doxil release/PK/tumour data"},
+
+    {
+      "name": "dermal_clearance_k",
+      "value": null,
+      "unit": "1/h",
+      "source": null,
+      "label": "ASSUMED",
+      "verified_here": false,
+      "note": "required for skin dermis sink; no sourced value; sensitivity analysis planned"
+    }
+  ],
+  "rule": "ASSUMED/UNVERIFIED_SECONDARY parameters must not drive production predictions; they get ranges + sensitivity analysis, or block only the specific output."
+}

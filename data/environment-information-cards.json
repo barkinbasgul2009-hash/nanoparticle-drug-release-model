@@ -1,0 +1,10 @@
+{
+  "$schema_version": "0.2.0",
+  "description": "Environment info cards. Skin cards sourced (small molecule); tumour/bladder pending.",
+  "cards": [
+    {"id":"skin_sc_transport","tissue":"topical_skin","display_name":"Stratum corneum transport","plain":"The SC is the main barrier; partition K and diffusion D/H² set how drug enters and crosses.","model_role":"SC-layer diffusion + partition interface","value":{"K_SC_v_caffeine":2.68,"D_SC_H2_per_h_caffeine":0.21},"source":"rothe-2017","api_class":"small molecule","pending_full_text":false},
+    {"id":"skin_geometry","tissue":"topical_skin","display_name":"Skin thickness (experimental)","plain":"Split-thickness skin 200-400 um at 32±1 C.","model_role":"domain length","value":"200-400 um","source":"oecd-tg428-2004","pending_full_text":false},
+    {"id":"bladder_urothelium","tissue":"intravesical_bladder","display_name":"Urothelium + GAG barrier","plain":"Tight barrier; GAG/mucin layer limits entry.","model_role":"boundary permeability","value":null,"source":"sarfraz-2022 (qualitative)","pending_full_text":"primaries_pending"},
+    {"id":"tumor_ecm","tissue":"solid_tumor_local","display_name":"ECM / interstitial pressure","plain":"Dense matrix and pressure slow transport.","model_role":"effective D / clearance","value":null,"source":null,"pending_full_text":true}
+  ]
+}

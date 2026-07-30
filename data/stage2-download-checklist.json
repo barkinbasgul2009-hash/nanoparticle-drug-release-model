@@ -1,0 +1,281 @@
+{
+ "$schema_version": "1.0",
+ "description": "Batched download order for the user. Batches map to docs/stage2-manual-download-checklist.md.",
+ "batches": [
+  {
+   "batch": 1,
+   "name": "Foundational (unlock most profiles)",
+   "aids": [
+    "A4",
+    "A5",
+    "E1",
+    "E3",
+    "E5",
+    "F1",
+    "C1",
+    "B1"
+   ],
+   "expected_files": "~10 (E1/F1/C1 each have a supplement)",
+   "priority": "highest"
+  },
+  {
+   "batch": 2,
+   "name": "Profile B & C primaries",
+   "aids": [
+    "B2",
+    "B3",
+    "B4",
+    "B6",
+    "C2",
+    "C3"
+   ],
+   "expected_files": "~6-7",
+   "priority": "high"
+  },
+  {
+   "batch": 3,
+   "name": "Doxil official + primary",
+   "aids": [
+    "E2",
+    "E4",
+    "E6"
+   ],
+   "expected_files": "~3-4",
+   "priority": "high"
+  },
+  {
+   "batch": 4,
+   "name": "Profile F comparison",
+   "aids": [
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+   ],
+   "expected_files": "~5",
+   "priority": "medium"
+  },
+  {
+   "batch": 5,
+   "name": "Modeling/environment/validation",
+   "aids": [
+    "A6",
+    "A7",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6"
+   ],
+   "expected_files": "~7",
+   "priority": "medium"
+  },
+  {
+   "batch": 6,
+   "name": "Expansion (verified reflist + search-targets)",
+   "aids": [
+    "D8",
+    "D9",
+    "E7",
+    "A8",
+    "B7",
+    "B8",
+    "C4",
+    "C5",
+    "E8"
+   ],
+   "expected_files": "~9 (D8/D9/E7 are verified citations; A8/B7/B8/C4/E8 are search-targets to identify+download)",
+   "priority": "medium-low"
+  }
+ ],
+ "access_summary": {
+  "open_pmc_download_now": [
+   "B1",
+   "B3",
+   "B6",
+   "F2",
+   "F4"
+  ],
+  "fda_ema": [
+   "E1",
+   "E6",
+   "F1",
+   "F6"
+  ],
+  "user_download_required": [
+   "A4",
+   "A5",
+   "A6",
+   "A7",
+   "B2",
+   "B4",
+   "C1",
+   "C2",
+   "C3",
+   "D2",
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "E2",
+   "E3",
+   "E5",
+   "F3",
+   "F5"
+  ]
+ },
+ "batch1_ingestion_status": {
+  "ingested_batch1": [
+   "B1",
+   "E1",
+   "E3"
+  ],
+  "note": "B1, E1 (incl. Clin-Pharm supplement in S-050), E3 uploaded and fully extracted. Remaining batch-1 aids A4/A5/E5/F1/C1 still to download."
+ },
+ "next_batch": {
+  "tier1_critical": [
+   {
+    "aid": "E4/E8",
+    "what": "Doxil/PLD INTRATUMORAL distribution primary (spatial free/total doxorubicin in tumour) - e.g. Laginha 2005-type",
+    "why": "the ONLY missing piece to enable a Profile E tumour output; currently disabled",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "E2",
+    "what": "Gabizon A et al. Clin Pharmacokinet 2003;42:419-436 (PMID 12739982)",
+    "why": "primary free/encapsulated/tumour PK behind Barenholz's secondary numbers",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "E5",
+    "what": "Charrois & Allen 2004 Biochim Biophys Acta 1663:167-77",
+    "why": "release-rate -> PK/tumour coupling for PLD",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "B2",
+    "what": "Celastrol+Indomethacin transdermal NLC (DOI 10.1080/21691401.2018.1503599)",
+    "why": "INDEPENDENT NP-skin study to validate Profile B beyond a single paper",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   }
+  ],
+  "tier2_completing": [
+   {
+    "aid": "E9",
+    "what": "Jiang, Lionberger & Yu 2011 Bioanalysis 3(3):333-344 (DOI 10.4155/bio.10.204)",
+    "why": "basis for >=90% encapsulated + total/encapsulated/free assay methodology (cited by FDA S-050)",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "F1",
+    "what": "Abraxane SmPC/label + nab-paclitaxel PK primary",
+    "why": "Profile F is still search-summary only",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "C1",
+    "what": "Chen 2024 AuNP spheroid primary + SI (DOI 10.1002/smll.202304693)",
+    "why": "upgrade Profile C from dossier-secondary to verified",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   }
+  ],
+  "tier3_validation": [
+   {
+    "aid": "A4",
+    "what": "Potts & Guy 1992 (PMID 1608900)",
+    "why": "still missing skin-permeability QSPR coefficients (earlier upload was wrong paper)",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "D2",
+    "what": "independent tumour-vascular validation dataset",
+    "why": "external validation for Profile D benchmark",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   }
+  ],
+  "no_longer_required": [
+   "B1 (uploaded)",
+   "E1 (uploaded, incl. Clin-Pharm review)",
+   "E3 Barenholz (uploaded)"
+  ]
+ },
+ "batch2_ingestion_status": {
+  "ingested_batch2": [
+   "C1b (Huang 2012)",
+   "E10 (Li 2022 free/encap)",
+   "E11 (Cern 2012 support)",
+   "E1 confirmed via S-064 label",
+   "B1 duplicate re-mined"
+  ],
+  "note": "Profile C anchored (Huang), Profile E free/encapsulated resolved (Li 2022, direct SPE)."
+ },
+ "next_batch_after_batch2": {
+  "tier1_critical": [
+   {
+    "aid": "E4/E8",
+    "what": "Doxil/PLD INTRATUMORAL distribution primary (spatial free/total doxorubicin in tumour)",
+    "why": "STILL the only missing piece to enable a Profile E tumour output; Li 2022 is systemic only",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "B2",
+    "what": "Celastrol+Indomethacin transdermal NLC (DOI 10.1080/21691401.2018.1503599)",
+    "why": "INDEPENDENT NP-skin study to validate Profile B (still single-study)",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   }
+  ],
+  "tier2_strengthening": [
+   {
+    "aid": "E2",
+    "what": "Gabizon 2003 Clin Pharmacokinet (PMID 12739982)",
+    "why": "primary tumour/free-encapsulated PK behind Barenholz secondary numbers",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "E5",
+    "what": "Charrois & Allen 2004 (BBA 1663:167-77)",
+    "why": "release-rate -> tumour coupling",
+    "access": "USER_DOWNLOAD_REQUIRED"
+   },
+   {
+    "aid": "F1",
+    "what": "Abraxane SmPC/label + PK primary",
+    "why": "Profile F still search-summary only",
+    "access": "FDA/EMA + library"
+   },
+   {
+    "aid": "Huang-SI",
+    "what": "Huang 2012 Supporting Information (Figs S1-S3)",
+    "why": "atoms/NP + XPS detail (not model-critical)",
+    "access": "publisher"
+   }
+  ],
+  "tier3_validation": [
+   {
+    "aid": "A4",
+    "what": "Potts & Guy 1992 (PMID 1608900)",
+    "why": "skin-permeability QSPR coefficients (earlier upload was wrong paper)",
+    "access": "library"
+   },
+   {
+    "aid": "C1",
+    "what": "Chen 2024 AuNP spheroid (15/22/60 nm) + SI (optional)",
+    "why": "second/larger size range for Profile C",
+    "access": "library"
+   },
+   {
+    "aid": "D2",
+    "what": "independent tumour-vascular validation dataset",
+    "why": "external validation for Profile D",
+    "access": "library"
+   }
+  ],
+  "no_longer_required": [
+   "C anchor primary (Huang uploaded)",
+   "E free/encapsulated systemic PK (Li 2022 uploaded)",
+   "E remote-loading mechanism (Cern uploaded)",
+   "current DOXIL label (S-064 uploaded)"
+  ]
+ }
+}

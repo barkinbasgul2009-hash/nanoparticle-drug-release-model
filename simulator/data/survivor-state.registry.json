@@ -1,0 +1,28 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A survivor-state categories. The survivor state describes the population REMAINING after treatment-associated loss has already been evaluated by the Phase-6 population/apoptosis engines (read-only). CRITICAL invariant: survival alone NEVER implies resistance - the survivor state must weigh effective treatment pressure, expected sensitivity, observed population response, apoptosis competence, delivery limitations, and microenvironment protection before enriching any resistant category. Ordinal categories only.",
+  "coefficient_policy": {
+    "valid_range": "ordinal categories (no numeric coefficient)",
+    "source": "general tumour-population survival biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "category selection is driven by the apparent-resistance hierarchy, not by survival fraction alone.",
+    "limitations": "No survivor cell count or fraction is measured; schematic classification only."
+  },
+  "categories": {
+    "no_meaningful_selection":             { "meaning": "Survival is explained by low effective pressure; no differential selection inferred." },
+    "predominantly_sensitive_survivors":   { "meaning": "Survivors remain largely sensitive; response was incomplete but not resistance-driven." },
+    "mixed_survivors":                     { "meaning": "A heterogeneous mixture of sensitive and less-sensitive survivors." },
+    "tolerant_survivors_enriched":         { "meaning": "Reversible drug-tolerant survivors are relatively enriched." },
+    "adaptive_survivors_enriched":         { "meaning": "Treatment-induced adaptively resistant survivors are relatively enriched." },
+    "persistent_resistant_survivors_enriched": { "meaning": "Persistently resistant survivors are relatively enriched (requires supporting persistence evidence)." }
+  },
+  "evaluation_inputs": [
+    "effective_treatment_pressure", "expected_sensitivity", "observed_population_response",
+    "apoptosis_competence", "delivery_limitations", "microenvironment_protection", "prior_resistance_state"
+  ],
+  "rules": {
+    "no_resistance_from_survival_alone": "A survivor category above 'predominantly_sensitive_survivors' requires validated biological pressure AND a survivor persistence/expansion signal - never survival alone.",
+    "delivery_limited_is_not_resistance": "If survival is explained by insufficient delivery, the survivor state stays no_meaningful_selection / predominantly_sensitive_survivors and the cause is recorded as a delivery limitation."
+  }
+}

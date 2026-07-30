@@ -1,0 +1,111 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-5B.1 SIGNALING EVIDENCE registry. Two parts: (1) reference records - symbolic keys used by nodes/edges, each with a verification_status; (2) an evidence audit trail recording HOW each evidence classification was assigned. ARCHITECTURE + EVIDENCE ONLY. No DOI is fabricated: canonical-biology keys point to established general relationships with NO specific citation asserted here, and celastrol/context claims are marked UNVERIFIED_IN_REPO pending primary-source attachment in Phase 5B.2.",
+  "verification_status_vocabulary": ["VERIFIED_IN_FROZEN_PACKAGE", "UNVERIFIED_IN_REPO", "CANONICAL_GENERAL_BIOLOGY", "NOT_APPLICABLE"],
+  "reference_records": {
+    "chen_2012": {
+      "kind": "primary_source",
+      "citation": "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476)",
+      "verification_status": "VERIFIED_IN_FROZEN_PACKAGE",
+      "supports": ["cell models HaCaT + B16BL6", "rat ex-vivo skin permeation", "cellular uptake", "in-vitro cytotoxicity (B16BL6)", "in-vivo antimelanoma efficacy (downstream, NOT modelled)"],
+      "does_not_support": ["any signal-transduction node or edge", "ROS/MAPK/Nrf2/ARE/HO-1 in HaCaT", "NF-κB suppression in HaCaT", "PI3K/AKT/mTOR in B16BL6"],
+      "note": "The frozen Profile-B package's primary source. It anchors CONTEXT (species/cell/drug/formulation and the exposure start) but reports NO signaling cascade."
+    },
+    "canonical_ros_mapk": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (established general biology; primary citation to be attached in Phase 5B.2)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["ROS -> ERK/p38 MAPK activation as a general relationship"],
+      "does_not_support": ["celastrol-specific or HaCaT-specific magnitude/timing"],
+      "note": "Classified EXPERIMENTAL_PATHWAY_SPECIFIC: relationship is generally established but not this exact context; no DOI fabricated."
+    },
+    "canonical_mapk_nrf2": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (established general biology; primary citation to be attached in Phase 5B.2)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["MAPK (ERK/p38) -> Nrf2 activation/stabilization as a general relationship"],
+      "does_not_support": ["context-specific magnitude/timing"],
+      "note": "EXPERIMENTAL_PATHWAY_SPECIFIC; no DOI fabricated."
+    },
+    "canonical_nrf2_are": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (established general biology; primary citation to be attached in Phase 5B.2)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["Nrf2 nuclear localization enabling the ARE regulatory state as a general relationship"],
+      "does_not_support": ["transcription simulation", "context-specific magnitude/timing"],
+      "note": "EXPERIMENTAL_PATHWAY_SPECIFIC; STOP before transcription. No DOI fabricated."
+    },
+    "canonical_nfkb_inflammatory": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (established general biology; primary citation to be attached in Phase 5B.2)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["NF-κB -> inflammatory signaling output as a general relationship"],
+      "does_not_support": ["cytokine production simulation", "context-specific magnitude/timing"],
+      "note": "EXPERIMENTAL_PATHWAY_SPECIFIC; no DOI fabricated."
+    },
+    "canonical_pi3k_akt_mtor": {
+      "kind": "canonical_relationship",
+      "citation": "NOT_REPORTED (established general biology; primary citation to be attached in Phase 5B.2)",
+      "verification_status": "CANONICAL_GENERAL_BIOLOGY",
+      "supports": ["PI3K -> AKT -> mTOR -> survival signaling output as a general relationship"],
+      "does_not_support": ["apoptosis/tumour endpoints", "context-specific magnitude/timing"],
+      "note": "EXPERIMENTAL_PATHWAY_SPECIFIC; no DOI fabricated."
+    },
+    "celastrol_ros_literature": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol->ROS literature to be attached + verified in Phase 5B.2)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that celastrol elevates ROS in keratinocytes (exposure-driven entry)"],
+      "does_not_support": ["any measured HaCaT ROS value in the frozen package"],
+      "note": "LITERATURE_DERIVED_PREDICTION; unverified in repo, no DOI fabricated."
+    },
+    "celastrol_ho1_literature": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol->HO-1 literature to be attached + verified in Phase 5B.2)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that the ARE axis raises the HO-1 signaling-output state"],
+      "does_not_support": ["HO-1 protein/expression measurement", "any frozen-package value"],
+      "note": "LITERATURE_DERIVED_PREDICTION; unverified in repo, no DOI fabricated."
+    },
+    "celastrol_nfkb_literature": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol->NF-κB suppression literature to be attached + verified in Phase 5B.2)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that celastrol suppresses NF-κB signaling in keratinocytes"],
+      "does_not_support": ["any measured HaCaT NF-κB value in the frozen package"],
+      "note": "LITERATURE_DERIVED_PREDICTION; unverified in repo, no DOI fabricated."
+    },
+    "celastrol_pi3k_literature": {
+      "kind": "literature_prediction",
+      "citation": "NOT_REPORTED (celastrol->PI3K suppression literature to be attached + verified in Phase 5B.2)",
+      "verification_status": "UNVERIFIED_IN_REPO",
+      "supports": ["prediction that celastrol suppresses PI3K/AKT/mTOR survival signaling in melanoma"],
+      "does_not_support": ["any measured B16BL6 signaling value in the frozen package"],
+      "note": "LITERATURE_DERIVED_PREDICTION; unverified in repo, no DOI fabricated."
+    }
+  },
+  "audit_trail": [
+    { "target_kind": "node", "target_id": "h1_exposure", "assigned_level": "EXPERIMENTAL_DRUG_CELL_SPECIFIC", "reference_ids": ["chen_2012"], "rationale": "Chen measured celastrol-NLC uptake in HaCaT; exposure itself is drug/cell-specific experimental, downstream is not.", "verification_status": "VERIFIED_IN_FROZEN_PACKAGE" },
+    { "target_kind": "node", "target_id": "h1_ros", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_ros_literature"], "rationale": "ROS elevation by celastrol in HaCaT not in frozen package; literature-derived prediction.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "h1_e_exposure_ros", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_ros_literature"], "rationale": "Entry edge is drug/context-specific prediction.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "h1_e_ros_erk", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_ros_mapk"], "rationale": "ROS->ERK is canonical general biology, not this context.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "h1_e_ros_p38", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_ros_mapk"], "rationale": "ROS->p38 canonical.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "h1_e_erk_nrf2", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_mapk_nrf2"], "rationale": "MAPK->Nrf2 canonical.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "h1_e_p38_nrf2", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_mapk_nrf2"], "rationale": "MAPK->Nrf2 canonical (convergent).", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "h1_e_nrf2_are", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_nrf2_are"], "rationale": "Nrf2->ARE regulatory state canonical; STOP before transcription.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "h1_e_are_ho1", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_ho1_literature"], "rationale": "ARE->HO-1 output state is a context/drug prediction; expression not modelled.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "node", "target_id": "h2_nfkb", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_nfkb_literature"], "rationale": "Celastrol NF-κB suppression in HaCaT not in frozen package.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "h2_e_exposure_nfkb", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_nfkb_literature"], "rationale": "Inhibitory entry edge is a context/drug prediction.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "h2_e_nfkb_inflammatory", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_nfkb_inflammatory"], "rationale": "NF-κB->inflammatory output canonical.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "node", "target_id": "m1_pi3k", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_pi3k_literature"], "rationale": "Celastrol PI3K suppression in B16BL6 not in frozen package.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "m1_e_exposure_pi3k", "assigned_level": "LITERATURE_DERIVED_PREDICTION", "reference_ids": ["celastrol_pi3k_literature"], "rationale": "Inhibitory entry edge is a context/drug prediction.", "verification_status": "UNVERIFIED_IN_REPO" },
+    { "target_kind": "edge", "target_id": "m1_e_pi3k_akt", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_pi3k_akt_mtor"], "rationale": "PI3K->AKT canonical.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "m1_e_akt_mtor", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_pi3k_akt_mtor"], "rationale": "AKT->mTOR canonical.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" },
+    { "target_kind": "edge", "target_id": "m1_e_mtor_survival", "assigned_level": "EXPERIMENTAL_PATHWAY_SPECIFIC", "reference_ids": ["canonical_pi3k_akt_mtor"], "rationale": "mTOR->survival output canonical; STOP before apoptosis.", "verification_status": "CANONICAL_GENERAL_BIOLOGY" }
+  ],
+  "integrity_rules": {
+    "no_fabricated_dois": "Canonical relationships carry NO fabricated DOI; celastrol/context claims are UNVERIFIED_IN_REPO until a primary source is attached and verified.",
+    "frozen_package_boundary": "Only chen_2012 is VERIFIED_IN_FROZEN_PACKAGE, and it supports CONTEXT (uptake) only, never a signaling node/edge.",
+    "not_reported_stays_not_reported": "Where the frozen package reports nothing (all signaling), evidence is a labelled prediction or NOT_REPORTED - never upgraded to experimental."
+  }
+}

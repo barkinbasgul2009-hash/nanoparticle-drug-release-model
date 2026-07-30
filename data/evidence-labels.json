@@ -1,0 +1,30 @@
+{
+  "$schema_version": "1.0",
+  "description": "Modular evidence-classification vocabulary. Applied at MODULE and PARAMETER level (not only whole-profile). Replaces the previous binary QUALIFIED/NOT-QUALIFIED logic.",
+  "component_labels": {
+    "DIRECT_EXACT": "Same API + carrier/formulation + route/tissue, directly measured in an opened primary.",
+    "DIRECT_PARTIAL": "Same core system, some experimental details differ (or read from a figure not the text).",
+    "API_SPECIFIC": "Same API, different formulation/context.",
+    "CARRIER_SPECIFIC": "Same carrier class, different API.",
+    "TISSUE_SPECIFIC": "Same tissue/environment, different transported compound.",
+    "MECHANISTIC_TRANSFER": "Parameter/relationship transferred from a related system with explicit rationale.",
+    "BENCHMARK": "Tests a transport mechanism / numerical behaviour; not claimed as the exact therapeutic system.",
+    "CALIBRATED": "Estimated by fitting model output to data.",
+    "INFERRED": "Derived from published quantities/equations, not directly reported.",
+    "ASSUMED": "Required for simulation, unsupported by direct quantitative evidence.",
+    "ILLUSTRATIVE_COUPLING": "Separate modules coupled for education/visualization; not an exact validated end-to-end formulation.",
+    "EXTERNALLY_VALIDATED": "Tested against an independent dataset not used for calibration.",
+    "UNVERIFIED_SECONDARY": "Reported in a secondary source or search summary; primary not opened/verified.",
+    "INSUFFICIENT_EVIDENCE": "Not adequate for quantitative use."
+  },
+  "profile_levels": {
+    "LEVEL_0_ILLUSTRATIVE_ONLY": "Mathematical/educational visualization; insufficient quantitative biological support.",
+    "LEVEL_1_MECHANISTIC_BENCHMARK": "Real data support a transport mechanism, not a complete therapeutic formulation.",
+    "LEVEL_2_RESEARCH_SUPPORTED_SUBMODEL": "A quantitatively supported biological/formulation subsystem.",
+    "LEVEL_3_RESEARCH_SUPPORTED_COMPOSITE": "Multiple compatible evidence modules coupled transparently; not validated as one exact end-to-end system.",
+    "LEVEL_4_FORMULATION_SPECIFIC_CALIBRATED": "Exact formulation has data sufficient for meaningful calibration.",
+    "LEVEL_5_EXTERNALLY_VALIDATED_RESEARCH_MODEL": "Independent validation exists for the intended endpoint.",
+    "LEVEL_6_CLINICALLY_QUALIFIED": "Only if genuinely justified; not expected in this project."
+  },
+  "rule": "Stage 3 may proceed with LEVEL 1-4 profiles if limitations are explicit and unsupported outputs are disabled/labelled. Block the unsupported CLAIM/OUTPUT, not the whole profile."
+}

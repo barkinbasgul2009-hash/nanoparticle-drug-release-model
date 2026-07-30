@@ -1,0 +1,19 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Surface charge, coating, and targeting evidence per Profile-B preset. A modification is offered ONLY if supported for the actual celastrol formulation, else it is a separate real preset or omitted.",
+  "surface_charge": {
+    "preset": "P1_chen2012_topical_nlc",
+    "configs": [
+      {"config":"cationic","zeta_mV":"+26.4","made_by":"stearylamine","confound":"stearylamine also IS the matrix change","best_permeation":true},
+      {"config":"neutral","zeta_mV":"-2.7","made_by":"glyceryl behenate matrix","confound":"different solid lipid"},
+      {"config":"anionic","zeta_mV":"-24.3","made_by":"Precirol ATO-5 matrix","confound":"different solid lipid; highest EE"}
+    ],
+    "interpretation_rule": "cationic delivered most celastrol into skin, but the lipid matrix ALSO differs between configs -> present as 'experimentally observed association between surface configuration and permeation', NOT 'isolated causal charge effect'"
+  },
+  "coatings_and_targeting": [
+    {"modification":"hyaluronic acid + folic acid + redox-responsive","preset":"P4 (identified, unopened)","status":"candidate - separate preset, NOT a toggle on P1"},
+    {"modification":"DSPE-PEG + TSE (ER-targeting)","preset":"P3 (identified, unopened)","status":"candidate - separate preset"}
+  ],
+  "P1_modification_status": "No active targeting or stimulus-responsive modification. Surface charge is the only experimentally-varied surface property. Do NOT imply targeted delivery for P1 (uptake/accumulation observed != active targeting).",
+  "rule": "A coating must not be offered merely because it is common in nanomedicine. PEG/chitosan/HA are only supported in the identified (unopened) systems P3/P4 - they become distinct presets after full-text verification, never free toggles."
+}

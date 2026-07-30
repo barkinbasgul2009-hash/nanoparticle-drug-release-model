@@ -1,0 +1,547 @@
+{
+  "status": "ok",
+  "blenderVersion": "4.5.12 LTS",
+  "buildSeconds": 302.9,
+  "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
+  "originalChecksumUnchanged": true,
+  "outputs": {
+    "blend": "simulator/assets/blender/phase2_application_source.blend",
+    "glb": "simulator/assets/human/human_application_baked.glb",
+    "manifest": "simulator/assets/human/human_application_manifest.json",
+    "preview": null
+  },
+  "exportedObjects": [
+    "ANCHOR_deposit",
+    "ANCHOR_nozzle",
+    "CREAM_film",
+    "CREAM_strand",
+    "Human",
+    "Human_afro01",
+    "Human_eyebrow001",
+    "Human_eyelashes02",
+    "Human_high-poly",
+    "Human_male_casualsuit06",
+    "Human_rig",
+    "Human_shoes06",
+    "Human_teeth_base",
+    "Human_tongue01",
+    "NANODERM_cap",
+    "NANODERM_tube",
+    "PRODUCT_tray",
+    "PRODUCT_tray_stand"
+  ],
+  "excludedObjects": [
+    "CTRL_hand_l",
+    "CTRL_hand_r",
+    "CTRL_pole_l",
+    "CTRL_pole_r",
+    "LIGHT_fill",
+    "LIGHT_key",
+    "LIGHT_rake",
+    "LIGHT_rim",
+    "PREVIEW_camera"
+  ],
+  "action": {
+    "bones": 53,
+    "fcurves": 531,
+    "keyframes": 223551,
+    "frameRange": [
+      1.0,
+      421.0
+    ]
+  },
+  "strand": {
+    "min_len": 0.06452,
+    "max_len": 0.6221
+  },
+  "poleCalibrationErrorMm": {
+    "l": 3.512,
+    "r": 3.512
+  },
+  "gripSolution": {
+    "fingers": {
+      "index": 2.48,
+      "middle": 2.8675,
+      "ring": 2.6350000000000002,
+      "pinky": 2.0925000000000002
+    },
+    "thumb": {
+      "oppose": 0.25,
+      "flex": 0.1,
+      "tip": 1.2000000000000002
+    },
+    "contact": {
+      "index": {
+        "rn": 1.4034,
+        "axialMm": 15.3,
+        "padGapMm": 4.91,
+        "wantGapMm": 5.45,
+        "pipGapMm": 17.91,
+        "dipGapMm": 7.76,
+        "dipWantMm": 9.23
+      },
+      "middle": {
+        "rn": 1.2903,
+        "axialMm": -9.3,
+        "padGapMm": 4.28,
+        "wantGapMm": 4.51,
+        "pipGapMm": 21.0,
+        "dipGapMm": 6.09,
+        "dipWantMm": 8.85
+      },
+      "ring": {
+        "rn": 1.3228,
+        "axialMm": -25.2,
+        "padGapMm": 4.25,
+        "wantGapMm": 4.84,
+        "pipGapMm": 19.93,
+        "dipGapMm": 5.94,
+        "dipWantMm": 7.71
+      },
+      "pinky": {
+        "rn": 1.2674,
+        "axialMm": -45.7,
+        "padGapMm": 3.16,
+        "wantGapMm": 3.29,
+        "pipGapMm": 12.6,
+        "dipGapMm": 3.19,
+        "dipWantMm": 5.58
+      },
+      "thumb": {
+        "rn": 1.3225,
+        "axialMm": 8.7,
+        "padGapMm": 5.02,
+        "wantGapMm": 5.71
+      }
+    },
+    "penetration": 0.0,
+    "unreachable": [],
+    "thumbError": 0.0006897341801702346,
+    "thumbEnvelope": [
+      {
+        "errMm": 29.5,
+        "padGapMm": 35.2,
+        "ipGapMm": 7.4,
+        "opposeDeg": 14.3,
+        "flexDeg": 5.7,
+        "axialMm": 35.8
+      },
+      {
+        "errMm": 30.8,
+        "padGapMm": 36.5,
+        "ipGapMm": 7.5,
+        "opposeDeg": 17.2,
+        "flexDeg": 5.7,
+        "axialMm": 28.6
+      },
+      {
+        "errMm": 31.6,
+        "padGapMm": 37.3,
+        "ipGapMm": 7.5,
+        "opposeDeg": 20.1,
+        "flexDeg": 5.7,
+        "axialMm": 21.3
+      },
+      {
+        "errMm": 31.8,
+        "padGapMm": 37.5,
+        "ipGapMm": 7.2,
+        "opposeDeg": 25.8,
+        "flexDeg": 5.7,
+        "axialMm": 6.4
+      },
+      {
+        "errMm": 31.9,
+        "padGapMm": 37.7,
+        "ipGapMm": 7.4,
+        "opposeDeg": 22.9,
+        "flexDeg": 5.7,
+        "axialMm": 13.8
+      },
+      {
+        "errMm": 32.1,
+        "padGapMm": 37.8,
+        "ipGapMm": 9.0,
+        "opposeDeg": 17.2,
+        "flexDeg": 0.0,
+        "axialMm": 33.6
+      }
+    ],
+    "wrapError": 0.0,
+    "offset": [
+      0.0,
+      0.092,
+      0.0276
+    ],
+    "tiltDeg": 18.0,
+    "palmGapMm": -2.5,
+    "seatMeasuredMm": [
+      0.0,
+      78.0,
+      27.55
+    ],
+    "trials": [
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0276
+        ],
+        "tiltDeg": 18.0,
+        "score": 0.00542,
+        "contactErrMm": 0.37,
+        "thumbErrMm": 0.69,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -2.5,
+        "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0276
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.00807,
+        "contactErrMm": 1.95,
+        "thumbErrMm": 0.33,
+        "wrapErrorMm": 1.13,
+        "palmGapMm": -2.5,
+        "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0316
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.00915,
+        "contactErrMm": 1.75,
+        "thumbErrMm": 0.67,
+        "wrapErrorMm": 4.6,
+        "palmGapMm": 1.5,
+        "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0236
+        ],
+        "tiltDeg": 18.0,
+        "score": 0.01234,
+        "contactErrMm": 0.36,
+        "thumbErrMm": 0.35,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -6.5,
+        "penetrationMm": 0.0,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          0.0,
+          0.092,
+          0.0236
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.01319,
+        "contactErrMm": 1.19,
+        "thumbErrMm": 0.21,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -6.5,
+        "penetrationMm": 0.04,
+        "unreachable": []
+      },
+      {
+        "offset": [
+          -0.028,
+          0.078,
+          0.0236
+        ],
+        "tiltDeg": 34.0,
+        "score": 0.01355,
+        "contactErrMm": 1.14,
+        "thumbErrMm": 0.38,
+        "wrapErrorMm": 0.0,
+        "palmGapMm": -6.5,
+        "penetrationMm": 0.14,
+        "unreachable": []
+      }
+    ]
+  },
+  "collisionResolution": null,
+  "collisionResolutionApplied": false,
+  "palmContact": {
+    "perKey": [
+      {
+        "frame": 265,
+        "axialMm": 254.5,
+        "gapMm": 347.77
+      },
+      {
+        "frame": 269,
+        "axialMm": 205.7,
+        "gapMm": 166.66
+      },
+      {
+        "frame": 273,
+        "axialMm": 125.9,
+        "gapMm": 45.82
+      },
+      {
+        "frame": 278,
+        "axialMm": 96.5,
+        "gapMm": 85.77
+      },
+      {
+        "frame": 286,
+        "axialMm": 96.0,
+        "gapMm": -1.0
+      },
+      {
+        "frame": 296,
+        "axialMm": 106.0,
+        "gapMm": -1.41
+      },
+      {
+        "frame": 316,
+        "axialMm": 209.5,
+        "gapMm": -1.5
+      },
+      {
+        "frame": 334,
+        "axialMm": 65.5,
+        "gapMm": -1.29
+      },
+      {
+        "frame": 346,
+        "axialMm": 197.5,
+        "gapMm": -1.4
+      },
+      {
+        "frame": 376,
+        "axialMm": 116.3,
+        "gapMm": 0.43
+      },
+      {
+        "frame": 391,
+        "axialMm": 107.1,
+        "gapMm": 76.98
+      },
+      {
+        "frame": 404,
+        "axialMm": 350.9,
+        "gapMm": 173.11
+      },
+      {
+        "frame": 421,
+        "axialMm": 387.0,
+        "gapMm": 520.45
+      }
+    ],
+    "worstGapMm": -1.5,
+    "largestHoverMm": 520.45
+  },
+  "creamFilm": {
+    "vertices": 933,
+    "triangles": 1728
+  },
+  "manifest": {
+    "$schema": "./human_application_manifest.schema.json",
+    "schemaVersion": 1,
+    "assetVersion": "2b.1.0+6114fceafe6c",
+    "asset": "human_application_baked.glb",
+    "generatedAtUtc": "2026-07-30T07:05:04Z",
+    "clip": {
+      "name": "phase2_application",
+      "fps": 30,
+      "durationSeconds": 14.0,
+      "frameStart": 1,
+      "frameEnd": 421
+    },
+    "source": {
+      "originalAsset": "human.glb",
+      "originalAssetChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
+      "blenderSource": "../blender/phase2_application_source.blend",
+      "blenderVersion": "4.5.12 LTS",
+      "buildScript": "simulator/tools/blender/build_phase2_realism.py"
+    },
+    "skeleton": {
+      "boneMapVersion": "phase0-ue-makehuman-1",
+      "boneCount": 53,
+      "rootBone": "Root",
+      "compatibilityStatus": "verified"
+    },
+    "objects": {
+      "humanRoot": "Human_rig",
+      "bodyMesh": "Human",
+      "tube": "NANODERM_tube",
+      "cap": "NANODERM_cap",
+      "tray": "PRODUCT_tray",
+      "creamStrand": "CREAM_strand",
+      "nozzleAnchor": "ANCHOR_nozzle",
+      "depositAnchor": "ANCHOR_deposit",
+      "creamDeposit": "CREAM_film",
+      "creamSpread": "CREAM_film"
+    },
+    "morphTargets": {
+      "tubeSqueeze": {
+        "mesh": "NANODERM_tube",
+        "targets": [
+          "TUBE_GRIP_COMPRESSION",
+          "TUBE_SQUEEZE",
+          "TUBE_CREASE",
+          "TUBE_RECOVERY"
+        ]
+      },
+      "tubeDepletion": {
+        "mesh": "NANODERM_tube",
+        "targets": [
+          "TUBE_DEPLETION"
+        ]
+      },
+      "skinIndent": {
+        "mesh": "Human",
+        "targets": [
+          "SKIN_INDENT_CONTACT_A",
+          "SKIN_INDENT_CONTACT_B",
+          "SKIN_INDENT_CONTACT_C",
+          "SKIN_INDENT_CONTACT_D",
+          "SKIN_INDENT_CONTACT_E",
+          "SKIN_INDENT_CONTACT_F",
+          "SKIN_INDENT_CONTACT_G",
+          "SKIN_INDENT_RELEASE"
+        ]
+      },
+      "creamNozzle": {
+        "mesh": "CREAM_strand",
+        "targets": [
+          "STRAND_NOZZLE_BEAD"
+        ]
+      },
+      "creamStrand": {
+        "mesh": "CREAM_strand",
+        "targets": [
+          "STRAND_SHORT",
+          "STRAND_EXTENDED",
+          "STRAND_THINNING",
+          "STRAND_BROKEN"
+        ]
+      },
+      "creamDeposit": {
+        "mesh": "CREAM_film",
+        "targets": [
+          "CREAM_CONTACT_BEAD",
+          "CREAM_COMPRESSED_BEAD"
+        ]
+      },
+      "creamSpread": {
+        "mesh": "CREAM_film",
+        "targets": [
+          "CREAM_SPREAD_PRIMARY",
+          "CREAM_SPREAD_SECONDARY",
+          "CREAM_FINAL_FILM"
+        ]
+      },
+      "creamSkinIndent": {
+        "mesh": "CREAM_film",
+        "targets": [
+          "SKIN_INDENT_CONTACT_A",
+          "SKIN_INDENT_CONTACT_B",
+          "SKIN_INDENT_CONTACT_C",
+          "SKIN_INDENT_CONTACT_D",
+          "SKIN_INDENT_CONTACT_E",
+          "SKIN_INDENT_CONTACT_F",
+          "SKIN_INDENT_CONTACT_G",
+          "SKIN_INDENT_RELEASE"
+        ]
+      }
+    },
+    "events": {
+      "neutral": 0.0,
+      "productEstablishStart": 0.071429,
+      "gripPreparation": 0.142857,
+      "productGripEstablished": 0.214286,
+      "dispensePreparation": 0.285714,
+      "dispenseStart": 0.357143,
+      "creamContact": 0.428571,
+      "dispenseEnd": 0.5,
+      "productRetreatStart": 0.52381,
+      "productRetreatEnd": 0.607143,
+      "handApproach": 0.630952,
+      "skinContact": 0.678571,
+      "spreadStart": 0.702381,
+      "strokeOne": 0.75,
+      "strokeTwo": 0.821429,
+      "releaseStart": 0.892857,
+      "releaseEnd": 0.928571,
+      "heroStart": 0.940476,
+      "heroHold": 0.964286,
+      "sequenceEnd": 1.0
+    },
+    "ownership": {
+      "bones": "blender-baked",
+      "morphTargets": "blender-baked",
+      "camera": "threejs",
+      "timeline": "master-progress",
+      "surfaceShader": "threejs-glsl"
+    },
+    "provenance": {
+      "humanMotion": "VISUAL_ONLY",
+      "productMotion": "VISUAL_ONLY",
+      "tubeSqueeze": "VISUAL_ONLY",
+      "creamExtrusion": "VISUAL_ONLY",
+      "skinIndentation": "VISUAL_ONLY",
+      "camera": "VISUAL_ONLY"
+    },
+    "compatibility": {
+      "threeRevision": "r160",
+      "gltf": "2.0",
+      "presentationModes": [
+        "blender-baked",
+        "procedural-fallback"
+      ]
+    },
+    "statistics": {
+      "fileSizeBytes": 20302740,
+      "meshCount": 15,
+      "triangleCount": 45680,
+      "materialCount": 17,
+      "textureCount": 10,
+      "animationTrackCount": 531,
+      "animationKeyframeCount": 223551,
+      "morphTargetCount": 31
+    }
+  },
+  "log": [
+    "[phase2b] Blender 4.5.12 LTS (b'blender-v4.5-release')",
+    "[phase2b] original human.glb sha256 6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
+    "[phase2b] discarded 1 importer artefact(s): 1 object(s)",
+    "[phase2b] imported 10 objects, armature 'Human_rig' with 53 bones",
+    "[phase2b] body/skin mesh: Human (9416 verts)",
+    "[phase2b] cream film: 933 verts / 1728 tris, axial 0.031..0.249 m, radius 0.0348 m",
+    "[phase2b] morphs: tube 5, strand 5, film 5, skin 8, hand correctives 10",
+    "[phase2b] pole calibration error: L 3.51 mm, R 3.51 mm",
+    "[phase2b] palm contact point (hand-local): [-0.0105, 0.0442, 0.0239]",
+    "[phase2b] finger soft tissue (pad radius, mm): index=7.5, middle=6.5, ring=6.8, pinky=5.3, thumb=7.7",
+    "[phase2b] palm surface (60 verts): median 16.3 mm  p75 18.6 mm  max 27.6 mm  -> barrel axis seated at 27.6 mm",
+    "[phase2b] grip seating: offset=[0.0, 0.092, 0.0276] tilt=18.0deg  palmGap=-2.5mm  penetration=0.00mm  wrapError=0.00mm  unreachable=[]",
+    "[phase2b] pad contact (achieved vs wanted, mm from the barrel surface): index=+4.9/5.5@+15mm, middle=+4.3/4.5@-9mm, ring=+4.2/4.8@-25mm, pinky=+3.2/3.3@-46mm, thumb=+5.0/5.7@+9mm",
+    "[phase2b] finger wrap (pip/dip gap vs dip want, mm): index=+17.9/+7.8/9.2, middle=+21.0/+6.1/8.8, ring=+19.9/+5.9/7.7, pinky=+12.6/+3.2/5.6",
+    "[phase2b]   finger totals (deg): index=142, middle=164, ring=151, pinky=120  thumb oppose=14 flex=6",
+    "[phase2b] deposit point (world): [0.1644, -0.1863, 1.2068]  forearm radius 0.0439 (mean 0.0348, profile 0.0497..0.0267)",
+    "[phase2b] palm-to-skin gap across the application keys: f265=+347.8mm, f269=+166.7mm, f273=+45.8mm, f278=+85.8mm, f286=-1.0mm, f296=-1.4mm, f316=-1.5mm, f334=-1.3mm, f346=-1.4mm, f376=+0.4mm, f391=+77.0mm, f404=+173.1mm, f421=+520.5mm",
+    "[phase2b]   worst -1.5 mm, largest hover +520.5 mm",
+    "[phase2b] collision resolution: NOT APPLIED (see --resolve-collisions and collision-report.md)",
+    "[phase2b] baked pose: 53 bones, 531 fcurves, 223551 keys, range [1.0, 421.0]",
+    "[phase2b] strand span 64.5..622.1 mm",
+    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20563205 bytes)",
+    "[phase2b] purged 9 non-export objects: CTRL_hand_l, CTRL_hand_r, CTRL_pole_l, CTRL_pole_r, LIGHT_fill, LIGHT_key, LIGHT_rake, LIGHT_rim, PREVIEW_camera",
+    "[phase2b] exported simulator/assets/human/human_application_baked.glb (20302740 bytes) from 18 objects",
+    "[phase2b] wrote simulator/assets/human/human_application_manifest.json"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUALIZATION DIRECTOR PASS - design spec only, not implemented",
+  "purpose": "Biological MOTION LANGUAGE extending the storyboard. Each motion: biological meaning, evidence level, recommended visual metaphor, qualitative-vs-quantitative, whether accelerated narrative time is acceptable, final decision. No cinematic 'swimming'; no constant-speed directional diffusion.",
+  "decision_enum": ["IMPLEMENT","OPTIONAL","DEFER","DO_NOT_USE"],
+  "motions": [
+    {"motion":"Brownian motion","meaning":"thermal jitter of suspended particles","evidence":"physical default","metaphor":"small random positional jitter, no net direction","qual_quant":"qualitative","accelerated_time":"yes","decision":"IMPLEMENT"},
+    {"motion":"diffusion (net transport)","meaning":"movement down a gradient","evidence":"B1 permeation (direction qualitative)","metaphor":"BIASED random walk; population drift, not single straight lines","qual_quant":"qualitative","accelerated_time":"yes (label time compression)","decision":"IMPLEMENT"},
+    {"motion":"barrier-limited diffusion (SC)","meaning":"slow crossing of the corneocyte/lipid barrier","evidence":"B1 skin permeation + lag time","metaphor":"crowding/stalling at the SC band; a slow front; occasional passage","qual_quant":"qualitative","accelerated_time":"yes","decision":"IMPLEMENT"},
+    {"motion":"partitioning into SC lipids","meaning":"lipophilic API entering lipid mortar","evidence":"celastrol lipophilic (qualitative)","metaphor":"accumulation tint in the mortar lanes","qual_quant":"qualitative","accelerated_time":"yes","decision":"OPTIONAL"},
+    {"motion":"membrane contact / adsorption","meaning":"particle reaching a cell surface","evidence":"B1 uptake","metaphor":"particle settles, slight deform at contact","qual_quant":"qualitative","accelerated_time":"yes","decision":"IMPLEMENT"},
+    {"motion":"uptake (ordinal)","meaning":"internalization tendency by charge","evidence":"B1 cationic>neutral>anionic","metaphor":"ordinal count/glow difference across the 3 configs; NO endocytosis machinery","qual_quant":"ordinal","accelerated_time":"yes","decision":"IMPLEMENT","note":"mandatory confound caption"},
+    {"motion":"endocytosis (mechanistic)","meaning":"membrane engulfment","evidence":"NOT resolved for B1","metaphor":"-","qual_quant":"-","decision":"DO_NOT_USE (B1)","note":"only if a future preset supports it"},
+    {"motion":"intracellular / ER transport","meaning":"organelle trafficking","evidence":"B2 abstract only","metaphor":"particle drifts to a perinuclear ER glow","decision":"OPTIONAL (B2 only) / DO_NOT_USE (B1)"},
+    {"motion":"sustained/delayed release","meaning":"gradual drug emission from NLC","evidence":"B1 first-order selected (qualitative)","metaphor":"slow, steady emission of free-API dots; NO plotted curve, NO countdown","qual_quant":"qualitative","accelerated_time":"yes (label)","decision":"IMPLEMENT"},
+    {"motion":"free API diffusion (post-release)","meaning":"released celastrol spreading","evidence":"B1 permeation context","metaphor":"biased random walk of dots into deeper bands","qual_quant":"qualitative","decision":"IMPLEMENT"},
+    {"motion":"formulation spreading","meaning":"dispersion film wetting the surface","evidence":"topical application","metaphor":"thin film easing across the surface","qual_quant":"qualitative","decision":"IMPLEMENT"},
+    {"motion":"nanoparticle suspension behavior","meaning":"particles held in the reservoir","evidence":"formulation state","metaphor":"gentle Brownian drift within the film","qual_quant":"qualitative","decision":"IMPLEMENT"},
+    {"motion":"ECM movement","meaning":"matrix deformation/flow","evidence":"NOT reported for B1","metaphor":"-","decision":"DO_NOT_USE"},
+    {"motion":"directional 'swimming' through tissue","meaning":"none","evidence":"none","metaphor":"-","decision":"DO_NOT_USE","note":"particles must never self-propel"}
+  ],
+  "global_motion_rules": ["diffusion = biased random walk, never straight constant-speed lines","time compression always labelled","no self-propelled particles","release has no numeric timer","organelle motion only where a preset supports it (B2 ER)"]
+}

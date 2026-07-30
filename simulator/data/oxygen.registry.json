@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A passive oxygen environment as QUALITATIVE states only. No blood-vessel simulation, no pO2 value in mmHg unless literature provides it (it does not -> NOT_REPORTED). A schematic oxygen-availability value (0-1) per state supports the passive oxygen field + diffusion.",
+  "oxygen_states": {
+    "normoxic":          { "availability": 0.9,  "diffusion": 0.85 },
+    "mild_hypoxia":      { "availability": 0.65, "diffusion": 0.6 },
+    "moderate_hypoxia":  { "availability": 0.4,  "diffusion": 0.4 },
+    "severe_hypoxia":    { "availability": 0.2,  "diffusion": 0.25 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Qualitative oxygen states; no absolute pO2 (NOT_REPORTED). Passive field only - no vasculature."
+}

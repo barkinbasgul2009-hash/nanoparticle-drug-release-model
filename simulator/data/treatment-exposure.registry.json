@@ -1,0 +1,35 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A treatment-exposure abstraction: ORDINAL exposure status / stage / relative intensity describing how much EFFECTIVE (intracellular) treatment the surviving population has experienced. Effective exposure is derived from validated upstream delivery/uptake/intracellular engines - NOT from applied topical amount. A high applied dose with low intracellular availability yields LOW effective exposure. Schematic normalized values only; no dose (mg), concentration, AUC, or real duration (all NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "relative_exposure_intensity in [0,1]; cumulative_exposure is a bounded normalized accumulator in [0,1]",
+    "0_interpretation": "0 = no effective treatment exposure",
+    "1_interpretation": "1 = maximal schematic effective exposure the model represents",
+    "source": "normalized modeling abstraction over validated upstream effective-availability outputs",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "intensity scales pressure only through effective exposure; it does not itself classify resistance.",
+    "limitations": "No dose / concentration / AUC / real time; ordinal only."
+  },
+  "exposure_status": {
+    "untreated":          { "meaning": "No treatment applied yet." },
+    "single_exposure":    { "meaning": "One treatment episode in progress or completed." },
+    "repeated_exposure":  { "meaning": "Multiple discrete treatment episodes have occurred." },
+    "sustained_exposure": { "meaning": "Continuous uninterrupted effective exposure." },
+    "interrupted":        { "meaning": "Treatment paused between episodes (gap present)." },
+    "washout":            { "meaning": "Treatment withdrawn; recovery interval in progress." },
+    "rechallenge":        { "meaning": "Renewed treatment after a washout interval." }
+  },
+  "exposure_stage": {
+    "ordered_stages": ["none", "initial", "early", "intermediate", "sustained", "post_exposure"],
+    "note": "Ordinal progression driven by validated simulation-stage advancement, never wall-clock time."
+  },
+  "relative_exposure_intensity": {
+    "absent": 0.0, "negligible": 0.1, "low": 0.3, "moderate": 0.55, "high": 0.8, "very_high": 0.95
+  },
+  "rules": {
+    "effective_not_applied": "exposure intensity reflects EFFECTIVE intracellular availability (upstream), not applied topical amount.",
+    "cumulative_bounded": "cumulative_exposure is a bounded normalized accumulator, never an unbounded sum.",
+    "deterministic_history": "exposure progression is deterministic and serializable; no RNG, no wall-clock time."
+  }
+}

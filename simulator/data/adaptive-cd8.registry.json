@@ -1,0 +1,62 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 CD8 cytotoxic T-cell runtime coefficients. CD8 biology is a STAGED process (priming -> recruitment -> infiltration -> activation -> effector competence -> target engagement -> cytotoxic potential -> dysfunction -> exhaustion -> recovery); a high value at one stage does NOT imply high downstream activity. All weights / thresholds / temporal constants are registry-driven; negative factors (checkpoint / suppression / dysfunction / exhaustion) are applied ONCE through the shared contribution ledger (no duplicate penalties). Prediction-only; schematic normalized [0,1]; no T-cell counts (NOT_REPORTED).",
+  "stage_weights": {
+    "priming":       { "antigen_presentation": 0.3, "adaptive_priming": 0.25, "antigen_availability": 0.15, "dc_effectiveness": 0.15, "tumor_visibility": 0.1, "prior_priming": 0.05 },
+    "recruitment":   { "priming": 0.35, "immune_accessibility": 0.3, "vascular_access": 0.2, "tumor_visibility": 0.1, "prior_recruitment": 0.05 },
+    "infiltration":  { "recruitment": 0.4, "immune_accessibility": 0.25, "vascular_functionality": 0.2, "prior_infiltration": 0.15 },
+    "activation":    { "priming": 0.3, "infiltration": 0.3, "antigen_availability": 0.2, "tumor_visibility": 0.1, "prior_activation": 0.1 },
+    "effector_competence": { "activation": 0.4, "infiltration": 0.2, "target_visibility": 0.2, "prior_competence": 0.2 },
+    "target_engagement":   { "tumor_visibility": 0.3, "antigen_availability": 0.25, "immune_accessibility": 0.2, "infiltration": 0.15, "effector_competence": 0.1 },
+    "cytotoxic_potential": { "effector_competence": 0.4, "target_engagement": 0.35, "activation": 0.15, "infiltration": 0.1 }
+  },
+  "cd4_support_weights": {
+    "cd8_priming_support": 0.15,
+    "cd8_activation_support": 0.15,
+    "note": "Additive, bounded CD4 helper boost applied to CD8 priming and CD8 activation respectively. These are SEPARATE biological relationships (helper support to two distinct CD8 stages) that happen to share a default weight; they are intentionally NOT merged."
+  },
+  "capability_weights": {
+    "priming": 0.3, "activation": 0.35, "competence": 0.35,
+    "note": "Weighted mix used to estimate pre-penalty CD8 capability for blocked-potential accounting (capability minus effective cytotoxic). Weights sum to 1."
+  },
+  "negative_penalties": {
+    "checkpoint_on_activation": 0.35,
+    "suppression_on_activation": 0.3,
+    "checkpoint_on_competence": 0.3,
+    "suppression_on_competence": 0.3,
+    "dysfunction_on_competence": 0.4,
+    "exhaustion_on_cytotoxic": 0.5,
+    "dysfunction_on_cytotoxic": 0.3,
+    "penalty_note": "Each penalty is applied at exactly ONE stage via a unique contribution id; the double-counting guard rejects re-application of the same causal effect at a later stage."
+  },
+  "dysfunction": {
+    "contributors": { "persistent_suppression": 0.3, "persistent_checkpoint": 0.3, "repeated_activation_without_clearance": 0.2, "poor_microenvironment": 0.1, "prior_dysfunction": 0.1 },
+    "gradual_rate": 0.15, "gradual_rate_note": "dysfunction accumulates gradually per frame (bounded), never an immediate irreversible switch."
+  },
+  "exhaustion": {
+    "contributors": { "dysfunction_pressure": 0.35, "persistent_checkpoint": 0.25, "persistent_suppression": 0.2, "ineffective_engagement_history": 0.1, "prior_exhaustion": 0.1 },
+    "min_duration_frames": 2, "min_duration_note": "exhaustion must not switch on from a single noisy frame; the exhaustion driver must persist this many frames.",
+    "hysteresis_margin": 0.08, "recovery_eligibility_threshold": 0.4,
+    "driver_persistence_threshold": 0.4, "driver_persistence_note": "SCIENTIFIC_THRESHOLD: the prior-frame exhaustion driver must exceed this (strict >) for exhaustion to be treated as persisted and allowed to rise (distinct from recovery_eligibility_threshold)."
+  },
+  "recovery": {
+    "contributors": { "suppression_reduction": 0.3, "checkpoint_reduction": 0.3, "residual_competence": 0.2, "recovery_duration": 0.1, "favorable_context": 0.1 },
+    "severity_penalty": { "SEVERE": 0.5, "PERSISTENT": 0.7 }, "recurrence_penalty": 0.1, "recovery_delay_frames": 2,
+    "recovery_duration_fallback": 0.5, "recovery_duration_fallback_note": "STRUCTURAL_FALLBACK: placeholder value for the unmodelled recovery-duration input (availability PARTIALLY_AVAILABLE); NOT a calibrated biological coefficient. Replace when a real recovery-duration signal exists."
+  },
+  "state_thresholds": {
+    "priming":      { "UNPRIMED": 0.0, "PRIMING_LIMITED": 0.2, "PARTIALLY_PRIMED": 0.4, "PRIMED": 0.6, "STRONGLY_PRIMED": 0.8 },
+    "recruitment":  { "NONE": 0.0, "LOW": 0.25, "MODERATE": 0.5, "HIGH": 0.75 },
+    "infiltration": { "NONE": 0.0, "LOW": 0.25, "MODERATE": 0.5, "HIGH": 0.75 },
+    "activation":   { "INACTIVE": 0.0, "WEAKLY_ACTIVATED": 0.2, "PARTIALLY_ACTIVATED": 0.4, "ACTIVATED": 0.6, "HIGHLY_ACTIVATED": 0.8 },
+    "exhaustion":   { "NONE": 0.0, "EARLY": 0.2, "MODERATE": 0.4, "SEVERE": 0.65, "PERSISTENT": 0.85 }
+  },
+  "temporal": { "min_residence_frames": 1 },
+  "coefficient_policy": {
+    "valid_range": "every stage score, penalty, and pressure in [0,1]",
+    "source": "general adaptive tumour-immunology biology applied predictively (no direct CD8 dataset for this context)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "stage weights are schematic; downstream stages are gated by upstream stages, never assumed.",
+    "limitations": "No CD8 count / TCR / clonality / cytokine level (all NOT_REPORTED)."
+  }
+}

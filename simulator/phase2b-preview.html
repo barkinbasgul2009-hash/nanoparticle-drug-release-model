@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phase 2B — Blender-baked vs procedural application</title>
+<!-- Empty data URI: stops the browser's automatic /favicon.ico request 404ing in production. -->
+<link rel="icon" href="data:,">
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; font: 13px/1.45 ui-sans-serif, system-ui, sans-serif; background: #fff; color: #14181d; }
+  header { padding: 10px 14px; border-bottom: 1px solid #dde2e8; }
+  h1 { font-size: 14px; margin: 0 0 8px; }
+  #bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button { font: inherit; padding: 4px 12px; border: 1px solid #c6ccd4; background: #fff; border-radius: 5px; cursor: pointer; }
+  button.on { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+  input[type=range] { width: 320px; }
+  #view { width: 100%; height: 70vh; background: #39424b; }
+  #hud { padding: 8px 14px; border-top: 1px solid #dde2e8; font-family: ui-monospace, monospace; font-size: 12px; white-space: pre; }
+  .ok { color: #1a7f37; } .no { color: #b42318; } .warn { color: #9a6700; }
+  /* clean capture mode: the viewport IS the render surface */
+  body.clean header, body.clean #hud { display: none; }
+  body.clean #view { height: 100vh; }
+  /* development-only overlay for the ss35 debug captures; never shown in the production UI */
+  #debug { position: fixed; left: 12px; top: 12px; z-index: 10; display: none;
+    font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.35; color: #eef3f8;
+    background: rgba(18,24,30,0.78); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px;
+    padding: 8px 10px; white-space: pre; pointer-events: none; }
+  body.debug #debug { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Phase 2B — topical application (baked / procedural presentation modes)</h1>
+  <div id="bar">
+    <button id="play">Play</button>
+    <button id="restart">Restart</button>
+    <button id="toggleMode">Switch mode</button>
+    <input id="scrub" type="range" min="0" max="1000" value="0">
+    <span id="pval">0.000</span>
+    <span id="modeLabel"></span>
+  </div>
+  <div id="bar" style="margin-top:6px"></div>
+</header>
+<div id="view"></div>
+<div id="debug"></div>
+<div id="hud">loading…</div>
+
+<script>
+window.addEventListener('error', (e) => {
+  window.__error = 'PAGE ERROR: ' + (e.message || '') + ' @' + (e.filename || '') + ':' + (e.lineno || '');
+  const h = document.getElementById('hud'); if (h) h.textContent = window.__error;
+});
+window.addEventListener('unhandledrejection', (e) => {
+  window.__error = 'PROMISE REJECTION: ' + ((e.reason && (e.reason.stack || e.reason.message)) || e.reason);
+  const h = document.getElementById('hud'); if (h) h.textContent = window.__error;
+});
+(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.get('clean') === '1') document.body.classList.add('clean');
+  if (q.get('debug')) document.body.classList.add('debug');
+})();
+</script>
+
+<script type="module">
+import * as THREE from './vendor/three/three.module.js';
+import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
+import { ThreeRenderer } from './src/render/threeRenderer.js';
+import { HumanApplicationScene } from './src/three/humanApplicationScene.js';
+import { BakedApplicationScene } from './src/three/bakedApplicationScene.js';
+import { loadManifest } from './src/three/applicationManifest.js';
+import {
+  PRESENTATION_MODES, DEFAULT_PRESENTATION_MODE, resolvePresentationMode, modeFromQuery,
+  ownershipFor, assertExclusive, bakedClipEnabled, proceduralControllersEnabled,
+} from './src/three/presentationMode.js';
+
+const q = new URLSearchParams(location.search);
+const host = document.getElementById('view');
+const hud = document.getElementById('hud');
+const scrub = document.getElementById('scrub');
+const pval = document.getElementById('pval');
+const modeLabel = document.getElementById('modeLabel');
+
+const rend = new ThreeRenderer({ preserveDrawingBuffer: true });
+rend.mount(host);
+
+// ---- ONE narrative clock. Everything downstream only reflects `progress`. -----------------------
+const DURATION_S = 14;
+let progress = 0;
+let playing = false;
+let active = null;                 // the scene currently driving the render
+const scenes = { [PRESENTATION_MODES.BAKED]: null, [PRESENTATION_MODES.PROCEDURAL]: null };
+let modeState = { mode: DEFAULT_PRESENTATION_MODE, requested: null, fellBack: false, reason: null };
+let manifest = null;
+let loadDiag = { bakedMs: null, proceduralMs: null, bakedBytes: null };
+
+// ---- close-up override (?closeup=<anchor|bone>&dist=<m>&az=<rad>&elev=<rad>) ---------------------
+// The shot list frames the STORY. The hand review pack needs to frame the HAND, at a distance where
+// knuckles, finger pads and mesh boundaries are actually resolvable. This overrides the director's
+// camera after it has run, so the animation and the timeline are untouched — only the lens moves.
+const closeupTarget = q.get('closeup');
+const closeupDist = Number(q.get('dist') || 0.17);
+const closeupAz = Number(q.get('az') || -0.22);
+const closeupElev = Number(q.get('elev') || 0.12);
+const closeupFov = Number(q.get('fov') || 30);
+const _cuTarget = new THREE.Vector3();
+const _cuDir = new THREE.Vector3();
+
+function applyCloseup() {
+  if (!closeupTarget || !active) return;
+  const cam = active.camera;
+  let p = null;
+  if (active._anchors) {
+    const a = active._anchors();
+    if (a[closeupTarget]) p = a[closeupTarget];
+  }
+  if (!p) {
+    // fall back to a named bone/object anywhere in the active scene
+    let found = null;
+    (active.root || active.model || active.scene).traverse((o) => {
+      if (!found && o.name === closeupTarget) found = o;
+    });
+    if (found) { p = _cuTarget.copy(found.getWorldPosition(new THREE.Vector3())); }
+  }
+  if (!p) return;
+  _cuTarget.copy(p);
+  const ce = Math.cos(closeupElev);
+  _cuDir.set(Math.sin(closeupAz) * ce, Math.sin(closeupElev), Math.cos(closeupAz) * ce).normalize();
+  cam.position.copy(_cuTarget).addScaledVector(_cuDir, closeupDist);
+  cam.lookAt(_cuTarget);
+  if (Math.abs(cam.fov - closeupFov) > 1e-4) { cam.fov = closeupFov; cam.updateProjectionMatrix(); }
+  cam.updateMatrixWorld();
+}
+
+function apply(p) {
+  progress = Math.max(0, Math.min(1, p));
+  if (active) active.update({ progress });
+  applyCloseup();
+  scrub.value = String(Math.round(progress * 1000));
+  pval.textContent = progress.toFixed(3);
+  if (!document.body.classList.contains('clean')) renderHud();
+  if (debugMode) { syncSkeletonHelper(); renderDebugOverlay(); }
+}
+
+function renderHud() {
+  const own = ownershipFor(modeState.mode);
+  const ex = exclusivity();
+  const lines = [];
+  lines.push(`presentationMode ${modeState.mode}${modeState.fellBack ? '  (FELL BACK)' : ''}`);
+  if (modeState.reason) lines.push(`  reason: ${modeState.reason}`);
+  lines.push(`ownership  bones=${own.humanBones} morphs=${own.tubeSqueeze} camera=${own.camera} timeline=${own.timeline}`);
+  lines.push(`exclusive  <span class="${ex.ok ? 'ok' : 'no'}">${ex.ok}</span>${ex.ok ? '' : '  ' + ex.conflicts.join('; ')}`);
+  if (active && active.diagnostics) {
+    const d = active.diagnostics();
+    lines.push(`clip       ${d.clip}  time=${d.clipTime.toFixed(3)}s / ${d.clipDuration.toFixed(3)}s  masterProgress=${d.masterProgress.toFixed(4)}`);
+    lines.push(`event      ${d.event}   mixer=${d.mixer}  procedural=${d.proceduralControllers}`);
+    const f = active.lastFrame;
+    if (f && f.shot) lines.push(`camera     ${f.shot.from} -> ${f.shot.to}  mix=${f.shot.mix.toFixed(3)}  dist=${f.shot.dist.toFixed(3)}m fov=${f.shot.fov.toFixed(1)}`);
+    if (f && f.morphs) {
+      for (const [semantic, values] of Object.entries(f.morphs)) {
+        const parts = Object.entries(values).map(([k, v]) => `${k.replace(/^(TUBE|CREAM|SKIN_INDENT|STRAND)_/, '')}=${v == null ? 'NA' : v.toFixed(2)}`);
+        lines.push(`  ${semantic.padEnd(16)} ${parts.join(' ')}`);
+      }
+    }
+  } else if (active && active.lastFrame) {
+    const f = active.lastFrame;
+    lines.push(`stage      ${f.stage}  contact=${f.contact.valid}  gap=${(f.contact.gap * 1000).toFixed(1)}mm  clearance=${(f.clearance.min * 1000).toFixed(0)}mm`);
+    lines.push(`cream      coverage=${f.choreography.cream.coverage.toFixed(3)}  squeeze=${f.choreography.dispense.squeeze.toFixed(2)}`);
+  }
+  lines.push(`assets     baked ${loadDiag.bakedMs == null ? 'not loaded' : loadDiag.bakedMs + 'ms / ' + (loadDiag.bakedBytes / 1e6).toFixed(1) + 'MB'}   procedural ${loadDiag.proceduralMs == null ? 'not loaded' : loadDiag.proceduralMs + 'ms'}`);
+  hud.innerHTML = lines.join('\n');
+}
+
+/**
+ * Report which system is ACTUALLY driving each exclusive channel right now, then let
+ * presentationMode.js judge it. Only the currently-active scene drives anything: the other mode's
+ * scene may still be constructed (mode switching keeps both around) but it is not in the render
+ * graph and its update() is never called.
+ */
+function exclusivity() {
+  const bakedScene = scenes[PRESENTATION_MODES.BAKED];
+  const procScene = scenes[PRESENTATION_MODES.PROCEDURAL];
+  const bakedDriving = !!bakedScene && active === bakedScene && bakedClipEnabled(modeState.mode);
+  const procDriving = !!procScene && active === procScene && proceduralControllersEnabled(modeState.mode);
+  const channels = ['humanBones', 'fingerPose', 'productTransform', 'tubeSqueeze', 'skinIndent', 'creamGeometry'];
+  const mk = (on) => Object.fromEntries(channels.map((c) => [c, !!on]));
+  return assertExclusive(modeState.mode, { baked: mk(bakedDriving), procedural: mk(procDriving) });
+}
+
+// ---- render loop. Draws mechanics only; it never advances narrative state in capture mode. ------
+const bootScene = new THREE.Scene();
+bootScene.background = new THREE.Color(0x39424b);
+const bootCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
+bootCamera.position.z = 2;
+const clock = new THREE.Clock();
+(function loop() {
+  requestAnimationFrame(loop);
+  const dt = clock.getDelta();
+  if (window.__captureMode) return;
+  if (playing && active) {
+    const next = progress + dt / DURATION_S;
+    apply(next >= 1 ? (playing = false, 1) : next);
+  }
+  rend.render(active ? active.scene : bootScene, active ? active.camera : bootCamera);
+})();
+
+const loader = new GLTFLoader();
+const load = (url) => new Promise((res, rej) => loader.load(url, res, null, rej));
+
+async function buildProcedural() {
+  if (scenes[PRESENTATION_MODES.PROCEDURAL]) return scenes[PRESENTATION_MODES.PROCEDURAL];
+  const t0 = performance.now();
+  const gltf = await load('./assets/human/human.glb');
+  const scene = new HumanApplicationScene({
+    gltf, renderer: rend.renderer, applyingSide: 'R',
+    aspect: host.clientWidth / host.clientHeight,
+  });
+  loadDiag.proceduralMs = Math.round(performance.now() - t0);
+  scenes[PRESENTATION_MODES.PROCEDURAL] = scene;
+  return scene;
+}
+
+async function buildBaked() {
+  if (scenes[PRESENTATION_MODES.BAKED]) return scenes[PRESENTATION_MODES.BAKED];
+  const t0 = performance.now();
+  const loaded = await loadManifest('./assets/human/human_application_manifest.json');
+  manifest = loaded.manifest;
+  const gltf = await load('./assets/human/' + manifest.asset);
+  const scene = new BakedApplicationScene({
+    gltf, manifest, renderer: rend.renderer,
+    aspect: host.clientWidth / host.clientHeight,
+  });
+  loadDiag.bakedMs = Math.round(performance.now() - t0);
+  loadDiag.bakedBytes = manifest.statistics.fileSizeBytes;
+  scenes[PRESENTATION_MODES.BAKED] = scene;
+  return scene;
+}
+
+async function activate(requested) {
+  // Bounded loading state with an explicit fallback — never a silent pretend-baked (ss28).
+  let resolved = resolvePresentationMode(requested, { bakedAvailable: true });
+  if (resolved.mode === PRESENTATION_MODES.BAKED) {
+    try {
+      active = await buildBaked();
+      modeState = resolved;
+    } catch (err) {
+      const reason = (err && (err.message || String(err))) || 'unknown baked-asset failure';
+      console.warn('[phase2b] baked mode unavailable, falling back:', reason);
+      modeState = resolvePresentationMode(PRESENTATION_MODES.BAKED,
+        { bakedAvailable: false, failureReason: reason });
+      active = await buildProcedural();
+    }
+  } else {
+    active = await buildProcedural();
+    modeState = resolved;
+  }
+  rend.setCamera({ camera: active.camera });
+  active.setAspect(host.clientWidth / host.clientHeight);
+  modeLabel.textContent = modeState.mode + (modeState.fellBack ? ' (fallback)' : '');
+  window.__mode = modeState;
+  return active;
+}
+
+(async () => {
+  try {
+    await activate(modeFromQuery(location.search) || DEFAULT_PRESENTATION_MODE);
+    apply(q.has('p') ? Number(q.get('p')) : 0);
+    if (q.get('play') === '1') playing = true;
+    window.__ready = true;
+  } catch (err) {
+    window.__error = 'SCENE ERROR: ' + (err && (err.stack || err.message || err));
+    hud.textContent = window.__error;
+  }
+})();
+
+document.getElementById('play').addEventListener('click', (e) => {
+  playing = !playing;
+  if (playing && progress >= 1) apply(0);
+  e.target.classList.toggle('on', playing);
+  e.target.textContent = playing ? 'Pause' : 'Play';
+});
+document.getElementById('restart').addEventListener('click', () => apply(0));
+document.getElementById('toggleMode').addEventListener('click', async () => {
+  const next = modeState.mode === PRESENTATION_MODES.BAKED
+    ? PRESENTATION_MODES.PROCEDURAL : PRESENTATION_MODES.BAKED;
+  await activate(next);
+  apply(progress);
+});
+scrub.addEventListener('input', () => { playing = false; apply(Number(scrub.value) / 1000); });
+addEventListener('resize', () => {
+  rend.setSize(host.clientWidth, host.clientHeight);
+  if (active) active.setAspect(host.clientWidth / host.clientHeight);
+});
+
+// ---- development-only debug overlays (ss24: never in the production UI) --------------------------
+const debugMode = q.get('debug');            // 'skeleton' | 'morphs' | null
+const debugEl = document.getElementById('debug');
+let skeletonHelper = null;
+
+function syncSkeletonHelper() {
+  if (debugMode !== 'skeleton' || !active) return;
+  if (skeletonHelper && skeletonHelper.parent === active.scene) return;
+  if (skeletonHelper && skeletonHelper.parent) skeletonHelper.parent.remove(skeletonHelper);
+  const root = active.root || (active.model) || null;
+  if (!root) return;
+  skeletonHelper = new THREE.SkeletonHelper(root);
+  skeletonHelper.material.linewidth = 2;
+  skeletonHelper.material.depthTest = false;
+  skeletonHelper.renderOrder = 999;
+  active.scene.add(skeletonHelper);
+}
+
+function renderDebugOverlay() {
+  if (!debugMode || !active) return;
+  const f = active.lastFrame;
+  const lines = [`presentationMode  ${modeState.mode}`];
+  if (debugMode === 'skeleton') {
+    lines.push('overlay           baked deform skeleton (SkeletonHelper)');
+    lines.push(`bones driven      ${active.clip ? new Set(active.clip.tracks.map((t) => t.name.split('.')[0])).size : 'n/a'}`);
+    lines.push(`clip              ${active.clip ? active.clip.name : 'n/a'}  tracks ${active.clip ? active.clip.tracks.length : 0}`);
+    lines.push(`clipTime          ${f ? f.clipTime.toFixed(3) : '—'} s / ${active.clipDuration ? active.clipDuration.toFixed(3) : '—'} s`);
+    lines.push(`masterProgress    ${progress.toFixed(4)}`);
+  } else {
+    lines.push(`masterProgress    ${progress.toFixed(4)}   event ${f ? f.event : '—'}`);
+    lines.push('morph target weights (baked, driven by the clip):');
+    if (f && f.morphs) {
+      for (const [semantic, values] of Object.entries(f.morphs)) {
+        for (const [name, value] of Object.entries(values)) {
+          const v = value == null ? NaN : value;
+          const bar = '#'.repeat(Math.round(Math.max(0, Math.min(1, v)) * 22)).padEnd(22, '.');
+          lines.push(`  ${name.padEnd(24)} ${bar} ${Number.isFinite(v) ? v.toFixed(3) : 'UNAVAILABLE'}`);
+        }
+      }
+    }
+  }
+  debugEl.textContent = lines.join('\n');
+}
+
+// ---- automation hooks (tools/capture-frames.mjs) -------------------------------------------------
+
+window.__setProgress = apply;
+window.__apply = apply;
+window.__drawNow = () => {
+  if (!active) return;
+  syncSkeletonHelper();
+  renderDebugOverlay();
+  rend.render(active.scene, active.camera);
+};
+window.__frame = () => (active ? active.lastFrame : null);
+window.__scene = () => active;
+window.__renderer = rend.renderer;               // read-only, for the measurement pass
+window.__setMode = async (m) => { await activate(m); apply(progress); return window.__mode; };
+window.__diag = () => {
+  if (!active) return null;
+  const f = active.lastFrame;
+  const base = {
+    progress, mode: modeState.mode, fellBack: modeState.fellBack,
+    exclusive: exclusivity().ok,
+  };
+  if (active.diagnostics) {
+    const d = active.diagnostics();
+    const strand = f && f.morphs && f.morphs.creamStrand;
+    const squeeze = f && f.morphs && f.morphs.tubeSqueeze;
+    const deposit = f && f.morphs && f.morphs.creamDeposit;
+    const spread = f && f.morphs && f.morphs.creamSpread;
+    const indent = f && f.morphs && f.morphs.skinIndent;
+    const peak = (o) => (o ? Math.max(...Object.values(o).map((v) => (v == null ? 0 : v))) : null);
+    return {
+      ...base, clipTime: d.clipTime, event: d.event,
+      tubeSqueeze: peak(squeeze), creamStrand: peak(strand),
+      creamDeposit: peak(deposit), creamSpread: peak(spread), skinIndent: peak(indent),
+      shot: f && f.shot ? `${f.shot.from}->${f.shot.to}` : null,
+    };
+  }
+  return {
+    ...base,
+    stage: f ? f.stage : null,
+    contactValid: f ? f.contact.valid : null,
+    clearanceMm: f ? +(f.clearance.min * 1000).toFixed(1) : null,
+    creamCoverage: f ? +f.choreography.cream.coverage.toFixed(3) : null,
+  };
+};
+</script>
+</body>
+</html>

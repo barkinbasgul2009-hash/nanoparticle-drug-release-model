@@ -1,0 +1,38 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Scientific-visualization style + color policy + movement rules for Profile B. Goal: scientifically defensible visual realism, not photorealism or sci-fi. Every color's meaning is declared; every movement type is evidence-tagged.",
+  "style": {
+    "realism_level": "biologically recognizable, disciplined scientific-illustration (BioRender/Cell-Press style principles, not copied assets); not cartoonish, not horror, not decorative sci-fi",
+    "cell_shape": "true-to-type (corneocyte flat/anucleate; keratinocyte polygonal; melanocyte/B16 dendritic-or-spindle; fibroblast spindle)",
+    "membrane": "smooth bilayer line; junctions where real (desmosomes in epidermis)",
+    "ecm": "intentional fibrillar pattern (dermal collagen bundles), not random noise",
+    "nanoparticle": "uniform spheres ~85-90 nm class (B1); DISTINCT deliberate color, declared as illustrative",
+    "encapsulated_vs_free_API": "encapsulated = tint inside the particle; released/free = separate small glyphs/dots",
+    "nucleus": "shown in nucleated cells only; NEVER in corneocytes",
+    "uncertainty_visualization": "ghosted/hatched rendering + amber badge for INFERRED_RISK / qualitative events",
+    "labels_arrows_trails": "trails allowed for diffusion (random-walk look), not directional 'swimming'"
+  },
+  "color_policy": {
+    "classes": ["TRUE_NATURAL_COLOR","STAIN_DEPENDENT","FLUORESCENCE_PSEUDOCOLOR","ILLUSTRATIVE_COLOR","DATA_ENCODING_COLOR"],
+    "rules": [
+      "H&E pink/purple, trichrome blue = STAIN_DEPENDENT, never presented as natural tissue color",
+      "IF green/red = FLUORESCENCE_PSEUDOCOLOR (assigned channels)",
+      "nanoparticle color = ILLUSTRATIVE_COLOR (deliberately assigned)",
+      "concentration/depth encoding = DATA_ENCODING_COLOR with a legend",
+      "do NOT reuse red for blood AND concentration AND danger AND therapeutic effect - pick distinct hues",
+      "every major view carries a LEGEND declaring each color's class"
+    ]
+  },
+  "movement_rules": [
+    {"movement":"Brownian motion","meaning":"thermal random motion of particles","evidence":"physical default","render":"random-walk jitter","tag":"ILLUSTRATIVE_ONLY"},
+    {"movement":"diffusion","meaning":"net transport down gradient","evidence":"B1 permeation (qualitative direction)","render":"biased random walk (NOT constant-speed straight lines)","tag":"QUALITATIVELY_SUPPORTED"},
+    {"movement":"barrier crossing (SC)","meaning":"slow, barrier-limited transport","evidence":"B1 skin permeation + lag","render":"stalling/limited progress at the SC","tag":"QUALITATIVELY_SUPPORTED"},
+    {"movement":"partitioning","meaning":"lipophilic API into SC lipids","evidence":"celastrol lipophilic (qualitative)","render":"accumulation cue in lipid mortar","tag":"INFERRED / QUALITATIVE"},
+    {"movement":"cell-membrane contact + uptake","meaning":"association/internalization","evidence":"B1 HaCaT/B16 uptake (ordinal by charge)","render":"contact + ordinal glow; NO detailed endocytosis machinery for B1","tag":"QUALITATIVELY_SUPPORTED"},
+    {"movement":"release from carrier","meaning":"drug leaving NLC","evidence":"B1 first-order/sustained (qualitative)","render":"gradual emission, unlabelled timing","tag":"QUALITATIVELY_SUPPORTED"},
+    {"movement":"intracellular trafficking / ER localization","meaning":"organelle transport","evidence":"B2 ONLY (Wang abstract)","render":"ER close-up for B2; PROHIBITED for B1","tag":"ABSTRACT_SUPPORTED (B2) / UNSUPPORTED (B1)"},
+    {"movement":"directional 'swimming' through tissue","meaning":"none","evidence":"none","render":"PROHIBITED","tag":"UNSUPPORTED_DO_NOT_ANIMATE"}
+  ],
+  "movement_forbidden": ["constant-speed straight-line diffusion","intentional particle swimming","organelle trafficking for B1","exact concentration fields without quantitative data"]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Disease/tissue context per Profile-B preset, with the exact topical->melanoma chain for the verified anchor. Distinguishes modeled vs visual-only vs informational.",
+  "verified_preset_context": {
+    "preset": "P1_chen2012_topical_nlc",
+    "disease": "murine cutaneous melanoma",
+    "chain": ["topical application (NLC dispersion)","skin barrier (stratum corneum)","skin permeation (rat, ex vivo Franz)","viable epidermis / dermis","melanoma tissue","B16BL6 melanoma cells","cellular uptake (charge-dependent)","antimelanoma pharmacodynamic response","tolerability"],
+    "in_vivo_details": {"species":"C57BL/6 mice","tumour_cells":"B16BL6 melanoma","permeation_species":"Sprague-Dawley RAT (ex vivo skin) - SPECIES MISMATCH with in-vivo mouse","endpoint":"antimelanoma efficacy (cationic NLC highest, P<0.05)"},
+    "not_reported_in_extract": ["exact dose/volume","dosing frequency/duration","tumour implantation method/location","survival endpoint","skin-irritation histology","systemic exposure"],
+    "note": "these details are in the paper but were not transcribed; mark as pending re-read, do NOT invent"
+  },
+  "tissue_microenvironment_elements": {
+    "modeled_candidates": ["stratum corneum barrier","viable epidermis/dermis diffusion (released-API)","melanoma cell uptake compartment"],
+    "visual_only_candidates": ["corneocytes/lipid lamellae","keratinocytes","fibroblasts","collagen/ECM","tumour-associated vasculature","immune cells","interstitial fluid"],
+    "informational_only": ["pH","oxygenation","hydration","local enzymes"],
+    "rule": "elements appearing in the animation are NOT thereby quantitatively modeled; each is tagged in data/profile-b-animation-events.json"
+  },
+  "additional_disease_presets": [
+    {"preset":"P3","disease":"melanoma (systemic PLGA-PEG ER-targeting)","route":"systemic","status":"candidate - different route than topical core"},
+    {"preset":"P4","disease":"breast cancer (HA redox micelle)","route":"systemic","status":"candidate"},
+    {"preset":"P5","disease":"breast cancer (mixed micelle)","route":"systemic","status":"candidate"},
+    {"preset":"P2","disease":"rheumatoid arthritis (celastrol+indomethacin NLC)","route":"transdermal","status":"candidate - combination drug"}
+  ],
+  "rule": "An additional disease option requires a REAL evidence bridge (celastrol formulation + route + tissue model + measured endpoint). Do NOT convert celastrol's general pharmacology into formulation-specific presets. If the carrier differs, it is a SEPARATE preset."
+}

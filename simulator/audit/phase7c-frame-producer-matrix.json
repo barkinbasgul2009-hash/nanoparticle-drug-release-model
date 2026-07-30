@@ -1,0 +1,37 @@
+{
+  "artifact": "phase7c-frame-producer-matrix",
+  "note": "Every producer that assembles an immune frame / frame-like object. Read-only audit.",
+  "canonical_top_level_builder": {
+    "id": "buildImmuneFrame", "file": "src/biology/immuneFrameBuilder.js",
+    "authoritative": true, "immutability": "deepFreeze at publication boundary", "serialization": "immuneSerialization (plain data)",
+    "produces_keys": 32, "consumers": ["renderer", "timeline", "replay", "debugger", "export", "8A adapter"]
+  },
+  "producers": [
+    {
+      "id": "immuneMicroenvironmentEngine (S1)", "file": "src/biology/immuneMicroenvironmentEngine.js", "role": "foundational/context frame",
+      "builder": "buildImmuneFrame", "input_path": "ImmuneInputAdapter", "authoritative": true, "legacy": false, "test_only": false,
+      "domainState_shape": "UNAVAILABLE carrier classes (Section 1)", "transitionRecords": "[] (empty)"
+    },
+    {
+      "id": "immuneAdaptiveEngine (S4)", "file": "src/biology/immuneAdaptiveEngine.js", "role": "adaptive biology frame",
+      "builder": "buildImmuneFrame", "input_path": "buildAdaptiveContext", "authoritative": true, "legacy": false, "test_only": false,
+      "domainState_shape": "computed contribution objects (Section 4)", "transitionRecords": "[] (empty) <- GAP G2"
+    }
+  ],
+  "field_by_field_divergence": [
+    { "field": "immuneEscape", "s1": ["availability", "components", "confidence", "escapePressure", "persistentEscape"], "s4": ["availability", "dimensions", "magnitudeState", "overallEscapePressure", "persistenceState"], "class": "semantic_mismatch" },
+    { "field": "adaptiveImmunity.cd8", "s1": "CD8State (metric slots, UNAVAILABLE)", "s4": "CD8Contribution (staged values)", "class": "nesting/semantic_mismatch (both expose .cytotoxicPotential {value,availability})" },
+    { "field": "checkpointState", "s1": "CheckpointState carrier", "s4": "{pd1,pdl1,axis,ctla4,overallCheckpointBurden}", "class": "nesting_mismatch" },
+    { "field": "immuneEffect", "s1": "ImmuneEffectState {potential,effectiveModifier,blockedPotential}", "s4": "{potential,blockedPotential,controlState,failureState}", "class": "semantic_mismatch (S4 adds control/failure states)" },
+    { "field": "top-level keys", "s1_count": 32, "s4_count": 32, "class": "match (same ImmuneFrame class)" }
+  ],
+  "canonical_builder_migration_plan": {
+    "decision": "buildImmuneFrame already IS the single top-level builder; the divergence is at the DOMAIN-STATE contract layer, not the builder.",
+    "proposed": "Part 2: define ONE authoritative domain-state contract (superset shape covering innate + adaptive + checkpoint + suppression + escape{magnitude,persistence,dimensions} + effect{control,failure}), have BOTH engines emit that shape, and update the renderer spec table to the single shape (removing fallbacks). Provide a versioned domain-state adapter only if backward compatibility with already-serialized S1 frames is required.",
+    "api_unchanged": "buildImmuneFrame public API stays; only the domainStates it receives are standardized.",
+    "consumers_affected": ["renderer SPECS", "views", "debugger executionTrace availability reads", "export summary"],
+    "backward_compat": "S1 UNAVAILABLE frames remain valid (their fields become the UNAVAILABLE case of the unified shape).",
+    "risks": ["renderer spec-table churn", "test fixtures asserting old nested keys", "serialized golden frames (none committed yet)"],
+    "migration_order": ["1 define unified domainState shape (types + a builder-side normalizer)", "2 migrate S4 engine emit", "3 migrate S1 engine emit", "4 simplify renderer SPECS", "5 wire transition controllers (G2) into the same builder path"]
+  }
+}

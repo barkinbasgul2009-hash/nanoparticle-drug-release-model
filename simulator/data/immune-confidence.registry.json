@@ -1,0 +1,32 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C shared confidence framework registry (Part 1 - Section 2). Confidence represents TRUST in the computational estimate - NOT biological activity. Declares the normalized->categorical boundaries and the propagation penalties every immune module applies through the shared ImmuneConfidence utility. Confidence is never artificially inflated: it decreases with missing inputs, incomplete registries, unavailable dependencies, conflicting signals, and prediction uncertainty. Deterministic.",
+  "confidence_framework_version": "7C.1.0",
+  "categories": {
+    "VERY_LOW":  { "min": 0.0, "max": 0.2 },
+    "LOW":       { "min": 0.2, "max": 0.4 },
+    "MODERATE":  { "min": 0.4, "max": 0.6 },
+    "HIGH":      { "min": 0.6, "max": 0.8 },
+    "VERY_HIGH": { "min": 0.8, "max": 1.0 }
+  },
+  "propagation": {
+    "base_confidence": 0.6,
+    "base_confidence_note": "Starting confidence for a fully supported prediction-only estimate (this is a prediction-only layer, so base confidence is modest by design).",
+    "penalties": {
+      "missing_input": 0.15,
+      "unavailable_dependency": 0.2,
+      "incomplete_registry": 0.15,
+      "conflicting_signal": 0.1,
+      "prediction_uncertainty": 0.1
+    },
+    "penalty_note": "Each applicable penalty is SUBTRACTED from base confidence (bounded at floor); penalties never increase confidence.",
+    "floor": 0.02,
+    "ceiling": 0.95,
+    "ceiling_note": "A prediction-only layer never reports full (1.0) confidence."
+  },
+  "policy": {
+    "no_inflation": "No module may raise confidence above the ceiling or above what its available inputs + evidence justify.",
+    "confidence_is_not_activity": "A high biological value with poor input support yields a LOW-confidence estimate, not a high one.",
+    "decreases_with_gaps": "Confidence generally decreases when required inputs are missing, registries incomplete, upstream values unavailable, or multiple biological interpretations exist."
+  }
+}

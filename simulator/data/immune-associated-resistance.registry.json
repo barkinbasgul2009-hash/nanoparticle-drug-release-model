@@ -1,0 +1,31 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A immune-associated resistance CONTEXT. Phase-7C immune outputs (immune suppression / escape / checkpoint pressure / weak tumour visibility / exhausted adaptive response / low immune-mediated loss) MAY contribute a resistance context. IMPORTANT: Phase 7C (immune microenvironment) is NOT implemented in this frozen build, so there is no immune output to consume - every immune-associated input resolves to UNAVAILABLE and contributes NOTHING to resistance burden. No new immune biology is added and no immune-cell state is modified here; the resistance engine only ever consumes immutable Phase-7C outputs when they exist.",
+  "availability": {
+    "phase_7c_present": false,
+    "state_when_absent": "UNAVAILABLE",
+    "note": "When Phase 7C is added later, these inputs become consumable read-only; until then the immune-associated resistance state is UNAVAILABLE, not NOT_REPORTED-as-zero and not fabricated."
+  },
+  "coefficient_policy": {
+    "valid_range": "each immune modifier in [0,1] (additive, bounded) - only usable once Phase 7C exists",
+    "0_interpretation": "0 = no immune-escape-associated protection",
+    "1_interpretation": "1 = maximal schematic immune-escape-associated protection the model would represent",
+    "source": "Phase-7C immune outputs (read-only) - NOT AVAILABLE in this build",
+    "evidence_level": "UNAVAILABLE", "prediction_level": "UNAVAILABLE",
+    "sensitivity_note": "no contribution to burden while Phase 7C is absent.",
+    "limitations": "Requires the Phase-7C immune-microenvironment layer, which is not implemented; no immune value is fabricated."
+  },
+  "allowed_inputs": ["immune_suppression", "immune_escape", "checkpoint_pressure", "weak_tumor_visibility", "exhausted_adaptive_response", "low_immune_mediated_tumor_loss_modifier"],
+  "allowed_outputs": ["immune_escape_protection", "immune_selection_context", "treatment_durability_reduction"],
+  "levels_when_available": {
+    "none":     { "immune_escape_protection": 0.0, "treatment_durability_reduction": 0.0 },
+    "low":      { "immune_escape_protection": 0.15, "treatment_durability_reduction": 0.1 },
+    "moderate": { "immune_escape_protection": 0.3, "treatment_durability_reduction": 0.2 },
+    "high":     { "immune_escape_protection": 0.5, "treatment_durability_reduction": 0.35 }
+  },
+  "rules": {
+    "no_new_immune_biology": "The resistance engine never creates or modifies immune-cell states.",
+    "no_duplication": "Immune escape from Phase 7C (when present) is consumed once; it is never duplicated as a new immune-suppression mechanism inside Phase 8A.",
+    "unavailable_not_zero": "While Phase 7C is absent the state is UNAVAILABLE (distinct from a measured/predicted zero)."
+  }
+}

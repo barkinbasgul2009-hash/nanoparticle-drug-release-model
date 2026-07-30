@@ -1,0 +1,45 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6C population-response prediction records. Each documents a labelled population prediction: the claim, its level, the single-cell source it is derived from, and its uncertainty. Population predictions are permitted ONLY where single-cell apoptosis evidence exists AND population evidence is absent.",
+  "prediction_records": {
+    "pred_pop_b16bl6": {
+      "profile_id": "mouse_b16bl6_population",
+      "claim": "As the single (context-transferred) B16BL6 cell commits and executes apoptosis, a susceptible sub-population accumulates apoptosis while a resistant fraction and adapted/recovered survivors persist.",
+      "level": "CONTEXT_TRANSFER_PREDICTION",
+      "confidence": "LOW",
+      "source_context": "single_cell_apoptosis:B16BL6 (Phase 6B, itself a B16 -> B16BL6 transfer)",
+      "target_context": "virtual_population:B16BL6",
+      "transfer_assumptions": ["population susceptibility is heterogeneous", "committed cells never recover", "surviving cells may adapt or recover"],
+      "uncertainty": "No B16BL6 population apoptosis dataset; fractions are schematic.",
+      "species": "mouse",
+      "cell_model": "B16BL6",
+      "reference_ids": ["pop_b16bl6_transfer"]
+    },
+    "pred_pop_b16": {
+      "profile_id": "mouse_b16_population",
+      "claim": "A susceptible B16 sub-population accumulates apoptosis while a resistant fraction persists; surviving cells may adapt/recover.",
+      "level": "MECHANISTIC_PREDICTION",
+      "confidence": "LOW",
+      "source_context": "single_cell_apoptosis:B16 (Phase 6B, experimental mechanism)",
+      "target_context": "virtual_population:B16",
+      "transfer_assumptions": ["population susceptibility is heterogeneous", "committed cells never recover"],
+      "uncertainty": "No B16 population apoptotic-fraction dataset; fractions are schematic.",
+      "species": "mouse",
+      "cell_model": "B16",
+      "reference_ids": ["pop_b16_mech"]
+    },
+    "pred_pop_b16f10": {
+      "profile_id": "mouse_b16f10_population",
+      "claim": "A susceptible B16-F10 sub-population accumulates apoptosis while a resistant fraction persists; surviving cells may adapt/recover.",
+      "level": "MECHANISTIC_PREDICTION",
+      "confidence": "LOW",
+      "source_context": "single_cell_apoptosis:B16-F10 (Phase 6B, experimental mechanism)",
+      "target_context": "virtual_population:B16-F10",
+      "transfer_assumptions": ["population susceptibility is heterogeneous", "committed cells never recover"],
+      "uncertainty": "No B16-F10 population apoptotic-fraction dataset; fractions are schematic.",
+      "species": "mouse",
+      "cell_model": "B16-F10",
+      "reference_ids": ["pop_b16f10_mech"]
+    }
+  }
+}

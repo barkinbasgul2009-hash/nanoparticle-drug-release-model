@@ -1,0 +1,66 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-4D INTRACELLULAR DRUG RELEASE registry. Defines ONLY: intracellular payload release models, intracellular free-drug spec, cytoplasmic diffusion, intracellular degradation modes, a SCHEMATIC nucleus, and optional nucleus TARGETING. It is a SEPARATE layer that READS the endocytosis / uptake / release outputs and modifies nothing upstream. The code hardcodes NO biology or constants - models, probabilities, degradation, targeting and evidence all live here. NOTHING downstream of nucleus targeting is defined (no DNA/RNA, transcription, translation, receptor signalling, PD, PK, apoptosis, tumour killing, nuclear-pore transport, etc.).",
+  "authoritative_source": "data/profile-b-evidence-package.json (FROZEN). Chen 2012 reports IN-VITRO (EXTRACELLULAR) release only (first-order). INTRACELLULAR release kinetics, intracellular degradation half-life and nucleus targeting are NOT REPORTED for this NLC. Endosomal escape is also NOT REPORTED (Phase 4C: no_escape), so for B1 no carrier reaches the cytoplasm - the intracellular stage is honestly idle / NOT REPORTED.",
+  "release_models": {
+    "note": "Model MATH only (evidence gates WHICH model, if any, a formulation uses). Cumulative released fraction F(t) in [0,1]. Rate constants are supplied per formulation ONLY when evidence exists; absent -> NOT REPORTED (no release).",
+    "burst": { "equation": "F(t) = 1 for t>0", "params": [] },
+    "first_order": { "equation": "F(t) = 1 - exp(-k t)", "params": ["k"] },
+    "zero_order": { "equation": "F(t) = min(1, k t)", "params": ["k"] },
+    "higuchi": { "equation": "F(t) = min(1, k * sqrt(t))", "params": ["k"] },
+    "korsmeyer_peppas": { "equation": "F(t) = min(1, k * t^n)", "params": ["k", "n"] }
+  },
+  "degradation_modes": {
+    "note": "Degradation mode is evidence-gated. Absent -> NOT REPORTED (no degradation; half-life never fabricated).",
+    "stable": { "meaning": "no appreciable intracellular degradation" },
+    "partial": { "meaning": "a fraction of drug degrades over time (rate from evidence)" },
+    "complete": { "meaning": "drug degrades toward full loss over time (rate from evidence)" }
+  },
+  "targeting_modes": {
+    "note": "Nucleus targeting is evidence-gated. Molecules move toward the nucleus ONLY if supported; they STOP at the nuclear membrane and NEVER enter (nuclear-pore transport is a later phase).",
+    "none": { "meaning": "no targeting; drug remains in the cytoplasm" },
+    "passive": { "meaning": "weak, non-specific drift toward the nucleus (only if evidence supports)" },
+    "evidence_supported": { "meaning": "directed drift toward the nucleus (only with explicit evidence)" }
+  },
+  "molecule": {
+    "drug": "tripterine (celastrol)",
+    "note": "An intracellular free drug molecule is an INDEPENDENT object (no chemistry beyond optional degradation; only diffusion). Never merges back into the carrier; never exits the cell; never enters neighbouring cells.",
+    "representation": "SCHEMATIC",
+    "appearance": { "style": "small_dot", "radius_px": 1.3, "glow": false, "trail": false }
+  },
+  "nucleus": {
+    "note": "SCHEMATIC nucleus ONLY: membrane + interior + label. NO DNA, chromosomes, nucleolus, histones, RNA or transcription machinery. Placed concentrically inside each cell.",
+    "radius_fraction": 0.42,
+    "membrane_thickness": 0.006,
+    "label": "Nucleus",
+    "color": "#c3b7d6"
+  },
+  "formulations": {
+    "note": "Per-formulation intracellular profile (registry data; never hard-coded). For B1 the intracellular stage is NOT REPORTED across the board - Chen reports extracellular release only, no intracellular kinetics/degradation/targeting, and no endosomal escape - so no intracellular free drug is produced. Rate constants are NEVER invented.",
+    "B1_nlc": {
+      "trigger": "carrier endocytosis state == CYTOPLASM (post endosomal escape)",
+      "intracellular_release": { "model": null, "params": {}, "evidence_level": "NOT_REPORTED", "basis": "Intracellular release kinetics are NOT REPORTED (Chen 2012 reports in-vitro EXTRACELLULAR release only). No model or rate is assigned." },
+      "degradation": { "mode": null, "params": {}, "evidence_level": "NOT_REPORTED", "basis": "Intracellular degradation / half-life is NOT REPORTED for this NLC." },
+      "nucleus_targeting": { "mode": "none", "evidence_level": "NOT_REPORTED", "basis": "No nucleus-targeting evidence for this NLC (Chen NLC is not nucleus-targeting)." }
+    }
+  },
+  "species_intracellular": {
+    "note": "Per-species intracellular-release evidence. For B1 it is NOT REPORTED for all species (not measured intracellularly). No fabricated evidence; no rat->human copy.",
+    "rat": { "evidence_level": "NOT_REPORTED", "confidence": "NOT_REPORTED", "referenceIds": [], "message": "Intracellular Release Evidence: Not Reported. Intracellular release, degradation and nucleus targeting are not reported for this formulation; no intracellular drug is shown." },
+    "human": { "evidence_level": "NOT_REPORTED", "confidence": "NOT_REPORTED", "referenceIds": [], "message": "Intracellular Release Evidence: Not Reported. Intracellular release, degradation and nucleus targeting are not reported for this formulation; no intracellular drug is shown." },
+    "mouse": { "evidence_level": "NOT_REPORTED", "confidence": "NOT_REPORTED", "referenceIds": [], "message": "Intracellular Release Evidence: Not Reported. Intracellular release, degradation and nucleus targeting are not reported for this formulation; no intracellular drug is shown." }
+  },
+  "integrity": {
+    "reads_only": "The intracellular-release engine READS the endocytosis / uptake / release outputs read-only and modifies NOTHING upstream. Its state (intracellular molecules) lives only in this engine.",
+    "independent_release": "Intracellular release is COMPLETELY independent of the extracellular (Phase 4A) release; it has its own model + molecules.",
+    "cytoplasm_only": "Intracellular free drug diffuses ONLY inside its own cell's cytoplasm - it never exits the cell and never enters a neighbouring cell.",
+    "no_nuclear_entry": "Targeted molecules may STOP at the nuclear membrane but NEVER enter the nucleus. Nuclear-pore / importin / exportin / Ran-GTP / NPC transport are a later phase.",
+    "not_to_scale": true,
+    "ends_at": "Ends at cytoplasmic diffusion, or (if targeting is supported) at the nuclear membrane. Nothing beyond.",
+    "forbidden": ["DNA_binding", "RNA_binding", "transcription", "translation", "protein_synthesis", "receptor_signalling", "MAPK", "PI3K", "NF_kB", "apoptosis", "immune_response", "mitochondrial_toxicity", "pharmacodynamics", "efficacy", "tumour_response", "toxicity", "pharmacokinetics", "cell_death", "cell_cycle", "nuclear_pore", "importin", "exportin", "Ran_GTP", "NPC_transport", "chromosomes", "nucleolus", "histones", "gene_regulation", "gene_expression", "downstream_biology"]
+  },
+  "provenance_sources": [
+    "data/profile-b-evidence-package.json (FROZEN) - Chen 2012 in-vitro (extracellular) first-order release; intracellular release/degradation/targeting NOT REPORTED; endosomal escape NOT REPORTED",
+    "Chen Y et al. Int J Nanomedicine 2012;7:3023-3033 (DOI 10.2147/IJN.S32476) - primary full-text source"
+  ]
+}

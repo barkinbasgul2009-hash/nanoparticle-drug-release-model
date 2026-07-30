@@ -1,0 +1,34 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A acquired (persistent) resistance model. Acquired resistance is a PERSISTENT reduction in treatment sensitivity that emerges AFTER exposure and requires stronger, temporal evidence than transient adaptation. It must NOT be classified after a single unsupported frame, and it must NEVER be inferred from a delivery-limited response. Each state defines a bounded sensitivity-reduction modifier, persistence linkage, and evidence. No invented mutation / gene / IC50 shift / time-to-resistance / fold-resistance (all NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "acquired_sensitivity_reduction in [0,1] (additive, bounded)",
+    "0_interpretation": "0 = no acquired reduction in treatment sensitivity",
+    "1_interpretation": "1 = maximal schematic acquired reduction the model represents",
+    "source": "general acquired-resistance biology applied predictively; NO experimental acquired-resistance dataset exists for this context in the frozen package",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "acquired reduction persists across washout per persistence criteria; applied only through a bounded adapter.",
+    "limitations": "No mutation identity/frequency, IC50 shift, fold-resistance, or time-to-resistance is stated (all NOT_REPORTED)."
+  },
+  "states": {
+    "absent":                { "acquired_sensitivity_reduction": 0.0, "meaning": "No acquired resistance." },
+    "suspected":             { "acquired_sensitivity_reduction": 0.1, "meaning": "Persistence signal suspected; not yet supported." },
+    "emerging":              { "acquired_sensitivity_reduction": 0.3, "meaning": "Acquired resistance emerging with supporting temporal signal." },
+    "established":           { "acquired_sensitivity_reduction": 0.5, "meaning": "Acquired resistance established across multiple exposure stages." },
+    "persistent":            { "acquired_sensitivity_reduction": 0.6, "meaning": "Persistent acquired resistance surviving washout." },
+    "partially_reversible":  { "acquired_sensitivity_reduction": 0.35, "meaning": "Acquired resistance partially reversing where supported." },
+    "re_sensitized":         { "acquired_sensitivity_reduction": 0.1, "meaning": "Substantial re-sensitization after supported reversal." }
+  },
+  "classification_criteria": [
+    "sustained_reduced_sensitivity", "persistent_response_after_washout", "reduced_response_on_rechallenge",
+    "stable_resistant_subpopulation_enrichment", "profile_supported_persistent_mechanism",
+    "repeated_exposure_history", "continued_reduced_effect_despite_adequate_delivery"
+  ],
+  "rules": {
+    "requires_temporal_evidence": "Acquired resistance requires temporal evidence (multiple stages / washout persistence / rechallenge reduction) OR an explicitly labelled prediction; never a single unsupported frame.",
+    "not_delivery_failure": "A delivery-limited or uptake-limited response is never promoted to acquired resistance.",
+    "minimum_exposure_stages": 2,
+    "minimum_exposure_stages_note": "SUSPECTED -> EMERGING requires at least this many supported exposure stages (schematic threshold; see persistent-resistance registry)."
+  }
+}

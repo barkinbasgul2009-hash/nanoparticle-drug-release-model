@@ -1,0 +1,27 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Lawful, open-licensed reference sources for skin/melanoma/cell histology + a microscopy-method visual-language map. References are DESIGN references (analyze visual principles); do not copy protected artwork. Verify each asset's license before any reuse.",
+  "microscopy_methods": [
+    {"method":"H&E histology","visible":"tissue architecture; nuclei (haematoxylin, blue-purple); cytoplasm/ECM (eosin, pink)","color_class":"STAIN_DEPENDENT","use":"tissue-view style reference","note":"pink/purple are stain colors, NOT natural tissue colors"},
+    {"method":"Masson trichrome","visible":"collagen (blue), cytoplasm/muscle (red), nuclei (dark)","color_class":"STAIN_DEPENDENT","use":"dermal collagen organization"},
+    {"method":"immunohistochemistry (IHC)","visible":"marker-specific (e.g. SOX10/S100/HMB-45/Melan-A for melanocytes/melanoma)","color_class":"STAIN_DEPENDENT (chromogen)","use":"identify melanocytic cells","cite":"DermNet; HPA"},
+    {"method":"immunofluorescence / confocal","visible":"labelled targets in PSEUDOCOLOR (green/red/blue channels)","color_class":"FLUORESCENCE_PSEUDOCOLOR","use":"uptake/localization style (e.g. nanoparticle-cell association)","note":"channel colors are assigned, not real"},
+    {"method":"transmission EM (TEM)","visible":"ultrastructure: corneocyte lipid lamellae, membranes, organelles, nanoparticle morphology (grayscale)","color_class":"GRAYSCALE","use":"SC lipid lamellae + NP morphology reference"},
+    {"method":"scanning EM (SEM)","visible":"surface topography (grayscale)","color_class":"GRAYSCALE","use":"skin-surface / particle-surface reference"},
+    {"method":"dark-field","visible":"scattering objects on dark background","color_class":"DATA_ENCODING","use":"particle localization style (as in Huang-type imaging elsewhere)"}
+  ],
+  "visual_language_pipeline": ["MACROSCOPIC_ORIENTATION","HISTOLOGY_INSPIRED_TISSUE_VIEW","CELLULAR_SCIENTIFIC_ILLUSTRATION","MOLECULAR_OR_NANOPARTICLE_SCHEMATIC"],
+  "pipeline_rule": "every transition labelled by SCALE; the final animation must NOT pretend to be a single microscopy method if it blends several - a legend states the visual mode",
+  "open_license_sources": [
+    {"source":"OpenStax Anatomy & Physiology (5.1 Layers of the Skin)","license":"CC BY 4.0","use":"skin layer diagrams/text","reuse":"attribution"},
+    {"source":"StatPearls 'Histology, Skin' (NBK537325, NCBI Bookshelf/NIH)","license":"open (NCBI Bookshelf terms; check per-article)","use":"skin/melanocyte reference"},
+    {"source":"Open Histology (University of Galway)","license":"open educational (verify CC)","use":"layered skin histology"},
+    {"source":"Human Protein Atlas","license":"CC BY 4.0","use":"tissue/cell IHC & IF images (skin, melanoma, cell lines)","reuse":"attribution"},
+    {"source":"Wikimedia Commons","license":"per-file (CC BY / CC BY-SA / PD - verify each)","use":"histology/anatomy images","reuse":"verify each file"},
+    {"source":"NCI Visuals Online / NIH","license":"largely public domain (verify per asset)","use":"melanoma/anatomy illustrations"},
+    {"source":"DermNet NZ","license":"proprietary (design reference ONLY; do not reuse images)","use":"melanoma pathology visual principles"},
+    {"source":"Libre Pathology","license":"CC BY-SA (verify)","use":"melanoma histology descriptions"}
+  ],
+  "reuse_rules": ["prefer CC BY / CC BY-SA / public-domain","record source+URL+license+species+method+magnification per asset","DermNet/textbook proprietary images = design reference only, never embedded","verify every Wikimedia/HPA file's specific license before use"]
+}

@@ -1,0 +1,37 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 CD4 helper T-cell runtime coefficients. Bounded functional-support abstraction - NOT a Th1/Th2/Th17/Tfh cytokine-subtype simulation. CD4 estimates priming / recruitment / infiltration / activation / helper competence and publishes SEPARATE support contributions (never one opaque multiplier) that the adaptive integration layer applies to CD8 acyclically. CD4 never directly kills tumour cells and never mutably references CD8. All weights registry-driven; prediction-only; schematic [0,1].",
+  "stage_weights": {
+    "priming":      { "antigen_presentation": 0.3, "adaptive_priming": 0.3, "antigen_availability": 0.2, "dc_effectiveness": 0.1, "prior_priming": 0.1 },
+    "recruitment":  { "priming": 0.35, "immune_accessibility": 0.35, "vascular_access": 0.2, "prior_recruitment": 0.1 },
+    "infiltration": { "recruitment": 0.45, "immune_accessibility": 0.3, "prior_infiltration": 0.25 },
+    "activation":   { "priming": 0.3, "infiltration": 0.3, "antigen_presentation": 0.2, "tumor_visibility": 0.1, "prior_activation": 0.1 },
+    "helper_competence": { "activation": 0.5, "infiltration": 0.25, "prior_competence": 0.25 }
+  },
+  "negative_penalties": { "checkpoint_on_activation": 0.3, "suppression_on_activation": 0.3, "note": "applied once per stage via unique contribution ids." },
+  "capability_weights": {
+    "priming": 0.4, "activation": 0.6,
+    "note": "Weighted mix used to estimate pre-penalty CD4 helper capability for blocked-potential accounting. Weights sum to 1."
+  },
+  "support_weights": {
+    "cd8_priming_support": 0.5,
+    "cd8_activation_support": 0.6,
+    "cd8_persistence_support": 0.5,
+    "antigen_presentation_continuity_support": 0.4,
+    "adaptive_coordination_support": 0.4,
+    "recovery_support": 0.3,
+    "note": "each support is a SEPARATE contribution scaled from helper_competence; the integration layer applies each at its declared CD8 stage, never overwriting CD8 outputs."
+  },
+  "state_thresholds": {
+    "priming":    { "UNPRIMED": 0.0, "PRIMING_LIMITED": 0.2, "PARTIALLY_PRIMED": 0.4, "PRIMED": 0.6, "STRONGLY_PRIMED": 0.8 },
+    "activation": { "INACTIVE": 0.0, "WEAKLY_ACTIVATED": 0.2, "PARTIALLY_ACTIVATED": 0.4, "ACTIVATED": 0.6, "HIGHLY_ACTIVATED": 0.8 }
+  },
+  "temporal": { "min_residence_frames": 1 },
+  "coefficient_policy": {
+    "valid_range": "every score + support in [0,1]",
+    "source": "general CD4 helper biology applied predictively (bounded abstraction)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "CD4 access weights are distinct from CD8 (helper access != cytotoxic access).",
+    "limitations": "No CD4 subtype / cytokine / count (all NOT_REPORTED / excluded)."
+  }
+}

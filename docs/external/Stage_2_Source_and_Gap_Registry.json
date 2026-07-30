@@ -1,0 +1,115 @@
+{
+  "dossier_version": "1.0",
+  "created_date": "2026-07-15",
+  "stage2_outcome": "PARTIALLY_SUFFICIENT_EVIDENCE",
+  "complete_nanoparticle_drug_profile_grade": "INSUFFICIENT_EVIDENCE",
+  "profiles": [
+    {
+      "id": "skin_niacinamide_vehicle_specific",
+      "api": "niacinamide",
+      "carrier": null,
+      "formulation": "source-defined topical vehicle",
+      "route": "topical",
+      "tissue": "human skin",
+      "status": "RESEARCH_SUPPORTED_SUBMODEL",
+      "supports": [
+        "released API permeation",
+        "vehicle effect",
+        "human skin IVIVC"
+      ],
+      "does_not_support": [
+        "nanoparticle release",
+        "carrier penetration",
+        "independent external validation"
+      ]
+    },
+    {
+      "id": "chen_2024_aunp_spheroid",
+      "api": null,
+      "carrier": "gold nanoparticle",
+      "sizes_nm": [
+        15,
+        22,
+        60
+      ],
+      "zeta_potential_mV_approx": -35,
+      "route": "in vitro incubation",
+      "tissue": "MDA-MB-231 tumor spheroid",
+      "status": "RESEARCH_SUPPORTED_CARRIER_BENCHMARK",
+      "supports": [
+        "intact carrier penetration",
+        "size-dependent pathway"
+      ],
+      "does_not_support": [
+        "API release",
+        "clinical tumor prediction"
+      ]
+    },
+    {
+      "id": "dreher_2006_dextran_tumor",
+      "api": null,
+      "carrier": "fluorescent dextran model macromolecule",
+      "route": "intravenous",
+      "tissue": "murine FaDu window-chamber tumor",
+      "status": "RESEARCH_SUPPORTED_VASCULAR_BENCHMARK",
+      "apparent_permeability_1e_minus_7_cm_s": {
+        "3.3_kDa": {
+          "median": 154,
+          "ci95": [
+            134,
+            174
+          ]
+        },
+        "10_kDa": {
+          "median": 32,
+          "ci95": [
+            24,
+            39
+          ]
+        },
+        "40_kDa": {
+          "median": 9.5,
+          "ci95": [
+            7.5,
+            11.4
+          ]
+        },
+        "70_kDa": {
+          "median": 9.8,
+          "ci95": [
+            7.1,
+            12.4
+          ]
+        },
+        "2_MDa": {
+          "median": 1.7,
+          "ci95": [
+            0.7,
+            2.6
+          ]
+        }
+      }
+    }
+  ],
+  "critical_gaps": [
+    "Exact nanoparticle formulation with both full release and local tissue data",
+    "Free-versus-encapsulated API measurements",
+    "Independent external validation",
+    "Route-relevant release assay",
+    "Supporting information/raw spatial profiles",
+    "Batch variability and uncertainty"
+  ],
+  "stage3_recommendation": {
+    "primary": "Implement released-API multilayer human-skin submodel with explicit warning that nanoparticle release is not yet supported",
+    "parallel_benchmarks": [
+      "Chen 2024 carrier spheroid",
+      "Dreher 2006 vascular macromolecule"
+    ],
+    "prohibited_claims": [
+      "qualified",
+      "clinical",
+      "patient-specific",
+      "complete nanoparticle drug model"
+    ]
+  }
+}

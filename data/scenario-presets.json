@@ -1,0 +1,9 @@
+{
+  "$schema_version": "0.1.0",
+  "description": "Scenario presets (docs/user-control-policy.md). EMPTY of values until sourced; structure only. Presets activate only where evidence exists.",
+  "presets": [
+    {"id":"skin_intact","tissue":"topical_skin","description":"intact barrier","parameters":null,"pending_full_text":true},
+    {"id":"skin_compromised","tissue":"topical_skin","description":"compromised barrier","parameters":null,"pending_full_text":true},
+    {"id":"tumor_baseline","tissue":"solid_tumor_local","description":"baseline microenvironment","parameters":null,"pending_full_text":true}
+  ]
+}

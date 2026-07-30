@@ -1,0 +1,26 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUALIZATION DIRECTOR PASS - design spec only, not implemented",
+  "purpose": "Reusable VISUAL-REFERENCE information an illustrator/3D artist reproduces per structure (geometry, silhouette, texture, membrane, nucleus, cytoplasm, proportions, translucency, layering, landmarks, defensible simplifications). No copyrighted artwork; design attributes only. Each ends with a representation recommendation + a final decision.",
+  "representation_enum": ["REALISTIC","STYLIZED","SCHEMATIC","LABEL_ONLY","HIDDEN"],
+  "decision_enum": ["IMPLEMENT","OPTIONAL","DEFER","DO_NOT_USE"],
+  "structures": [
+    {"id":"stratum_corneum","geometry":"stacked flattened plates (bricks) + thin interstitial mortar","silhouette":"horizontal lamellar band, densest at top","texture":"matte, keratin; lipid mortar slightly translucent","nucleus":"NONE (anucleate)","proportions":"thin dense band above viable epidermis","landmarks":"bricks-and-mortar; lipid lamellae lines","simplification":"3-6 representative brick rows, not literal 15-20 layers","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"viable_epidermis","geometry":"polygonal cells in graded layers (columnar basale -> flattening upward)","silhouette":"cobblestone band","texture":"soft cytoplasm; visible junctions","nucleus":"present, oval, basal cells nucleus-rich","proportions":"thicker than SC","landmarks":"basal palisade; desmosomal junctions","simplification":"2-3 grouped bands, labelled; no per-layer literalism","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"dermis","geometry":"open fibrous meshwork with sparse cells + vessels","silhouette":"looser, lighter band","texture":"fibrillar collagen bundles (intentional weave)","proportions":"deepest band shown","landmarks":"papillary loops, fibroblasts","simplification":"suggest fiber weave, not a dense scribble","representation":"SCHEMATIC","decision":"IMPLEMENT"},
+    {"id":"corneocyte","geometry":"flat hexagonal plate","texture":"matte keratin","nucleus":"NONE","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"keratinocyte","geometry":"polygonal, junction-connected","cytoplasm":"pale, granular","nucleus":"central oval","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"melanocyte","geometry":"small dendritic body at basale","texture":"fine dendrites","representation":"SCHEMATIC","decision":"OPTIONAL","note":"context only; label MURINE vs human appropriately"},
+    {"id":"melanoma_cell_B16","geometry":"rounded/spindle, loosely cohesive","texture":"optional melanin speckle","nucleus":"enlarged, prominent nucleolus (line property, murine)","representation":"STYLIZED","decision":"IMPLEMENT","note":"label murine B16BL6/B16F10; NOT human invasive-melanoma histology"},
+    {"id":"fibroblast","geometry":"spindle","representation":"SCHEMATIC","decision":"OPTIONAL"},
+    {"id":"dermal_vessel","geometry":"tube with endothelial lining + optional RBCs","representation":"SCHEMATIC","decision":"OPTIONAL","note":"dermis only; context; NO nanoparticle entry"},
+    {"id":"collagen_ecm","geometry":"aligned wavy bundles","texture":"fibrillar","representation":"SCHEMATIC","decision":"OPTIONAL","note":"intentional weave, not random noise"},
+    {"id":"basement_membrane","geometry":"thin continuous line at DEJ","representation":"SCHEMATIC","decision":"OPTIONAL"},
+    {"id":"nlc_nanoparticle","geometry":"smooth sphere (~85-90 nm class)","surface":"smooth (Chen TEM)","translucency":"semi -> shows encapsulated tint","landmarks":"charge halo (cationic warm / anionic cool / neutral grey) as ILLUSTRATIVE encoding","simplification":"uniform spheres, one size class (no 3 sizes)","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"free_api_celastrol","geometry":"small dots/glyphs (or 3Dmol.js structure, optional)","representation":"SCHEMATIC (dots) / REALISTIC (optional molecule)","decision":"IMPLEMENT (dots); OPTIONAL (molecule)"},
+    {"id":"formulation_reservoir","geometry":"thin translucent film/droplet on skin surface holding particles","representation":"STYLIZED","decision":"IMPLEMENT"},
+    {"id":"endoplasmic_reticulum_B2","geometry":"lacy perinuclear network","representation":"SCHEMATIC","decision":"OPTIONAL","note":"B2 ONLY"},
+    {"id":"immune_cells_B2","geometry":"dendritic cell (veiled) + T cell (small round)","representation":"SCHEMATIC","decision":"OPTIONAL","note":"B2 ICD scene ONLY"}
+  ],
+  "global_reference_rule": "Extract DESIGN attributes (geometry/silhouette/texture/proportion), never trace copyrighted artwork. Reference images (HPA CC BY, OpenStax CC BY, Wikimedia per-file) inform proportions/landmarks only."
+}

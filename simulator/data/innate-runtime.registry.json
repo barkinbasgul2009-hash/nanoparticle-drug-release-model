@@ -1,0 +1,38 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 3 innate immune runtime coefficients. Real deterministic computation of macrophage (continuum), NK, dendritic-cell, antigen-presentation, innate integration and adaptive-priming potential from validated upstream inputs (tumour visibility / antigen availability / immune accessibility / vascular access / treatment-induced damage) using the shared aggregation + confidence frameworks. All weights registry-driven; prediction-only; schematic normalized [0,1]. Availability-gated: a missing input yields UNAVAILABLE, never zero.",
+  "macrophage": {
+    "tumor_opposing_weights": { "tumor_immune_visibility": 0.4, "immune_accessibility": 0.3, "innate_activation_context": 0.3 },
+    "polarization_axis_note": "axis = tumor_opposing - tumor_supporting in [-1,1]; tumor_supporting = 1 - tumor_opposing (schematic complement)."
+  },
+  "nk": {
+    "available_weights": { "immune_accessibility": 0.5, "vascular_access": 0.5 },
+    "activation_weights": { "available": 0.5, "tumor_immune_visibility": 0.3, "damage": 0.2 },
+    "cytotoxic_weights": { "activation": 0.5, "functional_competence": 0.3, "available": 0.2 },
+    "suppression_reduction": 0.0
+  },
+  "dendritic": {
+    "available_weights": { "immune_accessibility": 0.5, "vascular_access": 0.5 },
+    "uptake_weights": { "antigen_availability": 0.5, "damage": 0.3, "available": 0.2 },
+    "maturation_weights": { "uptake": 0.5, "tumor_immune_visibility": 0.3, "available": 0.2 },
+    "presentation_weights": { "maturation": 0.5, "uptake": 0.3, "antigen_availability": 0.2 }
+  },
+  "antigen_presentation": { "effective_weights": { "dc_presentation": 0.7, "antigen_availability": 0.3 } },
+  "innate_integration": {
+    "readiness_weights": { "macrophage_tumor_opposing": 0.3, "nk_cytotoxic": 0.35, "dc_presentation": 0.35 },
+    "tumor_pressure_weights": { "nk_cytotoxic": 0.4, "macrophage_tumor_opposing": 0.3, "innate_readiness": 0.3 }
+  },
+  "adaptive_priming_potential": { "weights": { "dc_presentation": 0.4, "antigen_presentation_effective": 0.3, "tumor_immune_visibility": 0.2, "antigen_availability": 0.1 } },
+  "state_thresholds": {
+    "macrophage_polarization": { "tumor_supporting": -1.0, "mixed": -0.2, "tumor_opposing": 0.2 },
+    "nk_activation": { "resting": 0.0, "recruited": 0.25, "activated": 0.55 },
+    "dc_maturation": { "immature": 0.0, "antigen_loaded": 0.25, "maturing": 0.5, "mature": 0.75 }
+  },
+  "coefficient_policy": {
+    "valid_range": "every score in [0,1]; macrophage axis in [-1,1]",
+    "source": "general innate tumour-immunology biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "cytotoxic/presentation potentials are derived AFTER availability + activation, never assumed from availability alone; adaptive priming potential FEEDS Section 4.",
+    "limitations": "No macrophage/NK/DC count or marker; no cytokine level (all NOT_REPORTED)."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C innate-immunity structure: macrophages, natural killer (NK) cells, dendritic cells (DC). Macrophages use a CONTINUUM polarization tendency (never a binary M1/M2 switch). NK and DC separate availability / presence / activation / competence / suppression from net potential. Section 1 establishes the contract; calculation is a later section (UNAVAILABLE for now). Schematic normalized [0,1]; no cell count or marker level (NOT_REPORTED).",
+  "macrophage": {
+    "polarization_states": ["tumor_opposing", "mixed", "tumor_supporting", "indeterminate"],
+    "polarization_axis": { "range": "[-1,1]", "note": "-1 = strongly tumour-supporting, +1 = strongly tumour-opposing, 0 = mixed; signed continuum, not a binary switch." }
+  },
+  "nk": { "stages": ["available", "presence", "activation", "functional_competence", "suppression", "cytotoxic_potential"] },
+  "dendritic": { "stages": ["available", "antigen_uptake_potential", "maturation", "presentation_potential", "suppression"] },
+  "coefficient_policy": {
+    "valid_range": "normalized stages in [0,1]; macrophage polarization axis in [-1,1]",
+    "source": "general innate tumour-immunology biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "cytotoxic potential is derived AFTER availability/activation/suppression are established, never assumed from availability alone.",
+    "limitations": "No macrophage/NK/DC count or marker (all NOT_REPORTED)."
+  }
+}

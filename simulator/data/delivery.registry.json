@@ -1,0 +1,22 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B vascular delivery-modifier combination model. Combines perfusion efficiency, vascular permeability, vessel density, and vessel-maturity delivery efficiency into a single schematic drug-DELIVERY modifier + an ordinal delivery state. The delivery modifier influences EFFECTIVE drug arrival / extracellular availability / delivery opportunity ONLY - it NEVER modifies drug chemistry, drug release, protein interactions, or gene regulation. Schematic; no absolute delivery rate.",
+  "combination_weights": { "perfusion": 0.4, "permeability": 0.25, "vessel_density": 0.2, "maturity_efficiency": 0.15 },
+  "delivery_floor": 0.05,
+  "delivery_note": "delivery_modifier = clamp(weighted combination, delivery_floor, 1); 1 = unrestricted vascular delivery, lower = poorer delivery.",
+  "delivery_states": ["poor_delivery", "limited_delivery", "moderate_delivery", "good_delivery", "excellent_delivery"],
+  "state_thresholds": {
+    "poor_delivery": 0.25,
+    "limited_delivery": 0.45,
+    "moderate_delivery": 0.65,
+    "good_delivery": 0.82,
+    "thresholds_basis": "SCHEMATIC ordinal boundaries on the combined delivery modifier [0,1]; above good_delivery = excellent_delivery. NOT measured delivery fractions."
+  },
+  "stop_boundary": "vascular delivery modifies drug availability (effective drug arrival / extracellular availability / delivery opportunity)",
+  "excluded_downstream_processes": [
+    "immune_infiltration", "vegf_signalling", "hif_transcriptional_regulation", "vascular_inflammation",
+    "fibroblast_recruitment", "caf", "ecm_remodeling", "collagen_synthesis", "mmp", "lymphatics",
+    "metastasis", "invasion", "intravasation", "extravasation", "coagulation", "thrombosis",
+    "immune_trafficking", "endothelial_signalling_cascades"
+  ]
+}

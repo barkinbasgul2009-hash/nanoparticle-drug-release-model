@@ -1,0 +1,27 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A controlled re-sensitization model. Re-sensitization is the recovery of treatment sensitivity through an EXPLICIT transition (never assumed). Persistent resistance is NOT assumed irreversible, and acquired resistance does NOT always resolve - profile-specific rules decide. Ordinal states + triggers. Schematic; no real recovery time (NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "sensitivity_recovery in [0,1] (additive, bounded restoration of treatment sensitivity)",
+    "0_interpretation": "0 = no recovery",
+    "1_interpretation": "1 = full schematic recovery to baseline sensitivity the model represents",
+    "source": "general reversibility biology applied predictively (per-profile reversal rules)",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "recovery reduces the acquired/adaptive sensitivity-reduction through a bounded adapter; only via an explicit re-sensitization transition.",
+    "limitations": "No measured recovery time or reversion rate (all NOT_REPORTED)."
+  },
+  "states": {
+    "not_applicable": { "sensitivity_recovery": 0.0, "meaning": "No prior resistance to reverse." },
+    "not_observed":   { "sensitivity_recovery": 0.0, "meaning": "Prior resistance present; no reversal observed." },
+    "possible":       { "sensitivity_recovery": 0.1, "meaning": "Reversal plausible under supported triggers." },
+    "partial":        { "sensitivity_recovery": 0.4, "meaning": "Partial recovery of sensitivity." },
+    "substantial":    { "sensitivity_recovery": 0.7, "meaning": "Substantial recovery of sensitivity." },
+    "complete":       { "sensitivity_recovery": 1.0, "meaning": "Full recovery to baseline sensitivity." },
+    "unknown":        { "sensitivity_recovery": null, "evidence_level": "NOT_REPORTED", "meaning": "Reversal potential not reported." }
+  },
+  "triggers": ["treatment_withdrawal", "tolerance_resolution", "adaptive_state_decay", "profile_supported_reversal", "loss_of_microenvironment_protection", "reversal_of_pathway_adaptation"],
+  "rules": {
+    "requires_prior_resistance": "Re-sensitization requires a prior tolerant/adaptive/acquired state; validation rejects re-sensitization without prior resistance.",
+    "explicit_transition_only": "Sensitivity recovery occurs only through a recorded re-sensitization transition, never implicitly."
+  }
+}

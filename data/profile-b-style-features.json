@@ -1,0 +1,23 @@
+{
+  "$schema_version": "1.0",
+  "status": "VISUAL REFERENCE VALIDATION - documentation only",
+  "purpose": "Extracted biological VISUAL CHARACTERISTICS per structure (geometry, morphology, texture, density, spatial organization, visual hierarchy). Lighting-independent; NO stain colors inferred as biology. These are implementation-neutral specs an illustrator reproduces.",
+  "structures": [
+    {"structure":"stratum_corneum","geometry":"horizontal lamellar band; overlapping flat plates","morphology":"anucleate high-aspect plates; smooth edges","texture":"laminated","density":"dense (compact superficially)","spatial":"strong horizontal anisotropy, aligned","hierarchy":"dominant barrier band at top"},
+    {"structure":"lipid_lamellae","geometry":"parallel repeating bilayers between plates","morphology":"thin uniform bands","texture":"laminated/striated","density":"dense","spatial":"parallel, periodic","hierarchy":"subtle; visible only at high zoom"},
+    {"structure":"corneocyte","geometry":"flat polygon","morphology":"high aspect ratio, tile-like","texture":"matte/smooth","density":"packed","spatial":"overlapping, tiled","hierarchy":"defines SC texture"},
+    {"structure":"viable_epidermis","geometry":"graded polygonal layers (columnar->flattening)","morphology":"nucleated polygons; junctions","texture":"granular (granular layer)","density":"moderate-dense","spatial":"vertical polarity (basal palisade)","hierarchy":"cell environment band"},
+    {"structure":"keratinocyte","geometry":"polygon","morphology":"central oval nucleus; desmosomal outline","texture":"smooth cytoplasm","density":"packed sheet","spatial":"junction-connected","hierarchy":"primary epidermal cell"},
+    {"structure":"melanocyte","geometry":"small body + dendrites","morphology":"branching processes","texture":"fine","density":"sparse (minority basal)","spatial":"basal, interspersed","hierarchy":"subtle accent"},
+    {"structure":"melanoma_cell_B16","geometry":"rounded/spindle","morphology":"enlarged nucleus; optional pigment speckle; loosely cohesive","texture":"granular","density":"clustered","spatial":"nests + single cells","hierarchy":"disease target (murine label)"},
+    {"structure":"fibroblast","geometry":"spindle","morphology":"tapering processes; flat nucleus","texture":"smooth","density":"sparse","spatial":"aligned along collagen","hierarchy":"minor dermal accent"},
+    {"structure":"dermis","geometry":"open fibrous meshwork","morphology":"wavy bundles","texture":"fibrillar/reticular","density":"moderate (papillary) -> dense (reticular)","spatial":"interwoven, semi-aligned","hierarchy":"context band (recedes at low zoom)"},
+    {"structure":"collagen_I","geometry":"thick wavy bundles","morphology":"bundled fibrils","texture":"fibrillar","density":"dense (reticular dermis)","spatial":"interwoven","hierarchy":"dermis identity"},
+    {"structure":"basement_membrane","geometry":"thin undulating line","morphology":"continuous sheet at DEJ","texture":"smooth","density":"n/a","spatial":"horizontal boundary with rete ridges","hierarchy":"landmark line"},
+    {"structure":"dermal_vessel","geometry":"tube + lumen","morphology":"endothelial lining","texture":"smooth","density":"sparse","spatial":"papillary loops + deep plexus","hierarchy":"context only (no NP entry)"},
+    {"structure":"nlc_nanoparticle","geometry":"sphere","morphology":"smooth surface (Chen TEM); one ~85-90 nm class","texture":"smooth","density":"variable (dose)","spatial":"suspended/dispersing","hierarchy":"PROTAGONIST"},
+    {"structure":"free_api_celastrol","geometry":"point/dot (or molecule)","morphology":"small","texture":"n/a","density":"increases with release","spatial":"biased random walk","hierarchy":"secondary (released state)"},
+    {"structure":"endoplasmic_reticulum_B2","geometry":"lacy perinuclear network","morphology":"tubular/cisternal","texture":"reticular","density":"moderate","spatial":"perinuclear","hierarchy":"B2 target organelle"}
+  ],
+  "extraction_rules": ["describe biology only, never artistic style","no color from stains (H&E/trichrome/IF colors are lab artifacts)","observations are lighting-independent","density recorded as sparse/moderate/dense, never invented counts"]
+}

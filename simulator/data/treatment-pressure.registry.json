@@ -1,0 +1,37 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A treatment-pressure model. Treatment pressure is the selective + adaptive pressure exerted by EFFECTIVE treatment exposure and validated biological effect (stress / apoptosis from Phase 6). It is combined from component pressures into a bounded net_treatment_pressure and an ordinal state. CRITICAL: a high applied dose with negligible delivery must NOT create high intracellular treatment pressure - pressure depends on effective exposure and observed biological effect, never on applied amount. Schematic normalized values only.",
+  "coefficient_policy": {
+    "valid_range": "each component pressure and net_treatment_pressure in [0,1]",
+    "0_interpretation": "0 = no selective/adaptive pressure",
+    "1_interpretation": "1 = maximal schematic pressure the model represents",
+    "source": "normalized modeling abstraction over validated upstream effective-exposure + stress + apoptosis outputs",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "combination_weights are schematic; net pressure is a weighted, bounded combination - not a measured selection coefficient.",
+    "limitations": "No selection coefficient, kill rate, or growth-inhibition constant (all NOT_REPORTED)."
+  },
+  "pressure_states": {
+    "absent":     { "value": 0.0 },
+    "negligible": { "value": 0.1 },
+    "low":        { "value": 0.3 },
+    "moderate":   { "value": 0.55 },
+    "high":       { "value": 0.8 },
+    "very_high":  { "value": 0.95 }
+  },
+  "state_thresholds": { "negligible": 0.05, "low": 0.2, "moderate": 0.45, "high": 0.7, "very_high": 0.88 },
+  "combination_weights": {
+    "exposure_pressure": 0.25,
+    "cytotoxic_pressure": 0.2,
+    "stress_pressure": 0.15,
+    "apoptosis_pressure": 0.15,
+    "pathway_pressure": 0.1,
+    "duration_pressure": 0.1,
+    "cumulative_pressure": 0.05
+  },
+  "rules": {
+    "delivery_gated": "net_treatment_pressure is gated by effective exposure; when effective exposure is negligible, pressure is negligible regardless of applied amount.",
+    "selection_pressure_derived": "selection_pressure is a downstream reading of net pressure x differential sensitivity, computed in the selection-pressure registry, not summed here.",
+    "bounded": "net_treatment_pressure = clamp(weighted combination, 0, 1)."
+  }
+}

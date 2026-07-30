@@ -1,0 +1,49 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Profile-B stability evidence, graded by modelability (S0-S4 per task section 6.5). No fabricated timescales.",
+  "modelability_levels": {
+    "S0": "No usable stability evidence - animation must NOT show definitive aggregation/precipitation",
+    "S1": "Qualitative evidence - animation may show a risk state, NOT a precise onset time",
+    "S2": "Quantitative endpoint evidence (e.g. size/PDI before & after a defined period) - endpoint changes with explicit interpolation assumptions",
+    "S3": "Quantitative time-series evidence - time-dependent change within the measured domain",
+    "S4": "Independently replicated stability model"
+  },
+  "presets": [
+    {
+      "preset": "P1_chen2012_topical_nlc",
+      "evidence_opened": true,
+      "api_crystallization": {"level":"S1","evidence":"DSC: tripterine melting peaks (175.7/211.4 C) ABSENT in the NLC -> celastrol amorphous/molecularly dispersed -> low crystallization risk WITHIN the carrier","source":"chen-2012 DSC / crystallinity section"},
+      "colloidal_size_PDI_zeta_time_series": {"level":"S0","evidence":"NO size/PDI/zeta-vs-time data reported in the paper","note":"cannot model aggregation onset"},
+      "storage_stability": {"level":"S0-S1","evidence":"intro claims NLCs have 'limited drug leakage during storage' - GENERIC class claim, not a measured Chen time-series"},
+      "serum_biological_fluid_stability": {"level":"S0","evidence":"not investigated (topical study)"},
+      "freeze_thaw_lyophilization": {"level":"S0","evidence":"not investigated"},
+      "net": "S1 for API-crystallization risk (amorphous); S0 for colloidal aggregation/precipitation timing. Animation may show a stable dispersion + a qualitative post-release precipitation-RISK cue, but NOT a deterministic aggregation/precipitation clock."
+    },
+    {
+      "preset": "P2_celastrol_indomethacin_nlc",
+      "evidence_opened": false,
+      "note": "search mentions storage stability assessed; VALUES UNVERIFIED. Level pending full text (potentially S2 if before/after size/PDI reported)."
+    },
+    {
+      "preset": "P4_celastrol_HA_redox_micelle_breast",
+      "evidence_opened": false,
+      "note": "search mentions 'storage stability assessment' in QC; VALUES UNVERIFIED. Level pending full text."
+    },
+    {
+      "preset": "P3_celastrol_plga_peg_ER_melanoma",
+      "evidence_opened": false,
+      "note": "stability not characterized in search snippet; pending full text."
+    },
+    {
+      "preset": "P5_celastrol_mixed_micelle_4T1",
+      "evidence_opened": false,
+      "note": "pending full text."
+    }
+  ],
+  "general_celastrol_stability": {
+    "chemical_instability": "celastrol is chemically unstable under aqueous/physiological/oxidative conditions (consensus reviews PMC7751759, PMC10904542) - qualitative, NOT time-resolved here",
+    "beta_CD_complex": "SBE-betaCD complexation reported to reduce degradation (S1_celastrol_beta_cyclodextrin) - values UNVERIFIED",
+    "implication": "released celastrol degradation is a real RISK; without compatible time-series it stays a qualitative warning, not a modeled rate"
+  },
+  "overall_conclusion": "No Profile-B preset currently has S3 (time-series) colloidal-stability or precipitation data opened in this project. Precise time-to-aggregation / time-to-precipitation CANNOT be modeled. Only qualitative risk states (S1) and the amorphous-state crystallization argument are supported."
+}

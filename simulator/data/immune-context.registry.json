@@ -1,0 +1,58 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C immune-microenvironment context profiles per species + tumour model. Each profile names the immune domains that context SUPPORTS and its baseline immune posture. The frozen package has NO direct immune dataset for this tripterine-NLC context (Chen 2012 measured antimelanoma RESPONSE, not immune infiltration / checkpoint / cytotoxicity), so every active profile is a LABELLED prediction (general tumour-immunology biology) or NOT_REPORTED - never experimental. Species/model/formulation are strictly isolated; no silent transfer. NOTE (Part 1 - Section 1): this section establishes CONTRACTS only; the immune biology is populated in later sections, so a resolved profile still yields UNAVAILABLE component outputs (structurally valid, explicitly labelled) until then. No immune-cell count / expression level / cytokine concentration is stated (all NOT_REPORTED).",
+  "registry_bundle_version": "7C.1.0",
+  "profiles": {
+    "mouse_b16bl6_immune": {
+      "profile_id": "mouse_b16bl6_immune",
+      "species": "mouse", "tumour_model": "B16BL6",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "immune_available": true, "default_runtime": true,
+      "baseline_immune_posture": "moderately_immunosuppressive_predicted",
+      "supported_domains": ["tumor_visibility", "innate_immunity", "antigen_presentation", "adaptive_immunity", "checkpoint", "immune_suppression", "immune_escape", "immune_effect"],
+      "confidence": "LOW",
+      "uncertainty": "B16BL6 melanoma is generally regarded as poorly immunogenic / immunosuppressive; this posture is inferred from general tumour-immunology biology, not measured for this tripterine-NLC context. All immune values schematic; Section 1 exposes them as UNAVAILABLE (biology pending later sections).",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "evidence_refs": ["im_b16bl6_posture"],
+      "limitations": "No immune-cell count / checkpoint expression / cytokine level / cytotoxic rate (all NOT_REPORTED). Not a clinical immunotherapy predictor.",
+      "excluded_processes": ["b_cell", "antibody", "complement", "cytokine_kinetics", "lymph_node", "cart", "checkpoint_inhibitor_treatment", "clinical_response", "metastasis", "autoimmunity"]
+    },
+    "human_skin_immune": {
+      "profile_id": "human_skin_immune",
+      "species": "human", "tumour_model": "human_skin_melanoma_predictive",
+      "drug": "tripterine (celastrol)", "formulation": "cationic_nlc",
+      "immune_available": true, "predictive_exploratory": true, "default_shown": false,
+      "baseline_immune_posture": "heterogeneous_predicted",
+      "supported_domains": ["tumor_visibility", "innate_immunity", "antigen_presentation", "adaptive_immunity", "checkpoint", "immune_suppression", "immune_escape", "immune_effect"],
+      "confidence": "LOW",
+      "uncertainty": "A PREDICTIVE, exploratory human immune microenvironment with its OWN distinct posture - NOT copied from mouse. Not validated for human clinical immune response; abstract only.",
+      "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+      "human_translation_warning": "This immune microenvironment is a mechanistic, exploratory prediction and is not validated for human clinical immune response, immunotherapy, or outcome.",
+      "evidence_refs": ["im_human_posture"],
+      "limitations": "Predictive only; no human immune measurement; all values schematic (NOT_REPORTED quantitatively).",
+      "excluded_processes": ["b_cell", "antibody", "complement", "cytokine_kinetics", "lymph_node", "cart", "checkpoint_inhibitor_treatment", "clinical_response", "metastasis", "autoimmunity"]
+    },
+    "rat_skin_immune": {
+      "profile_id": "rat_skin_immune",
+      "species": "rat", "tumour_model": "none",
+      "drug": "tripterine (celastrol)", "formulation": "vehicle_control",
+      "immune_available": false,
+      "supported_domains": [],
+      "confidence": "LOW",
+      "uncertainty": "Rat data support skin permeation only; no rat tumour immune dataset. No immune microenvironment is generated from skin-permeation evidence alone.",
+      "evidence_level": "NOT_REPORTED", "prediction_level": "NOT_REPORTED",
+      "evidence_refs": [],
+      "reason": "no rat tumour immune evidence -> NOT_REPORTED",
+      "limitations": "Not modelled.",
+      "excluded_processes": ["all_immune_biology"]
+    }
+  },
+  "context_rules": {
+    "read_only_upstream": "Phase 7C reads validated tumour / apoptosis / Phase-7A microenvironment / Phase-7B vascular outputs READ-ONLY; it mutates nothing upstream.",
+    "publishes_immutable_output": "Phase 7C publishes a versioned immutable ImmuneFrame; Phase 8A consumes it READ-ONLY and mutates nothing here.",
+    "species_isolation": "Mouse / human / rat immune profiles are strictly isolated; a cross-species use requires a CROSS_SPECIES_PREDICTION.",
+    "no_experimental_tier": "Immune relationships are labelled predictions; there is no experimental immune tier for this context.",
+    "not_reported_stays": "Rat stays NOT_REPORTED; human is a labelled predictive-exploratory mode.",
+    "section1_foundational": "Section 1 establishes contracts; component outputs are UNAVAILABLE until later sections populate the biology."
+  }
+}

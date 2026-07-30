@@ -1,0 +1,54 @@
+{
+  "$schema_version": "1.0",
+  "status": "DESIGN BLUEPRINT - not implemented",
+  "purpose": "Complete asset inventory for the Profile-B animation system. classification: REUSE (existing/open asset), PROCEDURAL (generated in code), DYNAMIC (parameter-driven at runtime). Licenses noted for sourced assets; only permissive/attribution licenses recommended.",
+  "classification_enum": ["REUSE","PROCEDURAL","DYNAMIC"],
+  "asset_groups": {
+    "anatomical": [
+      {"asset":"human body (semi-transparent, layered)","class":"REUSE","source":"Z-Anatomy (CC BY-SA 4.0) / BodyParts3D (DBCLS)","use":"orientation frame for B2 systemic context only; NOT required for B1 topical","note":"attribution + share-alike required; keep as a simplified low-poly glTF for web weight"},
+      {"asset":"skin layer block (stratum corneum / epidermis / dermis)","class":"PROCEDURAL","source":"code (layered slab with 0-30/30-60/60-90 um bands)","use":"B1 primary scene","note":"bands map to Chen depth sections"},
+      {"asset":"skin microvasculature","class":"PROCEDURAL","source":"code","use":"CONTEXTUAL only (B1) - NOT a quantified extravasation path","note":"greyed/illustrative"},
+      {"asset":"tumor tissue mass","class":"PROCEDURAL","source":"code","use":"B1 local melanoma, B2 tumor","note":"cell-cluster, no quantified geometry"},
+      {"asset":"intestinal 3D tissue model (EpiIntestinal-style)","class":"PROCEDURAL","source":"code","use":"B3 comparator panel context"},
+      {"asset":"endoplasmic reticulum (cell organelle)","class":"PROCEDURAL","source":"code","use":"B2 ER-targeting scene"}
+    ],
+    "cells": [
+      {"asset":"HaCaT keratinocyte","class":"PROCEDURAL","source":"code (sprite/mesh)","use":"B1 uptake assay scene"},
+      {"asset":"B16BL6 / B16F10 melanoma cell","class":"PROCEDURAL","source":"code","use":"B1 (B16BL6) & B2 (B16F10)"},
+      {"asset":"dendritic cell","class":"PROCEDURAL","source":"code","use":"B2 ICD immune-activation (abstract)"},
+      {"asset":"CD8+ T cell","class":"PROCEDURAL","source":"code","use":"B2 ICD (abstract)"},
+      {"asset":"generic cell membrane + lipid bilayer","class":"PROCEDURAL","source":"code","use":"uptake scenes"}
+    ],
+    "particles_molecules": [
+      {"asset":"NLC nanoparticle (spherical, ~85-90 nm, smooth)","class":"DYNAMIC","source":"code (instanced spheres; charge tint by config)","use":"B1","note":"morphology per Chen TEM (spherical, smooth)"},
+      {"asset":"ER-targeting PLGA/DSPE-PEG nanoparticle (TSE-CEL/NP)","class":"DYNAMIC","source":"code","use":"B2","note":"no size label (NOT REPORTED)"},
+      {"asset":"celastrol drug molecule","class":"REUSE","source":"3Dmol.js (BSD) from PubChem SDF, OR a simple sprite","use":"released-drug depiction","note":"molecular structure optional; not scientifically load-bearing"},
+      {"asset":"SBE-betaCD inclusion complex glyph","class":"PROCEDURAL","source":"code","use":"B3 comparator (molecular complex, NOT a nanoparticle)"}
+    ],
+    "effects": [
+      {"asset":"release emission (drug leaving carrier)","class":"DYNAMIC","source":"code particle system","use":"B1 qualitative sustained release","note":"eased, unlabelled - no curve"},
+      {"asset":"uptake-intensity glow (ordinal by charge)","class":"DYNAMIC","source":"code","use":"B1","note":"ordinal ranking only"},
+      {"asset":"ER-stress / signal-release burst","class":"DYNAMIC","source":"code","use":"B2 abstract"},
+      {"asset":"tumor-cell reduction (fade/apoptosis cue)","class":"DYNAMIC","source":"code","use":"B1/B2 endpoint","note":"qualitative, no % "}
+    ],
+    "ui_overlays": [
+      {"asset":"evidence badges + info notes","class":"DYNAMIC","source":"code (from data/profile-b-animation-info-panels.json)","use":"all scenes"},
+      {"asset":"'what is NOT shown' tray","class":"DYNAMIC","source":"code","use":"all presets"},
+      {"asset":"stage progress rail / timeline","class":"PROCEDURAL","source":"code","use":"all"},
+      {"asset":"UI micro-animations / icons","class":"REUSE","source":"Lottie (free, open) or Rive (free plan)","use":"buttons, transitions","note":"optional; keep self-contained/inlined"},
+      {"asset":"labels / callouts / leader lines","class":"PROCEDURAL","source":"code (SVG/HTML overlay)","use":"all"}
+    ],
+    "cinematography": [
+      {"asset":"camera paths (skin dive; cell zoom; ER close-up)","class":"PROCEDURAL","source":"code (keyframed camera)","use":"scene transitions"},
+      {"asset":"microscope/scale transitions (macro->tissue->cell->organelle)","class":"PROCEDURAL","source":"code","use":"scale changes","note":"label scale at each step; never imply equal rates"},
+      {"asset":"lighting rig","class":"PROCEDURAL","source":"code (three-point / soft)","use":"3D scenes"}
+    ]
+  },
+  "reuse_vs_build_summary": {
+    "reuse": ["Z-Anatomy body (B2 context only)","3Dmol.js celastrol molecule (optional)","Lottie/Rive UI micro-animations (optional)"],
+    "procedural": ["skin slab + depth bands","cells","organelles","labels","camera","lighting","transitions"],
+    "dynamic": ["nanoparticles","release emission","uptake glow","effect cues","evidence overlays"],
+    "rationale": "Profile-B V1 is mostly PROCEDURAL/DYNAMIC because the science is schematic (depth bands, ordinal uptake, qualitative release) - procedural assets stay self-contained (GitHub-Pages friendly), lightweight, and fully controllable by evidence gates. Heavy anatomical meshes are reused only where a systemic body frame adds orientation (B2)."
+  },
+  "licensing_rules": ["prefer permissive (BSD/MIT) or attribution (CC BY / CC BY-SA) assets","record attribution + share-alike obligations","keep the deployed page self-contained (inline/bundle assets; no external CDN at runtime, matching the existing tool's constraints)"]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 immune-escape runtime coefficients. Escape = the integrated outcome in which tumour cells avoid/resist/outlast otherwise-available immune pressure (DISTINCT from suppression, which is inhibitory pressure on immune function). Represented as MULTIPLE explicit dimensions (recognition / access / priming / effector / checkpoint-mediated / suppression-mediated / exhaustion-mediated / persistence) rather than one opaque score. Escape CONSUMES upstream blocked-potential records rather than re-applying raw penalties (no double counting). Magnitude and persistence are kept SEPARATE. No genetic adaptation / clonal evolution / acquired resistance here (that is Phase 8A). Prediction-only; schematic [0,1].",
+  "dimension_weights": {
+    "recognition_escape": { "low_tumor_visibility": 0.35, "low_antigen_availability": 0.3, "poor_antigen_presentation": 0.2, "weak_target_engagement": 0.15 },
+    "access_escape":      { "poor_immune_accessibility": 0.35, "poor_vascular_access": 0.25, "weak_recruitment": 0.2, "weak_infiltration": 0.2 },
+    "priming_escape":     { "poor_dc_effectiveness": 0.25, "poor_antigen_presentation": 0.2, "low_adaptive_priming": 0.2, "ctla4_priming_inhibition": 0.2, "failed_cd8_priming": 0.15 },
+    "effector_escape":    { "weak_effector_competence": 0.3, "poor_target_engagement": 0.25, "low_cytotoxic_potential": 0.2, "insufficient_cd4_support": 0.15, "blocked_cd8_potential": 0.1 },
+    "checkpoint_escape":  { "pd_axis_engagement": 0.5, "ctla4_pressure": 0.3, "checkpoint_persistence": 0.2 },
+    "suppression_escape": { "treg_suppressive_competence": 0.35, "integrated_suppression": 0.4, "poor_recovery_potential": 0.25 },
+    "exhaustion_escape":  { "exhaustion_severity": 0.4, "exhaustion_duration": 0.25, "recurrent_exhaustion": 0.2, "residual_blocked_cd8": 0.15 }
+  },
+  "overall_weights": {
+    "recognition_escape": 0.15, "access_escape": 0.15, "priming_escape": 0.15, "effector_escape": 0.15,
+    "checkpoint_escape": 0.15, "suppression_escape": 0.15, "exhaustion_escape": 0.1
+  },
+  "magnitude_states": { "NONE": 0.0, "MINIMAL": 0.1, "LOW": 0.25, "MODERATE": 0.45, "HIGH": 0.65, "SEVERE": 0.85 },
+  "persistence": {
+    "states": ["NONE", "TRANSIENT", "EMERGING", "ESTABLISHED", "PERSISTENT", "RECURRENT"],
+    "activation_threshold": 0.4, "deactivation_threshold": 0.25,
+    "min_residence_frames": 2, "min_recovery_frames": 2, "persistence_window_frames": 3, "decay_rate": 0.12,
+    "note": "persistence is a SEPARATE temporal state from magnitude; exhaustion-mediated escape requires temporal persistence (not a single frame)."
+  },
+  "coefficient_policy": {
+    "valid_range": "every dimension + overall score in [0,1]",
+    "source": "general tumour immune-evasion biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "escape dimensions consume blocked-potential ledgers where an upstream penalty already applied; the overall score is a shared-aggregation combination, never an undocumented shortcut.",
+    "limitations": "No genetic escape / mutation inferred (excluded); microenvironmental + functional abstraction only."
+  }
+}

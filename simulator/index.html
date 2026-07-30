@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile-B Simulator - Foundation (Phase 1)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 system-ui, sans-serif; }
+    header { padding: 10px 14px; border-bottom: 1px solid #8884; }
+    header h1 { margin: 0; font-size: 15px; }
+    header p { margin: 2px 0 0; opacity: .7; font-size: 12px; }
+    .sim-layout { display: grid; gap: 8px; padding: 10px;
+      grid-template-columns: 220px 1fr 260px;
+      grid-template-areas:
+        "nav main evidence"
+        "nav main citation"
+        "legend timeline debug"
+        "info info info"; }
+    #panel-navigation { grid-area: nav; }
+    #panel-mainView { grid-area: main; min-height: 320px; }
+    #panel-evidence { grid-area: evidence; }
+    #panel-citation { grid-area: citation; }
+    #panel-legend { grid-area: legend; }
+    #panel-timeline { grid-area: timeline; }
+    #panel-debug { grid-area: debug; }
+    #panel-information { grid-area: info; }
+    .sim-panel { border: 1px solid #8884; border-radius: 6px; padding: 8px 10px; min-height: 60px; }
+    .sim-panel__title { margin: 0 0 4px; font-size: 12px; letter-spacing: .02em; text-transform: uppercase; opacity: .75; }
+    .sim-panel__body { font-size: 13px; opacity: .8; }
+    footer { padding: 8px 14px; border-top: 1px solid #8884; font-size: 12px; opacity: .7; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Profile-B Simulator - Foundation</h1>
+    <p>Phase 1: infrastructure only. Zero biological rendering, zero particles, zero animation.</p>
+  </header>
+
+  <main id="sim-root" class="sim-layout">
+    <div id="panel-navigation"></div>
+    <div id="panel-mainView"></div>
+    <div id="panel-evidence"></div>
+    <div id="panel-citation"></div>
+    <div id="panel-legend"></div>
+    <div id="panel-timeline"></div>
+    <div id="panel-debug"></div>
+    <div id="panel-information"></div>
+  </main>
+
+  <footer>
+    Foundation build. Open the console and inspect <code>window.__SIM__</code> for loaded
+    presets, citations, scale levels, camera descriptor, and app state.
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

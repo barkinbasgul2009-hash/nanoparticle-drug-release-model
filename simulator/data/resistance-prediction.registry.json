@@ -1,0 +1,70 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistance prediction records. Prediction is enabled ONLY as an evidence-aware mechanistic fallback (relative tendencies + expected direction), NEVER as Phase-8C forecasting. Each record documents the assumptions required to RUN Phase 8A - it never fabricates mutation identity, resistance probability, resistant-cell count, time-to-resistance, fold-resistance, or IC50 shift. Allowed labels are enumerated in prediction_labels.",
+  "prediction_labels": ["MECHANISTIC_PREDICTION", "CROSS_SPECIES_PREDICTION", "CROSS_TUMOR_PREDICTION", "FORMULATION_PREDICTION", "RESISTANCE_MECHANISM_PREDICTION", "PERSISTENCE_PREDICTION", "REVERSIBILITY_PREDICTION", "EVIDENCE_GAP", "NOT_REPORTED", "UNAVAILABLE", "UNSUPPORTED"],
+  "prediction_records": {
+    "pred_re_b16bl6": {
+      "prediction_id": "pred_re_b16bl6",
+      "prediction_type": "MECHANISTIC_PREDICTION",
+      "source_context": "general tumour drug-resistance biology + verified B16BL6 tripterine-NLC treatment context (Chen 2012, response only)",
+      "target_context": "mouse_b16bl6_resistance",
+      "species_transfer": "none (mouse -> mouse)",
+      "tumor_transfer": "none (B16BL6 -> B16BL6)",
+      "formulation_transfer": "none (cationic_nlc -> cationic_nlc)",
+      "mechanistic_basis": "Sustained effective treatment pressure on a heterogeneous melanoma population can enrich reversible drug-tolerant / adaptively resistant survivors; persistence requires additional temporal criteria. Applied predictively; no direct resistance dataset.",
+      "supporting_evidence_ids": ["re_b16bl6_baseline", "re_b16bl6_context_chen2012"],
+      "assumptions": ["resistance is time-dependent, not a binary flag", "tolerance/adaptive reversible by default", "selection redistributes fractions without inventing mechanisms", "immune-associated resistance UNAVAILABLE (no Phase 7C)"],
+      "expected_direction": "resistant/tolerant fraction may rise under sustained pressure and partially reverse on washout; treatment-sensitivity modifier decreases then partially recovers",
+      "predicted_state": "reversible tolerance/adaptive tendency; acquired resistance only under met persistence criteria",
+      "confidence": "LOW",
+      "uncertainty": "Relative tendencies + direction only; all quantities NOT_REPORTED.",
+      "falsifiability_statement": "A longitudinal B16BL6 tripterine-NLC study showing NO tolerance/adaptive enrichment under sustained effective exposure, or fully irreversible resistance after a single exposure, would contradict this prediction.",
+      "limitations": "Not a measured resistance trajectory; schematic ordinal + normalized only.",
+      "status": "MECHANISTIC_PREDICTION",
+      "may_show_by_default": true
+    },
+    "pred_re_human": {
+      "prediction_id": "pred_re_human",
+      "prediction_type": "MECHANISTIC_PREDICTION",
+      "source_context": "general tumour drug-resistance biology (human skin melanoma, exploratory)",
+      "target_context": "human_skin_resistance",
+      "species_transfer": "none (human context defined with own distinct values, not transferred from mouse)",
+      "tumor_transfer": "none",
+      "formulation_transfer": "none",
+      "mechanistic_basis": "Human skin melanoma is predicted to show heterogeneous baseline sensitivity and reversible adaptive tendencies; exploratory only.",
+      "supporting_evidence_ids": ["re_human_baseline"],
+      "assumptions": ["own distinct values (not copied from mouse)", "not validated for human clinical response", "immune-associated resistance UNAVAILABLE"],
+      "expected_direction": "qualitatively similar reversible tendencies to mouse but with independent values and higher uncertainty",
+      "predicted_state": "reversible tolerance/adaptive tendency (exploratory)",
+      "confidence": "LOW",
+      "uncertainty": "Entirely predictive; all quantities NOT_REPORTED; not shown by default.",
+      "falsifiability_statement": "Any validated human dataset contradicting reversible adaptive tendency for this context would falsify this exploratory prediction.",
+      "limitations": "Exploratory; mandated non-clinical warning; not shown by default.",
+      "status": "MECHANISTIC_PREDICTION",
+      "may_show_by_default": false
+    },
+    "pred_re_immune_unavailable": {
+      "prediction_id": "pred_re_immune_unavailable",
+      "prediction_type": "UNAVAILABLE",
+      "source_context": "Phase-7C immune microenvironment (not implemented)",
+      "target_context": "immune_associated_resistance",
+      "species_transfer": "n/a", "tumor_transfer": "n/a", "formulation_transfer": "n/a",
+      "mechanistic_basis": "Immune-associated resistance would consume immutable Phase-7C outputs; Phase 7C does not exist in this build.",
+      "supporting_evidence_ids": [],
+      "assumptions": ["no immune output to consume"],
+      "expected_direction": "n/a",
+      "predicted_state": "UNAVAILABLE",
+      "confidence": "LOW",
+      "uncertainty": "Immune contribution cannot be evaluated without Phase 7C.",
+      "falsifiability_statement": "n/a (component unavailable).",
+      "limitations": "Blocked on Phase 7C; contributes zero to resistance burden and is labelled UNAVAILABLE (not a predicted/measured zero).",
+      "status": "UNAVAILABLE",
+      "may_show_by_default": false
+    }
+  },
+  "policy": {
+    "no_forecasting": "These records describe assumptions required to run Phase 8A; they are NOT Phase-8C prospective forecasting, probability, or ranking.",
+    "never_fabricate": "No mutation identity/frequency, resistance probability, resistant-cell count, time-to-resistance, fold-resistance, IC50 shift, clinical progression, or treatment failure is produced.",
+    "prediction_distinguishable": "Every predicted mechanism is programmatically distinguishable from an evidence-supported one (there are none here) via its prediction label."
+  }
+}

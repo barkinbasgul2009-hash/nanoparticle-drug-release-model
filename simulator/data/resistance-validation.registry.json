@@ -1,0 +1,58 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A resistance validation architecture. Enumerates the conditions the resistance state validator must reject and the critical biological invariants it must preserve. Part 1 defines this architecture; comprehensive test implementation continues in Part 2. The engine's validate() implements the structural subset of these rules over the loaded registries and the current runtime state.",
+  "must_reject": [
+    "negative_subpopulation_fraction",
+    "fraction_greater_than_one",
+    "non_normalized_population_state",
+    "unsupported_resistance_mechanism",
+    "unsupported_species_transfer",
+    "unsupported_tumor_transfer",
+    "unsupported_formulation_transfer",
+    "unlabeled_prediction",
+    "persistent_resistance_without_persistence_criteria",
+    "acquired_resistance_after_insufficient_exposure",
+    "active_tolerance_with_no_viable_survivor_context",
+    "selection_with_no_differential_sensitivity",
+    "resistant_enrichment_with_no_treatment_or_supported_baseline_process",
+    "re_sensitization_without_prior_resistance",
+    "washout_transition_during_active_uninterrupted_exposure",
+    "incompatible_mechanism_and_adapter",
+    "exact_quantitative_value_without_units",
+    "predicted_value_presented_as_measured",
+    "direct_mutation_of_frozen_previous_phase_state",
+    "circular_engine_dependency",
+    "direct_tumor_burden_mutation_by_resistance_engine",
+    "illegal_state_machine_transition",
+    "unbounded_modifier",
+    "naive_unbounded_burden_sum"
+  ],
+  "critical_invariants": {
+    "1_no_resistance_from_survival_alone": "Resistance cannot be inferred solely from survival.",
+    "2_delivery_failure_is_not_acquired_resistance": "Weak response from poor delivery must not become acquired resistance.",
+    "3_tolerance_distinct_from_persistent": "Drug tolerance stays distinguishable from persistent resistance.",
+    "4_adaptive_distinct_from_intrinsic": "Adaptive resistance stays distinguishable from intrinsic resistance.",
+    "5_selection_alters_composition_only": "Selection alters composition rather than inventing a mechanism.",
+    "6_acquired_needs_temporal_or_labelled_prediction": "Acquired resistance requires temporal evidence or an explicitly labelled prediction.",
+    "7_enrichment_not_burden": "Resistant-fraction enrichment does not necessarily imply increased absolute tumour burden.",
+    "8_burden_down_resistance_up": "Tumour burden may decline while resistant fraction rises.",
+    "9_resensitization_explicit_only": "Re-sensitization occurs only through an explicit transition.",
+    "10_no_overwrite_previous_engine": "No resistance mechanism directly overwrites previous engine values.",
+    "11_every_modifier_bounded": "Every modifier is bounded to [0,1].",
+    "12_prediction_distinguishable": "Every predicted mechanism stays visibly + programmatically distinguishable from evidence-supported mechanisms."
+  },
+  "population_invariant": {
+    "components": ["sensitive_fraction", "tolerant_fraction", "adaptive_resistant_fraction", "persistent_resistant_fraction", "unclassified_fraction"],
+    "sum": 1.0, "tolerance": 0.0001, "non_negative": true, "max_fraction": 1.0
+  },
+  "double_counting_protections": [
+    "delivery_failure_not_also_intrinsic_resistance",
+    "apoptosis_reduction_applied_once",
+    "microenvironment_protection_not_double_counted_with_effective_exposure",
+    "immune_escape_not_duplicated",
+    "tolerant_and_adaptive_not_same_cells_unless_overlap_supported",
+    "selection_not_also_cytotoxic_loss",
+    "burden_not_naive_sum_of_correlated_mechanisms"
+  ],
+  "notes": "Part-1 validate() covers: registry integrity, evidence-level labelling, prediction labelling, population-fraction invariant, bounded modifiers, legal state-machine transitions, species/rat isolation, and the immune-UNAVAILABLE rule. Remaining behavioural rejections (temporal acquired-resistance, washout-during-exposure, double-counting) get dedicated tests in Part 2."
+}

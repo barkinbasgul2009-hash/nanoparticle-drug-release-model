@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A hypoxia states + the PASSIVE modifiers hypoxia applies: penetration, drug-effectiveness, cell-stress susceptibility, and prediction confidence. Hypoxia does NOT directly activate signalling pathways in Phase 7A (that belongs to later phases). Schematic ordinal severity (0-1); no absolute oxygen concentration.",
+  "hypoxia_states": {
+    "normoxic": { "severity": 0.0,  "penetration_modifier": 1.0,  "drug_effectiveness_modifier": 1.0,  "stress_susceptibility": 0.0,  "prediction_confidence": "MEDIUM" },
+    "mild":     { "severity": 0.3,  "penetration_modifier": 0.9,  "drug_effectiveness_modifier": 0.9,  "stress_susceptibility": 0.15, "prediction_confidence": "LOW" },
+    "moderate": { "severity": 0.6,  "penetration_modifier": 0.75, "drug_effectiveness_modifier": 0.7,  "stress_susceptibility": 0.35, "prediction_confidence": "LOW" },
+    "severe":   { "severity": 0.85, "penetration_modifier": 0.55, "drug_effectiveness_modifier": 0.5,  "stress_susceptibility": 0.55, "prediction_confidence": "LOW" }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Hypoxia is a passive modifier only; it does not activate HIF-1a / signalling in Phase 7A."
+}

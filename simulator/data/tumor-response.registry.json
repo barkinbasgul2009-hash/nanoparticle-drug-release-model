@@ -1,0 +1,45 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-6D tumour treatment-response STATE vocabulary + burden semantics + response thresholds. A SCHEMATIC virtual tumour-cell burden (normalized 0-1 relative to a simulation baseline of 1.0) and a treatment-response trajectory. Burden is NEVER a real tumour volume (mm3) / diameter / weight / cellularity / RECIST measurement. The simulator STOPS at the schematic response trajectory; no clinical / survival / patient outcome is represented.",
+  "burden_semantics": {
+    "normalized": "Relative tumour burden is normalized and schematic unless primary quantitative data are explicitly loaded (none are).",
+    "baseline_reference": 1.0,
+    "lower_bound": 0.0,
+    "upper_bound": 1.5,
+    "no_negative": "Burden never goes below lower_bound; reaching lower_bound is NOT a clinical cure - prefer minimal_residual_burden.",
+    "viable_apoptotic_terminal": "normalized_viable_burden + normalized_apoptotic_burden (+ terminal) partition the current burden; viable = current_burden * population living fraction (schematic coupling)."
+  },
+  "response_states": [
+    { "id": "untreated_growth", "description": "No treatment applied; schematic baseline growth (control reference)." },
+    { "id": "treatment_started", "description": "A treatment event has begun." },
+    { "id": "growth_continues", "description": "Net growth pressure still positive under treatment." },
+    { "id": "growth_slowed", "description": "Growth pressure reduced but net still non-negative." },
+    { "id": "stable_burden", "description": "Growth and loss pressure roughly balanced; burden ~ constant." },
+    { "id": "partial_regression", "description": "Loss pressure exceeds growth; burden gradually declining." },
+    { "id": "strong_regression", "description": "Sustained strong net loss; burden declining faster." },
+    { "id": "minimal_residual_burden", "description": "Burden at a low schematic plateau (NOT a cure)." },
+    { "id": "treatment_ended", "description": "Treatment discontinued." },
+    { "id": "rebound_possible", "description": "Surviving viable fraction remains after treatment stop (prediction-ready)." },
+    { "id": "rebound_in_progress", "description": "Growth pressure recovering; burden rising again." },
+    { "id": "stable_post_treatment", "description": "Post-treatment burden roughly stable." },
+    { "id": "unresolved", "description": "Trajectory did not resolve within the schematic window." }
+  ],
+  "idle_states": ["idle", "not_reported", "unavailable"],
+  "forbidden_states": ["complete_response", "clinical_remission", "cure"],
+  "response_thresholds": {
+    "net_growth_epsilon": 0.02,
+    "regression_net_loss": -0.04,
+    "strong_regression_net_loss": -0.09,
+    "minimal_residual_burden_level": 0.15,
+    "rebound_net_growth": 0.03,
+    "stable_dwell_hours": 2.0,
+    "thresholds_basis": "SCHEMATIC ordinal boundaries on the normalized net growth pressure and burden. NOT measured growth constants, kill coefficients, or % tumour-growth inhibition."
+  },
+  "stop_boundary": "schematic tumour-response trajectory (growth / stabilization / regression / rebound state) + normalized burden",
+  "excluded_downstream_processes": [
+    "clinical_response", "RECIST", "patient_outcome", "survival", "recurrence_probability", "cure",
+    "metastasis", "invasion", "angiogenesis", "vascular_remodelling", "immune_recruitment", "immune_clearance",
+    "lymphatics", "systemic_circulation", "organ_distribution", "PBPK", "clinical_pharmacokinetics",
+    "toxicity", "adverse_event", "therapeutic_index", "dose_recommendation", "personalized_medicine", "clinical_decision_support"
+  ]
+}

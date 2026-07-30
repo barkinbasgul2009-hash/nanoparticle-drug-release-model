@@ -1,0 +1,29 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A persistence criteria for acquired resistance. Every acquired-resistance profile must define explicit persistence REQUIREMENTS before a state may be treated as persistent. If persistence information is unavailable it is NOT fabricated - it is labelled NOT_REPORTED and uncertainty is raised. Persistence is never implied merely because a state was previously active. Schematic thresholds only; no real durations (NOT_REPORTED).",
+  "coefficient_policy": {
+    "valid_range": "minimum_exposure_stages is a non-negative integer count of validated simulation stages; sustained_state_duration_stages likewise",
+    "source": "general persister/acquired-resistance biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION",
+    "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "thresholds gate whether an ESTABLISHED state may persist across washout; they are schematic stage counts, not real time.",
+    "limitations": "No real washout time, half-life, or reversion rate is stated (all NOT_REPORTED)."
+  },
+  "persistence_requirements": {
+    "minimum_exposure_stages": 2,
+    "sustained_state_duration_stages": 2,
+    "washout_persistence_required": true,
+    "rechallenge_response_reduction_required": false,
+    "stable_population_enrichment_required": true,
+    "mechanism_persistence_required": true,
+    "evidence_supported_irreversibility_or_partial": true
+  },
+  "persistence_result_vocabulary": [
+    "REVERSIBLE", "PARTIALLY_REVERSIBLE", "PERSISTENT", "NOT_REPORTED", "MECHANISTIC_PREDICTION_REQUIRED"
+  ],
+  "rules": {
+    "no_fabrication": "If persistence data are unavailable, persistence = NOT_REPORTED; a MECHANISTIC_PREDICTION is used only when explicitly justified and always raises uncertainty.",
+    "no_implicit_irreversibility": "No state is permanent solely because it was previously active; persistence requires meeting the requirements above.",
+    "washout_gate": "washout_persistence_required means a state that resolves during washout is NOT persistent."
+  }
+}

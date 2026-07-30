@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7B vascular permeability as ORDINAL states only. Abstracts the leakiness of tumour vessels (EPR-style) - NO endothelial junction modelling, NO pore-size calculations. Schematic 0-1 value per state.",
+  "permeability_states": {
+    "low":       { "value": 0.2 },
+    "moderate":  { "value": 0.45 },
+    "high":      { "value": 0.7 },
+    "very_high": { "value": 0.9 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Abstracted permeability only; no junction / pore-size model (NOT_REPORTED)."
+}

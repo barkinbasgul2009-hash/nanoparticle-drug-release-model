@@ -1,0 +1,29 @@
+{
+  "$schema_version": "1.0",
+  "status": "BIOLOGICAL VISUALIZATION BLUEPRINT - design only",
+  "purpose": "Biological/histological asset inventory (extends data/profile-b-animation-asset-inventory.json). classification REUSE/PROCEDURAL/CUSTOM_ILLUSTRATION/REFERENCE_ONLY; format 2D_SVG/3D_MESH/PROCEDURAL/RASTER_REFERENCE; license recorded. Every asset has a scene + priority.",
+  "assets": [
+    {"asset":"whole-body orientation (topical site)","class":"REUSE/PROCEDURAL","format":"3D_MESH (simplified) or 2D_SVG","source":"Z-Anatomy CC BY-SA / procedural","scenes":["S1"],"priority":"low (B1 needs only a skin site)"},
+    {"asset":"skin cross-section (SC/epidermis/dermis)","class":"PROCEDURAL","format":"2D_SVG / shader","source":"in-code (ref: OpenStax CC BY)","scenes":["S3","S4","S5"],"priority":"high"},
+    {"asset":"corneocyte + lipid lamellae","class":"PROCEDURAL","format":"2D_SVG","source":"in-code (ref: TEM SC ultrastructure)","scenes":["S3"],"priority":"high","note":"anucleate"},
+    {"asset":"keratinocyte (tissue + HaCaT inset)","class":"PROCEDURAL","format":"2D_SVG/sprite","source":"in-code (ref: OpenStax, HPA CC BY)","scenes":["S5","S6"],"priority":"high"},
+    {"asset":"melanocyte (basal, dendritic)","class":"PROCEDURAL","format":"2D_SVG","source":"in-code (ref: OpenStax)","scenes":["S5"],"priority":"medium"},
+    {"asset":"B16BL6/B16F10 melanoma cell","class":"PROCEDURAL","format":"2D_SVG/sprite","source":"in-code (ref: ATCC CRL-6475 morphology)","scenes":["S6","S7","B2"],"priority":"high","note":"murine; pigment optional"},
+    {"asset":"fibroblast","class":"PROCEDURAL","format":"2D_SVG","source":"in-code","scenes":["S5 dermis context"],"priority":"low"},
+    {"asset":"endothelial cell / dermal vessel","class":"PROCEDURAL","format":"2D_SVG","source":"in-code","scenes":["S3-S5 context"],"priority":"low","note":"dermis only; no NP entry"},
+    {"asset":"collagen bundles / basement membrane","class":"PROCEDURAL","format":"2D_SVG","source":"in-code (intentional fibrillar pattern)","scenes":["S3-S5"],"priority":"medium"},
+    {"asset":"NLC nanoparticle (~85-90 nm)","class":"DYNAMIC/PROCEDURAL","format":"2D_SVG/instanced","source":"in-code","scenes":["S2-S6"],"priority":"high"},
+    {"asset":"free celastrol/tripterine molecule","class":"REUSE (optional)","format":"3Dmol.js (BSD) from PubChem, or glyph","source":"PubChem PD / 3Dmol.js BSD","scenes":["S3+ released API"],"priority":"low"},
+    {"asset":"endoplasmic reticulum (B2 only)","class":"PROCEDURAL","format":"2D_SVG","source":"in-code","scenes":["B2 ER"],"priority":"medium"},
+    {"asset":"dendritic cell / CD8+ T cell (B2 only)","class":"PROCEDURAL","format":"2D_SVG","source":"in-code","scenes":["B2 ICD"],"priority":"medium"},
+    {"asset":"EpiIntestinal comparator glyph (B3)","class":"PROCEDURAL","format":"2D_SVG","source":"in-code","scenes":["B3 panel"],"priority":"low"},
+    {"asset":"labels / legends / callouts / confidence badges","class":"PROCEDURAL","format":"HTML/SVG","source":"in-code (from info-panels + confidence registries)","scenes":["all"],"priority":"high"},
+    {"asset":"histology/microscopy REFERENCE images","class":"REFERENCE_ONLY","format":"RASTER_REFERENCE","source":"HPA (CC BY), OpenStax (CC BY), Wikimedia (per-file), NCI/NIH (PD)","scenes":["design reference"],"priority":"medium","note":"design reference to inform illustration; verify each license before any embedding; DermNet/textbook = principles only"}
+  ],
+  "priority_summary": {
+    "high": ["skin cross-section","corneocyte/lamellae","keratinocyte","melanoma cell","NLC particle","labels/legends/badges"],
+    "medium": ["melanocyte","collagen/BM","ER (B2)","immune cells (B2)","reference images"],
+    "low": ["whole body","fibroblast","vessels","celastrol molecule","EpiIntestinal glyph"]
+  },
+  "licensing_rules": ["prefer CC BY / CC BY-SA / public domain / BSD/MIT","record attribution + share-alike per asset","keep deployed page self-contained (bundle/inline; no runtime CDN)","reference-only images are NOT embedded unless license verified"]
+}

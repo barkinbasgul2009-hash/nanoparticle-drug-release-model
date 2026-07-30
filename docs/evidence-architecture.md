@@ -1,0 +1,85 @@
+# Evidence Architecture (modular)
+
+Stage 2 replaces the previous **all-or-nothing** candidate logic (which blocked a
+whole profile unless one paper supplied the entire chain) with a **modular**
+architecture: each profile is decomposed into modules (A–T), and **every module and
+parameter carries its own evidence label** (`data/evidence-labels.json`).
+
+## Why
+Real nanoparticle DDS evidence is modular: formulation, release, tissue transport,
+environment, PK, and validation typically come from different papers. Absence of a
+single perfect end-to-end validated dataset does **not** mean there is no useful,
+defensible model — it means the model is a transparent composite with per-module
+grades.
+
+## Component labels (module/parameter level)
+DIRECT_EXACT · DIRECT_PARTIAL · API_SPECIFIC · CARRIER_SPECIFIC · TISSUE_SPECIFIC ·
+MECHANISTIC_TRANSFER · BENCHMARK · CALIBRATED · INFERRED · ASSUMED ·
+ILLUSTRATIVE_COUPLING · EXTERNALLY_VALIDATED · UNVERIFIED_SECONDARY ·
+INSUFFICIENT_EVIDENCE.
+
+## Profile levels
+LEVEL 0 ILLUSTRATIVE_ONLY → LEVEL 1 MECHANISTIC_BENCHMARK → LEVEL 2
+RESEARCH_SUPPORTED_SUBMODEL → LEVEL 3 RESEARCH_SUPPORTED_COMPOSITE → LEVEL 4
+FORMULATION_SPECIFIC_CALIBRATED → LEVEL 5 EXTERNALLY_VALIDATED → LEVEL 6
+CLINICALLY_QUALIFIED.
+
+## Stage-3 rule
+Stage 3 may proceed with LEVEL 1–4 profiles **if** limitations are explicit and
+unsupported outputs are disabled/labelled. **Block the unsupported claim/output, not
+the whole profile.** Every cross-study bridge is recorded explicitly in
+`evidence-bridge-tables.md`; every parameter in `data/parameter-provenance.json`.
+
+## Non-combination rule (unchanged)
+Distinct systems (skin released-API · AuNP spheroid carrier · dextran vascular ·
+liposomal/protein clinical NPs) are **never silently merged**. Any transfer is an
+explicit, labelled bridge with a stated mismatch and uncertainty direction.
+
+## Simulator per-layer evidence vocabularies (additive)
+The isolated `simulator/` build layers additive, per-phase evidence vocabularies on top of
+this architecture (each new array leaves all earlier arrays unchanged): transport
+`EVIDENCE_LEVELS`; signal `SIGNAL_EVIDENCE_LEVELS`; gene `GENE_EVIDENCE_LEVELS`; translation
+`TRANSLATION_EVIDENCE_LEVELS`; protein function `FUNCTION_EVIDENCE_LEVELS`; apoptosis
+`APOPTOSIS_EVIDENCE_LEVELS` (11 tiers, incl. `CONTEXT_TRANSFER_PREDICTION`); and — Phase 6C —
+`POPULATION_EVIDENCE_LEVELS` (8 tiers). The population vocabulary deliberately has **no
+experimental tier**: the frozen package holds no measured population composition, so a
+population relationship is only ever a labelled prediction (`MECHANISTIC_PREDICTION` /
+`CONTEXT_TRANSFER_PREDICTION`) or `NOT_REPORTED`. The non-combination rule is enforced at the
+cell-model level too: population behaviour never transfers across cell models without an
+explicit `CONTEXT_TRANSFER_PREDICTION` record (validator-enforced), and `NOT_REPORTED`
+single-cell contexts (HaCaT, rat) yield `NOT_REPORTED` populations — no human/rat fallback.
+The simulator stops at population composition; tumour / survival / clinical outcome stays
+`NOT_EVALUATED`. See `population-prediction-policy.md` and `population-evidence-review.md`.
+
+Phase 6D adds `TUMOR_EVIDENCE_LEVELS` (11 tiers, incl. `EXPERIMENTAL_TUMOUR_MODEL_SPECIFIC`).
+This layer **does** have an experimental tier: the frozen package contains a verified in vivo
+antimelanoma PD study (Chen 2012, `chen-2012-tripterine-nlc`, doi:10.2147/IJN.S32476, B16BL6),
+which supports treatment **direction** and surface-charge formulation **ranking** (cationic >
+anionic/neutral; NLC > free) — qualitatively only; every exact tumour value stays `NOT_REPORTED`
+(the trajectory shape is a labelled `MECHANISTIC_PREDICTION`). The non-combination rule holds at
+the cell-model level: B16 / B16BL6 / B16-F10 tumour evidence is never merged without an explicit
+`CONTEXT_TRANSFER_PREDICTION`; **no human EXPERIMENTAL label** is derived from mouse data (human is
+`UNAVAILABLE`, predictive-exploratory only), and **rat has no tumour fallback** (`NOT_REPORTED`).
+The simulator stops at the schematic treatment-response trajectory; clinical / RECIST / survival /
+metastasis / immune / PK stay `NOT_EVALUATED`. See `tumor-response-evidence-review.md`,
+`tumor-prediction-framework.md`, and `tumor-context-transfer-policy.md`.
+
+Phase 7A adds `MICROENVIRONMENT_EVIDENCE_LEVELS` (8 tiers) for the passive tumour
+microenvironment. Like the population layer, it has **no experimental tier**: the frozen package
+holds no direct TME characterization for this context, so every active microenvironment value is a
+labelled prediction (general tumour-ECM / hypoxia biology) or `NOT_REPORTED`. The non-combination
+rule holds at the species level — mouse / human / rat passive environments are isolated (human
+carries its own distinct values, not copied from mouse; a cross-species reuse requires a
+`CONTEXT_TRANSFER_PREDICTION`), and rat stays `NOT_REPORTED`. The layer only **modifies** drug
+penetration; it stops at the penetration modifier, with immune / vascular / remodeling / metastasis
+`NOT_EVALUATED`. See `microenvironment-evidence-review.md`, `microenvironment-prediction-policy.md`.
+
+Phase 7B adds `VASCULAR_EVIDENCE_LEVELS` (8 tiers) for the active tumour vasculature. Like the
+population and passive-microenvironment layers, it has **no experimental tier**: the frozen package
+holds no direct tumour-vasculature characterization for this context, so every active vascular
+value is a labelled prediction (general tumour-vasculature biology) or `NOT_REPORTED`. Species are
+isolated (human carries its own distinct states, not copied from mouse; a cross-species reuse
+requires a `CONTEXT_TRANSFER_PREDICTION`), and rat has no available vasculature (`NOT_REPORTED`, no
+fallback). The layer only **modifies** drug delivery; it stops at the delivery modifier, with immune
+/ VEGF / HIF / metastasis `NOT_EVALUATED`. See `vascular-evidence-review.md`,
+`vascular-prediction-policy.md`.

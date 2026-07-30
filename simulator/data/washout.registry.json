@@ -1,0 +1,24 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-8A washout abstraction: ordinal recovery-interval stages after treatment withdrawal. Washout drives tolerance/adaptive-state resolution and is a prerequisite for testing persistence (a state that resolves during washout is NOT persistent). Real-world durations are NOT defined without evidence - stages are ordinal simulation-stage abstractions only.",
+  "coefficient_policy": {
+    "valid_range": "relative_recovery in [0,1] (schematic recovery progress)",
+    "0_interpretation": "0 = no washout (treatment ongoing)",
+    "1_interpretation": "1 = maximal schematic recovery the extended-washout stage represents",
+    "source": "general treatment-withdrawal recovery biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "relative_recovery scales tolerance/adaptive resolution; it does not by itself remove persistent resistance.",
+    "limitations": "No real washout duration (hours/days) is defined (NOT_REPORTED)."
+  },
+  "stages": {
+    "no_washout":           { "relative_recovery": 0.0, "meaning": "Treatment ongoing / no recovery interval." },
+    "early_washout":        { "relative_recovery": 0.25, "meaning": "Early recovery interval after withdrawal." },
+    "intermediate_washout": { "relative_recovery": 0.55, "meaning": "Intermediate recovery interval." },
+    "extended_washout":     { "relative_recovery": 0.85, "meaning": "Extended recovery interval; persistence testable." }
+  },
+  "ordered_stages": ["no_washout", "early_washout", "intermediate_washout", "extended_washout"],
+  "rules": {
+    "no_washout_during_exposure": "A washout transition is illegal during active uninterrupted exposure (validation rejects it).",
+    "persistence_gate": "Only a state surviving extended_washout may be evaluated as persistent."
+  }
+}

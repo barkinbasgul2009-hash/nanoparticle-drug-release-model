@@ -1,0 +1,35 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7C Section 4 final adaptive + net immune integration coefficients. Combines innate + CD8 + CD4 + Treg + checkpoint + integrated suppression + immune escape into adaptive readiness / activation / effector competence / effective cytotoxic potential / persistence / recovery / burdens / blocked potential, then the net immune layer (readiness, competence, net immune-mediated tumour-loss potential, blocked immune potential, immune control + failure states). Uses the Section-2 aggregation framework only (no ad-hoc math). Escape is applied to effective cytotoxic potential ONLY where its causes were not already applied (ledger-gated). Net tumour-loss is a POTENTIAL - it never mutates tumour burden. Prediction-only; schematic [0,1].",
+  "adaptive_weights": {
+    "readiness":  { "adaptive_priming": 0.2, "cd8_priming": 0.2, "cd4_priming": 0.15, "antigen_presentation": 0.15, "immune_accessibility": 0.15, "cd8_infiltration": 0.15 },
+    "activation": { "cd8_activation": 0.4, "cd4_activation": 0.2, "cd4_activation_support": 0.15, "prior_adaptive_activation": 0.05, "checkpoint_burden": -0.1, "suppression_burden": -0.1 },
+    "effector_competence": { "cd8_effector_competence": 0.4, "cd4_helper_competence": 0.15, "cd4_support": 0.15, "recovery_potential": 0.1, "dysfunction": -0.1, "exhaustion": -0.1 },
+    "effective_cytotoxic": { "cd8_cytotoxic_potential": 0.5, "target_engagement": 0.2, "cd4_support": 0.15, "escape_applied": -0.15 },
+    "persistence": { "adaptive_activation": 0.3, "cd4_persistence_support": 0.25, "recovery_potential": 0.2, "checkpoint_persistence": -0.15, "suppression_persistence": -0.1 },
+    "recovery": { "cd8_recovery_potential": 0.4, "cd4_recovery_support": 0.2, "residual_accessibility": 0.15, "residual_antigen_presentation": 0.15, "exhaustion_severity": -0.1 }
+  },
+  "blocked_categories": ["priming", "recruitment", "infiltration", "activation", "helper", "checkpoint", "regulatory", "dysfunction", "exhaustion", "target_engagement"],
+  "net_immune_weights": {
+    "readiness": { "innate_readiness": 0.4, "adaptive_readiness": 0.6 },
+    "competence": { "innate_competence": 0.35, "adaptive_effector_competence": 0.65 },
+    "net_tumor_loss": {
+      "innate_tumor_pressure": 0.2, "nk_cytotoxic_potential": 0.15, "macrophage_tumor_opposing": 0.1,
+      "adaptive_effective_cytotoxic": 0.35, "target_engagement": 0.1, "immune_accessibility": 0.1,
+      "suppression_burden": -0.2, "checkpoint_burden": -0.15, "exhaustion": -0.15, "immune_escape": -0.25
+    }
+  },
+  "control_state_thresholds": { "NO_CONTROL": 0.0, "WEAK_CONTROL": 0.15, "PARTIAL_CONTROL": 0.35, "FUNCTIONAL_CONTROL": 0.6, "STRONG_CONTROL": 0.8 },
+  "failure_state_thresholds": { "NONE": 0.0, "EMERGING": 0.2, "PARTIAL": 0.4, "SUBSTANTIAL": 0.6, "DOMINANT": 0.8 },
+  "failure_weights": { "immune_escape": 0.4, "suppression_burden": 0.25, "checkpoint_burden": 0.2, "blocked_immune_potential": 0.15 },
+  "control_escape_dampening": 0.5,
+  "control_escape_dampening_note": "SCIENTIFIC_COEFFICIENT: fraction by which overall immune-escape pressure dampens realized immune control (controlValue = netTumorLoss * (1 - escapePressure * this)). In [0,1]; higher escape never improves control.",
+  "control_note": "immune control considers realized immune pressure AND escape burden; control + failure are NOT exact inverses (a mixed state may exist). Neither infers tumour elimination.",
+  "coefficient_policy": {
+    "valid_range": "every output in [0,1]; signed weights denote applied penalties within a bounded aggregation",
+    "source": "general integrated tumour-immunology biology applied predictively",
+    "evidence_level": "MECHANISTIC_PREDICTION", "prediction_level": "MECHANISTIC_PREDICTION",
+    "sensitivity_note": "net tumour-loss is a POTENTIAL published for a downstream tumour engine; Phase 7C never mutates tumour state.",
+    "limitations": "No absolute tumour-cell kill count / rate (NOT_REPORTED)."
+  }
+}

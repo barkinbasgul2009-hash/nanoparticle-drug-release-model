@@ -1,0 +1,12 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Phase-7A mechanical barrier as ORDINAL states only. No Young's modulus, no absolute pressure units, no interstitial fluid pressure value. A schematic barrier score (0-1) per ordinal state, used as a passive penetration-resistance contribution.",
+  "barrier_states": {
+    "soft":         { "score": 0.15 },
+    "moderate":     { "score": 0.4 },
+    "dense":        { "score": 0.7 },
+    "highly_dense": { "score": 0.9 }
+  },
+  "evidence_level": "MECHANISTIC_PREDICTION",
+  "note": "Ordinal stiffness only; no modulus / pressure value (NOT_REPORTED)."
+}

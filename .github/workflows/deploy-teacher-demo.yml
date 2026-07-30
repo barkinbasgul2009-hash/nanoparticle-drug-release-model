@@ -1,0 +1,98 @@
+name: Deploy Phase 7C Teacher Demo
+
+# MANUAL-ONLY deployment of the Phase-7C immune-runtime teacher demo
+# (simulator/teacher-demo.html) to the repository's single GitHub Pages site.
+#
+# This is SEPARATE from the main site workflow (.github/workflows/pages.yml), which
+# is left untouched. The repo has ONE Pages site, so running this workflow TEMPORARILY
+# replaces the currently deployed content with the teacher demo. Re-run the main
+# "Deploy web tool to GitHub Pages" workflow (from main) afterwards to restore the
+# original site — see the restore steps in the task report.
+#
+# It never triggers on push (so ordinary stage2 commits do not redeploy), never
+# merges PR #3, never pushes to main, and changes no biological code / registries.
+
+on:
+  # MANUAL ONLY.
+  #
+  # This used to also fire on pushes to the stage2 branch, from a time when that branch was not
+  # merging and workflow_dispatch was unavailable for a workflow absent from the default branch.
+  # That trigger is now actively dangerous: this workflow REPLACES the single Pages site with the
+  # teacher demo, so any stage2 push touching simulator/src/** would silently take the main site
+  # down and put the demo up in its place. Once this branch merges, the workflow lives on the
+  # default branch and workflow_dispatch works from the Actions tab, which is what it should have
+  # been all along.
+  #
+  # Nothing else about this workflow changed. Running it still replaces the live site with the
+  # teacher demo; re-run "Deploy web tool to GitHub Pages" from main afterwards to restore.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Serialize Pages deployments; do not cancel an in-progress run.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout stage2/deep-scientific-evidence-review
+        uses: actions/checkout@v4
+        with:
+          ref: stage2/deep-scientific-evidence-review
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Prepare _site artifact (animated web tool at root + simulator immune demo)
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/simulator
+          # ROOT = the animated web tool (Nanoparticle Journey + Release comparison +
+          # Tissue penetration + Animated Tissue View). Self-contained single file.
+          cp web/index.html _site/index.html
+          cp web/.nojekyll  _site/.nojekyll 2>/dev/null || touch _site/.nojekyll
+          # Also ship the Phase-7C immune-runtime demo (imports ./src/**, fetches ./data/**),
+          # reachable at /simulator/teacher-demo.html.
+          cp -R simulator/src  _site/simulator/src
+          cp -R simulator/data _site/simulator/data
+          cp    simulator/teacher-demo.html _site/simulator/teacher-demo.html
+
+      - name: Verify the artifact dependency graph (fail early on any missing/escaping file)
+        run: node simulator/tools/verify-teacher-demo-site.mjs _site
+
+      - name: Print artifact tree (demo-relevant)
+        run: |
+          echo "Directories:"; find _site -maxdepth 3 -type d | sort
+          echo "Total files: $(find _site -type f | wc -l)"
+          test -f _site/index.html
+          test -f _site/simulator/teacher-demo.html
+          test -d _site/simulator/src
+          test -d _site/simulator/data
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload _site as the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
