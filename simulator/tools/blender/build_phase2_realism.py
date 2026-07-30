@@ -899,9 +899,9 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
                           grip=grip_solution, thumb_oppose=thumb)
         R.key_pose_bones(armature, R.finger_bone_names(R.APPLYING), frame)
 
-    def relaxed_key(frame: int, matrix: Matrix, relax: float):
+    def relaxed_key(frame: int, matrix: Matrix, relax: float, rest_floor: float = 0.0):
         R.key_control(controls[R.APPLYING]["hand"], frame, matrix)
-        R.relaxed_hand(armature, R.APPLYING, axes_r, relax)
+        R.relaxed_hand(armature, R.APPLYING, axes_r, relax, rest_floor=rest_floor)
         R.key_pose_bones(armature, R.finger_bone_names(R.APPLYING), frame)
 
     tray_hand = hand_from_tube(tray_tube)
@@ -980,6 +980,12 @@ def author_animation(armature: bpy.types.Object, body: bpy.types.Object, tube: b
         (E["sequenceEnd"], Matrix.Translation(rest_wrist_r + Vector((0.02, -0.06, -0.01))) @ rest_basis_r.to_4x4(), 0.33),
     ]
     for frame, matrix, relax in application:
+        # `rest_floor` is deliberately left at 0. relaxed_hand can impose a natural resting hand
+        # shape, but measurement says it belongs to the contact lock rather than here: the splayed
+        # claw visible at the approach is the TREATED hand, and it is splayed because curling and
+        # adducting it drives it further into the shirt it is already 72 mm inside (-72.1 -> -76.8 mm
+        # measured). Fixing the shape and fixing the garment clearance are one job, and it is not
+        # this one.
         relaxed_key(frame, matrix, relax)
 
     R.smooth_all_fcurves(armature.animation_data.action)

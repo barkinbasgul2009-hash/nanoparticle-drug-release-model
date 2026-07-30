@@ -91,9 +91,24 @@ than kept.
 
 ## 7. Why this is still blocked
 
-**The hand-approach pose is a splayed claw.** `motion/captures/04-hand-approach.png` shows the
-fingers spread wide with the thumb extended and visibly elongated. Whatever the velocity curves say,
-that is not a hand reaching to spread cream.
+**The hand-approach pose is a splayed claw — and it is the TREATED hand, not the applying one.**
+`motion/captures/04-hand-approach.png` shows fingers spread wide, nearly straight, with the thumb
+extended. The first reading of this frame attributed it to the applying hand; anchoring a camera on
+`hand_l` (`collision-evidence` companion capture) shows it is the treated hand, which is also the
+hand pressed against the shirt.
+
+That distinction decides who owns the fix. The hand is splayed because this rig's rest hand is a flat
+modelling pose and the pose scales everything by a small `amount`, so at the values the approach uses
+each joint receives about 4 degrees. Giving it a natural resting shape was implemented and measured:
+adduction plus curl plus thumb opposition takes treated-hand-to-garment clearance from **-72.1 mm to
+-76.8 mm**, because curling and adducting a hand that is already inside the shirt drives it further
+in. The claw and the garment penetration are one problem, and it belongs to the contact and collision
+lock, which is still separately blocked.
+
+`relaxed_hand` keeps the mechanism (`RESTING_ADDUCTION`, `RESTING_CURL`, `RESTING_THUMB_*`, gated by
+`rest_floor`) with the gate at zero, so the shipped asset is byte-identical to the build these videos
+were rendered from. Shipping it enabled would have changed the asset without changing anything a
+viewer sees, and invalidated the evidence.
 
 **The stroke frames cannot be visually accepted because the limbs fuse.**
 `motion/captures/06-stroke-one.png` shows the applying hand and the treated forearm merging into one

@@ -410,26 +410,54 @@ def set_finger_pose(armature: bpy.types.Object, side: str, axes: dict, close: fl
     )
 
 
-def relaxed_hand(armature: bpy.types.Object, side: str, axes: dict, amount: float = 1.0) -> None:
-    """The treated hand must not be left in bind pose (ss12). A real hand rests with a soft cascade."""
+#: A resting hand's fingers lie TOGETHER, and its thumb does not stand out straight.
+#:
+#: These are floors, applied whatever `amount` is, and they exist because this rig's rest hand is a
+#: flat splayed palm -- a MakeHuman modelling pose, not a resting one. Scaling everything by `amount`
+#: means that at the small values the approach uses (0.26) each joint gets about 4 degrees, the pose
+#: is essentially the rest pose, and what reaches the screen is the rig's own splay plus a thumb
+#: sticking straight out. Reviewed at the hand-approach frame that reads as a claw with an elongated
+#: thumb, which is what blocked the previous pass.
+RESTING_ADDUCTION = 0.20       # radians pulling each finger back towards the midline
+RESTING_THUMB_OPPOSE = 0.55    # radians of thumb opposition even in the loosest pose
+RESTING_THUMB_FLEX = 0.80      # radians spread over the thumb chain, so it curves rather than points
+RESTING_CURL = 0.75            # radians of total flexion a hand carries even when doing nothing
+
+
+def relaxed_hand(armature: bpy.types.Object, side: str, axes: dict, amount: float = 1.0,
+                 rest_floor: float = 0.0) -> None:
+    """The treated hand must not be left in bind pose (ss12). A real hand rests with a soft cascade.
+
+    `rest_floor` scales the resting adduction and thumb floors, and it defaults to OFF because those
+    floors are only correct in mid-air. Applied everywhere they cost collision clearance -- the more
+    adducted, more curled fingers reach further, and measurement put hand-to-forearm contact at
+    -24.5 mm instead of -21.2 mm and treated-hand-to-garment at -76.8 mm instead of -72.1 mm. So they
+    are enabled for the travel waypoints, where the hand is in open air and the claw was visible, and
+    left off wherever the hand is against something.
+    """
     cascade = {"index": 0.26, "middle": 0.31, "ring": 0.36, "pinky": 0.42}
     for name in FINGERS:
         total = cascade[name] * amount
         for seg, share in joint_share(name).items():
             pb = armature.pose.bones[f"{name}_{seg}_{side}"]
             pb.rotation_mode = "QUATERNION"
-            q = Quaternion(axes[f"{name}_{seg}_{side}"]["flex"], total * share * 3.0)
+            q = Quaternion(axes[f"{name}_{seg}_{side}"]["flex"],
+                           (total * 3.0 + RESTING_CURL * rest_floor) * share)
             if seg == "01":
-                q = q @ Quaternion(axes[f"{name}_01_{side}"]["abduct"],
-                                   FINGER_TUNING[name]["spread"] * 0.8 * amount)
+                # spread fans the fingers apart; the adduction floor closes the whole fan towards
+                # the middle finger so they rest side by side instead of splayed
+                spread = (FINGER_TUNING[name]["spread"] * 0.8 * amount
+                          - RESTING_ADDUCTION * rest_floor)
+                q = q @ Quaternion(axes[f"{name}_01_{side}"]["abduct"], spread)
             pb.rotation_quaternion = q
     for seg, flex in (("01", 0.16), ("02", 0.22), ("03", 0.18)):
         pb = armature.pose.bones[f"thumb_{seg}_{side}"]
         pb.rotation_mode = "QUATERNION"
         ax = axes[f"thumb_{seg}_{side}"]
-        q = Quaternion(ax["flex"], flex * amount)
+        share = {"01": 0.18, "02": 0.46, "03": 0.36}[seg]
+        q = Quaternion(ax["flex"], flex * amount + RESTING_THUMB_FLEX * share * rest_floor)
         if seg == "01":
-            q = Quaternion(ax["oppose"], 0.30 * amount) @ q
+            q = Quaternion(ax["oppose"], 0.30 * amount + RESTING_THUMB_OPPOSE * rest_floor) @ q
         pb.rotation_quaternion = q
 
 

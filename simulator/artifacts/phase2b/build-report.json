@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "blenderVersion": "4.5.12 LTS",
-  "buildSeconds": 210.6,
+  "buildSeconds": 302.9,
   "originalChecksum": "6114fceafe6c4840c225eec98bc57eaf622886ed168d9d4b1cf4d09fa4415b7e",
   "originalChecksumUnchanged": true,
   "outputs": {
@@ -355,7 +355,7 @@
     "schemaVersion": 1,
     "assetVersion": "2b.1.0+6114fceafe6c",
     "asset": "human_application_baked.glb",
-    "generatedAtUtc": "2026-07-29T20:03:04Z",
+    "generatedAtUtc": "2026-07-30T07:05:04Z",
     "clip": {
       "name": "phase2_application",
       "fps": 30,
@@ -539,7 +539,7 @@
     "[phase2b] collision resolution: NOT APPLIED (see --resolve-collisions and collision-report.md)",
     "[phase2b] baked pose: 53 bones, 531 fcurves, 223551 keys, range [1.0, 421.0]",
     "[phase2b] strand span 64.5..622.1 mm",
-    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20566921 bytes)",
+    "[phase2b] saved authoring source: simulator/assets/blender/phase2_application_source.blend (20563205 bytes)",
     "[phase2b] purged 9 non-export objects: CTRL_hand_l, CTRL_hand_r, CTRL_pole_l, CTRL_pole_r, LIGHT_fill, LIGHT_key, LIGHT_rake, LIGHT_rim, PREVIEW_camera",
     "[phase2b] exported simulator/assets/human/human_application_baked.glb (20302740 bytes) from 18 objects",
     "[phase2b] wrote simulator/assets/human/human_application_manifest.json"
