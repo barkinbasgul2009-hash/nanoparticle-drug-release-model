@@ -97,7 +97,10 @@ deploy. That is the machinery working, not a fault in it.
 ## Enabling auto-merge on a PR
 
 1. The task's own report declares its visual gate passed.
-2. Every check on the head commit is green.
+2. Every check on the head commit is green, **and** `all gates`, `r-tests`, `js-tests` and
+   `hidden-char-check` have all actually reported. An absent check is not a passing check: without
+   that list, a commit whose `tests` workflow never ran would sail through, because there would be
+   nothing red to find.
 3. Add the label `auto-merge: verified` to the PR.
 
 `auto-merge when verified` then calls `gh pr merge --auto --squash`, which sets GitHub's native

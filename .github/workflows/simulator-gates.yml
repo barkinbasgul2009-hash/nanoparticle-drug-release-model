@@ -17,11 +17,12 @@ name: simulator gates
 on:
   pull_request:
     branches: [main]
+  # Only main. A feature branch with an open PR already gets a `pull_request` run on every push;
+  # adding a `push` trigger for it produces two identical runs and two check runs of the same name on
+  # one commit. The run on main is not redundant — `deploy-reconcile.yml` reads main's `all gates`
+  # check before it is willing to deploy.
   push:
-    branches:
-      - main
-      - stage2/deep-scientific-evidence-review
-      - "claude/**"
+    branches: [main]
   workflow_dispatch:
 
 # Read-only. No token in this workflow can change the repository.

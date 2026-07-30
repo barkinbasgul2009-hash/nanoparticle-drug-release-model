@@ -99,22 +99,37 @@ jobs:
         if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
         run: node simulator/tools/check-acceptance.mjs
 
-      - name: Require every other check on this commit to be green
+      - name: Require every check on this commit to be green
         if: steps.pr.outputs.found == 'true' && steps.optin.outputs.opted-in == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           REPO: ${{ github.repository }}
+          # Checks that must be PRESENT, not merely not-failing. Without this list a commit whose
+          # `tests` workflow never ran at all would pass the loop below, because there would be
+          # nothing red to find. An absent check is not a passing check.
+          REQUIRED: "all gates r-tests js-tests hidden-char-check"
         run: |
           set -euo pipefail
           gh api "repos/$REPO/commits/$HEAD_SHA/check-runs" --paginate \
             -q '.check_runs[] | [.name, .status, (.conclusion // "pending")] | @tsv' > checks.tsv
           cat checks.tsv
+
           # `neutral` and `skipped` are legitimate non-failures; anything else that is not success,
-          # including a check still in progress, blocks. A check that has not reported is not a pass.
-          if awk -F'\t' '$2 != "completed" || ($3 != "success" && $3 != "neutral" && $3 != "skipped")' checks.tsv | grep -q .; then
+          # including a check still in progress, blocks.
+          bad() { awk -F'\t' '$2 != "completed" || ($3 != "success" && $3 != "neutral" && $3 != "skipped")' checks.tsv; }
+          if bad | grep -q .; then
             echo "::error::Not every check on $HEAD_SHA is green — refusing to enable auto-merge."
-            awk -F'\t' '$2 != "completed" || ($3 != "success" && $3 != "neutral" && $3 != "skipped")' checks.tsv
+            bad
+            exit 1
+          fi
+
+          missing=""
+          for name in $REQUIRED; do
+            cut -f1 checks.tsv | grep -qxF "$name" || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Required check(s) never reported on $HEAD_SHA:$missing"
             exit 1
           fi
 
