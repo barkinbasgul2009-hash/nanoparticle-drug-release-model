@@ -1,0 +1,1948 @@
+<title>HALO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<style>
+/* ============================================================================
+   HALO — a scroll-driven product reveal.
+   Single committed visual world: a dark optical bench. Every colour is painted
+   explicitly so the page holds on any host ground.
+   ========================================================================== */
+
+:root {
+  /* ground */
+  --void:      #04050a;
+  --graphite:  #0b0d14;
+  --steel:     #1b1f2a;
+  --hairline:  rgba(180, 195, 230, 0.13);
+  --hairline-2:rgba(180, 195, 230, 0.07);
+
+  /* ink */
+  --white:     #eef1f6;
+  --haze:      #8b93a5;
+  --haze-dim:  #565d6e;
+
+  /* accent — re-written live by the configurator */
+  --accent:    #7d95ff;
+  --accent-soft: rgba(125, 149, 255, 0.16);
+
+  /* type */
+  --display: "Helvetica Neue", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --micro: 0.625rem;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--white);
+  font-family: var(--display);
+  font-weight: 300;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--accent-soft); color: var(--white); }
+
+::-webkit-scrollbar { width: 9px; }
+::-webkit-scrollbar-track { background: #05060b; }
+::-webkit-scrollbar-thumb { background: #1c2130; border-radius: 9px; }
+::-webkit-scrollbar-thumb:hover { background: #2a3145; }
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------- structure */
+
+.track { height: 760vh; }               /* the scroll distance the story needs */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--void);
+}
+
+#ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* every narrative beat is a full-bleed layer, driven per-frame from JS */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+  --o: 0;
+  --y: 0px;
+}
+.scene.live { pointer-events: auto; }
+
+.wrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 5rem);
+}
+
+/* --------------------------------------------------------------- typography */
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  margin: 0;
+}
+.eyebrow .dot {
+  display: inline-block;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: middle;
+  margin-right: 0.85em;
+  margin-bottom: 2px;
+  transition: background 0.8s var(--ease);
+}
+
+h2.head {
+  font-size: clamp(1.9rem, 4.3vw, 3.9rem);
+  font-weight: 200;
+  letter-spacing: -0.035em;
+  line-height: 1.03;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.lede {
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.62;
+  color: var(--haze);
+  margin: 0;
+  max-width: 34ch;
+}
+
+.spec {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: var(--haze-dim);
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------- page chrome */
+
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: var(--accent);
+  width: 0;
+  z-index: 40;
+  opacity: 0.55;
+  transition: background 0.8s var(--ease);
+}
+
+.chrome {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(1.1rem, 2.4vw, 1.9rem) clamp(1.2rem, 3.4vw, 2.6rem);
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+.chrome .mark { width: 62px; opacity: 0.9; }
+.chrome .mark path, .chrome .mark circle { stroke: var(--white); }
+
+.readout {
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  display: flex;
+  gap: 0.9em;
+  align-items: center;
+}
+.readout b { color: var(--haze); font-weight: 400; }
+
+/* chapter rail — the story is an ordered sequence, so it earns its numbering */
+.rail {
+  position: fixed;
+  right: clamp(0.9rem, 2.2vw, 2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  align-items: flex-end;
+}
+.rail button {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--haze-dim);
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.rail .tick {
+  display: block;
+  width: 14px; height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+  transition: width 0.6s var(--ease), opacity 0.6s var(--ease), background 0.6s var(--ease);
+}
+.rail .name {
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  white-space: nowrap;
+}
+.rail button:hover .name, .rail button:focus-visible .name { opacity: 0.75; transform: none; }
+.rail button:hover .tick { width: 24px; opacity: 0.8; }
+.rail button[aria-current="true"] { color: var(--white); }
+.rail button[aria-current="true"] .tick { width: 30px; opacity: 1; background: var(--accent); }
+.rail button[aria-current="true"] .name { opacity: 1; transform: none; }
+
+/* ============================================================ SCENE 1 — hero */
+
+.hero-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 2.6vw, 2.2rem);
+  transform: translate3d(0, var(--y), 0);
+}
+.wordmark {
+  width: clamp(230px, 34vw, 480px);
+  overflow: visible;
+}
+/* stroke weight lives in viewBox units so the mark scales as one drawing */
+.wordmark path, .wordmark circle {
+  fill: none;
+  stroke: var(--white);
+  stroke-width: 5;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+.hero-line {
+  font-size: clamp(0.82rem, 1.25vw, 1.02rem);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--haze);
+  margin: 0;
+  opacity: 0;
+  animation: rise 1.5s 1.15s var(--ease) forwards;
+  text-align: center;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.scroll-cue {
+  position: absolute;
+  bottom: clamp(1.8rem, 5vh, 3.4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+  animation: rise 1.4s 2.1s var(--ease) forwards;
+}
+.scroll-cue .rule {
+  width: 1px; height: 46px;
+  background: linear-gradient(to bottom, transparent, var(--haze-dim));
+  position: relative;
+  overflow: hidden;
+}
+.scroll-cue .rule::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, var(--white));
+  animation: cue 2.6s var(--ease-io) infinite;
+}
+@keyframes cue {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* ======================================================== SCENE 2 — presence */
+
+.presence {
+  position: absolute;
+  left: clamp(1.5rem, 7vw, 7rem);
+  bottom: clamp(3.5rem, 12vh, 8rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-width: 30rem;
+  transform: translate3d(0, var(--y), 0);
+}
+.presence h2 { max-width: 13ch; font-size: clamp(1.8rem, 3.6vw, 3.2rem); }
+
+.metrics {
+  display: flex;
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+  position: absolute;
+  right: clamp(1.5rem, 7vw, 7rem);
+  bottom: clamp(3.5rem, 12vh, 8rem);
+  transform: translate3d(0, calc(var(--y) * 0.45), 0);
+}
+.metric { display: flex; flex-direction: column; gap: 0.45rem; }
+.metric .v {
+  font-size: clamp(1.1rem, 1.9vw, 1.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.metric .k {
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+}
+
+.drag-hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.6rem, 4vh, 2.6rem);
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  transition: opacity 0.7s var(--ease);
+  white-space: nowrap;
+}
+
+/* ======================================================= SCENE 3 — structure */
+
+.structure-copy {
+  position: absolute;
+  left: clamp(1.5rem, 7vw, 7rem);
+  top: 50%;
+  transform: translate(0, calc(-50% + var(--y)));
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 22rem;
+}
+
+/* callouts are positioned per-frame against projected 3-D anchors */
+.labels { position: absolute; inset: 0; pointer-events: none; }
+.leaders { position: absolute; inset: 0; overflow: visible; }
+.leaders polyline { fill: none; stroke: var(--hairline); stroke-width: 1; }
+.leaders circle { fill: var(--accent); transition: fill 0.8s var(--ease); }
+.lbl {
+  position: absolute;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  opacity: 0;
+  white-space: nowrap;
+}
+.lbl .n {
+  font-size: 0.86rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: var(--white);
+}
+.lbl .s {
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+}
+
+/* ========================================================= SCENE 4 — gesture */
+
+.gesture-copy {
+  position: absolute;
+  top: clamp(4.5rem, 12vh, 7rem);
+  left: clamp(1.5rem, 7vw, 7rem);
+  transform: translate(0, var(--y));
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 11ch;
+}
+.gesture-copy h2 { font-size: clamp(1.7rem, 3.1vw, 2.75rem); }
+.gesture-foot {
+  position: absolute;
+  bottom: clamp(2.2rem, 7vh, 4.5rem);
+  left: clamp(1.5rem, 7vw, 7rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 26ch;
+}
+
+.wires { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.wires line {
+  stroke: var(--hairline);
+  stroke-width: 1;
+  transition: stroke 0.5s var(--ease);
+}
+.wires line.hot {
+  stroke: var(--accent);
+  stroke-dasharray: 3 7;
+  animation: flow 1.1s linear infinite;
+  opacity: 0.85;
+}
+@keyframes flow { to { stroke-dashoffset: -20; } }
+
+.nodes { position: absolute; inset: 0; }
+.node {
+  all: unset;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.62rem 1.05rem;
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  background: rgba(10, 12, 20, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--haze);
+  transition: border-color 0.45s var(--ease), color 0.45s var(--ease),
+              background 0.45s var(--ease), box-shadow 0.6s var(--ease);
+  white-space: nowrap;
+}
+.node .glyph { width: 13px; height: 13px; display: block; opacity: 0.8; }
+.node .glyph * { stroke: currentColor; fill: none; stroke-width: 1.2; }
+.node:hover { color: var(--white); border-color: rgba(180, 195, 230, 0.3); }
+.node[aria-pressed="true"] {
+  color: var(--white);
+  border-color: var(--accent);
+  background: rgba(20, 24, 40, 0.62);
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 0 34px -8px var(--accent);
+}
+.node[aria-pressed="true"] .glyph { opacity: 1; }
+
+/* the holographic readout that answers a selection */
+/* the readout floats low and right — clear of the chapter rail, and balancing
+   the headline across the diagonal */
+.holo {
+  position: absolute;
+  right: clamp(1.5rem, 4vw, 3.6rem);
+  bottom: clamp(2rem, 8vh, 5rem);
+  width: clamp(228px, 21vw, 282px);
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  background: linear-gradient(155deg, rgba(16, 20, 32, 0.72), rgba(8, 10, 17, 0.58));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  padding: 1.05rem 1.15rem 1.2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease), transform 0.7s var(--ease);
+  overflow: hidden;
+}
+.holo::before {           /* scan sheen */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, var(--accent-soft), transparent);
+  transform: translateY(-100%);
+  animation: scan 4.5s var(--ease-io) infinite;
+  pointer-events: none;
+}
+@keyframes scan { 0% { transform: translateY(-100%); } 55%, 100% { transform: translateY(210%); } }
+.holo.on { opacity: 1; }
+.holo .hh {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  border-bottom: 1px solid var(--hairline-2);
+  padding-bottom: 0.7rem;
+  margin-bottom: 0.9rem;
+}
+.holo .hh b { color: var(--accent); font-weight: 400; transition: color 0.8s var(--ease); }
+.holo .title { font-size: 0.98rem; font-weight: 300; letter-spacing: -0.005em; margin: 0 0 0.15rem; }
+.holo .sub {
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  margin: 0;
+}
+.holo .viz { margin-top: 1rem; height: 46px; }
+
+.eq { display: flex; align-items: flex-end; gap: 3px; height: 100%; }
+.eq i {
+  display: block;
+  flex: 1;
+  background: var(--accent);
+  opacity: 0.65;
+  height: 20%;
+  animation: eqb 1.4s var(--ease-io) infinite alternate;
+  transition: background 0.8s var(--ease);
+}
+@keyframes eqb { to { height: 100%; } }
+
+.arc { width: 100%; height: 100%; overflow: visible; }
+.arc * { fill: none; stroke-width: 1.2; }
+.arc .bed { stroke: var(--hairline); }
+.arc .val { stroke: var(--accent); stroke-linecap: round; transition: stroke 0.8s var(--ease); }
+
+.chips { display: flex; flex-direction: column; gap: 0.42rem; }
+.chip {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--haze);
+  padding-bottom: 0.34rem;
+  border-bottom: 1px solid var(--hairline-2);
+}
+.chip span:last-child { color: var(--haze-dim); font-variant-numeric: tabular-nums; }
+
+/* ========================================================== SCENE 5 — finish */
+
+.finish-head {
+  position: absolute;
+  top: clamp(4.5rem, 13vh, 8rem);
+  left: 50%;
+  transform: translate(-50%, var(--y));
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.finish-dock {
+  position: absolute;
+  bottom: clamp(2.2rem, 7vh, 4.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: min(92vw, 46rem);
+}
+.swatches {
+  position: relative;
+  display: flex;
+  gap: clamp(0.6rem, 2.4vw, 2rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hairline-2);
+  width: 100%;
+  justify-content: center;
+}
+.swatch {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.2rem;
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--haze-dim);
+  transition: color 0.5s var(--ease);
+}
+.swatch:hover { color: var(--haze); }
+.swatch[aria-pressed="true"] { color: var(--white); }
+.swatch .disc {
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.swatch[aria-pressed="true"] .disc { transform: scale(1.18); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); }
+.underline {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  width: 0;
+  background: var(--accent);
+  transition: transform 0.65s var(--ease), width 0.65s var(--ease), background 0.8s var(--ease);
+}
+.finish-note {
+  min-height: 2.6em;
+  text-align: center;
+  color: var(--haze);
+  font-size: 0.87rem;
+  line-height: 1.6;
+  max-width: 40ch;
+  transition: opacity 0.35s var(--ease);
+}
+
+/* ======================================================== SCENE 6 — features */
+
+.features {
+  position: absolute;
+  left: clamp(1.5rem, 8vw, 8.5rem);
+  top: 50%;
+  transform: translate(0, calc(-50% + var(--y)));
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2.6vh, 2rem);
+  max-width: 34rem;
+}
+.feat {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  gap: 1.4rem;
+  align-items: start;
+  opacity: 0.22;
+  transition: opacity 0.8s var(--ease);
+}
+.feat.on { opacity: 1; }
+.feat .motif { width: 3.4rem; height: 3.4rem; overflow: visible; }
+.feat .motif * { fill: none; stroke: var(--haze-dim); stroke-width: 1; transition: stroke 0.8s var(--ease); }
+.feat.on .motif .lit { stroke: var(--accent); }
+.feat h3 {
+  font-size: clamp(1.3rem, 2.5vw, 2.1rem);
+  font-weight: 200;
+  letter-spacing: -0.028em;
+  margin: 0 0 0.45rem;
+  line-height: 1.1;
+}
+.feat p { margin: 0; color: var(--haze); font-size: 0.88rem; line-height: 1.6; max-width: 32ch; }
+
+/* motif motion, only while the feature is the active one */
+.feat.on .spin { animation: spin 9s linear infinite; transform-origin: 50% 50%; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.feat.on .breathe { animation: breathe 3.4s var(--ease-io) infinite alternate; transform-origin: 50% 50%; }
+@keyframes breathe { from { opacity: 0.25; transform: scale(0.72); } to { opacity: 1; transform: scale(1); } }
+.feat.on .sweep { stroke-dasharray: 44; animation: sweep 3.2s var(--ease-io) infinite; }
+@keyframes sweep { 0% { stroke-dashoffset: 44; } 60%, 100% { stroke-dashoffset: -44; } }
+
+/* =========================================================== SCENE 7 — close */
+
+/* the object floats above; the statement resolves beneath it */
+.close-stack {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(2.4rem, 9vh, 6rem);
+  width: min(92vw, 40rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.2rem, 2.6vw, 2rem);
+  text-align: center;
+  transform: translate3d(-50%, var(--y), 0);
+}
+.close-stack .wordmark { width: clamp(150px, 17vw, 230px); }
+.close-line {
+  font-size: clamp(1.15rem, 2.4vw, 2.05rem);
+  font-weight: 200;
+  letter-spacing: -0.028em;
+  line-height: 1.24;
+  margin: 0;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.cta {
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  padding: 1.02rem 2.5rem;
+  border: 1px solid rgba(180, 195, 230, 0.26);
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: var(--micro);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--white);
+  transition: border-color 0.5s var(--ease), box-shadow 0.7s var(--ease), letter-spacing 0.5s var(--ease);
+}
+.cta span { position: relative; z-index: 1; }
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 180% at 50% 120%, var(--accent-soft), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+.cta:hover { border-color: var(--accent); box-shadow: 0 0 44px -14px var(--accent); letter-spacing: 0.34em; }
+.cta:hover::before { opacity: 1; }
+.cta.firing { border-color: var(--accent); }
+
+/* ------------------------------------------------------------- adaptations */
+
+@media (max-width: 860px) {
+  .rail { display: none; }
+  .presence, .structure-copy, .features { left: clamp(1.2rem, 6vw, 3rem); right: clamp(1.2rem, 6vw, 3rem); }
+  .presence { bottom: 4.5rem; }
+  .metrics { display: none; }
+  .holo {
+    right: auto;
+    left: 50%;
+    bottom: 1.2rem;
+    transform: translateX(-50%);
+    width: min(88vw, 320px);
+  }
+  .gesture-copy { max-width: 20ch; top: 10vh; }
+  .gesture-foot { display: none; }
+  .node { padding: 0.5rem 0.75rem; letter-spacing: 0.12em; gap: 0.4rem; }
+  .node .glyph { display: none; }
+
+  /* the teardown needs the full width for the object, so the copy goes up top
+     and the callouts wrap into a narrow column */
+  .structure-copy {
+    top: 9vh;
+    transform: translate(0, var(--y));
+    max-width: none;
+  }
+  .structure-copy .lede { max-width: 30ch; }
+  .lbl { white-space: normal; max-width: 46vw; }
+  .lbl .n { font-size: 0.68rem; line-height: 1.25; }
+  .lbl .s { display: none; }
+  .feat { grid-template-columns: 2.4rem 1fr; gap: 1rem; }
+  .feat .motif { width: 2.4rem; height: 2.4rem; }
+  .drag-hint { display: none; }
+  .swatches { flex-wrap: wrap; gap: 0.5rem 1.1rem; }
+  .swatch { font-size: 0.56rem; letter-spacing: 0.16em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line, .scroll-cue { animation-duration: 0.01ms; animation-delay: 0ms; opacity: 1; }
+  .scroll-cue .rule::after, .holo::before, .eq i, .wires line.hot,
+  .feat.on .spin, .feat.on .breathe, .feat.on .sweep { animation: none; }
+  .eq i { height: 62%; }
+}
+</style>
+
+<div class="progress" id="progress"></div>
+
+<header class="chrome">
+  <svg class="mark" viewBox="0 0 356 100" aria-label="HALO" role="img">
+    <path d="M13 6 V94 M67 6 V94 M13 50 H67" stroke-width="8" fill="none" />
+    <path d="M99 94 L126 6 L153 94 M108 66 H144" stroke-width="8" fill="none" />
+    <path d="M185 6 V94 H239" stroke-width="8" fill="none" />
+    <circle cx="299" cy="50" r="44" stroke-width="8" fill="none" />
+  </svg>
+  <div class="readout">
+    <span id="chapNum">01</span>
+    <b id="chapName">Reveal</b>
+  </div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters"></nav>
+
+<main class="stage">
+  <canvas id="ring"></canvas>
+
+  <!-- ==================================================== 1 — hero reveal -->
+  <section class="scene" data-scene="hero" aria-label="HALO">
+    <div class="wrap">
+      <div class="hero-stack">
+        <svg class="wordmark" id="heroMark" viewBox="0 0 356 100" aria-label="HALO" role="img">
+          <path class="draw" d="M13 6 V94" />
+          <path class="draw" d="M67 6 V94" />
+          <path class="draw" d="M13 50 H67" />
+          <path class="draw" d="M99 94 L126 6 L153 94" />
+          <path class="draw" d="M108 66 H144" />
+          <path class="draw" d="M185 6 V94 H239" />
+          <circle class="draw" cx="299" cy="50" r="44" />
+        </svg>
+        <p class="hero-line">Everything you need. Nothing you notice.</p>
+      </div>
+      <div class="scroll-cue">
+        <span class="rule"></span>
+        <span class="spec">Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 2 — presence -->
+  <section class="scene" data-scene="object">
+    <div class="presence">
+      <p class="eyebrow"><span class="dot"></span>Presence</p>
+      <h2 class="head">A quiet object with extraordinary intent.</h2>
+      <p class="lede">Machined from a single billet, then finished by hand. Precision you can feel at the edge of your finger and never see on the surface.</p>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="v">4.1 g</span><span class="k">Mass</span></div>
+      <div class="metric"><span class="v">1.9 mm</span><span class="k">Profile</span></div>
+      <div class="metric"><span class="v">±2 µm</span><span class="k">Tolerance</span></div>
+    </div>
+    <p class="drag-hint" id="dragHint">Drag to rotate</p>
+  </section>
+
+  <!-- ====================================================== 3 — structure -->
+  <section class="scene" data-scene="explode">
+    <div class="structure-copy">
+      <p class="eyebrow"><span class="dot"></span>Structure</p>
+      <h2 class="head">Engineered to disappear.</h2>
+      <p class="lede">Five layers, each one shaped around the next, resolved into a single band. Complexity, refined into one gesture.</p>
+    </div>
+    <div class="labels" id="labels"></div>
+  </section>
+
+  <!-- ======================================================== 4 — gesture -->
+  <section class="scene" data-scene="gesture">
+    <svg class="wires" id="wires"></svg>
+    <div class="gesture-copy">
+      <p class="eyebrow"><span class="dot"></span>Gesture</p>
+      <h2 class="head">One gesture. Infinite control.</h2>
+    </div>
+    <div class="nodes" id="nodes"></div>
+    <div class="holo" id="holo" aria-live="polite">
+      <div class="hh"><span id="holoMode">Standby</span><b id="holoState">Ready</b></div>
+      <p class="title" id="holoTitle">Select a command</p>
+      <p class="sub" id="holoSub">The ring is listening</p>
+      <div class="viz" id="holoViz"></div>
+    </div>
+    <div class="gesture-foot">
+      <p class="lede" style="max-width:30ch;text-align:center">Your digital world, condensed into a gesture.</p>
+      <p class="spec">Tap less. Do more.</p>
+    </div>
+  </section>
+
+  <!-- ========================================================= 5 — finish -->
+  <section class="scene" data-scene="finish">
+    <div class="finish-head">
+      <p class="eyebrow"><span class="dot"></span>Finish</p>
+      <h2 class="head">Choose your finish.</h2>
+    </div>
+    <div class="finish-dock">
+      <p class="finish-note" id="finishNote"></p>
+      <div class="swatches" id="swatches"><span class="underline" id="underline"></span></div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 6 — features -->
+  <section class="scene" data-scene="features">
+    <div class="features" id="features">
+      <article class="feat">
+        <svg class="motif" viewBox="0 0 40 40">
+          <circle class="lit breathe" cx="20" cy="20" r="6" />
+          <path class="lit sweep" d="M6 20 A14 14 0 0 1 34 20" />
+          <circle cx="20" cy="20" r="18" />
+        </svg>
+        <div>
+          <h3>Gesture Control</h3>
+          <p>Navigate your day with the smallest movement you can make.</p>
+        </div>
+      </article>
+      <article class="feat">
+        <svg class="motif" viewBox="0 0 40 40">
+          <rect x="6" y="6" width="28" height="28" />
+          <rect class="lit breathe" x="14" y="14" width="12" height="12" />
+          <path class="lit" d="M20 2 V6 M20 34 V38 M2 20 H6 M34 20 H38" />
+        </svg>
+        <div>
+          <h3>Adaptive Interface</h3>
+          <p>It reads the room before you do, and offers only what belongs there.</p>
+        </div>
+      </article>
+      <article class="feat">
+        <svg class="motif" viewBox="0 0 40 40">
+          <circle class="lit" cx="20" cy="20" r="3" />
+          <circle class="spin" cx="20" cy="20" r="11" stroke-dasharray="4 6" />
+          <circle class="lit spin" cx="20" cy="20" r="17" stroke-dasharray="2 9" />
+        </svg>
+        <div>
+          <h3>Seamless Connectivity</h3>
+          <p>A calm, continuous link to everything already in your life.</p>
+        </div>
+      </article>
+      <article class="feat">
+        <svg class="motif" viewBox="0 0 40 40">
+          <ellipse cx="20" cy="20" rx="17" ry="7" />
+          <ellipse class="lit breathe" cx="20" cy="20" rx="9" ry="3.5" />
+        </svg>
+        <div>
+          <h3>All-Day Elegance</h3>
+          <p>Light enough to forget. Built to outlast the devices it speaks to.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========================================================== 7 — close -->
+  <section class="scene" data-scene="close">
+    <div>
+      <div class="close-stack">
+        <svg class="wordmark" viewBox="0 0 356 100" aria-label="HALO" role="img">
+          <path d="M13 6 V94 M67 6 V94 M13 50 H67" />
+          <path d="M99 94 L126 6 L153 94 M108 66 H144" />
+          <path d="M185 6 V94 H239" />
+          <circle cx="299" cy="50" r="44" />
+        </svg>
+        <p class="close-line">The most invisible interface is the one you never have to think about.</p>
+        <button class="cta" id="cta"><span>Enter the Interface</span></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="track"></div>
+
+<script>
+(() => {
+"use strict";
+
+const TAU = Math.PI * 2;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * (3 - 2 * t);
+const smoother = t => t * t * t * (t * (t * 6 - 15) + 10);
+/** normalised progress inside [a,b] */
+const band = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+/** 0 → 1 → 0 across a fade-in / hold / fade-out envelope */
+const env = (p, a, b, c, d) => Math.min(band(p, a, b), 1 - band(p, c, d));
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ========================================================================== *
+ * MATERIALS
+ * Each finish is a small BRDF description, not a swatch: base albedo, specular
+ * strength and tightness, how metallic the reflection is, and the environment
+ * it reflects. Switching finishes interpolates every field.
+ * ========================================================================== */
+
+const MATERIALS = {
+  titanium: {
+    label: "Titanium",
+    base: [0.355, 0.375, 0.418], spec: 0.66, shine: 34, metal: 0.86, fres: 0.55,
+    sky: [0.38, 0.43, 0.58], ground: [0.030, 0.034, 0.052], aniso: 0.5,
+    accent: [125, 149, 255], chip: "linear-gradient(140deg,#9aa3b4,#5d6577 46%,#c3cbd9 62%,#6d7686)",
+    note: "Cold-forged grade-5 titanium, grain-blasted to a matte that refuses to shine — and refuses to mark."
+  },
+  obsidian: {
+    label: "Obsidian",
+    base: [0.062, 0.066, 0.082], spec: 1.00, shine: 145, metal: 0.62, fres: 1.05,
+    sky: [0.30, 0.32, 0.48], ground: [0.014, 0.015, 0.024], aniso: 0.1,
+    accent: [157, 125, 255], chip: "linear-gradient(140deg,#2a2c38,#08090e 52%,#4a4560 70%,#101119)",
+    note: "Light-absorbing ceramic glass. A shape you sense a moment before you see it."
+  },
+  silver: {
+    label: "Silver",
+    base: [0.700, 0.722, 0.775], spec: 1.00, shine: 210, metal: 1.00, fres: 0.75,
+    sky: [0.72, 0.78, 0.92], ground: [0.038, 0.044, 0.066], aniso: 0.15,
+    accent: [143, 212, 255], chip: "linear-gradient(140deg,#f2f5fa,#8e97a8 44%,#ffffff 58%,#7d8798)",
+    note: "Mirror-polished to a true optical finish. It reflects the room, never the wearer."
+  },
+  ceramic: {
+    label: "Ceramic",
+    base: [0.845, 0.858, 0.882], spec: 0.42, shine: 16, metal: 0.06, fres: 0.38,
+    sky: [0.52, 0.55, 0.64], ground: [0.115, 0.118, 0.145], aniso: 0.0,
+    accent: [168, 182, 216], chip: "linear-gradient(140deg,#ffffff,#d3d7de 55%,#eef1f6)",
+    note: "Fired at 1,400 °C, then diamond-lapped. Warm in the hand, cool to the eye."
+  }
+};
+const MAT_KEYS = Object.keys(MATERIALS);
+
+/* ========================================================================== *
+ * GEOMETRY
+ * The ring is a surface of revolution with a superellipse cross-section — a
+ * thin, wide, machined band rather than a donut. In the exploded view it is
+ * five stacked slices spread along its own axis.
+ * ========================================================================== */
+
+const LAYERS = [
+  { name: "Outer Shell",              spec: "Grade-5 titanium · 1.9 mm", R: 1.000, hr: 0.130, hz: 0.098, z: -0.226, k: 2.9, tint: 1.00, emis: 0 },
+  // the touch band sits fractionally proud of the shell — a real inlay, and
+  // unambiguously in front of it for the depth sort
+  { name: "Touch Surface",            spec: "Capacitive band · 360°",    R: 1.008, hr: 0.137, hz: 0.050, z: -0.076, k: 3.4, tint: 0.92, emis: 1 },
+  { name: "Core Module",              spec: "Sealed silicon · 4 mm²",    R: 0.990, hr: 0.112, hz: 0.070, z:  0.036, k: 2.6, tint: 0.74, emis: 0 },
+  { name: "Gesture Engine",           spec: "Nine-axis intent sensing",  R: 0.978, hr: 0.100, hz: 0.048, z:  0.140, k: 2.4, tint: 0.62, emis: 0 },
+  { name: "Adaptive Interface Layer", spec: "Context model · on-device", R: 1.004, hr: 0.124, hz: 0.074, z:  0.242, k: 3.2, tint: 0.80, emis: 0.45 }
+];
+
+/** superellipse profile table: radial offset, axial offset, and 2-D normal */
+function profile(hr, hz, power, n) {
+  const a = new Float32Array(n + 1), b = new Float32Array(n + 1);
+  const na = new Float32Array(n + 1), nb = new Float32Array(n + 1);
+  const e = 2 / power;
+  const s = t => Math.sign(t) * Math.pow(Math.abs(t), e);
+  for (let i = 0; i <= n; i++) {
+    const v = i / n * TAU, v2 = v + 0.0012;
+    a[i] = hr * s(Math.cos(v));  b[i] = hz * s(Math.sin(v));
+    const ta = hr * s(Math.cos(v2)) - a[i], tb = hz * s(Math.sin(v2)) - b[i];
+    const l = Math.hypot(tb, -ta) || 1;
+    na[i] = tb / l; nb[i] = -ta / l;
+  }
+  return { a, b, na, nb, n };
+}
+
+/* ========================================================================== *
+ * RENDERER
+ * ========================================================================== */
+
+const canvas = document.getElementById("ring");
+const ctx = canvas.getContext("2d", { alpha: false });
+
+let W = 0, H = 0, DPR = 1, narrow = false;
+let tier = 1;                               // quality tier, adapts to frame cost
+
+/** per-layer scratch buffers, re-allocated whenever the tessellation changes */
+let mesh = null;
+function buildMesh() {
+  const vs = tier === 1 ? 14 : 10;
+  const us = tier === 1 ? 104 : 68;
+  mesh = LAYERS.map(L => {
+    const prof = profile(L.hr, L.hz, L.k, vs);
+    const count = (us + 1) * (vs + 1);
+    return {
+      L, prof, us, vs,
+      sx: new Float32Array(count), sy: new Float32Array(count),
+      nx: new Float32Array(count), ny: new Float32Array(count), nz: new Float32Array(count),
+      pz: new Float32Array(count)
+    };
+  });
+  // merged (assembled) band: one continuous surface, used outside the teardown
+  buildMerged(detail < 0 ? 1 : detail);
+}
+
+/* The assembled band carries the whole silhouette and the steepest shading
+   gradient, so its tessellation follows how large it is actually drawn —
+   flat-shaded quads that are fine at thumbnail size quilt visibly at full
+   bleed. Rebuilt only when the object crosses a size bucket. */
+let merged = null, detail = -1;
+const DETAIL = [{ u: 88, v: 20 }, { u: 116, v: 28 }, { u: 148, v: 36 }];
+
+function buildMerged(d) {
+  detail = d;
+  const { u, v } = DETAIL[d];
+  merged = {
+    L: { R: 1, hr: 0.132, hz: 0.322, k: 4.4, tint: 1, emis: 0, z: 0 },
+    prof: profile(0.132, 0.322, 4.4, v),
+    us: u, vs: v
+  };
+  const c = (u + 1) * (v + 1);
+  merged.sx = new Float32Array(c); merged.sy = new Float32Array(c);
+  merged.nx = new Float32Array(c); merged.ny = new Float32Array(c);
+  merged.nz = new Float32Array(c); merged.pz = new Float32Array(c);
+}
+
+/* quad soup — flat buffers so a frame allocates nothing */
+const MAXQ = 9000;
+const qxy = new Float32Array(MAXQ * 8);
+const qd  = new Float32Array(MAXQ);
+const qc  = new Int32Array(MAXQ);
+const qi  = new Int32Array(MAXQ);
+let qn = 0;
+
+const colorCache = new Map();
+function css(packed) {
+  let s = colorCache.get(packed);
+  if (s === undefined) {
+    s = "rgb(" + (packed >> 16 & 255) + "," + (packed >> 8 & 255) + "," + (packed & 255) + ")";
+    if (colorCache.size < 24000) colorCache.set(packed, s);
+  }
+  return s;
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  narrow = W < 860;
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  layoutUnderline();
+}
+
+/* ---- lighting rig: a key, a cool fill, and a rim that draws the contour --- */
+const LIGHTS = [
+  { d: [-0.52, 0.62, 0.59], c: [1.00, 0.99, 0.98], i: 1.15, key: 1 },   // key
+  { d: [ 0.78, -0.14, 0.42], c: [0.55, 0.63, 0.90], i: 0.42, key: 1 },  // cool fill
+  { d: [ 0.16, 0.30, -0.94], c: [0.62, 0.72, 1.00], i: 0.90, key: 0 }   // rim (always on)
+];
+for (const l of LIGHTS) {
+  const m = Math.hypot(l.d[0], l.d[1], l.d[2]);
+  l.d[0] /= m; l.d[1] /= m; l.d[2] /= m;
+  const hx = l.d[0], hy = l.d[1], hz = l.d[2] + 1;
+  const hm = Math.hypot(hx, hy, hz) || 1;
+  l.h = [hx / hm, hy / hm, hz / hm];
+}
+
+const CAM_D = 4.6, FOCAL = 3.05;
+
+/** live material — interpolated toward the selected one */
+const M = {
+  base: [0, 0, 0], sky: [0, 0, 0], ground: [0, 0, 0],
+  spec: 0, shine: 0, metal: 0, fres: 0, aniso: 0, accent: [0, 0, 0]
+};
+function mixMaterial(from, to, t) {
+  for (let i = 0; i < 3; i++) {
+    M.base[i]   = lerp(from.base[i], to.base[i], t);
+    M.sky[i]    = lerp(from.sky[i], to.sky[i], t);
+    M.ground[i] = lerp(from.ground[i], to.ground[i], t);
+    M.accent[i] = lerp(from.accent[i], to.accent[i], t);
+  }
+  M.spec  = lerp(from.spec, to.spec, t);
+  M.shine = lerp(from.shine, to.shine, t);
+  M.metal = lerp(from.metal, to.metal, t);
+  M.fres  = lerp(from.fres, to.fres, t);
+  M.aniso = lerp(from.aniso, to.aniso, t);
+}
+
+/**
+ * Tessellate one layer into screen-space quads.
+ * Back faces are culled (the surface is closed) and the survivors are depth
+ * sorted globally so the far wall seen through the ring reads correctly.
+ */
+function emitLayer(m, mat, cx, cy, scale, zPush, exposure, emisAmt, alphaTint, emisW) {
+  const { prof, us, vs, L } = m;
+  const R = L.R, pz0 = L.z * zPush;
+  const [m00, m01, m02, m10, m11, m12, m20, m21, m22] = mat;
+
+  for (let iu = 0; iu <= us; iu++) {
+    const u = iu / us * TAU, cu = Math.cos(u), su = Math.sin(u);
+    const row = iu * (vs + 1);
+    for (let iv = 0; iv <= vs; iv++) {
+      const idx = row + iv;
+      const rad = R + prof.a[iv], ax = prof.b[iv] + pz0;
+      const px = rad * cu, py = rad * su, pzl = ax;
+      const X = m00 * px + m01 * py + m02 * pzl;
+      const Y = m10 * px + m11 * py + m12 * pzl;
+      const Z = m20 * px + m21 * py + m22 * pzl;
+      const w = FOCAL / (CAM_D - Z) * scale;
+      m.sx[idx] = cx + X * w;
+      m.sy[idx] = cy - Y * w;
+      m.pz[idx] = Z;
+      // normal of a surface of revolution: 2-D profile normal swept around u
+      const pnx = prof.na[iv] * cu, pny = prof.na[iv] * su, pnz = prof.nb[iv];
+      m.nx[idx] = m00 * pnx + m01 * pny + m02 * pnz;
+      m.ny[idx] = m10 * pnx + m11 * pny + m12 * pnz;
+      m.nz[idx] = m20 * pnx + m21 * pny + m22 * pnz;
+    }
+  }
+
+  // the terminator's polygonal step scales with the drawn size, so the
+  // grazing-quad grow has to as well
+  const growMax = 1.6 + scale * 0.009;
+  const ambMul = 0.10 + 0.90 * exposure;
+  const ambR = (0.038 + 0.048 * M.sky[0]) * ambMul,
+        ambG = (0.038 + 0.048 * M.sky[1]) * ambMul,
+        ambB = (0.052 + 0.048 * M.sky[2]) * ambMul;
+  const specTintR = lerp(1, M.base[0], M.metal),
+        specTintG = lerp(1, M.base[1], M.metal),
+        specTintB = lerp(1, M.base[2], M.metal);
+  const ar = M.accent[0] / 255, ag = M.accent[1] / 255, ab = M.accent[2] / 255;
+
+  for (let iu = 0; iu < us; iu++) {
+    const i0 = iu * (vs + 1), i1 = (iu + 1) * (vs + 1);
+    // the touch band is only emissive on its outward-facing wall
+    const uPhase = iu / us;
+    for (let iv = 0; iv < vs; iv++) {
+      const a = i0 + iv, b = i0 + iv + 1, c = i1 + iv + 1, d = i1 + iv;
+      const x0 = m.sx[a], y0 = m.sy[a], x1 = m.sx[b], y1 = m.sy[b],
+            x2 = m.sx[c], y2 = m.sy[c], x3 = m.sx[d], y3 = m.sy[d];
+      /* Cull on the projected winding, not on an averaged vertex normal. At
+         the tangent point where the surface runs parallel to the view, the
+         averaged normal reads as back-facing while the quad is still a large
+         visible polygon — culling it there punches a wedge out of the object.
+         The screen-space cross product is exact for the polygon being drawn. */
+      if ((x1 - x0) * (y3 - y0) - (y1 - y0) * (x3 - x0) <= 0) continue;
+      if (qn >= MAXQ) return;
+      let nz = (m.nz[a] + m.nz[b] + m.nz[c] + m.nz[d]) * 0.25;
+      if (nz < 0.004) nz = 0.004;
+      let nx = (m.nx[a] + m.nx[b] + m.nx[c] + m.nx[d]) * 0.25;
+      let ny = (m.ny[a] + m.ny[b] + m.ny[c] + m.ny[d]) * 0.25;
+      const nl = Math.hypot(nx, ny, nz) || 1;
+      nx /= nl; ny /= nl; nz /= nl;
+
+      /* ---- shading ---- */
+      let dr = 0, dg = 0, db = 0, sp = 0;
+      for (let li = 0; li < 3; li++) {
+        const L2 = LIGHTS[li];
+        // the rim never switches off entirely — at low exposure it is the only
+        // thing describing the object, which is the whole point of the opening
+        const inten = L2.i * (L2.key ? exposure : 0.34 + 0.66 * exposure);
+        const nd = nx * L2.d[0] + ny * L2.d[1] + nz * L2.d[2];
+        if (nd > 0) {
+          dr += L2.c[0] * nd * inten; dg += L2.c[1] * nd * inten; db += L2.c[2] * nd * inten;
+          const hd = nx * L2.h[0] + ny * L2.h[1] + nz * L2.h[2];
+          if (hd > 0) {
+            // brushed finishes smear the highlight along the sweep direction
+            const sh = M.shine * (1 - M.aniso * 0.62);
+            sp += Math.pow(hd, sh) * inten;
+          }
+        }
+      }
+      // environment: a two-tone room reflected off the surface. The room is
+      // lit by the same exposure as the object, or the ring would float fully
+      // formed out of a scene that is meant to be dark.
+      const ry = 2 * nz * ny;
+      const et = clamp(ry * 0.5 + 0.5, 0, 1);
+      const envMul = 0.06 + 0.94 * exposure;
+      const envR = lerp(M.ground[0], M.sky[0], et) * envMul,
+            envG = lerp(M.ground[1], M.sky[1], et) * envMul,
+            envB = lerp(M.ground[2], M.sky[2], et) * envMul;
+      const fres = Math.pow(1 - nz, 4.2) * M.fres * (0.30 + 0.70 * exposure);
+      // cavity term: inward-facing walls sit in their own shadow
+      const prad = prof.na[iv] * 0.5 + prof.na[iv + 1] * 0.5;
+      const ao = 0.42 + 0.58 * smooth(clamp(prad * 0.85 + 0.72, 0, 1));
+
+      const spc = sp * M.spec;
+      let r = (M.base[0] * (ambR + dr) * ao + specTintR * spc + envR * specTintR * M.metal * 0.55 + fres * ar * 0.9) * alphaTint;
+      let g = (M.base[1] * (ambG + dg) * ao + specTintG * spc + envG * specTintG * M.metal * 0.55 + fres * ag * 0.9) * alphaTint;
+      let bl= (M.base[2] * (ambB + db) * ao + specTintB * spc + envB * specTintB * M.metal * 0.55 + fres * ab * 0.9) * alphaTint;
+
+      // the capacitive band is a stripe painted into the surface shading
+      // rather than modelled as its own coincident geometry, which would
+      // z-fight with the shell it sits in
+      if (emisAmt > 0 && prad > 0.35) {
+        const off = Math.abs(prof.b[iv]) / emisW;
+        if (off < 1) {
+          // soft-edged so the inlay reads as a lit line, not a painted block,
+          // with a glint that travels the circumference
+          const falloff = 1 - smooth(off);
+          const trav = 0.46 + 0.54 * Math.pow(Math.max(0, Math.sin(uPhase * TAU - state.clock * 0.5)), 6);
+          const e = emisAmt * trav * falloff * 0.55;
+          r += ar * e; g += ag * e; bl += ab * e;
+        }
+      }
+
+      const o = qn * 8;
+      /* Grow every corner a fixed distance away from the centroid so adjacent
+         quads overlap instead of leaving hairline seams. The offset is
+         absolute, never proportional — a proportional grow turns the
+         near-degenerate quads at the silhouette into spikes. Grazing quads get
+         a wider grow: they sit on the terminator, where the polygonal edge of
+         the tessellation would otherwise read as sawteeth against the
+         background. */
+      const graze = 1 - nz;
+      const grow = 0.45 + growMax * graze * graze * graze * graze * graze * graze;
+      const gx = (x0 + x1 + x2 + x3) * 0.25, gy = (y0 + y1 + y2 + y3) * 0.25;
+      let ex = x0 - gx, ey = y0 - gy, el2 = Math.hypot(ex, ey);
+      let f = el2 > 0.02 ? (el2 + grow) / el2 : 1;
+      qxy[o] = gx + ex * f; qxy[o + 1] = gy + ey * f;
+      ex = x1 - gx; ey = y1 - gy; el2 = Math.hypot(ex, ey);
+      f = el2 > 0.02 ? (el2 + grow) / el2 : 1;
+      qxy[o + 2] = gx + ex * f; qxy[o + 3] = gy + ey * f;
+      ex = x2 - gx; ey = y2 - gy; el2 = Math.hypot(ex, ey);
+      f = el2 > 0.02 ? (el2 + grow) / el2 : 1;
+      qxy[o + 4] = gx + ex * f; qxy[o + 5] = gy + ey * f;
+      ex = x3 - gx; ey = y3 - gy; el2 = Math.hypot(ex, ey);
+      f = el2 > 0.02 ? (el2 + grow) / el2 : 1;
+      qxy[o + 6] = gx + ex * f; qxy[o + 7] = gy + ey * f;
+      qd[qn] = (m.pz[a] + m.pz[b] + m.pz[c] + m.pz[d]) * 0.25;
+      qc[qn] = (clamp(Math.round(r * 255), 0, 255) << 16) |
+               (clamp(Math.round(g * 255), 0, 255) << 8) |
+                clamp(Math.round(bl * 255), 0, 255);
+      qn++;
+    }
+  }
+}
+
+function flushQuads() {
+  for (let i = 0; i < qn; i++) qi[i] = i;
+  const view = qi.subarray(0, qn);
+  view.sort((a, b) => qd[a] - qd[b]);          // painter's order: far → near
+  let last = -1;
+  for (let k = 0; k < qn; k++) {
+    const q = view[k], o = q * 8, col = qc[q];
+    if (col !== last) { ctx.fillStyle = css(col); last = col; }
+    ctx.beginPath();
+    ctx.moveTo(qxy[o], qxy[o + 1]);
+    ctx.lineTo(qxy[o + 2], qxy[o + 3]);
+    ctx.lineTo(qxy[o + 4], qxy[o + 5]);
+    ctx.lineTo(qxy[o + 6], qxy[o + 7]);
+    ctx.fill();
+  }
+  qn = 0;
+}
+
+/* --------------------------------------------------- atmosphere: dust motes */
+const DUST = [];
+for (let i = 0; i < 64; i++) {
+  DUST.push({ x: (Math.random() - 0.5) * 7, y: (Math.random() - 0.5) * 5, z: (Math.random() - 0.5) * 5, s: 0.4 + Math.random() * 0.9 });
+}
+
+function rotationMatrix(rx, ry, rz) {
+  const cx = Math.cos(rx), sx = Math.sin(rx);
+  const cy = Math.cos(ry), sy = Math.sin(ry);
+  const cz = Math.cos(rz), sz = Math.sin(rz);
+  return [
+    cz * cy - sz * sx * sy, -sz * cx, cz * sy + sz * sx * cy,
+    sz * cy + cz * sx * sy,  cz * cx, sz * sy - cz * sx * cy,
+    -cx * sy,                sx,      cx * cy
+  ];
+}
+
+/* ========================================================================== *
+ * SCENES & CAMERA
+ * ========================================================================== */
+
+const SCENES = [
+  { id: "hero",     name: "Reveal",    a: 0.000, b: 0.118 },
+  { id: "object",   name: "Presence",  a: 0.118, b: 0.292 },
+  { id: "explode",  name: "Structure", a: 0.292, b: 0.470 },
+  { id: "gesture",  name: "Gesture",   a: 0.470, b: 0.628 },
+  { id: "finish",   name: "Finish",    a: 0.628, b: 0.778 },
+  { id: "features", name: "Detail",    a: 0.778, b: 0.906 },
+  { id: "close",    name: "Halo",      a: 0.906, b: 1.000 }
+];
+
+/* Keyframed camera: scale, tilt, yaw, roll, offset, teardown, key-light
+   exposure, halo bloom.
+   Yaw is authored and bounded rather than accumulated. It is applied before
+   the tilt, so it swings the ring's axis in space — an unbounded spin would
+   therefore drive the apparent tilt too, and could park the object edge-on
+   under any given line of copy. Openness on screen is cos(rx)·cos(ry), and
+   every value below is chosen for how the object sits in that scene. */
+const CAM = [
+  { p: 0.000, s: 0.46, rx: 1.42, ry: 0.90, rz: 0.00, x: 0.00, y: 0.000, ex: 0, exp: 0.075, gl: 0.06 },
+  { p: 0.070, s: 0.58, rx: 1.26, ry: 0.80, rz: 0.00, x: 0.00, y: 0.000, ex: 0, exp: 0.24,  gl: 0.12 },
+  { p: 0.140, s: 0.84, rx: 1.00, ry: 0.62, rz: 0.00, x: 0.00, y: 0.000, ex: 0, exp: 0.72,  gl: 0.22 },
+  { p: 0.230, s: 1.08, rx: 0.70, ry: 0.28, rz: 0.00, x: 0.00, y: 0.000, ex: 0, exp: 1.00,  gl: 0.30 },
+  { p: 0.292, s: 0.98, rx: 0.92, ry: -0.34, rz: 0.10, x: 0.00, y: 0.000, ex: 0, exp: 1.00, gl: 0.26 },
+  { p: 0.335, s: 0.92, rx: 1.08, ry: -0.52, rz: 0.30, x: -0.02, y: 0.000, ex: 0, exp: 0.95, gl: 0.24 },
+  { p: 0.392, s: 0.84, rx: 1.12, ry: -0.60, rz: 0.32, x: -0.02, y: 0.000, ex: 1, exp: 0.95, gl: 0.30 },
+  { p: 0.440, s: 0.84, rx: 1.12, ry: -0.44, rz: 0.30, x: -0.02, y: 0.000, ex: 1, exp: 0.95, gl: 0.30 },
+  { p: 0.470, s: 0.86, rx: 0.98, ry: -0.12, rz: 0.10, x: -0.03, y: 0.000, ex: 0, exp: 1.00, gl: 0.28 },
+  { p: 0.548, s: 0.64, rx: 0.86, ry: 0.42, rz: 0.00, x: -0.09, y: 0.020, ex: 0, exp: 1.00, gl: 0.44 },
+  { p: 0.628, s: 0.80, rx: 0.80, ry: 0.16, rz: 0.00, x: -0.04, y: 0.010, ex: 0, exp: 1.00, gl: 0.34 },
+  { p: 0.700, s: 0.88, rx: 0.60, ry: -0.20, rz: 0.00, x: 0.00, y: 0.058, ex: 0, exp: 1.05, gl: 0.30 },
+  { p: 0.778, s: 0.88, rx: 0.74, ry: -0.44, rz: 0.00, x: 0.00, y: 0.020, ex: 0, exp: 1.00, gl: 0.28 },
+  { p: 0.842, s: 0.72, rx: 0.94, ry: -0.66, rz: 0.00, x: 0.27, y: 0.000, ex: 0, exp: 0.95, gl: 0.24 },
+  { p: 0.906, s: 0.70, rx: 1.00, ry: -0.38, rz: 0.00, x: 0.22, y: 0.000, ex: 0, exp: 0.95, gl: 0.26 },
+  { p: 0.962, s: 0.58, rx: 0.84, ry: 0.04, rz: 0.00, x: 0.00, y: -0.150, ex: 0, exp: 1.00, gl: 0.44 },
+  { p: 1.000, s: 0.62, rx: 0.70, ry: 0.24, rz: 0.00, x: 0.00, y: -0.170, ex: 0, exp: 1.05, gl: 0.62 }
+];
+
+const cam = { s: 0, rx: 0, ry: 0, rz: 0, x: 0, y: 0, ex: 0, exp: 0, gl: 0 };
+function sampleCam(p) {
+  let i = 0;
+  while (i < CAM.length - 2 && p > CAM[i + 1].p) i++;
+  const A = CAM[i], B = CAM[i + 1];
+  const t = smoother(clamp((p - A.p) / (B.p - A.p), 0, 1));
+  for (const k in cam) cam[k] = lerp(A[k], B[k], t);
+}
+
+/* ========================================================================== *
+ * INPUT STATE
+ * ========================================================================== */
+
+const state = {
+  p: 0, pTarget: 0, clock: 0,
+  mx: 0, my: 0, mxT: 0, myT: 0,
+  dragging: false, dragX: 0, spin: 0, spinVel: 0,
+  scene: 0,
+  matFrom: MATERIALS.titanium, matTo: MATERIALS.titanium, matT: 1,
+  mode: null, pulse: 0, ignite: 0,
+  autoScroll: null
+};
+
+addEventListener("scroll", () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  state.pTarget = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
+}, { passive: true });
+
+addEventListener("pointermove", e => {
+  state.mxT = (e.clientX / innerWidth - 0.5) * 2;
+  state.myT = (e.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
+
+// any deliberate scroll takes the wheel back from a programmatic one
+const cancelAuto = () => { state.autoScroll = null; };
+addEventListener("wheel", cancelAuto, { passive: true });
+addEventListener("touchstart", cancelAuto, { passive: true });
+addEventListener("keydown", e => {
+  if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(e.key)) cancelAuto();
+}, { passive: true });
+
+/* drag-to-rotate — only meaningful while the ring is the subject */
+canvas.style.touchAction = "pan-y";
+canvas.addEventListener("pointerdown", e => {
+  if (state.p > 0.47) return;
+  state.dragging = true; state.dragX = e.clientX;
+  canvas.setPointerCapture(e.pointerId);
+  canvas.style.cursor = "grabbing";
+});
+canvas.addEventListener("pointermove", e => {
+  if (!state.dragging) return;
+  const dx = e.clientX - state.dragX;
+  state.dragX = e.clientX;
+  state.spinVel = dx * 0.006;
+  // bounded: the object can be turned in the hand, never spun out of frame
+  state.spin = clamp(state.spin + state.spinVel, -1.0, 1.0);
+});
+const endDrag = () => { state.dragging = false; canvas.style.cursor = ""; };
+canvas.addEventListener("pointerup", endDrag);
+canvas.addEventListener("pointercancel", endDrag);
+
+/* ========================================================================== *
+ * OVERLAYS
+ * ========================================================================== */
+
+const scenes = {};
+document.querySelectorAll(".scene").forEach(el => scenes[el.dataset.scene] = el);
+
+function setScene(el, o, y) {
+  el.style.opacity = o.toFixed(3);
+  el.style.setProperty("--y", y.toFixed(1) + "px");
+  const live = o > 0.55;
+  if (live !== el.classList.contains("live")) el.classList.toggle("live", live);
+  // a fully faded scene leaves the tab order as well as the pointer's reach
+  const vis = o < 0.02 ? "hidden" : "visible";
+  if (el.style.visibility !== vis) el.style.visibility = vis;
+}
+
+/* ------------------------------------------------------- chapter rail */
+const rail = document.getElementById("rail");
+SCENES.forEach((s, i) => {
+  const b = document.createElement("button");
+  b.innerHTML = '<span class="name">' + s.name + '</span><span class="tick"></span>';
+  b.setAttribute("aria-label", "Chapter " + (i + 1) + ": " + s.name);
+  b.addEventListener("click", () => scrollToScene(i));
+  rail.appendChild(b);
+});
+const railBtns = [...rail.children];
+const chapNum = document.getElementById("chapNum");
+const chapName = document.getElementById("chapName");
+const progressBar = document.getElementById("progress");
+
+function scrollToScene(i, bias = 0.42, done = null) {
+  const s = SCENES[i];
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const target = (s.a + (s.b - s.a) * bias) * max;
+  state.autoScroll = { from: scrollY, to: target, t: 0, dur: reduced ? 0.001 : 1.5, done };
+}
+
+/* ----------------------------------------------- exploded-view callouts */
+const labelHost = document.getElementById("labels");
+const leaderSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+leaderSvg.setAttribute("class", "leaders");
+labelHost.appendChild(leaderSvg);
+
+const labelEls = LAYERS.map(L => {
+  const el = document.createElement("div");
+  el.className = "lbl";
+  el.innerHTML = '<span class="n">' + L.name + '</span><span class="s">' + L.spec + "</span>";
+  labelHost.appendChild(el);
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  dot.setAttribute("r", "2");
+  leaderSvg.appendChild(line);
+  leaderSvg.appendChild(dot);
+  return { el, line, dot, y: 0 };
+});
+
+/* --------------------------------------------------- gesture interface */
+const MODES = [
+  {
+    id: "music", label: "Music",
+    glyph: '<path d="M4 10V3l7-1.6V8.6"/><circle cx="2.6" cy="10.4" r="1.5"/><circle cx="9.6" cy="8.8" r="1.5"/>',
+    state: "Playing", title: "Nocturne in E♭", sub: "Rotate to scrub · 3:12",
+    viz: '<div class="eq" id="eqbars"></div>'
+  },
+  {
+    id: "nav", label: "Navigation",
+    glyph: '<circle cx="6.5" cy="6.5" r="5.6"/><path d="M4.4 8.6L8.6 4.4 6.9 8.6z"/>',
+    state: "Guiding", title: "Left in 320 m", sub: "Heading 41° north",
+    viz: '<svg class="arc" viewBox="0 0 200 46"><path class="bed" d="M8 40 A 92 92 0 0 1 192 40"/><path class="val" d="M8 40 A 92 92 0 0 1 192 40" stroke-dasharray="230" stroke-dashoffset="150"/><circle class="val" cx="100" cy="8" r="2.4" fill="currentColor"/></svg>'
+  },
+  {
+    id: "home", label: "Home",
+    glyph: '<path d="M1.6 6.2L6.5 1.6l4.9 4.6M3.2 7.4v4.2h6.6V7.4"/>',
+    state: "4 nearby", title: "Studio", sub: "Everything in reach",
+    viz: '<div class="chips"><div class="chip"><span>Desk light</span><span>42%</span></div><div class="chip"><span>Climate</span><span>21°</span></div><div class="chip"><span>Blinds</span><span>Open</span></div></div>'
+  },
+  {
+    id: "calls", label: "Calls",
+    glyph: '<path d="M2 2.6l2.6-.8 1.4 2.8-1.6 1.2a7.5 7.5 0 003.8 3.8l1.2-1.6 2.8 1.4-.8 2.6a10.6 10.6 0 01-9.4-9.4z"/>',
+    state: "Incoming", title: "Mira Sølve", sub: "Lift to answer · decline to hold",
+    viz: '<svg class="arc" viewBox="0 0 200 46"><circle class="bed" cx="100" cy="23" r="20"/><circle class="val" cx="100" cy="23" r="20" stroke-dasharray="126" stroke-dashoffset="42"/><circle class="val" cx="100" cy="23" r="7"/></svg>'
+  },
+  {
+    id: "focus", label: "Focus",
+    glyph: '<circle cx="6.5" cy="6.5" r="5.6"/><path d="M6.5 3.4v3.1l2.1 1.6"/>',
+    state: "Held", title: "24 minutes left", sub: "Everything else is waiting",
+    viz: '<svg class="arc" viewBox="0 0 200 46"><path class="bed" d="M10 23H190"/><path class="val" d="M10 23H128"/><circle class="val" cx="128" cy="23" r="3" fill="currentColor"/></svg>'
+  }
+];
+
+const nodeHost = document.getElementById("nodes");
+const wires = document.getElementById("wires");
+const holo = document.getElementById("holo");
+const holoMode = document.getElementById("holoMode");
+const holoState = document.getElementById("holoState");
+const holoTitle = document.getElementById("holoTitle");
+const holoSub = document.getElementById("holoSub");
+const holoViz = document.getElementById("holoViz");
+
+const nodeEls = MODES.map((m, i) => {
+  const b = document.createElement("button");
+  b.className = "node";
+  b.type = "button";
+  b.setAttribute("aria-pressed", "false");
+  b.innerHTML = '<svg class="glyph" viewBox="0 0 13 13">' + m.glyph + "</svg>" + m.label;
+  b.addEventListener("click", () => selectMode(i));
+  nodeHost.appendChild(b);
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  wires.appendChild(line);
+  return { b, line, m };
+});
+
+/**
+ * The constellation orbits the object itself, not the viewport, so it drifts
+ * with the ring as the camera moves. Offset by 18° from vertical: an evenly
+ * divided circle would drop a node on the copy at top and bottom centre.
+ */
+function layoutNodes(cx, cy, ringR) {
+  const kx = narrow ? 1.75 : 2.05, ky = narrow ? 1.55 : 1.90;
+  nodeEls.forEach((n, i) => {
+    const ang = (-72 + i * 72) * Math.PI / 180;
+    n.x = cx + Math.cos(ang) * ringR * kx;
+    n.y = cy + Math.sin(ang) * ringR * ky;
+    n.b.style.left = n.x.toFixed(1) + "px";
+    n.b.style.top = n.y.toFixed(1) + "px";
+  });
+}
+
+function selectMode(i) {
+  const same = state.mode === i;
+  state.mode = same ? null : i;
+  state.pulse = 1;
+  nodeEls.forEach((n, k) => n.b.setAttribute("aria-pressed", String(k === state.mode)));
+  if (state.mode === null) { holo.classList.remove("on"); return; }
+  const m = MODES[i];
+  holoMode.textContent = m.label;
+  holoState.textContent = m.state;
+  holoTitle.textContent = m.title;
+  holoSub.textContent = m.sub;
+  holoViz.innerHTML = m.viz;
+  if (m.id === "music") {
+    const bars = holoViz.querySelector("#eqbars");
+    for (let k = 0; k < 22; k++) {
+      const b = document.createElement("i");
+      b.style.animationDelay = (-Math.random() * 1.4).toFixed(2) + "s";
+      b.style.animationDuration = (0.9 + Math.random() * 0.9).toFixed(2) + "s";
+      bars.appendChild(b);
+    }
+  }
+  holo.classList.add("on");
+}
+
+/* ------------------------------------------------------- configurator */
+const swatchHost = document.getElementById("swatches");
+const underline = document.getElementById("underline");
+const finishNote = document.getElementById("finishNote");
+let currentMat = "titanium";
+
+const swatchEls = MAT_KEYS.map(key => {
+  const m = MATERIALS[key];
+  const b = document.createElement("button");
+  b.className = "swatch";
+  b.type = "button";
+  b.setAttribute("aria-pressed", String(key === currentMat));
+  b.innerHTML = '<span class="disc" style="background:' + m.chip + '"></span>' + m.label;
+  b.addEventListener("click", () => selectMaterial(key));
+  swatchHost.appendChild(b);
+  return b;
+});
+
+function layoutUnderline() {
+  const i = MAT_KEYS.indexOf(currentMat);
+  const el = swatchEls[i];
+  if (!el) return;
+  const host = swatchHost.getBoundingClientRect(), r = el.getBoundingClientRect();
+  underline.style.width = r.width + "px";
+  underline.style.transform = "translateX(" + (r.left - host.left) + "px)";
+}
+
+function selectMaterial(key) {
+  if (key === currentMat && state.matT >= 1) {
+    state.pulse = Math.max(state.pulse, 0.6);
+    return;
+  }
+  state.matFrom = { ...M, label: "", accent: [...M.accent] };
+  state.matTo = MATERIALS[key];
+  state.matT = 0;
+  currentMat = key;
+  swatchEls.forEach((b, i) => b.setAttribute("aria-pressed", String(MAT_KEYS[i] === key)));
+  finishNote.style.opacity = "0";
+  setTimeout(() => {
+    finishNote.textContent = MATERIALS[key].note;
+    finishNote.style.opacity = "1";
+  }, 180);
+  layoutUnderline();
+  state.pulse = Math.max(state.pulse, 0.7);
+}
+finishNote.textContent = MATERIALS.titanium.note;
+
+/* ------------------------------------------------------------ features */
+const featEls = [...document.querySelectorAll(".feat")];
+
+/* ----------------------------------------------------------------- CTA */
+const cta = document.getElementById("cta");
+cta.addEventListener("click", () => {
+  state.ignite = 1;
+  cta.classList.add("firing");
+  setTimeout(() => cta.classList.remove("firing"), 2400);
+  // the interface itself is the payoff — return there, then bring a command
+  // live once the scene has actually arrived
+  setTimeout(() => scrollToScene(3, 0.5, () => {
+    if (state.mode === null) selectMode(0);
+  }), 620);
+});
+
+/* ========================================================================== *
+ * FRAME
+ * ========================================================================== */
+
+let lastT = performance.now(), frameAvg = 16, slowFrames = 0;
+
+function frame(now) {
+  const dt = Math.min((now - lastT) / 1000, 0.05);
+  lastT = now;
+  state.clock += dt;
+
+  /* ---- scroll easing + programmatic scroll ---- */
+  if (state.autoScroll) {
+    const a = state.autoScroll;
+    a.t = Math.min(a.t + dt / a.dur, 1);
+    const e = smoother(a.t);
+    scrollTo(0, lerp(a.from, a.to, e));
+    if (a.t >= 1) {
+      state.autoScroll = null;
+      if (a.done) a.done();
+    }
+  }
+  const ease = reduced ? 1 : 1 - Math.pow(0.001, dt);
+  state.p = lerp(state.p, state.pTarget, ease * 0.92);
+  const p = state.p;
+
+  /* ---- pointer parallax, drag inertia, decays ---- */
+  state.mx = lerp(state.mx, state.mxT, ease * 0.5);
+  state.my = lerp(state.my, state.myT, ease * 0.5);
+  if (!state.dragging) {
+    state.spin = clamp(state.spin + state.spinVel, -1.0, 1.0);
+    state.spinVel *= Math.pow(0.02, dt);
+    // and it settles back to the composed pose once released
+    state.spin *= Math.pow(0.55, dt);
+  }
+  state.pulse = Math.max(0, state.pulse - dt * 1.15);
+  state.ignite = Math.max(0, state.ignite - dt * 0.42);
+  if (state.matT < 1) state.matT = Math.min(1, state.matT + dt / 0.8);
+
+  mixMaterial(state.matFrom, state.matTo, smoother(state.matT));
+  const accentCss = "rgb(" + M.accent.map(v => Math.round(v)).join(",") + ")";
+  document.documentElement.style.setProperty("--accent", accentCss);
+  document.documentElement.style.setProperty("--accent-soft",
+    "rgba(" + M.accent.map(v => Math.round(v)).join(",") + ",0.16)");
+
+  /* ---- camera ---- */
+  sampleCam(p);
+  const igniteE = smoother(state.ignite);
+  const pulseE = smoother(state.pulse);
+  const base = Math.min(W, H);
+  // a phone wants the object larger relative to the frame, except in the
+  // teardown, where the spread layers need room for their callouts
+  const nAdj = narrow ? lerp(1.16, 0.70, smoother(cam.ex)) : 1;
+  const scale = base * 0.40 * cam.s * nAdj * (1 + pulseE * 0.012 + igniteE * 0.03);
+  const cx = W / 2 + cam.x * base * (narrow ? 0.3 : 1) - (narrow ? cam.ex * W * 0.10 : 0) + state.mx * 12;
+  const cy = H / 2 + cam.y * base + (narrow ? cam.ex * H * 0.10 : 0) + state.my * 9;
+  const rx = cam.rx + state.my * 0.09;
+  // a slow sway keeps the object alive without ever leaving the pose the
+  // scene was composed around
+  const ry = cam.ry + state.spin + state.mx * 0.15 +
+             (reduced ? 0 : Math.sin(state.clock * 0.115) * 0.12);
+  const mat = rotationMatrix(rx, ry, cam.rz);
+  const exposure = cam.exp + pulseE * 0.10 + igniteE * 0.35;
+  const glow = cam.gl + pulseE * 0.28 + igniteE * 0.7;
+
+  /* ---- background: the room the ring sits in ---- */
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, "#070810");
+  bg.addColorStop(0.55, "#05060c");
+  bg.addColorStop(1, "#030409");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const ar = Math.round(M.accent[0]), ag = Math.round(M.accent[1]), ab = Math.round(M.accent[2]);
+  const amb = ctx.createRadialGradient(cx, cy, 0, cx, cy, base * 1.1);
+  amb.addColorStop(0, "rgba(" + ar + "," + ag + "," + ab + "," + (0.052 * (0.4 + glow)).toFixed(3) + ")");
+  amb.addColorStop(0.55, "rgba(" + ar + "," + ag + "," + ab + "," + (0.018 * (0.4 + glow)).toFixed(3) + ")");
+  amb.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = amb;
+  ctx.fillRect(0, 0, W, H);
+
+  /* ---- dust ---- */
+  if (!reduced) {
+    ctx.globalCompositeOperation = "lighter";
+    const dm = rotationMatrix(rx * 0.35, ry * 0.14, 0);
+    for (let i = 0; i < DUST.length; i++) {
+      const d = DUST[i];
+      const dy = d.y + Math.sin(state.clock * 0.18 + i) * 0.12;
+      const X = dm[0] * d.x + dm[1] * dy + dm[2] * d.z;
+      const Y = dm[3] * d.x + dm[4] * dy + dm[5] * d.z;
+      const Z = dm[6] * d.x + dm[7] * dy + dm[8] * d.z;
+      if (Z > CAM_D - 0.6) continue;
+      const w = FOCAL / (CAM_D - Z) * base * 0.4;
+      const sx2 = cx + X * w, sy2 = cy - Y * w;
+      if (sx2 < -20 || sx2 > W + 20 || sy2 < -20 || sy2 > H + 20) continue;
+      const al = 0.05 + 0.10 * (1 - Z / 3) * glow;
+      ctx.fillStyle = "rgba(" + ar + "," + ag + "," + ab + "," + clamp(al, 0, 0.2).toFixed(3) + ")";
+      ctx.fillRect(sx2, sy2, d.s * (w / base) * 3.2 + 0.6, d.s * (w / base) * 3.2 + 0.6);
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  /* ---- the ring ---- */
+  const explode = cam.ex;
+  const touchEmis = 0.10 + pulseE * 0.85 + igniteE * 0.9 +
+                    (state.mode !== null ? 0.30 : 0) +
+                    (p > 0.47 && p < 0.63 ? 0.16 : 0);
+
+  if (explode < 0.004) {
+    const want = tier === 1 ? (scale > 330 ? 2 : scale > 190 ? 1 : 0)
+                            : (scale > 300 ? 1 : 0);
+    if (want !== detail) buildMerged(want);
+    emitLayer(merged, mat, cx, cy, scale, 1, exposure, touchEmis, 1, 0.085);
+  } else {
+    const push = 1 + smoother(explode) * 3.4;
+    for (let i = 0; i < mesh.length; i++) {
+      const L = LAYERS[i];
+      emitLayer(mesh[i], mat, cx, cy, scale, push, exposure,
+        L.emis * (touchEmis * 0.7 + 0.14), lerp(1, L.tint, smoother(explode)), 1);
+    }
+  }
+  flushQuads();
+
+  /* ---- halo bloom, drawn in the ring's own ellipse ---- */
+  const ell = Math.abs(Math.cos(rx)) * 0.86 + 0.14;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.translate(cx, cy);
+  ctx.rotate(-cam.rz);
+  ctx.scale(1, ell);
+  const rr = scale * FOCAL / CAM_D;
+  const bloom = ctx.createRadialGradient(0, 0, rr * 0.25, 0, 0, rr * 2.1);
+  bloom.addColorStop(0, "rgba(" + ar + "," + ag + "," + ab + ",0)");
+  bloom.addColorStop(0.42, "rgba(" + ar + "," + ag + "," + ab + "," + (0.05 * glow).toFixed(3) + ")");
+  bloom.addColorStop(0.6, "rgba(" + ar + "," + ag + "," + ab + "," + (0.085 * glow).toFixed(3) + ")");
+  bloom.addColorStop(1, "rgba(" + ar + "," + ag + "," + ab + ",0)");
+  ctx.fillStyle = bloom;
+  ctx.beginPath();
+  ctx.arc(0, 0, rr * 2.1, 0, TAU);
+  ctx.fill();
+
+  /* ignition: rings of light leaving the object */
+  if (state.ignite > 0.001) {
+    for (let i = 0; i < 3; i++) {
+      const t = clamp((1 - state.ignite) * 1.5 - i * 0.16, 0, 1);
+      if (t <= 0 || t >= 1) continue;
+      ctx.beginPath();
+      ctx.arc(0, 0, rr * (1 + t * 2.6), 0, TAU);
+      ctx.strokeStyle = "rgba(" + ar + "," + ag + "," + ab + "," + (0.4 * (1 - t) * (1 - t)).toFixed(3) + ")";
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  /* vignette keeps the eye on the object */
+  const vg = ctx.createRadialGradient(W / 2, H / 2, base * 0.34, W / 2, H / 2, base * 1.05);
+  vg.addColorStop(0, "rgba(0,0,0,0)");
+  vg.addColorStop(1, "rgba(0,0,0,0.62)");
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, W, H);
+
+  /* ====================================================== overlay driving */
+
+  setScene(scenes.hero,   env(p, -1, 0, 0.038, 0.098), band(p, 0, 0.1) * -34);
+  setScene(scenes.object, env(p, 0.118, 0.168, 0.232, 0.282), (band(p, 0.118, 0.282) - 0.5) * -46);
+  setScene(scenes.explode, env(p, 0.300, 0.348, 0.428, 0.470), (band(p, 0.30, 0.47) - 0.5) * -40);
+  setScene(scenes.gesture, env(p, 0.478, 0.522, 0.588, 0.626), (band(p, 0.478, 0.626) - 0.5) * -30);
+  setScene(scenes.finish, env(p, 0.636, 0.678, 0.742, 0.776), (band(p, 0.636, 0.776) - 0.5) * -30);
+  setScene(scenes.features, env(p, 0.784, 0.820, 0.878, 0.904), (band(p, 0.784, 0.904) - 0.5) * -42);
+  setScene(scenes.close, env(p, 0.912, 0.950, 1.2, 1.3), (band(p, 0.912, 1) - 0.5) * -26);
+
+  /* drag affordance fades once the ring has been grabbed */
+  const hint = document.getElementById("dragHint");
+  hint.style.opacity = (state.spin !== 0 || state.dragging) ? "0" : "0.9";
+
+  /* Exploded callouts. Each anchors to the rightmost point of its slice, then
+     the column is de-collided vertically and joined by elbow leaders — the
+     convention a real teardown drawing uses. */
+  if (cam.ex > 0.02) {
+    const push = 1 + smoother(cam.ex) * 3.4;
+    const lo = smoother(band(cam.ex, 0.22, 0.75));
+    const GAP = narrow ? 44 : 54;
+    const anchors = [];
+    let maxBx = 0;
+    for (let i = 0; i < LAYERS.length; i++) {
+      const L = LAYERS[i];
+      let bx = -1e9, by = 0;
+      for (let k = 0; k < 44; k++) {
+        const u = k / 44 * TAU;
+        const rad = L.R + L.hr, px = rad * Math.cos(u), py = rad * Math.sin(u), pz = L.z * push;
+        const X = mat[0] * px + mat[1] * py + mat[2] * pz;
+        const Y = mat[3] * px + mat[4] * py + mat[5] * pz;
+        const Z = mat[6] * px + mat[7] * py + mat[8] * pz;
+        const w = FOCAL / (CAM_D - Z) * scale;
+        const sxp = cx + X * w;
+        if (sxp > bx) { bx = sxp; by = cy - Y * w; }
+      }
+      anchors.push({ i, bx, by, ly: by });
+      if (bx > maxBx) maxBx = bx;
+    }
+    // the column clears the widest slice, so no leader ever doubles back
+    const colX = narrow
+      ? clamp(maxBx + 14, W * 0.42, W * 0.50)
+      : clamp(maxBx + 44, W * 0.5, W - 252);
+    // push the column apart from the top down, then settle it back into view
+    anchors.sort((a, b) => a.by - b.by);
+    let prev = -1e9;
+    for (const an of anchors) {
+      an.ly = Math.max(an.by, prev + GAP);
+      prev = an.ly;
+    }
+    const overflow = anchors[anchors.length - 1].ly - (H - 72);
+    if (overflow > 0) for (const an of anchors) an.ly -= overflow;
+    for (const an of anchors) {
+      const t = labelEls[an.i];
+      t.el.style.opacity = (lo * 0.96).toFixed(3);
+      t.el.style.left = colX + "px";
+      t.el.style.top = an.ly + "px";
+      const kink = clamp(an.bx + 22, colX - 64, colX - 18);
+      t.line.setAttribute("points",
+        (an.bx + 4).toFixed(0) + "," + an.by.toFixed(0) + " " +
+        kink.toFixed(0) + "," + an.by.toFixed(0) + " " +
+        kink.toFixed(0) + "," + an.ly.toFixed(0) + " " +
+        (colX - 12).toFixed(0) + "," + an.ly.toFixed(0));
+      t.line.style.opacity = (lo * 0.9).toFixed(3);
+      t.dot.setAttribute("cx", an.bx.toFixed(0));
+      t.dot.setAttribute("cy", an.by.toFixed(0));
+      t.dot.style.opacity = (lo * 0.9).toFixed(3);
+    }
+  } else if (labelEls[0].el.style.opacity !== "0") {
+    for (const t of labelEls) {
+      t.el.style.opacity = "0"; t.line.style.opacity = "0"; t.dot.style.opacity = "0";
+    }
+  }
+
+  /* holographic wires reach from the ring's silhouette out to each node */
+  const gv = +scenes.gesture.style.opacity;
+  if (gv > 0.02) {
+    layoutNodes(cx, cy, rr);
+    for (const n of nodeEls) {
+      const dx = n.x - cx, dy = n.y - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len, uy = dy / len;
+      n.line.setAttribute("x1", (cx + ux * rr * 1.06).toFixed(1));
+      n.line.setAttribute("y1", (cy + uy * rr * 1.06 * ell).toFixed(1));
+      n.line.setAttribute("x2", (n.x - ux * 52).toFixed(1));
+      n.line.setAttribute("y2", (n.y - uy * 26).toFixed(1));
+      n.line.style.opacity = gv.toFixed(3);
+    }
+    nodeEls.forEach((n, i) => n.line.classList.toggle("hot", i === state.mode));
+  } else if (state.mode !== null && p > 0.70) {
+    selectMode(state.mode);          // collapse the panel once the scene passes
+  }
+
+  /* feature focus advances with the scroll */
+  const fp = band(p, 0.790, 0.900);
+  const fi = clamp(Math.floor(fp * featEls.length), 0, featEls.length - 1);
+  featEls.forEach((el, i) => el.classList.toggle("on", i === fi));
+
+  /* chrome */
+  let si = 0;
+  for (let i = 0; i < SCENES.length; i++) if (p >= SCENES[i].a) si = i;
+  if (si !== state.scene) {
+    state.scene = si;
+    chapNum.textContent = String(si + 1).padStart(2, "0");
+    chapName.textContent = SCENES[si].name;
+    railBtns.forEach((b, i) => b.setAttribute("aria-current", String(i === si)));
+  }
+  progressBar.style.width = (p * 100).toFixed(2) + "%";
+
+  /* adaptive quality: drop tessellation rather than drop frames */
+  frameAvg = frameAvg * 0.92 + (performance.now() - now) * 0.08;
+  if (tier === 1 && frameAvg > 19) {
+    if (++slowFrames > 60) { tier = 2; buildMesh(); slowFrames = 0; }
+  } else slowFrames = 0;
+
+  requestAnimationFrame(frame);
+}
+
+/* ========================================================================== *
+ * BOOT
+ * ========================================================================== */
+
+/* The hero mark draws itself on. Dash lengths are measured per stroke rather
+   than normalised, which is the only way the compound letterforms come out
+   whole. */
+(function drawWordmark() {
+  const strokes = [...document.querySelectorAll("#heroMark .draw")];
+  strokes.forEach((s, i) => {
+    const len = s.getTotalLength();
+    s.style.strokeDasharray = len;
+    s.style.strokeDashoffset = reduced ? 0 : len;
+  });
+  if (reduced) return;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    strokes.forEach((s, i) => {
+      s.style.transition = "stroke-dashoffset 1.5s cubic-bezier(0.65,0,0.35,1) " + (i * 0.11 + 0.15) + "s";
+      s.style.strokeDashoffset = "0";
+    });
+  }));
+})();
+
+mixMaterial(MATERIALS.titanium, MATERIALS.titanium, 1);
+buildMesh();
+resize();
+addEventListener("resize", () => { resize(); }, { passive: true });
+layoutUnderline();
+setTimeout(layoutUnderline, 120);
+scrollTo(0, 0);
+requestAnimationFrame(frame);
+
+})();
+</script>
