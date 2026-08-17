@@ -30,6 +30,21 @@ from — local continuity follows the smooth backdrop gradient anywhere and
 stops at the product outline. A global colour key cannot do this, because the
 backdrop is a gradient and the cap is transparent.
 
+The matte itself is then estimated rather than thresholded (`matte2.py` in the
+scratch pipeline, mirrored in `assets/`): along a two-pixel band around the
+silhouette each pixel is expressed as a blend of the local foreground and
+local background colour, and that blend factor becomes alpha. This recovers
+the soft edge the camera actually recorded; hard-thresholding it is what makes
+a cut-out look cut out. Three further rules matter:
+
+- cleanup is done by **reconstruction** — an opening decides which component
+  survives, then the original shape is propagated back, so hairlines go
+  without notches being bitten out of the cap's corners;
+- the bottle is **cut at its true base line**, because the glossy tabletop
+  reflection below it survives the background grow as a pale ragged fringe;
+- every piece keeps a **transparent margin**, so no part of a silhouette sits
+  flush against its own frame edge where shadows and masks would clip it.
+
 The exploded frame was then split into its five separately floating pieces by
 connected component, and each piece's position in the original frame is stored
 in `assets/pieces.json` as normalised coordinates. The teardown scene lays the
@@ -58,6 +73,20 @@ composited and lit.
 - Scrolling is never hijacked. Only the product transforms follow a damped copy
   of the scroll position, so the object feels weighted while text stays locked
   to the user's input.
+- **The product's dimensionality is built, not modelled.** It is one
+  photograph, so there is no geometry to light: instead each product sits on a
+  perspective plane it can tilt on, and every light layer — travelling
+  specular, rim light, base shading — is clipped to the product's own alpha
+  via `mask-image`, so highlights fall on the glass rather than over the
+  scene. Depth between bottle, packaging and ground comes from differential
+  parallax (the box tilts and drifts at 0.4× the bottle) plus a little
+  defocus on the box.
+- **The artwork is referenced through a CSS custom property**, not repeated in
+  four `<img>` tags. That is what lets the light layers share the same mask,
+  and it halved the page (1222 KB → 724 KB).
+- A specular band must not be a diagonal gradient inside a narrow box — the
+  box corners land mid-gradient and show as a hard edge. Run the gradient
+  straight and skew the element.
 - Type is a system luxury stack (Didot → Bodoni MT → Hoefler Text → Georgia).
   No webfont is loaded, so the display face resolves differently per platform
   by design.
