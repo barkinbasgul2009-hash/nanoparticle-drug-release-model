@@ -1,0 +1,1709 @@
+<title>Khamrah Qahwa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<style>
+/* ==========================================================================
+   KHAMRAH QAHWA — a scroll-driven fragrance experience.
+   Palette sampled from the product photography itself: the amber of the
+   liquid, the espresso in the deep glass, the rose-brown of the packaging
+   and the gold of the plaque.
+   ========================================================================== */
+
+:root {
+  /* ground */
+  --void:      #070402;
+  --espresso:  #120A05;
+  --roast:     #1E120A;
+  --bark:      #2E1B10;
+  --ember:     #4A1F08;
+
+  /* product */
+  --cognac:    #6B3410;
+  --amber:     #A86000;
+  --amber-lit: #C97C22;
+  --gold:      #C09048;
+  --caramel:   #D8A860;
+  --champagne: #E8CFA0;
+  --cream:     #F0E2CE;
+  --rose:      #A87860;
+  --rose-deep: #904830;
+
+  /* ink */
+  --ink:       #F0E2CE;
+  --ink-soft:  #B49A7E;
+  --ink-dim:   #7A6350;
+
+  --hair: rgba(216, 168, 96, 0.16);
+  --hair-soft: rgba(216, 168, 96, 0.07);
+
+  /* type */
+  --display: Didot, "Bodoni MT", "Hoefler Text", "Playfair Display", Baskerville,
+             "Times New Roman", Georgia, serif;
+  --sans: "Helvetica Neue", Helvetica, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --arabic: "Geeza Pro", "Noto Naskh Arabic", "Traditional Arabic", "Arabic Typesetting",
+            "Segoe UI", var(--display);
+
+  --micro: 0.625rem;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: rgba(200, 122, 46, 0.3); color: var(--cream); }
+
+::-webkit-scrollbar { width: 9px; }
+::-webkit-scrollbar-track { background: #0A0603; }
+::-webkit-scrollbar-thumb { background: #2E1B10; border-radius: 9px; }
+::-webkit-scrollbar-thumb:hover { background: #4A2C18; }
+
+:focus-visible { outline: 1px solid var(--caramel); outline-offset: 5px; border-radius: 2px; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+/* ------------------------------------------------------------- typography */
+
+.display {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.94;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: var(--micro);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0;
+  font-weight: 400;
+}
+
+.lede {
+  font-size: clamp(0.92rem, 1.05vw, 1.06rem);
+  line-height: 1.72;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 40ch;
+  font-weight: 300;
+}
+
+.arabic { font-family: var(--arabic); font-weight: 400; }
+
+/* ------------------------------------------------- ambient page furniture */
+
+/* film grain — one tiny tile, painted once, never animated on the CPU */
+.grain {
+  position: fixed;
+  inset: -6%;
+  z-index: 90;
+  pointer-events: none;
+  background-image: url("__GRAIN__");
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+@keyframes grain-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  20%  { transform: translate3d(-2%, 1%, 0); }
+  40%  { transform: translate3d(1%, -2%, 0); }
+  60%  { transform: translate3d(-1%, 2%, 0); }
+  80%  { transform: translate3d(2%, 1%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* a warm halo that trails the pointer — additive only, native cursor intact */
+.halo {
+  position: fixed;
+  top: 0; left: 0;
+  width: 320px; height: 320px;
+  margin: -160px 0 0 -160px;
+  z-index: 88;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,124,34,0.16), rgba(201,124,34,0.05) 42%, transparent 68%);
+  opacity: 0;
+  transition: opacity 0.7s var(--ease);
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 2.2vw, 1.6rem) clamp(1.1rem, 3.2vw, 2.6rem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 0.6s var(--ease), border-color 0.6s var(--ease),
+              backdrop-filter 0.6s var(--ease), padding 0.6s var(--ease);
+}
+.nav.docked {
+  background: rgba(12, 7, 4, 0.72);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border-bottom-color: var(--hair-soft);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+.nav a, .nav button { color: inherit; text-decoration: none; }
+
+.nav-mark {
+  font-family: var(--sans);
+  font-size: var(--micro);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.nav-links {
+  display: flex;
+  gap: clamp(1rem, 2.6vw, 2.4rem);
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.nav-links a {
+  position: relative;
+  font-size: var(--micro);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.4s var(--ease);
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--caramel);
+  transition: right 0.5s var(--ease);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { right: 0; }
+.nav-brand {
+  font-size: var(--micro);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+@media (max-width: 900px) { .nav-links { display: none; } }
+
+/* ------------------------------------------------------------ scene rig */
+
+.scene { position: relative; }
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.layer { position: absolute; inset: 0; pointer-events: none; }
+
+/* a warm pool of light behind the product */
+.glow {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: min(120vw, 1500px);
+  aspect-ratio: 1.35;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center,
+              rgba(201,124,34,0.36), rgba(168,96,0,0.15) 34%,
+              rgba(74,31,8,0.08) 56%, transparent 72%);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 48%, transparent 30%, rgba(7,4,2,0.55) 76%, #070402 100%);
+  pointer-events: none;
+}
+
+.product { position: absolute; will-change: transform, opacity; }
+.product img { width: 100%; height: auto; }
+
+/* ============================================================ 01 — HERO */
+
+#hero { height: 300vh; }
+#hero .stage { background: var(--void); }
+
+.hero-bottle {
+  width: clamp(158px, 21vw, 300px);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+.hero-box {
+  width: clamp(112px, 15vw, 215px);
+  left: 50%; top: 50%;
+  z-index: 2;
+  filter: brightness(0.88);
+}
+/* a pool of shadow so the object sits on something */
+.ground {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(56vw, 620px);
+  aspect-ratio: 4.4;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.72), transparent 70%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* the wordmark sits behind the object: the bottle eclipses its centre, which
+   is the depth cue the whole opening rests on */
+.hero-back {
+  position: absolute;
+  left: 50%; top: 41%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  text-align: center;
+  width: 100%;
+  padding: 0 1rem;
+  pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: clamp(0.7rem, 1.6vw, 1.2rem);
+  will-change: transform, opacity;
+}
+/* clear of the object, which would otherwise cover it */
+.hero-eyebrow {
+  position: absolute;
+  left: 50%;
+  top: clamp(5rem, 15vh, 9rem);
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+}
+.hero-front {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(4.5rem, 13vh, 7.2rem);
+  transform: translateX(-50%);
+  z-index: 4;
+  text-align: center;
+  width: 100%;
+  padding: 0 1.2rem;
+  pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: clamp(0.7rem, 1.6vw, 1.1rem);
+  will-change: transform, opacity;
+}
+.hero-title {
+  font-size: clamp(2.4rem, 8.4vw, 8.2rem);
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  color: var(--cream);
+  white-space: nowrap;
+}
+.hero-tag {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.7vw, 1.42rem);
+  color: var(--champagne);
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+.hero-meta {
+  display: flex;
+  gap: 1.4rem;
+  align-items: center;
+  color: var(--ink-dim);
+  font-size: var(--micro);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hero-meta i { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); display: block; }
+
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.6rem, 4.5vh, 3rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  z-index: 5;
+}
+.cue .rule { width: 1px; height: 44px; background: rgba(216,168,96,0.22); position: relative; overflow: hidden; }
+.cue .rule::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent, var(--caramel));
+  animation: cue 2.8s var(--ease-io) infinite;
+}
+@keyframes cue {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* Entrance choreography — the fragrance emerges from darkness.
+   `rise` ends on `transform: none`, so it must only ever be applied to
+   elements that carry no positioning transform of their own; anything that is
+   centred with translate gets the class on an inner span instead. */
+.rise { opacity: 0; transform: translateY(18px); animation: rise 1.6s var(--ease) forwards; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.d1 { animation-delay: 0.35s; } .d2 { animation-delay: 0.6s; }
+.d3 { animation-delay: 0.85s; } .d4 { animation-delay: 1.15s; } .d5 { animation-delay: 1.5s; }
+
+/* ========================================================== 02 — BOTTLE */
+
+#bottle { height: 320vh; }
+#bottle .stage { background: linear-gradient(180deg, var(--void), var(--espresso) 60%, var(--roast)); }
+
+.type-back {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-size: clamp(5rem, 21vw, 20rem);
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: rgba(216,168,96,0.10);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform, opacity;
+}
+.type-back.ar { font-family: var(--arabic); font-size: clamp(5rem, 19vw, 17rem); line-height: 1.2; }
+
+.bottle-hero {
+  width: clamp(170px, 22vw, 320px);
+  left: 50%; top: 43%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+/* a highlight that travels the glass as the section advances */
+.sheen {
+  position: absolute;
+  inset: -10% -40%;
+  background: linear-gradient(105deg, transparent 42%, rgba(255,228,180,0.30) 50%, transparent 58%);
+  mix-blend-mode: screen;
+  z-index: 4;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* the two lines cross-fade in place rather than stacking, so the composition
+   below the object never shifts */
+.bottle-copy {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(2.4rem, 9vh, 6rem);
+  transform: translateX(-50%);
+  width: min(92vw, 40rem);
+  height: 5.5rem;
+  text-align: center;
+  z-index: 5;
+}
+.copy-step {
+  position: absolute;
+  will-change: opacity, transform;
+  left: 0; right: 0; top: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.bottle-copy .lede { max-width: 46ch; }
+/* a scrim keeps the copy legible where the object's base passes behind it */
+.copy-scrim {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 34%;
+  z-index: 4;
+  background: linear-gradient(to top, rgba(9,5,3,0.92), rgba(9,5,3,0.55) 45%, transparent);
+  pointer-events: none;
+}
+
+/* ========================================================= 03 — JOURNEY */
+
+#journey { height: 620vh; }
+#journey .stage { background: var(--espresso); }
+
+.act-atmos {
+  position: absolute; inset: 0;
+  opacity: 0;
+  will-change: opacity;
+}
+.atmos-1 { background: radial-gradient(ellipse at 50% 55%, rgba(214,102,26,0.46), rgba(150,56,12,0.20) 38%, transparent 70%), #241309; }
+.atmos-2 { background: radial-gradient(ellipse at 50% 55%, rgba(224,176,110,0.30), rgba(168,120,96,0.13) 42%, transparent 70%), #241610; }
+.atmos-3 { background: radial-gradient(ellipse at 50% 55%, rgba(168,96,0,0.26), rgba(74,31,8,0.14) 34%, transparent 64%), var(--void); }
+
+.journey-head {
+  position: absolute;
+  top: clamp(4.5rem, 12vh, 7.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 6;
+  display: flex; flex-direction: column; gap: 0.7rem; align-items: center;
+  will-change: opacity, transform;
+}
+.journey-head h2 { font-size: clamp(1.1rem, 2vw, 1.7rem); color: var(--champagne); letter-spacing: 0.16em; }
+
+.act {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.act-inner {
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.7rem);
+  padding: 0 1.2rem;
+  max-width: min(94vw, 60rem);
+}
+.act-index {
+  font-size: var(--micro);
+  letter-spacing: 0.44em;
+  text-transform: uppercase;
+  color: var(--caramel);
+}
+.act-title {
+  font-size: clamp(2.1rem, 7vw, 5.6rem);
+  color: var(--cream);
+  letter-spacing: -0.01em;
+}
+.act-notes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.7rem, 2.6vw, 2.2rem);
+}
+.act-notes span {
+  font-family: var(--sans);
+  font-size: clamp(0.62rem, 1.05vw, 0.76rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.act.on .act-notes span { opacity: 1; transform: none; }
+.act.on .act-notes span:nth-child(2) { transition-delay: 0.16s; }
+.act.on .act-notes span:nth-child(3) { transition-delay: 0.32s; }
+.act.on .act-notes span:nth-child(4) { transition-delay: 0.48s; }
+.act.on .act-notes span:nth-child(5) { transition-delay: 0.64s; }
+
+/* Coffee Arabica takes the whole screen — it is what makes this a Qahwa */
+.arabica {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-size: clamp(3rem, 15vw, 15rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  color: rgba(240,226,206,0.07);
+  white-space: nowrap;
+  z-index: 2;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* aromatic motes — pure CSS transforms, no per-frame JS */
+.motes { position: absolute; inset: 0; overflow: hidden; z-index: 3; }
+.mote {
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--caramel);
+  opacity: 0;
+  animation: mote-float linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes mote-float {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0) scale(0.6); }
+  15%  { opacity: 0.55; }
+  85%  { opacity: 0.35; }
+  100% { opacity: 0; transform: translate3d(var(--dx), -140px, 0) scale(1.25); }
+}
+
+/* ============================================================ 04 — QAHWA */
+
+#qahwa { height: 300vh; }
+#qahwa .stage { background: #060301; }
+
+.qahwa-word {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-size: clamp(4.4rem, 26vw, 25rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  white-space: nowrap;
+  z-index: 2;
+  will-change: transform, opacity;
+}
+/* the spotlight that sweeps the word and hands it to the bottle */
+.spotlight {
+  position: absolute;
+  top: -20%; bottom: -20%;
+  width: 46vw;
+  background: linear-gradient(90deg, transparent, rgba(255,214,150,0.04) 22%,
+              rgba(255,220,160,0.13) 40%, rgba(255,228,175,0.2) 50%,
+              rgba(255,220,160,0.13) 60%, rgba(255,214,150,0.04) 78%, transparent);
+  mix-blend-mode: screen;
+  z-index: 3;
+  pointer-events: none;
+  will-change: transform;
+}
+.qahwa-bottle {
+  width: clamp(150px, 19vw, 280px);
+  left: 50%; top: 50%;
+  z-index: 4;
+}
+.qahwa-copy {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(2rem, 9vh, 5.5rem);
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 5;
+  width: min(92vw, 34rem);
+  display: flex; flex-direction: column; gap: 0.75rem; align-items: center;
+}
+/* the Arabic reads as a header marker, clear of the object, rather than
+   decoration crowded under it */
+.qahwa-ar {
+  position: absolute;
+  left: 50%;
+  top: clamp(5rem, 15vh, 9rem);
+  transform: translateX(-50%);
+  z-index: 5;
+  font-family: var(--arabic);
+  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  color: rgba(216,168,96,0.55);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* =========================================================== 05 — OBJECT */
+
+#object { height: 560vh; }
+#object .stage { background: linear-gradient(180deg, #060301, var(--espresso) 55%, var(--roast)); }
+
+/* the exploded frame keeps the photograph's own geometry: every piece sits at
+   the position it occupied in the original frame, then travels from there */
+/* narrower than the stage so the callouts have their own margins to live in */
+.rig {
+  position: relative;
+  width: min(66vw, 900px);
+  aspect-ratio: 1672 / 941;
+  z-index: 3;
+}
+.piece {
+  position: absolute;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 14px 14px rgba(0,0,0,0.55));
+}
+.piece img { width: 100%; height: auto; }
+
+.object-head {
+  position: absolute;
+  top: clamp(3.6rem, 11vh, 6.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 6;
+  display: flex; flex-direction: column; gap: 0.7rem; align-items: center;
+  width: min(92vw, 40rem);
+}
+.object-head h2 { font-size: clamp(1.6rem, 4vw, 3.2rem); color: var(--cream); }
+
+/* annotations sit in the stage margins and appear with their piece */
+.anno {
+  position: absolute;
+  z-index: 7;
+  width: min(19vw, 220px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  pointer-events: none;
+}
+.a-tl { left: clamp(1.2rem, 3.5vw, 4rem); top: 30%; }
+.a-bl { left: clamp(1.2rem, 3.5vw, 4rem); top: 58%; }
+.a-tr { right: clamp(1.2rem, 3.5vw, 4rem); top: 30%; text-align: right; }
+.a-br { right: clamp(1.2rem, 3.5vw, 4rem); top: 58%; text-align: right; }
+.a-tr::before, .a-br::before { margin-left: auto; }
+.anno.on { opacity: 1; transform: none; }
+.anno .k {
+  font-size: var(--micro);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.anno .v { font-size: 0.74rem; line-height: 1.5; color: var(--ink-dim); display: block; }
+.anno::before {
+  content: "";
+  display: block;
+  width: 26px; height: 1px;
+  background: var(--caramel);
+  margin-bottom: 0.7rem;
+}
+
+/* ============================================================ 06 — LIGHT */
+
+#light { height: 340vh; }
+#light .stage { background: var(--espresso); }
+.light-wash { position: absolute; inset: 0; background: #0B0603; }
+.wash-step {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity;
+  background: radial-gradient(ellipse at 50% 50%, rgba(var(--c), 0.85), #0B0603 78%);
+}
+
+/* A contained plate rather than a full bleed: the crop is shown near its own
+   resolution instead of being blown up, and a blur-to-focus pass carries it. */
+.light-stack {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.6rem, 4vh, 3rem);
+}
+.macro {
+  position: relative;
+  width: min(58vw, 760px);
+  aspect-ratio: 450 / 320;
+  overflow: hidden;
+  will-change: transform;
+  /* the plate dissolves at its edges instead of sitting on the page as a
+     pasted rectangle */
+  -webkit-mask-image: radial-gradient(ellipse 82% 84% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 82% 84% at 50% 50%, #000 62%, transparent 100%);
+}
+.macro img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, filter;
+  filter: saturate(1.08) contrast(1.05);
+}
+.macro::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 34%, rgba(7,4,2,0.6) 96%);
+  pointer-events: none;
+}
+/* a slow band of light travelling across the glass */
+.macro-sweep {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(100deg, transparent 40%, rgba(255,232,190,0.22) 50%, transparent 60%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: transform;
+}
+.light-line {
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 3.2vw, 2.7rem);
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  text-align: center;
+  padding: 0 1.4rem;
+  margin: 0;
+  will-change: opacity, transform;
+}
+
+/* ========================================================== 07 — PROFILE */
+
+#profile {
+  background: linear-gradient(180deg, var(--roast), var(--espresso) 40%, var(--void));
+  padding: clamp(5rem, 16vh, 11rem) clamp(1.2rem, 6vw, 6rem);
+}
+.profile-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-bottom: clamp(2rem, 5vw, 3.4rem);
+  border-bottom: 1px solid var(--hair);
+  margin-bottom: clamp(2rem, 5vw, 3.4rem);
+}
+.profile-head h2 { font-size: clamp(1.9rem, 5.4vw, 4.4rem); color: var(--cream); }
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px;
+  background: var(--hair-soft);
+  border: 1px solid var(--hair-soft);
+}
+.spec {
+  background: var(--espresso);
+  padding: clamp(1.3rem, 2.6vw, 2.1rem);
+  display: flex; flex-direction: column; gap: 0.7rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.spec.on { opacity: 1; transform: none; }
+.spec .k { font-size: var(--micro); letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-dim); }
+.spec .v { font-family: var(--display); font-size: clamp(1.05rem, 1.9vw, 1.5rem); color: var(--cream); line-height: 1.25; }
+.spec.wide { grid-column: 1 / -1; }
+.spec.wide .v { font-size: clamp(0.95rem, 1.7vw, 1.32rem); letter-spacing: 0.01em; }
+
+/* ========================================================== 08 — PYRAMID */
+
+#notes {
+  background: var(--void);
+  padding: clamp(4.5rem, 14vh, 10rem) clamp(1.2rem, 6vw, 6rem) clamp(5rem, 16vh, 11rem);
+}
+.notes-head { text-align: center; margin-bottom: clamp(2.6rem, 7vw, 5rem); display: flex; flex-direction: column; gap: 0.8rem; align-items: center; }
+.notes-head h2 { font-size: clamp(1.8rem, 5vw, 4rem); color: var(--cream); }
+
+.strata { display: flex; flex-direction: column; gap: 1px; background: var(--hair-soft); border: 1px solid var(--hair-soft); }
+.stratum {
+  position: relative;
+  padding: clamp(1.6rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2.4rem);
+  display: grid;
+  grid-template-columns: minmax(90px, 0.6fr) 3fr;
+  gap: clamp(1rem, 3vw, 2.4rem);
+  align-items: center;
+  overflow: hidden;
+  transition: background 0.7s var(--ease);
+}
+.stratum-1 { background: linear-gradient(100deg, #40200C, #5A2E0E 55%, #3A1D0B); }
+.stratum-2 { background: linear-gradient(100deg, #33211A, #4A3324 55%, #2A1B14); }
+.stratum-3 { background: linear-gradient(100deg, #0C0704, #16100A 55%, #0A0503); }
+.stratum:hover { filter: brightness(1.16); }
+.stratum .tier { display: flex; flex-direction: column; gap: 0.4rem; }
+.stratum .tier .n { font-size: var(--micro); letter-spacing: 0.34em; text-transform: uppercase; color: var(--caramel); }
+.stratum .tier .t { font-family: var(--display); font-size: clamp(1rem, 2vw, 1.5rem); color: var(--cream); }
+
+.note-row { display: flex; flex-wrap: wrap; gap: clamp(0.7rem, 2.4vw, 2.4rem); }
+.note {
+  position: relative;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.55rem 0.1rem 1.5rem;
+  text-align: left;
+  transition: transform 0.45s var(--ease);
+}
+.note .nm {
+  display: block;
+  font-family: var(--sans);
+  font-size: clamp(0.66rem, 1.15vw, 0.82rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  transition: color 0.4s var(--ease), text-shadow 0.5s var(--ease);
+}
+.note .ds {
+  position: absolute;
+  left: 0; bottom: 0.35rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  white-space: nowrap;
+}
+.note:hover, .note:focus-visible, .note.open { transform: translateY(-2px); }
+.note:hover .nm, .note:focus-visible .nm, .note.open .nm {
+  color: #FFF3DE;
+  text-shadow: 0 0 26px rgba(216,168,96,0.75);
+}
+.note:hover .ds, .note:focus-visible .ds, .note.open .ds { opacity: 1; transform: none; }
+
+/* ============================================================ 09 — FINAL */
+
+#final { height: 300vh; }
+#final .stage { background: var(--void); }
+/* the closing echoes the opening: wordmark behind the object, caption below */
+.final-bottle {
+  width: clamp(165px, 21vw, 305px);
+  left: 50%; top: 40%;
+  z-index: 3;
+}
+.final-back {
+  position: absolute;
+  left: 50%; top: 34%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  padding: 0 1rem;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.final-front {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(3.5rem, 11vh, 6.5rem);
+  transform: translateX(-50%);
+  z-index: 4;
+  width: 100%;
+  padding: 0 1.2rem;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(0.8rem, 1.8vw, 1.3rem);
+  will-change: transform, opacity;
+}
+.final-title {
+  font-size: clamp(2.1rem, 7.4vw, 6.6rem);
+  color: var(--cream);
+  line-height: 0.94;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.cta {
+  margin-top: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 1.05rem 2.6rem;
+  border: 1px solid rgba(216,168,96,0.34);
+  border-radius: 100px;
+  font-size: var(--micro);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: border-color 0.5s var(--ease), letter-spacing 0.5s var(--ease), color 0.4s var(--ease);
+  pointer-events: auto;
+}
+.cta span { position: relative; z-index: 1; }
+.cta::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -60%;
+  width: 60%;
+  background: linear-gradient(90deg, transparent, rgba(216,168,96,0.34), transparent);
+  transition: left 0.9s var(--ease);
+}
+.cta:hover { border-color: var(--caramel); letter-spacing: 0.36em; }
+.cta:hover::before { left: 110%; }
+
+/* ------------------------------------------------------------- footer */
+
+.foot {
+  background: #050302;
+  border-top: 1px solid var(--hair-soft);
+  padding: clamp(2.6rem, 7vw, 4.5rem) clamp(1.2rem, 6vw, 6rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.foot .f-brand { font-family: var(--display); font-size: clamp(1.1rem, 2.4vw, 1.8rem); color: var(--cream); line-height: 1.2; }
+.foot .f-meta { font-size: var(--micro); letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-dim); margin-top: 0.7rem; }
+.to-top {
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--sans);
+  font-size: var(--micro); letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.5rem 0;
+  transition: color 0.4s var(--ease);
+}
+.to-top:hover { color: var(--cream); }
+
+/* -------------------------------------------------------- reveal helper */
+
+.rv { opacity: 0; transform: translateY(20px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+.rv.on { opacity: 1; transform: none; }
+
+/* ------------------------------------------------------------ responsive */
+
+/* between phone and full desktop the callouts need the rig to give ground */
+@media (min-width: 861px) and (max-width: 1200px) {
+  .rig { width: 56vw; }
+  .anno { width: min(22vw, 186px); }
+  .a-tl, .a-tr { top: 26%; }
+  .a-bl, .a-br { top: 60%; }
+}
+
+@media (max-width: 860px) {
+  #hero { height: 240vh; }
+  #bottle { height: 260vh; }
+  #journey { height: 470vh; }
+  #qahwa { height: 230vh; }
+  #object { height: 420vh; }
+  #light { height: 250vh; }
+  #final { height: 230vh; }
+
+  .hero-bottle { width: 46vw; }
+  .hero-box { width: 32vw; }
+  .bottle-hero { width: 50vw; }
+  .qahwa-bottle { width: 40vw; }
+  .final-bottle { width: 52vw; }
+
+  .type-back { font-size: 30vw; }
+  .qahwa-word { font-size: 34vw; }
+  .arabica { font-size: 15vw; white-space: normal; text-align: center; width: 92vw; line-height: 1; }
+
+  /* portrait rig, and one caption at a time beneath it */
+  .rig { width: 88vw; aspect-ratio: 3 / 3.4; }
+  .anno {
+    width: auto;
+    left: 1.4rem; right: 1.4rem;
+    top: auto; bottom: clamp(1.2rem, 5vh, 2.6rem);
+    text-align: center;
+  }
+  .a-tr, .a-br { text-align: center; }
+  .anno::before { margin-left: auto; margin-right: auto; }
+  .anno .v { font-size: 0.72rem; }
+
+  /* the plate carries the whole frame on a phone, in a taller crop */
+  .macro { width: 88vw; aspect-ratio: 4 / 4.6; }
+  .light-stack { gap: 2rem; }
+
+  .stratum { grid-template-columns: 1fr; gap: 1rem; }
+  .note-row { gap: 0.9rem 1.2rem; }
+  .note { padding-bottom: 1.4rem; }
+
+  .halo { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .grain { animation: none; }
+  .cue .rule::after { animation: none; opacity: 0.6; }
+  .mote { animation: none; opacity: 0.3; }
+  .rise { animation-duration: 0.01ms; opacity: 1; transform: none; }
+  .rv, .spec, .act-notes span { transition-duration: 0.01ms; }
+}
+</style>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="halo" id="halo" aria-hidden="true"></div>
+
+<nav class="nav" id="nav">
+  <a class="nav-mark" href="#top">Khamrah Qahwa</a>
+  <ul class="nav-links">
+    <li><a href="#journey">Story</a></li>
+    <li><a href="#notes">Notes</a></li>
+    <li><a href="#object">Bottle</a></li>
+    <li><a href="#profile">Details</a></li>
+  </ul>
+  <span class="nav-brand">Lattafa</span>
+</nav>
+
+<main id="top">
+
+  <!-- ==================================================== 01 — HERO ==== -->
+  <section class="scene" id="hero">
+    <div class="stage">
+      <div class="layer"><div class="glow" id="heroGlow" style="opacity:0"></div></div>
+
+      <p class="label hero-eyebrow" id="heroEyebrow"><span class="rise d1">Lattafa</span></p>
+
+      <div class="hero-back" id="heroBack">
+        <h1 class="display hero-title rise d2">Khamrah Qahwa</h1>
+      </div>
+
+      <div class="ground" id="heroGround" style="top:76%"></div>
+
+      <div class="product hero-box" id="heroBox">
+        <img src="__OUTERBOX__" alt="Khamrah Qahwa presentation box in rose-brown with gold detailing" width="430" height="566" />
+      </div>
+      <div class="product hero-bottle" id="heroBottle">
+        <img src="__BOTTLE__" alt="Lattafa Khamrah Qahwa Eau de Parfum bottle with amber liquid and cut-crystal cap" width="474" height="817" fetchpriority="high" />
+      </div>
+
+      <div class="layer vignette"></div>
+
+      <div class="hero-front" id="heroFront">
+        <p class="hero-tag rise d3">Coffee. Spice. Temptation.</p>
+        <div class="hero-meta rise d4">
+          <span>Eau de Parfum</span><i></i><span>100 ml</span><i></i><span>Unisex</span>
+        </div>
+      </div>
+
+      <div class="cue" id="heroCue">
+        <span class="rule rise d5"></span>
+        <span class="label rise d5">Scroll to discover</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 02 — BOTTLE ==== -->
+  <section class="scene" id="bottle">
+    <div class="stage">
+      <div class="layer"><div class="glow" id="bottleGlow"></div></div>
+
+      <div class="type-back" id="typeLatin">Qahwa</div>
+      <div class="type-back ar" id="typeArabic" lang="ar" dir="rtl">خمرة</div>
+
+      <div class="product bottle-hero" id="bottleHero">
+        <img src="__BOTTLE__" alt="Khamrah Qahwa bottle, faceted glass and gold plaque" width="474" height="817" loading="lazy" />
+        <div class="sheen" id="bottleSheen"></div>
+      </div>
+
+      <div class="layer vignette"></div>
+      <div class="copy-scrim"></div>
+
+      <div class="bottle-copy">
+        <div class="copy-step" id="bStep0">
+          <p class="display" style="font-size:clamp(1.3rem,3.2vw,2.4rem);color:var(--cream)">A darker expression of Khamrah.</p>
+        </div>
+        <div class="copy-step" id="bStep1" style="opacity:0">
+          <p class="lede" style="text-align:center">Warm spice gives way to indulgent sweetness before settling into
+            coffee, vanilla and tonka.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 03 — JOURNEY ==== -->
+  <section class="scene" id="journey">
+    <div class="stage">
+      <div class="act-atmos atmos-1" id="atmos1"></div>
+      <div class="act-atmos atmos-2" id="atmos2"></div>
+      <div class="act-atmos atmos-3" id="atmos3"></div>
+
+      <div class="motes" id="motes" aria-hidden="true"></div>
+      <div class="arabica" id="arabica">Coffee Arabica</div>
+
+      <div class="journey-head" id="journeyHead">
+        <p class="label">The Olfactive Journey</p>
+        <h2 class="display">Three stages. One evolving signature.</h2>
+      </div>
+
+      <div class="act" id="act1">
+        <div class="act-inner">
+          <p class="act-index">01 / Top</p>
+          <h3 class="display act-title">Spiced Ignition</h3>
+          <div class="act-notes"><span>Ginger</span><span>Cinnamon</span><span>Cardamom</span></div>
+          <p class="lede" style="text-align:center">A vivid opening where ginger, cinnamon and cardamom introduce
+            immediate warmth and energy.</p>
+        </div>
+      </div>
+
+      <div class="act" id="act2">
+        <div class="act-inner">
+          <p class="act-index">02 / Heart</p>
+          <h3 class="display act-title">Gourmand Indulgence</h3>
+          <div class="act-notes"><span>Praline</span><span>Candied Fruits</span><span>White Flowers</span></div>
+          <p class="lede" style="text-align:center">The spice melts into a rich heart of praline, candied fruits and
+            delicate white florals.</p>
+        </div>
+      </div>
+
+      <div class="act" id="act3">
+        <div class="act-inner">
+          <p class="act-index">03 / Base</p>
+          <h3 class="display act-title">The Coffee Trail</h3>
+          <div class="act-notes"><span>Coffee Arabica</span><span>Tonka Bean</span><span>Musk</span><span>Benzoin</span><span>Vanilla</span></div>
+          <p class="lede" style="text-align:center">The fragrance settles into Coffee Arabica, creamy vanilla, tonka,
+            benzoin and musk — warm, smooth and lingering.</p>
+        </div>
+      </div>
+
+      <div class="layer vignette"></div>
+    </div>
+  </section>
+
+  <!-- =================================================== 04 — QAHWA ==== -->
+  <section class="scene" id="qahwa">
+    <div class="stage">
+      <div class="qahwa-word display" id="qahwaWord">Qahwa</div>
+      <div class="spotlight" id="spotlight"></div>
+
+      <div class="product qahwa-bottle" id="qahwaBottle" style="opacity:0">
+        <img src="__BOTTLE__" alt="Khamrah Qahwa bottle emerging from darkness" width="474" height="817" loading="lazy" />
+      </div>
+
+      <div class="layer vignette"></div>
+
+      <p class="qahwa-ar" id="qahwaAr" lang="ar" dir="rtl">قهوة</p>
+
+      <div class="qahwa-copy" id="qahwaCopy">
+        <p class="display" style="font-size:clamp(1.1rem,2.6vw,1.9rem);color:var(--cream);margin:0">
+          Qahwa means coffee. Here, coffee becomes atmosphere.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 05 — OBJECT ==== -->
+  <section class="scene" id="object">
+    <div class="stage">
+      <div class="layer"><div class="glow" id="objectGlow" style="opacity:0.5"></div></div>
+
+      <div class="object-head" id="objectHead">
+        <p class="label">The Object</p>
+        <h2 class="display">Crafted as an object</h2>
+        <p class="lede" style="text-align:center;max-width:44ch">More than a vessel, Khamrah Qahwa is presented as a
+          sculptural object of glass, texture and gold.</p>
+      </div>
+
+      <div class="rig" id="rig">
+        <!-- pieces are positioned from the original photograph's own geometry -->
+        <div class="piece" id="pBase"><img src="__BASE__" alt="Presentation box base" width="585" height="262" loading="lazy" /></div>
+        <div class="piece" id="pBottle"><img src="__BOTTLE_OPEN__" alt="Bottle with gold atomiser, cap removed" width="379" height="339" loading="lazy" /></div>
+        <div class="piece" id="pCap"><img src="__CAP__" alt="Faceted crystal-like cap" width="326" height="201" loading="lazy" /></div>
+        <div class="piece" id="pLid"><img src="__LID__" alt="Box lid with gold panel" width="401" height="446" loading="lazy" /></div>
+        <div class="piece" id="pBox"><img src="__OUTERBOX__" alt="Outer presentation box" width="430" height="566" loading="lazy" /></div>
+
+      </div>
+
+      <div class="anno a-tl" id="aCap">
+        <span class="k">Crystal-like cap</span>
+        <span class="v">Geometric transparency catches and refracts the light.</span>
+      </div>
+      <div class="anno a-bl" id="aGlass">
+        <span class="k">Textured glass</span>
+        <span class="v">Diagonal facets turn the amber liquid into shifting highlights.</span>
+      </div>
+      <div class="anno a-tr" id="aPlaque">
+        <span class="k">Gold plaque</span>
+        <span class="v">A restrained metallic centrepiece anchors the bottle.</span>
+      </div>
+      <div class="anno a-br" id="aBox">
+        <span class="k">Presentation box</span>
+        <span class="v">Warm brown surfaces and gold detailing extend the fragrance's visual language.</span>
+      </div>
+
+      <div class="layer vignette"></div>
+    </div>
+  </section>
+
+  <!-- =================================================== 06 — LIGHT ==== -->
+  <section class="scene" id="light">
+    <div class="stage">
+      <!-- the warming environment is a stack of static gradients that
+           cross-fade, so scrolling never repaints a full-screen gradient -->
+      <div class="light-wash" id="lightWash">
+        <div class="wash-step" style="--c:18,10,5"></div>
+        <div class="wash-step" style="--c:74,31,8"></div>
+        <div class="wash-step" style="--c:168,96,0"></div>
+        <div class="wash-step" style="--c:216,168,96"></div>
+        <div class="wash-step" style="--c:46,27,16"></div>
+        <div class="wash-step" style="--c:18,10,5"></div>
+      </div>
+      <div class="light-stack">
+        <div class="macro" id="macroPlate">
+          <img src="__MACRO_GLASS__" alt="Macro detail of the faceted amber glass of the Khamrah Qahwa bottle" id="macroImg" width="450" height="370" loading="lazy" />
+          <div class="macro-sweep" id="macroSweep"></div>
+        </div>
+        <p class="display light-line" id="lightLine">Light, captured in amber.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= 07 — PROFILE ==== -->
+  <section id="profile">
+    <div class="profile-head">
+      <h2 class="display rv">Khamrah Qahwa<br />at a glance</h2>
+      <p class="label rv">Fragrance profile</p>
+    </div>
+    <div class="spec-grid" id="specGrid">
+      <div class="spec"><span class="k">Brand</span><span class="v">Lattafa</span></div>
+      <div class="spec"><span class="k">Name</span><span class="v">Khamrah Qahwa</span></div>
+      <div class="spec"><span class="k">Concentration</span><span class="v">Eau de Parfum</span></div>
+      <div class="spec"><span class="k">Size</span><span class="v" style="white-space:nowrap">100 ml · 3.4 fl.oz.</span></div>
+      <div class="spec"><span class="k">Fragrance type</span><span class="v">Unisex</span></div>
+      <div class="spec"><span class="k">Launched</span><span class="v">2023</span></div>
+      <div class="spec wide"><span class="k">Top</span><span class="v">Ginger · Cinnamon · Cardamom</span></div>
+      <div class="spec wide"><span class="k">Heart</span><span class="v">Praline · Candied Fruits · White Flowers</span></div>
+      <div class="spec wide"><span class="k">Base</span><span class="v">Coffee Arabica · Tonka Bean · Musk · Benzoin · Vanilla</span></div>
+    </div>
+  </section>
+
+  <!-- ================================================= 08 — PYRAMID ==== -->
+  <section id="notes">
+    <div class="notes-head">
+      <p class="label rv">The Composition</p>
+      <h2 class="display rv">Eleven notes, three depths</h2>
+    </div>
+    <div class="strata">
+      <div class="stratum stratum-1 rv">
+        <div class="tier"><span class="n">01 / Top</span><span class="t">Spiced Ignition</span></div>
+        <div class="note-row">
+          <button class="note" type="button"><span class="nm">Ginger</span><span class="ds">Bright · Spicy</span></button>
+          <button class="note" type="button"><span class="nm">Cinnamon</span><span class="ds">Warm · Aromatic</span></button>
+          <button class="note" type="button"><span class="nm">Cardamom</span><span class="ds">Fresh · Spicy</span></button>
+        </div>
+      </div>
+      <div class="stratum stratum-2 rv">
+        <div class="tier"><span class="n">02 / Heart</span><span class="t">Gourmand Indulgence</span></div>
+        <div class="note-row">
+          <button class="note" type="button"><span class="nm">Praline</span><span class="ds">Rich · Gourmand</span></button>
+          <button class="note" type="button"><span class="nm">Candied Fruits</span><span class="ds">Sweet · Luminous</span></button>
+          <button class="note" type="button"><span class="nm">White Flowers</span><span class="ds">Soft · Floral</span></button>
+        </div>
+      </div>
+      <div class="stratum stratum-3 rv">
+        <div class="tier"><span class="n">03 / Base</span><span class="t">The Coffee Trail</span></div>
+        <div class="note-row">
+          <button class="note" type="button"><span class="nm">Coffee Arabica</span><span class="ds">Roasted · Deep</span></button>
+          <button class="note" type="button"><span class="nm">Tonka Bean</span><span class="ds">Creamy · Warm</span></button>
+          <button class="note" type="button"><span class="nm">Musk</span><span class="ds">Soft · Smooth</span></button>
+          <button class="note" type="button"><span class="nm">Benzoin</span><span class="ds">Resinous · Sweet</span></button>
+          <button class="note" type="button"><span class="nm">Vanilla</span><span class="ds">Creamy · Comforting</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== 09 — FINAL ==== -->
+  <section class="scene" id="final">
+    <div class="stage">
+      <div class="layer"><div class="glow" id="finalGlow" style="opacity:0"></div></div>
+
+      <div class="final-back" id="finalBack">
+        <h2 class="display final-title">Khamrah Qahwa</h2>
+      </div>
+
+      <div class="ground" id="finalGround" style="top:70%"></div>
+      <div class="product final-bottle" id="finalBottle">
+        <img src="__BOTTLE__" alt="Lattafa Khamrah Qahwa Eau de Parfum, 100 ml" width="474" height="817" loading="lazy" />
+      </div>
+      <div class="layer vignette"></div>
+
+      <div class="final-front" id="finalCopy">
+        <p class="hero-tag">An encounter between spice, sweetness and coffee.</p>
+        <div class="hero-meta"><span>Lattafa</span><i></i><span>Eau de Parfum</span><i></i><span>100 ml</span></div>
+        <button class="cta" id="cta" type="button"><span>Discover the fragrance</span></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div>
+    <div class="f-brand">Lattafa<br />Khamrah Qahwa</div>
+    <div class="f-meta">Eau de Parfum · 100 ml</div>
+  </div>
+  <button class="to-top" id="toTop" type="button">Back to top ↑</button>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  /** normalised progress of v across [a,b] */
+  const track = (v, a, b) => clamp((v - a) / (b - a), 0, 1);
+  const smooth = t => t * t * (3 - 2 * t);
+  const $ = id => document.getElementById(id);
+
+  /* ====================================================================== *
+   * SCROLL ENGINE
+   * Native scrolling throughout — nothing is hijacked or slowed. A scene is
+   * a tall section with a sticky stage; its progress is simply how far the
+   * section has travelled past the top of the viewport.
+   * ====================================================================== */
+
+  const scenes = [];
+  const scene = (id, fn) => {
+    const el = $(id);
+    if (el) scenes.push({ el, fn, last: -1 });
+  };
+
+  let vh = innerHeight;
+  let heavy = innerWidth > 860;      // richer choreography on larger screens
+
+  function progressOf(el) {
+    const r = el.getBoundingClientRect();
+    const span = el.offsetHeight - vh;
+    return span <= 0 ? 0 : clamp(-r.top / span, 0, 1);
+  }
+
+  /* Product transforms follow a damped copy of the scroll position, so the
+     object feels weighted while text stays locked to the user's input. */
+  let damp = 0, dampTarget = 0;
+
+  function frame() {
+    dampTarget = scrollY;
+    damp = reduced ? dampTarget : lerp(damp, dampTarget, 0.12);
+    for (const s of scenes) {
+      const r = s.el.getBoundingClientRect();
+      if (r.bottom < -vh || r.top > vh * 2) {
+        // keep the endpoints correct without paying for offscreen work
+        const end = r.bottom < 0 ? 1 : 0;
+        if (s.last !== end) { s.fn(end, end); s.last = end; }
+        continue;
+      }
+      const p = progressOf(s.el);
+      s.fn(p, p);
+      s.last = -1;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  addEventListener("resize", () => {
+    vh = innerHeight;
+    heavy = innerWidth > 860;
+    placePieces();
+  }, { passive: true });
+
+  /* ====================================================================== *
+   * 01 — HERO
+   * The fragrance arrives out of darkness: glow first, then the object,
+   * then the packaging settles back into depth.
+   * ====================================================================== */
+
+  const heroGlow = $("heroGlow"), heroBottle = $("heroBottle"), heroBox = $("heroBox"),
+        heroBack = $("heroBack"), heroFront = $("heroFront"), heroCue = $("heroCue"),
+        heroEyebrow = $("heroEyebrow"),
+        heroGround = $("heroGround");
+
+  // opening bloom, independent of scroll
+  requestAnimationFrame(() => {
+    heroGlow.style.transition = "opacity 2.8s cubic-bezier(0.22,0.61,0.36,1)";
+    heroGlow.style.opacity = "1";
+  });
+
+  scene("hero", p => {
+    const e = smooth(p);
+    heroBottle.style.transform =
+      `translate(-50%,-50%) translate3d(0,${-p * 12}vh,0) scale(${1 + e * 0.42})`;
+    heroBottle.style.opacity = String(1 - track(p, 0.72, 0.98));
+    // the packaging drifts back and to the left, giving the bottle the stage
+    heroBox.style.transform =
+      `translate(-50%,-50%) translate3d(${-95 - e * 32}%,${6 + e * 10}%,0) scale(${0.96 - e * 0.16})`;
+    heroBox.style.opacity = String((1 - track(p, 0.42, 0.76)) * 0.92);
+    heroGround.style.opacity = String(1 - track(p, 0.6, 0.95));
+    // wordmark and caption part company as the object grows through them
+    heroBack.style.transform = `translate(-50%,-50%) translate3d(0,${-p * 14}vh,0)`;
+    heroBack.style.opacity = String(1 - track(p, 0.14, 0.46));
+    heroEyebrow.style.opacity = String(1 - track(p, 0.06, 0.3));
+    heroFront.style.transform = `translateX(-50%) translate3d(0,${p * 8}vh,0)`;
+    heroFront.style.opacity = String(1 - track(p, 0.1, 0.36));
+    heroCue.style.opacity = String(1 - track(p, 0.02, 0.14));
+  });
+
+  /* ====================================================================== *
+   * 02 — THE BOTTLE
+   * Oversized type passes behind the object; a highlight travels the glass.
+   * ====================================================================== */
+
+  const bHero = $("bottleHero"), bGlow = $("bottleGlow"), bSheen = $("bottleSheen"),
+        tLatin = $("typeLatin"), tArabic = $("typeArabic"),
+        bStep0 = $("bStep0"), bStep1 = $("bStep1");
+
+  scene("bottle", p => {
+    const e = smooth(p);
+    bHero.style.transform =
+      `translate(-50%,-50%) translate3d(0,${(0.5 - e) * 6}vh,0) scale(${0.92 + e * 0.3})`;
+    // type drifts the opposite way and hands over from Latin to Arabic
+    const latinOut = track(p, 0.34, 0.56);
+    tLatin.style.transform = `translate(-50%,-50%) translate3d(${-e * 16}vw,0,0)`;
+    tLatin.style.opacity = String((1 - latinOut) * (0.35 + 0.65 * track(p, 0, 0.2)));
+    tArabic.style.transform = `translate(-50%,-50%) translate3d(${(1 - e) * 14}vw,0,0)`;
+    tArabic.style.opacity = String(track(p, 0.44, 0.72) * (1 - track(p, 0.9, 1)));
+    bSheen.style.transform = `translate3d(${-60 + p * 150}%,0,0)`;
+    bGlow.style.opacity = String(0.5 + e * 0.5);
+
+    const two = track(p, 0.42, 0.6);
+    bStep0.style.opacity = String(1 - two);
+    bStep0.style.transform = `translate3d(0,${-two * 20}px,0)`;
+    bStep1.style.opacity = String(two * (1 - track(p, 0.92, 1)));
+    bStep1.style.transform = `translate3d(0,${(1 - two) * 20}px,0)`;
+  });
+
+  /* ====================================================================== *
+   * 03 — THREE ACTS
+   * One pinned stage crossfades through three atmospheres. Each act's notes
+   * animate in individually the moment its act takes over.
+   * ====================================================================== */
+
+  const acts = [$("act1"), $("act2"), $("act3")];
+  const atmos = [$("atmos1"), $("atmos2"), $("atmos3")];
+  const jHead = $("journeyHead"), arabica = $("arabica");
+
+  // aromatic motes, drifting on the compositor only
+  (function seedMotes() {
+    if (reduced) return;
+    const host = $("motes");
+    const n = innerWidth > 860 ? 26 : 12;
+    let html = "";
+    for (let i = 0; i < n; i++) {
+      const dur = 14 + Math.random() * 16;
+      html += `<span class="mote" style="left:${Math.random() * 100}%;top:${60 + Math.random() * 45}%;` +
+              `--dx:${(Math.random() - 0.5) * 120}px;animation-duration:${dur}s;` +
+              `animation-delay:${-Math.random() * dur}s;width:${2 + Math.random() * 2.5}px;` +
+              `height:${2 + Math.random() * 2.5}px"></span>`;
+    }
+    host.innerHTML = html;
+  })();
+
+  scene("journey", p => {
+    // head recedes once the first act has landed
+    jHead.style.opacity = String(1 - track(p, 0.06, 0.16));
+    jHead.style.transform = `translateX(-50%) translate3d(0,${-track(p, 0.06, 0.2) * 30}px,0)`;
+
+    // short cross-fades, long holds: each act owns the screen for most of its
+    // third of the section rather than spending it half-faded
+    const w = [
+      track(p, 0.05, 0.12) * (1 - track(p, 0.28, 0.34)),
+      track(p, 0.36, 0.42) * (1 - track(p, 0.60, 0.66)),
+      track(p, 0.68, 0.74) * (1 - track(p, 0.96, 1)),
+    ];
+    for (let i = 0; i < 3; i++) {
+      atmos[i].style.opacity = String(w[i]);
+      acts[i].style.opacity = String(w[i]);
+      acts[i].style.transform = `translate3d(0,${(1 - w[i]) * 26}px,0)`;
+      const on = w[i] > 0.55;
+      if (on !== acts[i].classList.contains("on")) acts[i].classList.toggle("on", on);
+    }
+    // COFFEE ARABICA swells behind the final act
+    const a = track(p, 0.70, 0.90);
+    arabica.style.opacity = String(a * (1 - track(p, 0.95, 1)));
+    arabica.style.transform = `translate(-50%,-50%) scale(${0.86 + a * 0.24})`;
+  });
+
+  /* ====================================================================== *
+   * 04 — QAHWA
+   * A spotlight crosses the word; the object takes its place.
+   * ====================================================================== */
+
+  const qWord = $("qahwaWord"), qLight = $("spotlight"),
+        qBottle = $("qahwaBottle"), qCopy = $("qahwaCopy"), qAr = $("qahwaAr");
+
+  scene("qahwa", p => {
+    const e = smooth(p);
+    qLight.style.transform = `translate3d(${-60 + p * 210}vw,0,0)`;
+    qWord.style.transform = `translate(-50%,-50%) translate3d(0,0,0) scale(${1 + e * 0.16})`;
+    // the word owns the screen, then hands it cleanly to the object rather
+    // than both sitting at half strength together
+    qWord.style.opacity = String((0.25 + track(p, 0, 0.28) * 0.75) * (1 - track(p, 0.44, 0.62)));
+    const b = track(p, 0.52, 0.76);
+    qBottle.style.opacity = String(b * (1 - track(p, 0.94, 1)));
+    qBottle.style.transform =
+      `translate(-50%,-50%) translate3d(0,${(1 - b) * 8}vh,0) scale(${0.86 + b * 0.2})`;
+    qCopy.style.opacity = String(track(p, 0.55, 0.75) * (1 - track(p, 0.93, 1)));
+    qAr.style.opacity = String(track(p, 0.12, 0.34) * (1 - track(p, 0.9, 1)));
+  });
+
+  /* ====================================================================== *
+   * 05 — CRAFTED AS AN OBJECT
+   * Each piece keeps the position it held in the original photograph, then
+   * travels out along its own axis as the section advances.
+   * ====================================================================== */
+
+  /* Piece geometry taken from the original photograph, so the exploded view
+     reassembles exactly as it was shot. */
+  const PIECES = __PIECES__;
+  /* Narrow screens get a deliberately different composition — the wide
+     photographic arrangement would shrink to nothing in a portrait frame. */
+  const PIECES_NARROW = {
+    cap:         { left: 0.30, top: 0.02, width: 0.40 },
+    bottle_open: { left: 0.26, top: 0.19, width: 0.47 },
+    base:        { left: 0.16, top: 0.44, width: 0.66 },
+    lid:         { left: 0.02, top: 0.64, width: 0.42 },
+    outerbox:    { left: 0.56, top: 0.60, width: 0.40 },
+  };
+  const rigEls = {
+    base: $("pBase"), bottle_open: $("pBottle"), cap: $("pCap"),
+    lid: $("pLid"), outerbox: $("pBox"),
+  };
+
+  function placePieces() {
+    const map = heavy ? PIECES : PIECES_NARROW;
+    for (const k in rigEls) {
+      const d = map[k], el = rigEls[k];
+      if (!d || !el) continue;
+      el.style.left = (d.left * 100) + "%";
+      el.style.top = (d.top * 100) + "%";
+      el.style.width = (d.width * 100) + "%";
+    }
+  }
+  placePieces();
+
+  // where each piece travels from, as a fraction of the rig
+  const DRIFT = {
+    base:        { x: 0,   y: 34,  s: 0.9,  in: 0.06 },
+    bottle_open: { x: 0,   y: -30, s: 0.86, in: 0.20 },
+    cap:         { x: 0,   y: -46, s: 0.8,  in: 0.34 },
+    lid:         { x: -46, y: 10,  s: 0.85, in: 0.46 },
+    outerbox:    { x: 46,  y: 8,   s: 0.86, in: 0.58 },
+  };
+  const annos = {
+    cap: $("aCap"), bottle_open: $("aGlass"), lid: $("aPlaque"), outerbox: $("aBox"),
+  };
+  const objHead = $("objectHead"), objGlow = $("objectGlow");
+
+  scene("object", p => {
+    objHead.style.opacity = String(1 - track(p, 0.5, 0.68));
+    objHead.style.transform = `translateX(-50%) translate3d(0,${-track(p, 0.4, 0.75) * 40}px,0)`;
+    objGlow.style.opacity = String(0.3 + track(p, 0.2, 0.8) * 0.5);
+
+    let newest = null;
+    for (const k in rigEls) {
+      const d = DRIFT[k], el = rigEls[k];
+      const t = smooth(track(p, d.in, d.in + 0.3));
+      el.style.opacity = String(t);
+      el.style.transform =
+        `translate3d(${d.x * (1 - t)}%,${d.y * (1 - t)}%,0) scale(${lerp(d.s, 1, t)})`;
+      if (annos[k] && t > 0.75) newest = k;
+    }
+    // wide screens hold all four callouts in the margins; narrow screens show
+    // only the most recent one, as a single caption under the composition
+    for (const k in annos) {
+      const on = p < 0.95 && (heavy
+        ? smooth(track(p, DRIFT[k].in, DRIFT[k].in + 0.3)) > 0.75
+        : k === newest);
+      if (on !== annos[k].classList.contains("on")) annos[k].classList.toggle("on", on);
+    }
+  });
+
+  /* ====================================================================== *
+   * 06 — LIGHT THROUGH GLASS
+   * Purely atmospheric: the ground warms from brown to amber to champagne
+   * and back while the macro drifts.
+   * ====================================================================== */
+
+  const macroImg = $("macroImg"), lightLine = $("lightLine"),
+        macroPlate = $("macroPlate"), macroSweep = $("macroSweep");
+  const washSteps = [...document.querySelectorAll(".wash-step")];
+  let lastBlur = -1;
+
+  scene("light", p => {
+    // cross-fade neighbouring washes rather than rebuilding a gradient
+    const f = p * (washSteps.length - 1);
+    const i = Math.min(washSteps.length - 2, Math.floor(f));
+    const t = smooth(f - i);
+    for (let k = 0; k < washSteps.length; k++) {
+      const o = k === i ? 1 - t : k === i + 1 ? t : 0;
+      washSteps[k].style.opacity = o.toFixed(3);
+    }
+    // the plate arrives out of focus, resolves, and softens away again
+    const focus = Math.abs(p - 0.5) * 2;
+    const blur = Math.round(focus * focus * 24) / 4;   // quantised: filter changes force a repaint
+    if (blur !== lastBlur) {
+      macroImg.style.filter = `saturate(1.08) contrast(1.05) blur(${blur}px)`;
+      lastBlur = blur;
+    }
+    macroImg.style.transform = `scale(${1.16 - smooth(1 - focus) * 0.12})`;
+    macroPlate.style.transform =
+      `translate3d(0,${(0.5 - p) * 7}vh,0) scale(${0.94 + smooth(1 - focus) * 0.06})`;
+    macroSweep.style.transform = `translate3d(${-50 + p * 130}%,0,0)`;
+    lightLine.style.opacity = String(track(p, 0.22, 0.44) * (1 - track(p, 0.74, 0.94)));
+    lightLine.style.transform = `translate3d(0,${(0.5 - p) * 30}px,0)`;
+  });
+
+  /* ====================================================================== *
+   * 09 — FINAL REVEAL
+   * ====================================================================== */
+
+  const fBottle = $("finalBottle"), fCopy = $("finalCopy"), fGlow = $("finalGlow"),
+        fBack = $("finalBack"), fGround = $("finalGround");
+  scene("final", p => {
+    const e = smooth(track(p, 0, 0.55));
+    fBottle.style.opacity = String(e);
+    fBottle.style.transform =
+      `translate(-50%,-50%) translate3d(0,${(1 - e) * 14}vh,0) scale(${0.84 + e * 0.2})`;
+    fGlow.style.opacity = String(e * 0.9);
+    fGround.style.opacity = String(e * 0.9);
+    const b = track(p, 0.14, 0.46);
+    fBack.style.opacity = String(b);
+    fBack.style.transform = `translate(-50%,-50%) translate3d(0,${(1 - b) * 22}px,0)`;
+    const c = track(p, 0.34, 0.66);
+    fCopy.style.opacity = String(c);
+    fCopy.style.transform = `translateX(-50%) translate3d(0,${(1 - c) * 26}px,0)`;
+  });
+
+  /* ====================================================================== *
+   * REVEALS, NAV, INTERACTIONS
+   * ====================================================================== */
+
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (en.isIntersecting) { en.target.classList.add("on"); io.unobserve(en.target); }
+    }
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
+  document.querySelectorAll(".rv, .spec").forEach((el, i) => {
+    el.style.transitionDelay = (i % 6) * 0.07 + "s";
+    io.observe(el);
+  });
+
+  const nav = $("nav");
+  const onScroll = () => nav.classList.toggle("docked", scrollY > innerHeight * 0.6);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // notes: hover on pointer devices, tap to hold open on touch
+  document.querySelectorAll(".note").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const was = btn.classList.contains("open");
+      document.querySelectorAll(".note.open").forEach(o => o.classList.remove("open"));
+      btn.classList.toggle("open", !was);
+    });
+  });
+
+  // the closing button returns to the profile rather than inventing a store
+  $("cta").addEventListener("click", () => {
+    $("profile").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  });
+  $("toTop").addEventListener("click", () => {
+    scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+  });
+
+  // warm halo trailing the pointer (fine pointers only, never on touch)
+  if (matchMedia("(pointer: fine)").matches && !reduced) {
+    const halo = $("halo");
+    let hx = innerWidth / 2, hy = innerHeight / 2, tx = hx, ty = hy, shown = false;
+    addEventListener("pointermove", e => {
+      tx = e.clientX; ty = e.clientY;
+      if (!shown) { shown = true; halo.style.opacity = "1"; }
+    }, { passive: true });
+    (function follow() {
+      hx = lerp(hx, tx, 0.09); hy = lerp(hy, ty, 0.09);
+      halo.style.transform = `translate3d(${hx}px,${hy}px,0)`;
+      requestAnimationFrame(follow);
+    })();
+  }
+
+  requestAnimationFrame(frame);
+})();
+</script>
